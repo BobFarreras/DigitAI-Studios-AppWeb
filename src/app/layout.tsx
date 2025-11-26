@@ -1,13 +1,13 @@
-// FILE: src/app/layout.tsx
+// src/app/layout.tsx
 import { ReactNode } from 'react';
 
 type Props = {
   children: ReactNode;
 };
 
-// Aquest layout ha de ser "invisible". 
-// Next.js es queixarà si li falta <html> en desenvolupament, 
-// però com que el middleware redirigeix sempre a /[locale], mai es veurà.
+// Aquest component només existeix perquè Next.js no es queixi.
+// El middleware s'encarrega d'enviar l'usuari a /[locale]/..., 
+// per tant, l'usuari mai veurà aquest HTML "buit".
 export default function RootLayout({ children }: Props) {
   return children;
 }
