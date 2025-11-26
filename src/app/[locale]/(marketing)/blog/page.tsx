@@ -45,7 +45,7 @@ export default async function BlogIndexPage() {
               </CardHeader>
               
               <CardContent className="flex-1 flex flex-col justify-between">
-                <p className="text-muted-foreground text-sm line-clamp-3 mb-4">
+                <p className="text-muted-foreground text-sx line-clamp-3 mb-4">
                   {post.description}
                 </p>
                 

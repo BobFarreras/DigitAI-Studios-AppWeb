@@ -38,7 +38,7 @@ const components = {
   // Light: text-slate-900 (Negre intens per llegibilitat)
   // Dark: text-slate-200 (Blanc suau per no cremar els ulls)
   p: (props: ParagraphProps) => (
-    <p {...props} className="text-xl leading-8 text-p dark:text-p mb-8 font-sans" />
+    <p {...props} className="text-xl leading-8 text-slate-900 dark:text-slate-500 mb-8 font-sans" />
   ),
   
   // ELEMENTS INLINE
@@ -47,7 +47,7 @@ const components = {
 
   // LLISTES
   ul: (props: ListProps) => (
-    <ul {...props} className="list-disc list-outside ml-6 space-y-3 mb-8 text-xl text-slate-900 dark:text-slate-300" />
+    <ul {...props} className="list-disc list-outside ml-6 space-y-3 mb-8 text-xl text-slate-900 dark:text-slate-500" />
   ),
   li: (props: ComponentPropsWithoutRef<'li'>) => <li {...props} className="pl-2" />,
 

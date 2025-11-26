@@ -32,13 +32,14 @@ export default async function BlogPostPage({ params }: Props) {
             />
           ) : (
             // Fallback si no hi ha imatge: un gradient abstracte xulo
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-indigo-900 to-slate-900" />
+            <div className="absolute inset-0 bg-linear-to-br from-blue-900 via-indigo-900 to-slate-900" />
           )}
 
           {/* CAPA 2: L'Overlay fosc (Essencial per llegir el text blanc) */}
           {/* Un degradat que va de negre (baix) a transparent (dalt) */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/20" />
+          <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/50 to-black/20" />
         </div>
+        
         {/* Contingut del Hero (Text Blanc sempre, perquè el fons és fosc) */}
         <div className="relative z-10 container px-4 text-center max-w-4xl mx-auto">
           <div className="flex justify-center gap-2 mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
