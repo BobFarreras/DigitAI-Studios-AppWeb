@@ -1,7 +1,13 @@
-import type { NextConfig } from "next";
+// ✅ CORRECTE: Import per defecte (sense claus { })
+import createNextIntlPlugin from 'next-intl/plugin';
 
-const nextConfig: NextConfig = {
-  /* config options here */
+const withNextIntl = createNextIntlPlugin(
+  './src/i18n/request.ts'
+);
+
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  // Configs opcionals de Next.js
 };
 
-export default nextConfig;
+export default withNextIntl(nextConfig);

@@ -1,0 +1,527 @@
+ESTRUCTURA DEL PROJECTE (./src)
+
+├── app
+│   ├── api
+│   │   ├── track
+│   │   └── web-audit
+│   ├── favicon.ico
+│   ├── globals.css
+│   ├── layout.tsx
+│   ├── submit-audit.ts
+│   └── [locale]
+│       ├── (marketing)
+│       │   ├── blog
+│       │   │   └── [slug]
+│       │   ├── components
+│       │   └── page.tsx
+│       ├── auth
+│       │   └── login
+│       ├── dashboard
+│       │   └── analytics
+│       └── layout.tsx
+├── components
+│   └── ui
+│       ├── button.tsx
+│       ├── card.tsx
+│       └── input.tsx
+├── i18n
+│   └── request.ts
+├── lib
+│   ├── supabase
+│   │   ├── client.ts
+│   │   ├── middleware.ts
+│   │   └── server.ts
+│   ├── utils.ts
+│   └── validations
+├── proxy.ts
+└── routing.ts
+
+
+CONTINGUT DELS FITXERS
+
+
+// =================== FILE: src/app/globals.css ===================
+
+@import "tailwindcss";
+
+/* Definim les variables de colors semàntics.
+  Així, si demà vols canviar el color de marca, només toques aquí.
+*/
+:root {
+  --background: 0 0% 100%;
+  --foreground: 240 10% 3.9%;
+
+  --primary: 240 5.9% 10%;
+  --primary-foreground: 0 0% 98%;
+
+  --secondary: 240 4.8% 95.9%;
+  --secondary-foreground: 240 5.9% 10%;
+
+  --muted: 240 4.8% 95.9%;
+  --muted-foreground: 240 3.8% 46.1%;
+
+  --accent: 240 4.8% 95.9%;
+  --accent-foreground: 240 5.9% 10%;
+
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0% 98%;
+
+  --border: 240 5.9% 90%;
+  --input: 240 5.9% 90%;
+  --ring: 240 5.9% 10%;
+  --radius: 0.5rem;
+}
+
+@theme inline {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+}
+
+body {
+  @apply bg-background text-foreground antialiased;
+}
+
+// =================== FILE: src/app/layout.tsx ===================
+
+// FILE: src/app/layout.tsx
+import { ReactNode } from 'react';
+
+type Props = {
+  children: ReactNode;
+};
+
+// Aquest layout ha de ser "invisible". 
+// Next.js es queixarà si li falta <html> en desenvolupament, 
+// però com que el middleware redirigeix sempre a /[locale], mai es veurà.
+export default function RootLayout({ children }: Props) {
+  return children;
+}
+
+// =================== FILE: src/app/submit-audit.ts ===================
+
+'use server'
+
+import { z } from 'zod';
+import { createClient } from '@/lib/supabase/server';
+import { redirect } from 'next/navigation';
+
+// Schema amb missatges d'error personalitzats
+const AuditSchema = z.object({
+  url: z.string().url({ message: "La URL no és vàlida (ha de tenir http/https)" }),
+  email: z.string().email({ message: "L'email no és vàlid" })
+});
+
+export type FormState = {
+  message: string;
+  errors?: {
+    url?: string[];
+    email?: string[];
+  };
+  success?: boolean;
+}
+
+export async function submitAuditAction(
+  prevState: FormState, 
+  formData: FormData
+): Promise<FormState> {
+  
+  // 1. Validació
+  const rawData = {
+    url: formData.get('url') as string,
+    email: formData.get('email') as string,
+  };
+
+  const validation = AuditSchema.safeParse(rawData);
+
+  if (!validation.success) {
+    return {
+      success: false,
+      message: "Revisa els errors al formulari.",
+      errors: validation.error.flatten().fieldErrors
+    };
+  }
+
+  // 2. Lògica de DB
+  try {
+    const supabase = await createClient();
+    
+    // Inserim a la taula 'leads'.
+    // NOTA: Assegura't que tens una política RLS que permeti INSERT públic però SELECT privat.
+    const { error } = await supabase
+      .from('leads')
+      .insert({
+        url: validation.data.url,
+        email: validation.data.email,
+        created_at: new Date().toISOString(),
+        status: 'pending' // Estat inicial
+      });
+
+    if (error) {
+      console.error("Supabase Error:", error);
+      return { success: false, message: "Error connectant amb la base de dades." };
+    }
+
+  } catch (e) {
+    console.error("Unexpected Error:", e);
+    return { success: false, message: "Error inesperat al servidor." };
+  }
+
+  // 3. Redirecció (Només si tot ha anat bé)
+  // IMPORTANT: redirect() llança un error intern de Next.js, per això ha d'estar fora del try/catch
+  // o ser l'última instrucció.
+  redirect('/ca/dashboard/audit-pending');
+}
+
+// =================== FILE: src/app/[locale]/(marketing)/page.tsx ===================
+
+import { useTranslations } from 'next-intl';
+import { Button } from "@/components/ui/button";
+
+export default function MarketingPage() {
+  const t = useTranslations('HomePage');
+
+  return (
+    <div className="flex min-h-screen flex-col items-center justify-center p-24">
+      <h1 className="text-4xl font-bold">{t('title')}</h1>
+      <Button variant="outline">Prova Botó</Button>
+    </div>
+  );
+}
+
+// =================== FILE: src/app/[locale]/layout.tsx ===================
+
+import { NextIntlClientProvider } from 'next-intl';
+import { getMessages } from 'next-intl/server';
+import { notFound } from 'next/navigation';
+// Ara utilitzem @/routing gràcies al canvi del tsconfig
+import { routing, type Locale } from '@/routing'; 
+
+// ✅ SOLUCIÓ DEFINITIVA: Import absolut
+// Això buscarà sempre a src/app/globals.css, sense importar on moguis aquest fitxer
+import "@/app/globals.css"; 
+
+export default async function LocaleLayout({
+  children,
+  params
+}: {
+  children: React.ReactNode;
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+
+  if (!routing.locales.includes(locale as Locale)) {
+    notFound();
+  }
+
+  const messages = await getMessages();
+
+  return (
+    <html lang={locale}>
+      <body>
+        <NextIntlClientProvider messages={messages}>
+          {children}
+        </NextIntlClientProvider>
+      </body>
+    </html>
+  );
+}
+
+// =================== FILE: src/components/ui/button.tsx ===================
+
+import * as React from "react"
+import { cva, type VariantProps } from "class-variance-authority"
+import { cn } from "@/lib/utils"
+
+// Definició de les variants de disseny
+const buttonVariants = cva(
+  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+  {
+    variants: {
+      variant: {
+        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+        outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        ghost: "hover:bg-accent hover:text-accent-foreground",
+        link: "text-primary underline-offset-4 hover:underline",
+      },
+      size: {
+        default: "h-10 px-4 py-2",
+        sm: "h-9 rounded-md px-3",
+        lg: "h-11 rounded-md px-8",
+        icon: "h-10 w-10",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  }
+)
+
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {
+  asChild?: boolean
+}
+
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className, variant, size, ...props }, ref) => {
+    return (
+      <button
+        className={cn(buttonVariants({ variant, size, className }))}
+        ref={ref}
+        {...props}
+      />
+    )
+  }
+)
+Button.displayName = "Button"
+
+export { Button, buttonVariants }
+
+// =================== FILE: src/components/ui/card.tsx ===================
+
+import * as React from "react"
+import { cn } from "@/lib/utils"
+
+const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
+  ({ className, ...props }, ref) => (
+    <div ref={ref} className={cn("rounded-lg border bg-card text-card-foreground shadow-sm", className)} {...props} />
+  )
+)
+Card.displayName = "Card"
+
+const CardHeader = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
+  ({ className, ...props }, ref) => (
+    <div ref={ref} className={cn("flex flex-col space-y-1.5 p-6", className)} {...props} />
+  )
+)
+CardHeader.displayName = "CardHeader"
+
+const CardTitle = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLHeadingElement>>(
+  ({ className, ...props }, ref) => (
+    <h3 ref={ref} className={cn("text-2xl font-semibold leading-none tracking-tight", className)} {...props} />
+  )
+)
+CardTitle.displayName = "CardTitle"
+
+const CardContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
+  ({ className, ...props }, ref) => (
+    <div ref={ref} className={cn("p-6 pt-0", className)} {...props} />
+  )
+)
+CardContent.displayName = "CardContent"
+
+export { Card, CardHeader, CardTitle, CardContent }
+
+// =================== FILE: src/components/ui/input.tsx ===================
+
+import * as React from "react"
+import { cn } from "@/lib/utils"
+
+const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement>>(
+  ({ className, type, ...props }, ref) => {
+    return (
+      <input
+        type={type}
+        className={cn(
+          "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+          className
+        )}
+        ref={ref}
+        {...props}
+      />
+    )
+  }
+)
+Input.displayName = "Input"
+
+export { Input }
+
+// =================== FILE: src/i18n/request.ts ===================
+
+import { getRequestConfig } from 'next-intl/server';
+import { notFound } from 'next/navigation';
+import { routing, type Locale } from '@/routing'; // 👈 IMPORTEM DE LA FONT ÚNICA
+
+export default getRequestConfig(async ({ requestLocale }) => {
+  const locale = await requestLocale;
+
+  // Ara validem contra la configuració centralitzada
+  // Així no hem de mantenir dues llistes d'idiomes
+  if (!locale || !routing.locales.includes(locale as Locale)) {
+    notFound();
+  }
+
+  return {
+    locale,
+    messages: (await import(`../../messages/${locale}.json`)).default
+  };
+});
+
+// =================== FILE: src/lib/supabase/client.ts ===================
+
+import { createBrowserClient } from '@supabase/ssr'
+
+export function createClient() {
+  // Crea un client de Supabase pel navegador.
+  // Utilitza les variables d'entorn públiques.
+  return createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
+}
+
+// =================== FILE: src/lib/supabase/middleware.ts ===================
+
+import { createServerClient } from '@supabase/ssr'
+import { NextResponse, type NextRequest } from 'next/server'
+
+export async function updateSession(
+  request: NextRequest, 
+  response: NextResponse // ✅ Rebem la resposta del i18n
+) {
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll()
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) => {
+            request.cookies.set(name, value)
+            response.cookies.set(name, value, options)
+          })
+        },
+      },
+    }
+  )
+
+  // Això refresca el token si és necessari
+  const { data: { user } } = await supabase.auth.getUser()
+
+  // 🛡️ PROTECCIÓ DE RUTES
+  // Si intenta accedir a /dashboard sense usuari -> Login
+  if (request.nextUrl.pathname.includes('/dashboard') && !user) {
+    // Detectem el locale actual de la URL per redirigir al login correcte
+    const locale = request.nextUrl.pathname.split('/')[1] || 'ca';
+    const loginUrl = request.nextUrl.clone()
+    loginUrl.pathname = `/${locale}/auth/login`
+    return NextResponse.redirect(loginUrl)
+  }
+
+  return response
+}
+
+// =================== FILE: src/lib/supabase/server.ts ===================
+
+import { createServerClient } from '@supabase/ssr'
+import { cookies } from 'next/headers'
+
+export async function createClient() {
+  const cookieStore = await cookies()
+
+  return createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return cookieStore.getAll()
+        },
+        setAll(cookiesToSet) {
+          try {
+            cookiesToSet.forEach(({ name, value, options }) =>
+              cookieStore.set(name, value, options)
+            )
+          } catch {
+            // El mètode `setAll` es va cridar des d'un Server Component.
+            // Això pot passar si hi ha middleware refrescant la sessió,
+            // però no podem setar cookies en un component de servidor pur 
+            // que no sigui una Server Action o Route Handler.
+            // Ho ignorem tranquil·lament.
+          }
+        },
+      },
+    }
+  )
+}
+
+// =================== FILE: src/lib/utils.ts ===================
+
+import { type ClassValue, clsx } from "clsx"
+import { twMerge } from "tailwind-merge"
+
+/**
+ * Combina classes de CSS de manera intel·ligent.
+ * Soluciona conflictes de Tailwind automàticament.
+ */
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}
+
+// =================== FILE: src/proxy.ts ===================
+
+import createMiddleware from 'next-intl/middleware';
+import { routing } from '@/routing'; // 👈 IMPORTEM CONFIG
+import { updateSession } from '@/lib/supabase/middleware';
+import { NextRequest } from 'next/server';
+
+const intlMiddleware = createMiddleware(routing); // 👈 LI PASSEM LA CONFIG
+
+export async function proxy(request: NextRequest) {
+  // 1. Next-intl fa la feina de routing (idiomes)
+  const response = intlMiddleware(request);
+
+  // 2. Supabase fa la feina de sessió
+  return await updateSession(request, response);
+}
+
+export const config = {
+  matcher: [
+    '/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+  ],
+};
+
+// =================== FILE: src/routing.ts ===================
+
+import { defineRouting } from 'next-intl/routing';
+import { createNavigation } from 'next-intl/navigation';
+
+export const routing = defineRouting({
+  locales: ['ca', 'es', 'en'],
+  defaultLocale: 'ca',
+  localePrefix: 'as-needed' // Opcional: per si vols /ca o no
+});
+
+// Exportem tipus per a reutilitzar
+export type Locale = (typeof routing.locales)[number];
+
+export const { Link, redirect, usePathname, useRouter, getPathname } =
+  createNavigation(routing);
