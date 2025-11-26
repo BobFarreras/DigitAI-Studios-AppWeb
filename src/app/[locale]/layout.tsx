@@ -7,7 +7,7 @@ import { Inter } from 'next/font/google'; // Importem la font aquí
 import { ThemeProvider } from "@/components/theme-provider"; // 👈 Importa el nou provider
 // ✅ IMPORT ABSOLUT DELS ESTILS TAILWIND V4
 import "@/app/globals.css"; 
-
+import { AnalyticsTracker } from '@/features/analytics/ui/AnalyticsTracker'; // 👈 Importa l'espia d'analytics
 // Configurem la font
 const inter = Inter({ 
   subsets: ['latin'], 
@@ -42,6 +42,8 @@ export default async function LocaleLayout({
     <html lang={locale} className={inter.variable} suppressHydrationWarning>
       <body className="antialiased bg-background text-foreground overflow-x-hidden transition-colors duration-300">
         <NextIntlClientProvider messages={messages}>
+          {/* 👇 AQUI INJECTEM L'ESPIA */}
+          <AnalyticsTracker />
           <ThemeProvider
             attribute="class"
             defaultTheme="system"

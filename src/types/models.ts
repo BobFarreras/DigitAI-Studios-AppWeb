@@ -38,3 +38,10 @@ export type BlogPostDTO = {
   tags: string[];
   coverImage: string | null; // Mapejat des de cover_image
 };
+
+export type AnalyticsEventDTO = {
+  event_name: string;
+  path: string;
+  session_id: string;
+  meta?: Record<string, unknown>;
+};

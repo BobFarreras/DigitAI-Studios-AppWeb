@@ -20,44 +20,26 @@ export type Database = {
           event_name: string
           id: number
           meta: Json | null
-          path: string
-          user_id: string | null
-          visitor_id: string | null
+          path: string | null
+          session_id: string
         }
         Insert: {
           created_at?: string | null
           event_name: string
           id?: never
           meta?: Json | null
-          path: string
-          user_id?: string | null
-          visitor_id?: string | null
+          path?: string | null
+          session_id: string
         }
         Update: {
           created_at?: string | null
           event_name?: string
           id?: never
           meta?: Json | null
-          path?: string
-          user_id?: string | null
-          visitor_id?: string | null
+          path?: string | null
+          session_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "analytics_events_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "analytics_events_visitor_id_fkey"
-            columns: ["visitor_id"]
-            isOneToOne: false
-            referencedRelation: "analytics_visitors"
-            referencedColumns: ["visitor_id"]
-          },
-        ]
+        Relationships: []
       }
       analytics_visitors: {
         Row: {
