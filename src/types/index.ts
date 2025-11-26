@@ -14,3 +14,4 @@ export type Project = Database['public']['Tables']['projects']['Row'];
 export type UserRole = Database['public']['Enums']['user_role'];
 export type AuditStatus = Database['public']['Enums']['audit_status'];
 export type ContactLead = Database['public']['Tables']['contact_leads']['Row'];
+export type BlogPost = Database['public']['Tables']['posts']['Row'];

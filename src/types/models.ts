@@ -26,3 +26,15 @@ export interface IAuditRepository {
     }
   ): Promise<void>;
 }
+
+
+// 1. DTO (Data Transfer Object): Com la teva UI vol veure les dades (camelCase, net)
+export type BlogPostDTO = {
+  slug: string;
+  title: string;
+  date: string | null;     // Mapejat des de published_at
+  description: string | null;
+  content: string | null;  // Mapejat des de content_mdx
+  tags: string[];
+  coverImage: string | null; // Mapejat des de cover_image
+};

@@ -1,14 +1,29 @@
+// 1. Importem les Classes (els plànols)
 import { SupabaseAuditRepository } from '@/repositories/supabase/SupabaseAuditRepository';
-import { PageSpeedAdapter } from '@/adapters/google/PageSpeedAdapter';
+import { SupabasePostRepository } from '@/repositories/supabase/SupabasePostRepository';
+
 import { AuditService } from '@/services/AuditService';
+import { PostService } from '@/services/PostService';
 
-// 1. Repositori (DB)
+import { PageSpeedAdapter } from '@/adapters/google/PageSpeedAdapter';
+
+// ---------------------------------------------------------------------------
+// 2. Instanciem els Repositoris (Capa de Dades)
+// ---------------------------------------------------------------------------
 export const auditRepository = new SupabaseAuditRepository();
+export const postRepository = new SupabasePostRepository(); // 👈 Aquí neix la instància
 
-// 2. Escàner (Google)
-// Assegura't de tenir la variable d'entorn, o posa un string buit per fallar controladament
+// ---------------------------------------------------------------------------
+// 3. Instanciem els Adaptadors (Capa Externa)
+// ---------------------------------------------------------------------------
 const googleKey = process.env.GOOGLE_PAGESPEED_API_KEY || '';
 export const webScanner = new PageSpeedAdapter(googleKey);
 
-// 3. Servei (El que utilitzarem a les Actions)
+// ---------------------------------------------------------------------------
+// 4. Instanciem els Serveis (Capa de Negoci)
+//    Aquí fem la Injecció de Dependències
+// ---------------------------------------------------------------------------
 export const auditService = new AuditService(auditRepository, webScanner);
+
+// El PostService necessita el postRepository per funcionar
+export const postService = new PostService(postRepository);

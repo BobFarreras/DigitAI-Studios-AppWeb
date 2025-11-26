@@ -149,6 +149,48 @@ export type Database = {
         }
         Relationships: []
       }
+      posts: {
+        Row: {
+          content_mdx: string | null
+          cover_image: string | null
+          created_at: string | null
+          description: string | null
+          id: string
+          published_at: string | null
+          slug: string
+          status: Database["public"]["Enums"]["post_status"] | null
+          tags: string[] | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          content_mdx?: string | null
+          cover_image?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          published_at?: string | null
+          slug: string
+          status?: Database["public"]["Enums"]["post_status"] | null
+          tags?: string[] | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          content_mdx?: string | null
+          cover_image?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          published_at?: string | null
+          slug?: string
+          status?: Database["public"]["Enums"]["post_status"] | null
+          tags?: string[] | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -283,6 +325,7 @@ export type Database = {
     Enums: {
       audit_status: "processing" | "completed" | "failed"
       content_status: "queued" | "generating" | "review" | "published"
+      post_status: "draft" | "published" | "archived"
       project_status: "pending" | "active" | "maintenance" | "archived"
       user_role: "admin" | "client" | "lead"
     }
@@ -414,6 +457,7 @@ export const Constants = {
     Enums: {
       audit_status: ["processing", "completed", "failed"],
       content_status: ["queued", "generating", "review", "published"],
+      post_status: ["draft", "published", "archived"],
       project_status: ["pending", "active", "maintenance", "archived"],
       user_role: ["admin", "client", "lead"],
     },
