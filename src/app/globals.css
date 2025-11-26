@@ -1,121 +1,77 @@
 @import "tailwindcss";
-@import "tw-animate-css";
-
-@custom-variant dark (&:is(.dark *));
 @plugin "tailwindcss-animate";
 
 /* =========================================
-   1. DEFINICIÓ DE VARIABLES (COLORS)
+   1. VARIABLES DE COLOR
    ========================================= */
-:root { /* Blanc trencat per defecte */
-
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: 0 0% 100%;
-
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-
-  --radius: 0.625rem;
-
-  --background: oklch(1 0 0);
-
-  --foreground: oklch(0.145 0 0);
-
-  --chart-1: oklch(0.646 0.222 41.116);
-
-  --chart-2: oklch(0.6 0.118 184.704);
-
-  --chart-3: oklch(0.398 0.07 227.392);
-
-  --chart-4: oklch(0.828 0.189 84.429);
-
-  --chart-5: oklch(0.769 0.188 70.08);
-
-  --sidebar: oklch(0.985 0 0);
-
-  --sidebar-foreground: oklch(0.145 0 0);
-
-  --sidebar-primary: oklch(0.205 0 0);
-
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-
-  --sidebar-accent: oklch(0.97 0 0);
-
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-
-  --sidebar-border: oklch(0.922 0 0);
-
-  --sidebar-ring: oklch(0.708 0 0);
+:root {
+  /* Mode Clar (Estàndard) */
+  --background: 0 0% 100%;
+  --foreground: 260 10% 3.9%; /* Lleugerament tintat */
+  --card: 0 0% 100%;
+  --card-foreground: 260 10% 3.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 260 10% 3.9%;
+  --primary: 262 83% 58%;
+  --primary-foreground: 0 0% 98%;
+  --secondary: 260 4.8% 95.9%;
+  --secondary-foreground: 260 5.9% 10%;
+  --muted: 260 4.8% 95.9%;
+  --muted-foreground: 260 3.8% 46.1%;
+  --accent: 260 4.8% 95.9%;
+  --accent-foreground: 260 5.9% 10%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 260 5.9% 90%;
+  --input: 260 5.9% 90%;
+  --ring: 262 83% 58%;
+  --radius: 0.75rem;
+  --p: 222 47% 11%;
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
+  /* ✨ EL COLOR QUE BUSCAVES: Negre Apagat amb toc Lila */
+  /* HSL: Hue 260 (Lila), Sat 14% (Apagat), Light 4% (Fosc casi negre) */
+  --background: 260 8% %; 
+  --foreground: 260 10% 98%;
 
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
+  /* Les targetes un pèl més clares que el fons per fer capa */
+  --card: 260 14% 7%;
+  --card-foreground: 260 10% 98%;
 
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
+  --popover: 260 14% 4%;
+  --popover-foreground: 260 10% 98%;
 
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
+  /* El morat de la marca (Vibrant) */
+  --primary: 263 70% 50%;
+  --primary-foreground: 0 0% 98%;
 
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
+  /* Elements secundaris (Gris fosc lilos) */
+  --secondary: 260 15% 12%;
+  --secondary-foreground: 0 0% 98%;
 
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
+  /* Gris "Muted" (Slate lilos) */
+  --muted: 260 15% 12%;
+  --muted-foreground: 260 10% 65%; /* Gris suau */
 
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
+  --accent: 260 15% 12%;
+  --accent-foreground: 0 0% 98%;
 
-  --destructive: oklch(0.704 0.191 22.216);
-  --destructive-foreground: 0 0% 100%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 0% 98%;
 
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  /* Vores molt subtils */
+  --border: 260 15% 12%;
+  --input: 260 15% 12%;
+  --ring: 263 70% 50%;
+
+  --p: 216 12% 84%; /* slate-300 */
 }
 
 /* =========================================
-   2. CONFIGURACIÓ DEL TEMA (TAILWIND v4)
-   Aquí només definim variables, no classes.
+   2. CONFIGURACIÓ DEL TEMA (Tailwind v4)
    ========================================= */
 @theme inline {
-  /* Mapegem les variables CSS a classes de Tailwind (bg-primary, text-muted, etc.) */
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
   --color-card: hsl(var(--card));
@@ -136,183 +92,83 @@
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
 
+  --radius-xl: calc(var(--radius) + 4px);
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
 
-  /* Animacions personalitzades */
   --animate-floating: floating 6s ease-in-out infinite;
   --animate-pulse-glow: pulse-glow 2s ease-in-out infinite alternate;
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
 
   @keyframes floating {
     0%, 100% { transform: translateY(0px); }
     50% { transform: translateY(-20px); }
   }
-
   @keyframes pulse-glow {
-    from { box-shadow: 0 0 20px rgba(102, 126, 234, 0.4); }
-    to { box-shadow: 0 0 40px rgba(102, 126, 234, 0.8); }
-  }
-
-  --radius-xl: calc(var(--radius) + 4px)
-}
-
-/* =========================================
-   3. ESTILS BASE
-   ========================================= */
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-    font-family: 'Inter', sans-serif;
-    scroll-behavior: smooth;
+    from { box-shadow: 0 0 20px rgba(168, 85, 247, 0.4); }
+    to { box-shadow: 0 0 40px rgba(168, 85, 247, 0.8); }
   }
 }
 
 /* =========================================
-   4. COMPONENTS COMPLEXOS
-   Aquí van les teves classes personalitzades
+   3. BASE & COMPONENTS
    ========================================= */
-@layer components {
-
-  /* Targetes Futuristes */
-  .solution-card-futuristic {
-    @apply bg-white/60 border border-black/10 backdrop-blur-md shadow-sm transition-all duration-300;
-    /* Suport Dark Mode natiu amb Tailwind v4 */
-    &:hover {
-      @apply border-primary/60 shadow-lg;
-    }
-  }
-
-  .dark .solution-card-futuristic {
-    @apply bg-[#171923]/50 border-white/10 shadow-md;
-    &:hover {
-      @apply border-primary/50 shadow-[0_0_40px_hsla(var(--primary)/0.3)];
-    }
-  }
-
-  /* Efectes */
-  .glass-effect {
-    @apply bg-white/10 backdrop-blur-md border border-white/20;
-  }
-  .dark .glass-effect {
-    @apply bg-black/20 border-white/10;
-  }
-
-  .chatbot-bubble {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    @apply rounded-[50px] p-5 shadow-lg shadow-[#667eea]/30;
-  }
-
-  /* Testimonials */
-  .testimonial-card {
-    background: linear-gradient(135deg, hsla(var(--card) / 0.1) 0%, hsla(var(--card) / 0.05) 100%);
-    @apply backdrop-blur-md border border-border/20 rounded-2xl p-8 transition-all duration-300;
-  }
-  .dark .testimonial-card {
-    background: linear-gradient(135deg, rgba(30, 30, 40, 0.2) 0%, rgba(30, 30, 40, 0.1) 100%);
-    @apply border-white/10;
-  }
-  .testimonial-card:hover {
-    @apply -translate-y-2 shadow-2xl shadow-[#667eea]/20;
-  }
-
-  /* Icones */
-  .benefit-icon {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    @apply rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-5 shadow-lg shadow-[#667eea]/30;
-  }
-
-  /* Sliders (Before/After) */
-  .before-after-slider {
-    @apply relative overflow-hidden rounded-2xl;
-  }
-  .slider-handle {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    @apply absolute top-0 bottom-0 w-1 cursor-ew-resize z-10 flex items-center justify-center;
-  }
-  .slider-handle::before {
-    content: '';
-    @apply absolute w-10 h-10 bg-white rounded-full shadow-md border-2 border-primary;
-  }
-
-  /* Inputs Range */
-  input[type="range"].slider {
-    @apply appearance-none bg-transparent cursor-pointer;
-  }
-  input[type="range"].slider::-webkit-slider-runnable-track {
-    @apply bg-muted h-2 rounded;
-  }
-  input[type="range"].slider::-webkit-slider-thumb {
-    @apply appearance-none -mt-1 bg-primary h-4 w-4 rounded-full border-2 border-primary-foreground;
-  }
-
-  /* Pàgines Legals */
-  .legal-content h2 { @apply text-2xl font-extrabold mt-10 mb-4 pb-3 border-b border-border; }
-  .legal-content h3 { @apply text-xl font-bold mt-8 mb-3; }
-  .legal-content h4 { @apply text-lg font-bold mt-6 mb-2; }
-  .legal-content p, .legal-content ul, .legal-content li { @apply text-muted-foreground leading-relaxed; }
-  .legal-content ul { @apply list-disc pl-5 space-y-2 my-5; }
-  .legal-content strong { @apply text-foreground font-bold; }
-  .legal-content a { @apply text-primary font-medium hover:underline; }
-  .legal-content table { @apply w-full my-6; }
-  .legal-content th, .legal-content td { @apply border border-border p-3 text-left; }
-  .legal-content th { @apply bg-muted/50 font-semibold; }
-}
-
-/* =========================================
-   5. UTILITATS PURES
-   Classes petites per a ús freqüent
-   ========================================= */
-@layer utilities {
-  .gradient-bg {
-    @apply bg-gradient-to-r from-[#667eea] to-[#764ba2];
-  }
-
-  .gradient-text {
-    @apply bg-gradient-to-r from-[#667eea] to-[#764ba2] bg-clip-text text-transparent;
-  }
-
-  .hero-pattern {
-    background-image: 
-      radial-gradient(circle at 25% 25%, hsla(var(--primary) / 0.05) 0%, transparent 50%),
-      radial-gradient(circle at 75% 75%, hsla(var(--primary) / 0.05) 0%, transparent 50%);
-  }
-
-  .section-divider {
-    background: linear-gradient(90deg, transparent 0%, hsl(var(--primary)) 50%, transparent 100%);
-    @apply h-[2px] mx-auto w-4/5 max-w-[705px] opacity-50;
-  }
-
-  /* Helpers d'animació per si vols usar-los directament */
-  .animate-floating {
-    animation: floating 6s ease-in-out infinite;
-  }
-  .animate-pulse-glow {
-    animation: pulse-glow 2s ease-in-out infinite alternate;
-  }
-}
-
 @layer base {
   * {
     @apply border-border outline-ring/50;
- }
+  }
   body {
-    @apply bg-background text-foreground;
- }
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer components {
+  
+  /* ICONES MODERNS (Tal com sortien a les imatges) */
+  .benefit-icon {
+    @apply w-14 h-14 rounded-2xl flex items-center justify-center mb-6 transition-all duration-300;
+    /* Degradat molt subtil sobre el fons fosc */
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(99, 102, 241, 0.15) 100%);
+    border: 1px solid rgba(168, 85, 247, 0.2);
+    box-shadow: 0 0 0 1px rgba(168, 85, 247, 0.05); /* Ring subtil */
+  }
+
+  /* Efecte Hover Glow */
+  .group:hover .benefit-icon {
+    @apply scale-110 border-primary/50;
+    box-shadow: 0 0 25px rgba(168, 85, 247, 0.3);
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.25) 0%, rgba(99, 102, 241, 0.25) 100%);
+  }
+
+  /* Targetes Futuristes (Més netes, estil "Glass") */
+  .solution-card-futuristic {
+    @apply bg-white/[0.03] border border-white/[0.08] backdrop-blur-sm rounded-2xl p-8 transition-all duration-300;
+  }
+  
+  .solution-card-futuristic:hover {
+    @apply border-primary/40 bg-white/[0.06] -translate-y-1;
+  }
+
+  /* Inputs (Fons transparent o molt fosc) */
+  .input-dark {
+    @apply bg-white/[0.03] border border-white/10 text-white placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary rounded-lg;
+  }
+
+  .testimonial-card {
+    @apply bg-white/[0.03] border border-white/10 backdrop-blur-md rounded-2xl p-8 transition-all duration-300;
+  }
+}
+
+@layer utilities {
+  .gradient-text {
+    @apply bg-gradient-to-r from-[#a855f7] to-[#6366f1] bg-clip-text text-transparent;
+  }
+  .gradient-bg {
+    @apply bg-gradient-to-r from-[#a855f7] to-[#6366f1];
+  }
+  .section-divider {
+     /* Línia divisòria molt subtil, quasi invisible */
+     @apply h-[1px] w-full bg-gradient-to-r from-transparent via-white/10 to-transparent my-12;
+  }
 }

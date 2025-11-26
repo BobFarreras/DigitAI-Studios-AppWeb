@@ -1,66 +1,42 @@
-'use client'
+'use client';
 
 import { useActionState } from 'react';
-import { useTranslations } from 'next-intl';
-import { processWebAudit } from '../actions';
+import { processWebAudit } from '../actions'; // Comprova la ruta
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export function AuditForm() {
-  const t = useTranslations('HomePage'); // Assegura't que tens les claus al JSON
-  
-  // Hook de Next.js 16 / React 19 per gestionar Server Actions
-  const [state, action, isPending] = useActionState(processWebAudit, {
-    message: '',
-    errors: {}
-  });
+  const [state, action, isPending] = useActionState(processWebAudit, { message: '', errors: {} });
 
   return (
-    <Card className="w-full max-w-md mx-auto mt-8 shadow-lg">
-      <CardHeader>
-        <CardTitle className="text-center">{t('form_title')}</CardTitle>
-      </CardHeader>
-      <CardContent>
+    <div className="w-full max-w-lg mx-auto">
+      <div className="border border-white/10 rounded-xl p-8 bg-transparent">
+        <h3 className="text-xl font-bold text-center text-white mb-6">
+          Analitza la teva web en segons
+        </h3>
+        
         <form action={action} className="space-y-4">
-          
-          {/* Camp URL */}
-          <div className="space-y-2">
-            <Input 
-              name="url" 
-              placeholder="https://la-teva-web.com" 
-              disabled={isPending}
-              className={state.errors?.url ? "border-red-500" : ""}
-            />
-            {state.errors?.url && (
-              <p className="text-sm text-red-500">{state.errors.url[0]}</p>
-            )}
-          </div>
+          <Input 
+            name="url" 
+            placeholder="https://la-teva-web.com" 
+            className="bg-transparent border-white/10 text-white h-12 focus:border-white/30 placeholder:text-slate-600"
+          />
+          {state.errors?.url && <p className="text-red-400 text-xs">{state.errors.url[0]}</p>}
 
-          {/* Camp Email */}
-          <div className="space-y-2">
-            <Input 
-              name="email" 
-              type="email" 
-              placeholder="el-teu@email.com" 
-              disabled={isPending}
-              className={state.errors?.email ? "border-red-500" : ""}
-            />
-             {state.errors?.email && (
-              <p className="text-sm text-red-500">{state.errors.email[0]}</p>
-            )}
-          </div>
+          <Input 
+            name="email" 
+            placeholder="el-teu@email.com" 
+            className="bg-transparent border-white/10 text-white h-12 focus:border-white/30 placeholder:text-slate-600"
+          />
+          {state.errors?.email && <p className="text-red-400 text-xs">{state.errors.email[0]}</p>}
 
-          {/* Missatge d'error general */}
-          {state.message && (
-            <p className="text-sm text-red-500 text-center">{state.message}</p>
-          )}
-
-          <Button type="submit" className="w-full" disabled={isPending}>
-            {isPending ? 'Analitzant...' : t('cta')}
+          <Button type="submit" disabled={isPending} className="w-full bg-transparent hover:bg-white/5 text-white border border-white/10 h-12 mt-2 font-medium">
+            {isPending ? 'Analitzant...' : 'Auditoria Gratuïta'}
           </Button>
+          
+          {state.message && <p className="text-center text-slate-400 text-sm mt-2">{state.message}</p>}
         </form>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
