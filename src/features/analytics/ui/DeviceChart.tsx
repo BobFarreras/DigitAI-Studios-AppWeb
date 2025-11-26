@@ -9,12 +9,12 @@ type Props = {
 
 export function DeviceChart({ data }: Props) {
   return (
-    <Card className="bg-slate-900 border-slate-800 text-slate-200">
+    <Card className="bg-slate-900 border-slate-800 text-slate-200 h-full flex flex-col min-h-0">
       <CardHeader>
         <CardTitle>Dispositius</CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="h-[300px] w-full">
+      <CardContent className="flex-1 min-h-0">
+        <div className="h-full flex flex-col min-h-0">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie

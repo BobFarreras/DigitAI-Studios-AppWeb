@@ -1,5 +1,5 @@
 import { Navbar } from '@/components/layout/Navbar';
-
+import { Footer } from '@/components/layout/Footer';
 
 export default function MarketingLayout({
   children,
@@ -10,12 +10,12 @@ export default function MarketingLayout({
     <div className="flex min-h-screen flex-col">
       {/* La Navbar aquí assegura que surt a TOTES les pàgines de màrqueting */}
       <Navbar />
-      
+
       <main className="flex-1">
         {children}
       </main>
 
-      {/* <Footer /> */}
+      <Footer />
     </div>
   );
 }

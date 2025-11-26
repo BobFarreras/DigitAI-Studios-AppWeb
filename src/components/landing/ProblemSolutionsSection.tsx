@@ -1,27 +1,29 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Calendar, BarChart3, Smartphone, X, Store, CheckCircle2 } from 'lucide-react';
+import { Calendar, BarChart3, Smartphone, X, Store, ArrowRight, CheckCircle2 } from 'lucide-react';
 
 export function ProblemSolutionSection() {
   return (
-    <section className="py-24 container mx-auto px-4 relative overflow-hidden">
-
+    <section className="py-24 container mx-auto px-4 relative overflow-hidden transition-colors duration-300">
+      
       <div className="grid lg:grid-cols-2 gap-16 items-center">
-
-        {/* 1. TEXT NARRATIU (Enfocament Negoci) */}
-        <motion.div
+        
+        {/* 1. TEXT NARRATIU */}
+        <motion.div 
           initial={{ opacity: 0, x: -20 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
         >
-        
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/20 bg-primary/5 text-primary text-xs font-bold mb-6 uppercase tracking-wider">
+             Més que una pàgina web
+          </div>
 
-          <h2 className="text-4xl lg:text-5xl font-bold mb-6 text-p leading-tight">
+          <h2 className="text-4xl lg:text-5xl font-bold mb-6 text-foreground leading-tight">
             La teva web ha de <span className="gradient-text">Facturar</span>, <br />
             no només "ser-hi".
           </h2>
-
+          
           <p className="text-muted-foreground text-lg mb-8 leading-relaxed">
             La majoria de negocis tenen una "Targeta de Visita" digital: bonica, però inútil.
             No permet reservar, no ven i no fidelitza.
@@ -35,46 +37,46 @@ export function ProblemSolutionSection() {
               "Botiga online i pagaments integrats.",
               "Instal·lable al mòbil (PWA) com una App nativa."
             ].map((item, i) => (
-              <li key={i} className="flex items-center gap-3 text-slate-300 font-medium">
+              <li key={i} className="flex items-center gap-3 text-slate-600 dark:text-slate-300 font-medium">
                 <CheckCircle2 className="w-5 h-5 text-primary" /> {item}
               </li>
             ))}
           </ul>
         </motion.div>
-
-        {/* 2. COMPARATIVA VISUAL (Evolució de Funcionalitat) */}
+        
+        {/* 2. COMPARATIVA VISUAL (Adaptada Light/Dark) */}
         <div className="relative h-[500px] flex items-center justify-center perspective-1000">
-
+          
           {/* --- CARD 1: EL PROBLEMA ("Web Aparador") --- */}
-          <motion.div
-            initial={{ opacity: 0, rotate: -6, x: -30 }}
-            whileInView={{ opacity: 1, rotate: -6, x: -30 }}
+          <motion.div 
+            initial={{ opacity: 0, rotate: -5, x: -20 }}
+            whileInView={{ opacity: 1, rotate: -5, x: -20 }}
             viewport={{ once: true }}
-            className="absolute left-0 w-[260px] p-6 rounded-2xl border border-white/5 bg-[#0f111a]/80 backdrop-blur-sm z-0 grayscale opacity-60"
+            // LIGHT: bg-slate-100 (Gris clar) | DARK: bg-[#0f111a] (Negre)
+            className="absolute left-0 w-[300px] p-6 rounded-2xl border border-slate-200 dark:border-white/5 bg-slate-100/80 dark:bg-[#0f111a]/80 backdrop-blur-sm z-0 grayscale opacity-70"
           >
-            <div className="flex items-center gap-2 mb-4 text-slate-500">
-              <Store className="w-5 h-5" />
-              <span className="font-bold text-sm">Web "Aparador"</span>
-            </div>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between p-3 rounded bg-white/5 border border-white/5">
-                <span className="text-xs text-slate-500">Reserves Online</span>
-                <X className="w-4 h-4 text-red-500" />
-              </div>
-              <div className="flex items-center justify-between p-3 rounded bg-white/5 border border-white/5">
-                <span className="text-xs text-slate-500">Panell de Vendes</span>
-                <X className="w-4 h-4 text-red-500" />
-              </div>
-              <div className="flex items-center justify-between p-3 rounded bg-white/5 border border-white/5">
-                <span className="text-xs text-slate-500">App Mòbil</span>
-                <X className="w-4 h-4 text-red-500" />
-              </div>
-            </div>
+             <div className="flex items-center gap-2 mb-4 text-slate-500">
+                <Store className="w-5 h-5" />
+                <span className="font-bold text-sm">Web "Aparador"</span>
+             </div>
+             <div className="space-y-3">
+                {/* ITEM: Fons blanc en Light, fons transparent en Dark */}
+                <div className="flex items-center justify-between p-3 rounded bg-white dark:bg-white/5 border border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none">
+                   <span className="text-xs text-slate-500">Reserves Online</span>
+                   <X className="w-4 h-4 text-red-500" />
+                </div>
+                <div className="flex items-center justify-between p-3 rounded bg-white dark:bg-white/5 border border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none">
+                   <span className="text-xs text-slate-500">Panell de Vendes</span>
+                   <X className="w-4 h-4 text-red-500" />
+                </div>
+                <div className="flex items-center justify-between p-3 rounded bg-white dark:bg-white/5 border border-slate-200 dark:border-white/5 shadow-sm dark:shadow-none">
+                   <span className="text-xs text-slate-500">App Mòbil</span>
+                   <X className="w-4 h-4 text-red-500" />
+                </div>
+             </div>
           </motion.div>
 
-         
-
-          {/* --- CARD 2: LA SOLUCIÓ (Ecosistema DigitAI) --- */}
+                {/* --- CARD 2: LA SOLUCIÓ (Ecosistema DigitAI) --- */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9, x: 20 }}
             whileInView={{ opacity: 1, scale: 1, x: 20 }}
@@ -130,7 +132,6 @@ export function ProblemSolutionSection() {
             {/* Glow de fons */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-linear-to-b from-primary/5 to-transparent pointer-events-none" />
           </motion.div>
-
         </div>
       </div>
     </section>

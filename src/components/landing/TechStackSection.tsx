@@ -110,7 +110,7 @@ export function TechStackSection() {
                   initial={{ opacity: 0, y: 10 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.1 }}
-                  className="group flex flex-col items-center gap-4 min-w-[80px]"
+                  className="group flex flex-col items-center gap-4 min-w-20"
                 >
                   {/* ICONA GRAN: w-20 h-20
                       FILTRE: opacity-70 i grayscale per defecte

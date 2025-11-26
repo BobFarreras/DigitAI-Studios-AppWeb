@@ -26,9 +26,6 @@ export default function MarketingPage() {
       
       <ContactSection />
       
-      <footer className="py-12 border-t border-border text-center text-sm text-muted-foreground bg-background">
-        <p>© {new Date().getFullYear()} DigitAI Studios. Engineered for Growth.</p>
-      </footer>
     </main>
   );
 }

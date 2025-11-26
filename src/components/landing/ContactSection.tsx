@@ -1,7 +1,7 @@
 'use client';
 
 import { useActionState, useState } from 'react';
-import { submitContactForm } from '@/actions/contact'; // Assegura't que la ruta és correcta
+import { submitContactForm } from '@/actions/contact';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -13,119 +13,141 @@ export function ContactSection() {
   const [serviceType, setServiceType] = useState('ia'); // 'ia' o 'web'
 
   return (
-    <section id="contacte" className="py-24 bg-background relative overflow-hidden">
-      <div className="container mx-auto px-4 grid lg:grid-cols-2 gap-16 items-start">
+    <section id="contacte" className="py-24 bg-background relative overflow-hidden transition-colors duration-300">
+      
+      {/* Fons decoratiu (opcional) */}
+      <div className="absolute top-0 left-0 w-full h-full bg-linear-to-b from-transparent via-primary/5 to-transparent pointer-events-none" />
+
+      <div className="container mx-auto px-4 grid lg:grid-cols-2 gap-16 items-start relative z-10">
         
-        {/* COLUMNA ESQUERRA: Text i Punts (Igual que imatge 2) */}
+        {/* COLUMNA ESQUERRA: Text i Punts */}
         <motion.div 
           initial={{ opacity: 0, x: -20 }} 
           whileInView={{ opacity: 1, x: 0 }} 
           viewport={{ once: true }}
-          className="space-y-8"
+          className="space-y-10"
         >
            <div>
-             <h2 className="text-4xl lg:text-5xl font-bold mb-6 text-white">
-               Comença la teva <span className="text-[#8b5cf6]">transformació</span>
+             <h2 className="text-4xl lg:text-5xl font-bold mb-6 text-foreground leading-tight">
+               Comença la teva <span className="gradient-text">transformació</span>
              </h2>
-             <p className="text-slate-400 text-lg leading-relaxed">
-               Contacta amb nosaltres per una auditoria gratuïta. Descobreix com podem revolucionar el teu negoci.
+             <p className="text-muted-foreground text-lg leading-relaxed max-w-lg">
+               Tota gran empresa comença amb una decisió. Contacta amb nosaltres i descobreix com l'automatització pot revolucionar el teu negoci.
              </p>
            </div>
 
-           <div className="space-y-6">
+           <div className="space-y-8">
               {[
-                { icon: Rocket, title: "Implementació ràpida", desc: "En menys de 72 hores" },
-                { icon: Shield, title: "Suport 24/7", desc: "Sempre aquí per ajudar-te" },
-                { icon: Users, title: "Equip expert", desc: "Professionals en apps i automatitzacions" }
+                { icon: Rocket, title: "Implementació Àgil", desc: "Sense mesos d'espera. Llancem en setmanes." },
+                { icon: Shield, title: "Tecnologia Sòlida", desc: "Next.js, React Native i Supabase. Res de Wordpress vell." },
+                { icon: Users, title: "Partners, no Proveïdors", desc: "T'acompanyem en l'estratègia, no només en el codi." }
               ].map((item, i) => (
-                <div key={i} className="flex gap-4 items-start">
-                  <div className="mt-1 w-10 h-10 rounded-full bg-[#6366f1]/20 flex items-center justify-center shrink-0">
-                    <item.icon className="w-5 h-5 text-[#8b5cf6]" />
+                <div key={i} className="flex gap-5 items-start group">
+                  <div className="mt-1 w-12 h-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                    <item.icon className="w-6 h-6 text-primary" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-white text-lg">{item.title}</h3>
-                    <p className="text-slate-400">{item.desc}</p>
+                    <h3 className="font-bold text-foreground text-xl mb-1">{item.title}</h3>
+                    <p className="text-muted-foreground leading-relaxed">{item.desc}</p>
                   </div>
                 </div>
               ))}
            </div>
         </motion.div>
 
-        {/* COLUMNA DRETA: Formulari (Igual que imatge 4) */}
+        {/* COLUMNA DRETA: Formulari Adaptable */}
         <motion.div 
             initial={{ opacity: 0, x: 20 }} 
             whileInView={{ opacity: 1, x: 0 }} 
             viewport={{ once: true }}
-            className="border border-white/10 rounded-2xl p-8 bg-transparent" // ✅ Fons transparent/negre, vora fina
+            className="bg-card border border-border rounded-3xl p-8 lg:p-10 shadow-2xl relative overflow-hidden"
         >
-          <form action={action} className="space-y-6">
+          {/* Glow interior */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 blur-[80px] rounded-full pointer-events-none"></div>
+
+          <form action={action} className="space-y-6 relative z-10">
             
-            {/* SELECTOR TIPUS TOGGLE */}
+            {/* SELECTOR TIPUS (TOGGLE) */}
             <div className="grid grid-cols-2 gap-4 mb-8">
                <button
                   type="button"
                   onClick={() => setServiceType('ia')}
-                  className={`p-4 rounded-xl border transition-all flex flex-col items-center gap-2 ${
+                  className={`p-4 rounded-xl border transition-all flex flex-col items-center gap-3 ${
                     serviceType === 'ia' 
-                      ? 'border-white bg-white/5 text-white' 
-                      : 'border-white/10 text-slate-400 hover:bg-white/5'
+                      ? 'border-primary bg-primary/10 text-primary ring-1 ring-primary shadow-inner' 
+                      : 'border-border bg-muted/30 text-muted-foreground hover:bg-muted/50 hover:border-primary/30'
                   }`}
                >
-                  <Bot className="w-6 h-6" />
-                  <span className="font-medium">IA & Bots</span>
+                  <Bot className="w-7 h-7" />
+                  <span className="font-bold text-sm">IA & Automatització</span>
                </button>
                <button
                   type="button"
                   onClick={() => setServiceType('web')}
-                  className={`p-4 rounded-xl border transition-all flex flex-col items-center gap-2 ${
+                  className={`p-4 rounded-xl border transition-all flex flex-col items-center gap-3 ${
                     serviceType === 'web' 
-                      ? 'border-white bg-white/5 text-white' 
-                      : 'border-white/10 text-slate-400 hover:bg-white/5'
+                      ? 'border-primary bg-primary/10 text-primary ring-1 ring-primary shadow-inner' 
+                      : 'border-border bg-muted/30 text-muted-foreground hover:bg-muted/50 hover:border-primary/30'
                   }`}
                >
-                  <Code2 className="w-6 h-6" />
-                  <span className="font-medium">Webs</span>
+                  <Code2 className="w-7 h-7" />
+                  <span className="font-bold text-sm">Webs & Apps</span>
                </button>
-               {/* Input amagat per enviar el valor al server action */}
                <input type="hidden" name="service" value={serviceType === 'ia' ? 'Automatització i IA' : 'Creació Web'} />
             </div>
 
-            {/* INPUTS ESTILITZATS */}
-            <div className="space-y-4">
+            {/* INPUTS */}
+            <div className="space-y-5">
               <div className="space-y-2">
-                <label className="text-sm font-medium text-white ml-1">Nom complet</label>
-                <Input name="fullName" placeholder="" required className="bg-transparent border-white/10 focus:border-[#8b5cf6] h-12 text-white" />
+                <label className="text-sm font-bold text-foreground ml-1">Nom complet</label>
+                <Input 
+                  name="fullName" 
+                  placeholder="Joan Garcia" 
+                  required 
+                  className="bg-background border-input focus:border-primary h-12 text-foreground placeholder:text-muted-foreground/50" 
+                />
               </div>
               
               <div className="space-y-2">
-                 <label className="text-sm font-medium text-white ml-1">Email corporatiu</label>
-                 <Input name="email" type="email" placeholder="" required className="bg-transparent border-white/10 focus:border-[#8b5cf6] h-12 text-white" />
+                 <label className="text-sm font-bold text-foreground ml-1">Email corporatiu</label>
+                 <Input 
+                    name="email" 
+                    type="email" 
+                    placeholder="joan@empresa.com" 
+                    required 
+                    className="bg-background border-input focus:border-primary h-12 text-foreground placeholder:text-muted-foreground/50" 
+                 />
               </div>
 
               <div className="space-y-2">
-                 <label className="text-sm font-medium text-white ml-1">Explica'ns el teu projecte...</label>
+                 <label className="text-sm font-bold text-foreground ml-1">Explica'ns el teu projecte...</label>
                  <textarea 
                     name="message" 
                     rows={4} 
-                    className="w-full rounded-lg border border-white/10 bg-transparent px-3 py-2 text-sm text-white focus:outline-none focus:border-[#8b5cf6] transition-colors resize-none"
+                    placeholder="Vull automatitzar les reserves o crear una app per a..."
+                    className="w-full rounded-lg border border-input bg-background px-4 py-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all resize-none placeholder:text-muted-foreground/50"
                  />
               </div>
             </div>
 
-            <div className="flex items-center space-x-2 pt-2">
-              <Checkbox id="privacy" name="privacy" value="on" required className="border-white/20 data-[state=checked]:bg-[#8b5cf6] data-[state=checked]:border-[#8b5cf6]" />
-              <label htmlFor="privacy" className="text-sm text-slate-400">
-                Accepto la política de privacitat.
+            <div className="flex items-start space-x-3 pt-2">
+              <Checkbox id="privacy" name="privacy" value="on" required className="mt-1 border-muted-foreground/30 data-[state=checked]:bg-primary data-[state=checked]:border-primary" />
+              <label htmlFor="privacy" className="text-sm text-muted-foreground leading-tight cursor-pointer">
+                He llegit i accepto la política de privacitat i el tractament de les meves dades.
               </label>
             </div>
 
-            <Button type="submit" disabled={isPending} className="w-full bg-gradient-to-r from-[#6366f1] to-[#a855f7] hover:opacity-90 text-white font-bold h-12 rounded-lg text-lg transition-all">
+            <Button 
+              type="submit" 
+              disabled={isPending} 
+              className="w-full h-14 text-lg font-bold rounded-xl gradient-bg text-white hover:opacity-90 shadow-lg shadow-primary/25 transition-all"
+            >
                {isPending ? <Loader2 className="animate-spin mr-2" /> : <Send className="mr-2 w-5 h-5" />}
                Enviar Missatge
             </Button>
 
             {state?.message && (
-                <p className={`text-center text-sm font-medium mt-4 ${state.success ? 'text-green-400' : 'text-red-400'}`}>
+                <p className={`text-center text-sm font-medium mt-4 p-3 rounded-lg ${state.success ? 'bg-green-500/10 text-green-600 dark:text-green-400' : 'bg-red-500/10 text-red-600 dark:text-red-400'}`}>
                     {state.message}
                 </p>
             )}

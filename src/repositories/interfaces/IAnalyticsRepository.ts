@@ -1,5 +1,5 @@
 import { AnalyticsEventDTO } from '@/types/models';
-
+export type StatItem = { name: string; value: number; color?: string }; // Tipus genèric per gràfics
 export type DailyStats = {
   date: string;
   visitors: number;
@@ -18,6 +18,9 @@ export interface IAnalyticsRepository {
   getAdvancedStats(): Promise<{
     topPages: PageStat[];
     devices: DeviceStat[];
-    countries: CountryStat[];
+    countries: StatItem[]; // Ara usem StatItem (més flexible)
+    referrers: StatItem[]; // Nou
+    browsers: StatItem[];  // Nou
+    os: StatItem[];        // Nou
   }>;
 }
