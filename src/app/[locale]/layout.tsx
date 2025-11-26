@@ -4,7 +4,7 @@ import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing, type Locale } from '@/routing'; 
 import { Inter } from 'next/font/google'; // Importem la font aquí
-
+import { ThemeProvider } from "@/components/theme-provider"; // 👈 Importa el nou provider
 // ✅ IMPORT ABSOLUT DELS ESTILS TAILWIND V4
 import "@/app/globals.css"; 
 
@@ -37,12 +37,19 @@ export default async function LocaleLayout({
   // 2. Obtenir els textos de traducció
   const messages = await getMessages();
 
-  return (
-    // Injectem l'idioma correcte al tag HTML
-    <html lang={locale} className={inter.variable}>
-      <body className="antialiased bg-background text-foreground overflow-x-hidden">
+ return (
+    // ⚠️ CRÍTIC: suppressHydrationWarning és necessari per a next-themes
+    <html lang={locale} className={inter.variable} suppressHydrationWarning>
+      <body className="antialiased bg-background text-foreground overflow-x-hidden transition-colors duration-300">
         <NextIntlClientProvider messages={messages}>
-          {children}
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+          </ThemeProvider>
         </NextIntlClientProvider>
       </body>
     </html>
