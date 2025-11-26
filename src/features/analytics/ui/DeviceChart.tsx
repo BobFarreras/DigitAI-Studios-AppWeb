@@ -11,7 +11,7 @@ export function DeviceChart({ data }: Props) {
   return (
     <Card className="bg-slate-900 border-slate-800 text-slate-200 h-full flex flex-col min-h-0">
       <CardHeader>
-        <CardTitle>Dispositius</CardTitle>
+        <CardTitle>Dispositiusss</CardTitle>
       </CardHeader>
       <CardContent className="flex-1 min-h-0">
         <div className="h-full flex flex-col min-h-0">
