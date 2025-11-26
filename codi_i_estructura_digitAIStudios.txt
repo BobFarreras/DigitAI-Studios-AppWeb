@@ -1,5 +1,6 @@
 ESTRUCTURA DEL PROJECTE (./src)
 
+├── actions
 ├── app
 │   ├── api
 │   │   ├── track
@@ -7,26 +8,44 @@ ESTRUCTURA DEL PROJECTE (./src)
 │   ├── favicon.ico
 │   ├── globals.css
 │   ├── layout.tsx
-│   ├── submit-audit.ts
 │   └── [locale]
 │       ├── (marketing)
 │       │   ├── blog
 │       │   │   └── [slug]
-│       │   ├── components
 │       │   └── page.tsx
 │       ├── auth
-│       │   └── login
+│       │   ├── callback
+│       │   │   └── route.ts
+│       │   ├── login
+│       │   └── register
+│       │       └── page.tsx
 │       ├── dashboard
-│       │   └── analytics
+│       │   ├── audits
+│       │   │   ├── page.tsx
+│       │   │   └── [id]
+│       │   │       └── page.tsx
+│       │   ├── layout.tsx
+│       │   └── page.tsx
 │       └── layout.tsx
 ├── components
+│   ├── auth
 │   └── ui
 │       ├── button.tsx
 │       ├── card.tsx
 │       └── input.tsx
+├── domain
+├── features
+│   ├── auth
+│   │   └── ui
+│   │       └── RegisterForm.tsx
+│   └── web-audit
+│       ├── actions.ts
+│       └── ui
+│           └── AuditForm.tsx
 ├── i18n
 │   └── request.ts
 ├── lib
+│   ├── mock-audit.ts
 │   ├── supabase
 │   │   ├── client.ts
 │   │   ├── middleware.ts
@@ -34,7 +53,18 @@ ESTRUCTURA DEL PROJECTE (./src)
 │   ├── utils.ts
 │   └── validations
 ├── proxy.ts
-└── routing.ts
+├── repositories
+│   ├── interfaces
+│   │   └── IAuditRepository.ts
+│   └── supabase
+│       └── SupabaseAuditRepository.ts
+├── routing.ts
+├── services
+│   └── container.ts
+└── types
+    ├── database.types.ts
+    ├── index.ts
+    └── models.ts
 
 
 CONTINGUT DELS FITXERS
@@ -120,95 +150,431 @@ export default function RootLayout({ children }: Props) {
   return children;
 }
 
-// =================== FILE: src/app/submit-audit.ts ===================
-
-'use server'
-
-import { z } from 'zod';
-import { createClient } from '@/lib/supabase/server';
-import { redirect } from 'next/navigation';
-
-// Schema amb missatges d'error personalitzats
-const AuditSchema = z.object({
-  url: z.string().url({ message: "La URL no és vàlida (ha de tenir http/https)" }),
-  email: z.string().email({ message: "L'email no és vàlid" })
-});
-
-export type FormState = {
-  message: string;
-  errors?: {
-    url?: string[];
-    email?: string[];
-  };
-  success?: boolean;
-}
-
-export async function submitAuditAction(
-  prevState: FormState, 
-  formData: FormData
-): Promise<FormState> {
-  
-  // 1. Validació
-  const rawData = {
-    url: formData.get('url') as string,
-    email: formData.get('email') as string,
-  };
-
-  const validation = AuditSchema.safeParse(rawData);
-
-  if (!validation.success) {
-    return {
-      success: false,
-      message: "Revisa els errors al formulari.",
-      errors: validation.error.flatten().fieldErrors
-    };
-  }
-
-  // 2. Lògica de DB
-  try {
-    const supabase = await createClient();
-    
-    // Inserim a la taula 'leads'.
-    // NOTA: Assegura't que tens una política RLS que permeti INSERT públic però SELECT privat.
-    const { error } = await supabase
-      .from('leads')
-      .insert({
-        url: validation.data.url,
-        email: validation.data.email,
-        created_at: new Date().toISOString(),
-        status: 'pending' // Estat inicial
-      });
-
-    if (error) {
-      console.error("Supabase Error:", error);
-      return { success: false, message: "Error connectant amb la base de dades." };
-    }
-
-  } catch (e) {
-    console.error("Unexpected Error:", e);
-    return { success: false, message: "Error inesperat al servidor." };
-  }
-
-  // 3. Redirecció (Només si tot ha anat bé)
-  // IMPORTANT: redirect() llança un error intern de Next.js, per això ha d'estar fora del try/catch
-  // o ser l'última instrucció.
-  redirect('/ca/dashboard/audit-pending');
-}
-
 // =================== FILE: src/app/[locale]/(marketing)/page.tsx ===================
 
 import { useTranslations } from 'next-intl';
-import { Button } from "@/components/ui/button";
+import { AuditForm } from '@/features/web-audit/ui/AuditForm';
 
 export default function MarketingPage() {
   const t = useTranslations('HomePage');
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center p-24">
-      <h1 className="text-4xl font-bold">{t('title')}</h1>
-      <Button variant="outline">Prova Botó</Button>
+    <div className="flex min-h-screen flex-col items-center justify-center p-24 bg-gradient-to-b from-background to-secondary/20">
+      <div className="text-center space-y-4 mb-8">
+        <h1 className="text-5xl font-bold tracking-tight">{t('title')}</h1>
+        <p className="text-muted-foreground text-xl">
+          Descobreix errors de SEO i performance amb IA.
+        </p>
+      </div>
+
+      {/* Aquí injectem el formulari intel·ligent */}
+      <AuditForm />
     </div>
   );
+}
+
+// =================== FILE: src/app/[locale]/auth/callback/route.ts ===================
+
+import { NextResponse } from 'next/server'
+// El client de servidor que hem creat abans
+import { createClient } from '@/lib/supabase/server'
+
+export async function GET(request: Request) {
+  const { searchParams, origin } = new URL(request.url)
+  const code = searchParams.get('code')
+  // si tenim un paràmetre "next", el fem servir per redirigir
+  const next = searchParams.get('next') ?? '/dashboard'
+
+  if (code) {
+    const supabase = await createClient()
+    const { error } = await supabase.auth.exchangeCodeForSession(code)
+    
+    if (!error) {
+      // Si tot ha anat bé, redirigim a l'usuari cap al dashboard (o on volgués anar)
+      // Afegim el locale per defecte si cal, o detectem.
+      // Per ara hardcodegem 'ca', però l'ideal seria guardar-ho en cookie abans.
+      return NextResponse.redirect(`${origin}/ca${next}`)
+    }
+  }
+
+  // Si hi ha error, tornem al login amb un missatge
+  return NextResponse.redirect(`${origin}/ca/auth/login?error=auth-code-error`)
+}
+
+// =================== FILE: src/app/[locale]/auth/register/page.tsx ===================
+
+import { getTranslations } from 'next-intl/server'; // 👈 Canvi clau: importem del server
+import { Link } from '@/routing';
+import { RegisterForm } from '@/features/auth/ui/RegisterForm';
+
+type Props = {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+};
+
+export default async function RegisterPage({ searchParams }: Props) {
+  // 1. Fem servir await getTranslations en lloc del hook
+  const t = await getTranslations('Auth');
+  
+  // 2. Resolem els paràmetres (Next.js 16)
+  const params = await searchParams;
+  const emailParam = typeof params.email === 'string' ? params.email : '';
+
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-muted/20 px-4 py-12">
+      <div className="w-full max-w-md space-y-6">
+        <div className="text-center">
+          <h1 className="text-3xl font-bold tracking-tight">{t('register_title')}</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            {t('register_subtitle')}
+          </p>
+        </div>
+
+        <RegisterForm prefilledEmail={emailParam} />
+
+        <p className="text-center text-sm text-muted-foreground">
+          {t('already_have_account')}{' '}
+          <Link href="/auth/login" className="font-medium text-primary hover:underline">
+            {t('login_link')}
+          </Link>
+        </p>
+      </div>
+    </div>
+  );
+}
+
+// =================== FILE: src/app/[locale]/dashboard/audits/page.tsx ===================
+
+import { getTranslations, getLocale } from 'next-intl/server'; // Afegim getLocale
+import { Link } from '@/routing';
+import { redirect } from 'next/navigation'; // 👈 CANVI CLAU: Usem el natiu
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Plus } from 'lucide-react';
+import { createClient } from '@/lib/supabase/server'; 
+import { auditRepository } from '@/services/container';
+
+export default async function AuditsListPage() {
+  const t = await getTranslations('Dashboard');
+  const locale = await getLocale(); // Necessitem saber l'idioma per redirigir manualment
+  const supabase = await createClient();
+
+  const { data: { user } } = await supabase.auth.getUser();
+
+  // ✅ SOLUCIÓ: Redirecció nativa amb return implícit (Next.js sap que redirect llança error)
+  if (!user || !user.email) {
+    redirect(`/${locale}/auth/login`); 
+  }
+
+  // Ara TypeScript sap segur que user.email és un string perquè si no, hauria petat a dalt
+  const audits = await auditRepository.getAuditsByUserEmail(user.email);
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">{t('my_audits')}</h1>
+          <p className="text-muted-foreground mt-1">
+            Històric complet.
+          </p>
+        </div>
+        <Link href="/">
+          <Button>
+            <Plus className="mr-2 h-4 w-4" /> Nova Auditoria
+          </Button>
+        </Link>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {audits.map((audit) => (
+          <Link key={audit.id} href={`/dashboard/audits/${audit.id}`} className="block transition-transform hover:scale-[1.02]">
+            <Card className="h-full">
+              <CardHeader>
+                <CardTitle className="text-lg truncate" title={audit.url}>
+                  {audit.url}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex justify-between items-center mt-2">
+                  <span className={`px-2 py-1 rounded text-xs uppercase font-bold tracking-wide ${
+                    audit.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                  }`}>
+                    {audit.status}
+                  </span>
+                  <span className="text-sm text-slate-500">
+                    {audit.createdAt.toLocaleDateString()}
+                  </span>
+                </div>
+                {audit.status === 'completed' && audit.seoScore !== null && (
+                   <div className="mt-4 flex gap-2 text-sm font-medium">
+                      <span className="text-slate-600">SEO: <span className="text-black">{audit.seoScore}</span></span>
+                   </div>
+                )}
+              </CardContent>
+            </Card>
+          </Link>
+        ))}
+
+        {audits.length === 0 && (
+          <div className="col-span-full py-12 text-center border-2 border-dashed rounded-lg">
+            <p className="text-slate-500 mb-4">No tens auditories.</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// =================== FILE: src/app/[locale]/dashboard/audits/[id]/page.tsx ===================
+
+import { notFound } from 'next/navigation';
+import { createClient } from '@/lib/supabase/server';
+import { getTranslations } from 'next-intl/server';
+import { Link } from '@/routing';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from 'lucide-react'; // O el teu component de UI
+import { MOCK_REPORT } from '@/lib/mock-audit';
+
+type Props = {
+  params: Promise<{ id: string; locale: string }>;
+};
+
+export default async function AuditDetailsPage({ params }: Props) {
+  const { id } = await params;
+  const supabase = await createClient();
+  const t = await getTranslations('Dashboard');
+
+  // 1. Obtenim les dades de l'auditoria
+  const { data: audit, error } = await supabase
+    .from('web_audits')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  if (error || !audit) {
+    notFound();
+  }
+
+  // 2. SIMULACIÓ: Si està "processing", la completem automàticament
+  // (En producció, això ho faria una Edge Function en background)
+  let report = audit.report_data as typeof MOCK_REPORT | null;
+  
+  if (audit.status === 'processing') {
+    // Actualitzem la DB per fer veure que s'ha acabat
+    await supabase.from('web_audits').update({
+      status: 'completed',
+      seo_score: MOCK_REPORT.scores.seo,
+      performance_score: MOCK_REPORT.scores.performance,
+      report_data: MOCK_REPORT
+    }).eq('id', id);
+    
+    report = MOCK_REPORT; // Usem les dades mockejades per renderitzar ara
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Capçalera */}
+      <div className="flex items-center justify-between">
+        <div>
+          <Link href="/dashboard" className="text-sm text-muted-foreground hover:underline">
+            ← Tornar al llistat
+          </Link>
+          <h1 className="text-3xl font-bold mt-2">Informe: {audit.url}</h1>
+        </div>
+        <Button variant="outline">Descarregar PDF</Button>
+      </div>
+
+      {/* Targetes de Puntuació (Score Cards) */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <ScoreCard title="SEO" score={report?.scores.seo ?? 0} />
+        <ScoreCard title="Performance" score={report?.scores.performance ?? 0} />
+        <ScoreCard title="Accessibilitat" score={report?.scores.accessibility ?? 0} />
+        <ScoreCard title="Best Practices" score={report?.scores.best_practices ?? 0} />
+      </div>
+
+      {/* Detalls dels errors */}
+      <div className="grid md:grid-cols-3 gap-6">
+        <Card className="md:col-span-2">
+          <CardHeader>
+            <CardTitle>Problemes Detectats</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ul className="space-y-4">
+              {report?.issues.map((issue, i) => (
+                <li key={i} className="flex items-start gap-3 p-3 border rounded-lg">
+                  <span className={`w-3 h-3 mt-1.5 rounded-full ${
+                    issue.type === 'error' ? 'bg-red-500' : 
+                    issue.type === 'warning' ? 'bg-yellow-500' : 'bg-green-500'
+                  }`} />
+                  <div>
+                    <p className="font-medium">{issue.message}</p>
+                    <p className="text-xs text-muted-foreground uppercase">{issue.impact} impact</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Tecnologies</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-wrap gap-2">
+              {report?.technologies.map((tech) => (
+                <span key={tech} className="px-2 py-1 bg-slate-100 rounded text-sm font-medium text-slate-700">
+                  {tech}
+                </span>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}
+
+// Petit component auxiliar per les puntuacions
+function ScoreCard({ title, score }: { title: string; score: number }) {
+  // Color segons la nota
+  const colorClass = score >= 90 ? 'text-green-600' : score >= 50 ? 'text-yellow-600' : 'text-red-600';
+  
+  return (
+    <Card>
+      <CardContent className="pt-6 text-center">
+        <div className={`text-4xl font-bold ${colorClass}`}>{score}</div>
+        <div className="text-sm text-muted-foreground mt-1">{title}</div>
+      </CardContent>
+    </Card>
+  );
+}
+
+// =================== FILE: src/app/[locale]/dashboard/layout.tsx ===================
+
+import { createClient } from '@/lib/supabase/server';
+import { getTranslations } from 'next-intl/server';
+import { Link } from '@/routing'; // 👈 IMPORTANT: Importar del nostre routing, no de next/link
+import { redirect } from 'next/navigation'; // 👈 Usar el redirect natiu és més segur en Server Components
+
+type Props = {
+  children: React.ReactNode;
+  params: Promise<{ locale: string }>; // 👈 Necessitem saber l'idioma
+};
+
+export default async function DashboardLayout({
+  children,
+  params
+}: Props) {
+  const { locale } = await params; // Resolem la promesa
+  const supabase = await createClient();
+  const t = await getTranslations('Dashboard');
+
+  // 1. Verificació de Sessió al Servidor
+  const { data: { user }, error } = await supabase.auth.getUser();
+
+  if (error || !user) {
+    // Redirecció manual incloent l'idioma
+    redirect(`/${locale}/auth/login`);
+  }
+
+  return (
+    <div className="flex min-h-screen flex-col md:flex-row">
+      {/* Sidebar */}
+      <aside className="w-full md:w-64 bg-slate-900 text-white p-6 flex flex-col">
+        <div className="font-bold text-xl mb-8">DigitAI Studios</div>
+        <nav className="flex flex-col gap-4">
+          <Link href="/dashboard" className="hover:text-slate-300">Resum</Link>
+          <Link href="/dashboard/audits" className="hover:text-slate-300 font-bold text-blue-400">
+            {t('my_audits')}
+          </Link>
+          {/* Exemple de ruta futura */}
+          <button className="text-left hover:text-slate-300 text-slate-500 cursor-not-allowed">
+            Configuració (Aviat)
+          </button>
+          
+          <form action="/auth/signout" method="post" className="mt-auto">
+            <button className="text-sm text-slate-400 hover:text-white w-full text-left">
+              Tancar Sessió
+            </button>
+          </form>
+        </nav>
+      </aside>
+
+      {/* Contingut Principal */}
+      <main className="flex-1 bg-slate-50 p-8">
+        {children}
+      </main>
+    </div>
+  );
+}
+
+// =================== FILE: src/app/[locale]/dashboard/page.tsx ===================
+
+import { createClient } from '@/lib/supabase/server';
+import { getTranslations } from 'next-intl/server';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { redirect } from 'next/navigation';
+import { Link } from '@/routing';
+export default async function DashboardPage() {
+    const supabase = await createClient();
+    const t = await getTranslations('Dashboard');
+
+    // Obtenim l'usuari actual
+    const { data: { user } } = await supabase.auth.getUser();
+
+    // Protecció extra per TypeScript (encara que el layout ja ho fa)
+    if (!user || !user.email) {
+        redirect('/');
+    }
+
+    // Consultem les auditories
+    const { data: audits } = await supabase
+        .from('web_audits') // Ara els tipus funcionaran bé
+        .select('*')
+        .eq('email', user.email) // 👈 Ara és segur perquè hem fet el check a dalt
+        .order('created_at', { ascending: false });
+
+    return (
+        <div className="space-y-6">
+            {/* 👈 Usem ?? '' per si de cas, per evitar l'error de tipatge */}
+            <h1 className="text-3xl font-bold">{t('welcome', { name: user.email ?? 'Client' })}</h1>
+
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {audits?.map((audit) => (
+                    // Embolcallem la Card amb el Link
+                    <Link key={audit.id} href={`/dashboard/audits/${audit.id}`} className="block transition-transform hover:scale-[1.02]">
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="text-lg truncate" title={audit.url}>
+                                    {audit.url}
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                {/* ... el mateix contingut d'abans ... */}
+                                <div className="flex justify-between items-center">
+                                    <span className={`px-2 py-1 rounded text-xs ${audit.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                                        }`}>
+                                        {audit.status}
+                                    </span>
+                                    {/* Mostrar puntuació si existeix */}
+                                    {audit.seo_score && (
+                                        <span className="font-bold text-slate-700">SEO: {audit.seo_score}</span>
+                                    )}
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </Link>
+                ))}
+
+                {(!audits || audits.length === 0) && (
+                    <p className="text-slate-500 col-span-3 text-center py-10">
+                        Encara no tens cap auditoria registrada.
+                    </p>
+                )}
+            </div>
+        </div>
+    );
 }
 
 // =================== FILE: src/app/[locale]/layout.tsx ===================
@@ -362,6 +728,221 @@ Input.displayName = "Input"
 
 export { Input }
 
+// =================== FILE: src/features/auth/ui/RegisterForm.tsx ===================
+
+'use client'
+
+import { useState } from 'react';
+import { useTranslations } from 'next-intl';
+import { useRouter } from '@/routing'; // 👈 Important: Fem servir el router de next-intl
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent } from '@/components/ui/card';
+import { createClient } from '@/lib/supabase/client';
+import { Loader2 } from 'lucide-react';
+
+export function RegisterForm({ prefilledEmail }: { prefilledEmail: string }) {
+  const t = useTranslations('Auth');
+  const router = useRouter(); // Per redirigir
+  const [isLoading, setIsLoading] = useState(false);
+  const [email, setEmail] = useState(prefilledEmail);
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError(null);
+
+    const supabase = createClient();
+
+    // Com que has desactivat "Confirm Email" a Supabase,
+    // això retorna una sessió vàlida immediatament!
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          full_name: email.split('@')[0],
+        }
+      }
+    });
+
+    if (error) {
+      setError(error.message);
+      setIsLoading(false);
+    } else {
+      // ✅ ÈXIT: Redirigim directament al Dashboard
+      // Refresquem el router per actualitzar les cookies de sessió al servidor
+      router.refresh(); 
+      router.push('/dashboard'); 
+    }
+  };
+
+  return (
+    <Card>
+      <CardContent className="pt-6">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <label className="text-sm font-medium leading-none" htmlFor="email">Email</label>
+            <Input 
+              id="email" 
+              type="email" 
+              value={email} 
+              onChange={(e) => setEmail(e.target.value)}
+              required 
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium leading-none" htmlFor="password">Password</label>
+            <Input 
+              id="password" 
+              type="password" 
+              value={password} 
+              onChange={(e) => setPassword(e.target.value)}
+              required 
+              minLength={6}
+            />
+          </div>
+
+          {error && (
+            <p className="text-sm text-red-500">{error}</p>
+          )}
+
+          <Button type="submit" className="w-full" disabled={isLoading}>
+            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {t('cta_register')}
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
+  );
+}
+
+// =================== FILE: src/features/web-audit/actions.ts ===================
+
+'use server'
+
+import { z } from 'zod';
+import { redirect } from 'next/navigation';
+import { getLocale } from 'next-intl/server';
+// 👇 Importem el repositori des del container
+import { auditRepository } from '@/services/container';
+
+// Esquema de validació
+const AuditSchema = z.object({
+  url: z.string().url({ message: "La URL ha de ser vàlida (https://...)" }),
+  email: z.string().email({ message: "L'email no és correcte" }),
+});
+
+export type FormState = {
+  message?: string;
+  errors?: {
+    url?: string[];
+    email?: string[];
+  };
+};
+
+export async function processWebAudit(prevState: FormState, formData: FormData): Promise<FormState> {
+  const locale = await getLocale();
+
+  const rawData = {
+    url: formData.get('url'),
+    email: formData.get('email'),
+  };
+
+  const validation = AuditSchema.safeParse(rawData);
+
+  if (!validation.success) {
+    return {
+      errors: validation.error.flatten().fieldErrors,
+      message: "Revisa les dades del formulari.",
+    };
+  }
+
+  try {
+    // 👇 ARA USEM EL REPOSITORI (Codi net!)
+    // Ja no cal fer createClient() ni saber que usem Supabase
+    await auditRepository.createAudit(validation.data.url, validation.data.email);
+    console.log("ACCION REBUDA AL SERVIDOR:", validation.data);
+  } catch (err) {
+    console.error(err);
+    return { message: "Error al guardar la sol·licitud. Torna-ho a provar." };
+  }
+
+  // Redirecció
+  redirect(`/${locale}/auth/register?email=${encodeURIComponent(validation.data.email)}`);
+}
+
+// =================== FILE: src/features/web-audit/ui/AuditForm.tsx ===================
+
+'use client'
+
+import { useActionState } from 'react';
+import { useTranslations } from 'next-intl';
+import { processWebAudit } from '../actions';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+
+export function AuditForm() {
+  const t = useTranslations('HomePage'); // Assegura't que tens les claus al JSON
+  
+  // Hook de Next.js 16 / React 19 per gestionar Server Actions
+  const [state, action, isPending] = useActionState(processWebAudit, {
+    message: '',
+    errors: {}
+  });
+
+  return (
+    <Card className="w-full max-w-md mx-auto mt-8 shadow-lg">
+      <CardHeader>
+        <CardTitle className="text-center">{t('form_title')}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form action={action} className="space-y-4">
+          
+          {/* Camp URL */}
+          <div className="space-y-2">
+            <Input 
+              name="url" 
+              placeholder="https://la-teva-web.com" 
+              disabled={isPending}
+              className={state.errors?.url ? "border-red-500" : ""}
+            />
+            {state.errors?.url && (
+              <p className="text-sm text-red-500">{state.errors.url[0]}</p>
+            )}
+          </div>
+
+          {/* Camp Email */}
+          <div className="space-y-2">
+            <Input 
+              name="email" 
+              type="email" 
+              placeholder="el-teu@email.com" 
+              disabled={isPending}
+              className={state.errors?.email ? "border-red-500" : ""}
+            />
+             {state.errors?.email && (
+              <p className="text-sm text-red-500">{state.errors.email[0]}</p>
+            )}
+          </div>
+
+          {/* Missatge d'error general */}
+          {state.message && (
+            <p className="text-sm text-red-500 text-center">{state.message}</p>
+          )}
+
+          <Button type="submit" className="w-full" disabled={isPending}>
+            {isPending ? 'Analitzant...' : t('cta')}
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
+  );
+}
+
 // =================== FILE: src/i18n/request.ts ===================
 
 import { getRequestConfig } from 'next-intl/server';
@@ -383,14 +964,33 @@ export default getRequestConfig(async ({ requestLocale }) => {
   };
 });
 
+// =================== FILE: src/lib/mock-audit.ts ===================
+
+// Dades falses per poder dissenyar la UI de l'informe
+export const MOCK_REPORT = {
+  scores: {
+    seo: 85,
+    performance: 62,
+    accessibility: 90,
+    best_practices: 75
+  },
+  issues: [
+    { type: 'error', message: 'Falta l\'etiqueta H1 a la pàgina principal', impact: 'high' },
+    { type: 'warning', message: 'Imatges sense atribut ALT detectades', impact: 'medium' },
+    { type: 'success', message: 'Certificat SSL vàlid i actiu', impact: 'none' }
+  ],
+  technologies: ['Next.js', 'Tailwind CSS', 'Vercel']
+};
+
 // =================== FILE: src/lib/supabase/client.ts ===================
 
 import { createBrowserClient } from '@supabase/ssr'
+// 👇 Importa els tipus
+import { Database } from '@/types/database.types' 
 
 export function createClient() {
-  // Crea un client de Supabase pel navegador.
-  // Utilitza les variables d'entorn públiques.
-  return createBrowserClient(
+  // 👇 Afegeix el genèric <Database> aquí
+  return createBrowserClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   )
@@ -400,12 +1000,14 @@ export function createClient() {
 
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { Database } from '@/types/database.types'
 
+// 👇 Afegeix el genèric <Database> aquí
 export async function updateSession(
   request: NextRequest, 
   response: NextResponse // ✅ Rebem la resposta del i18n
 ) {
-  const supabase = createServerClient(
+  const supabase = createServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
@@ -443,32 +1045,42 @@ export async function updateSession(
 
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
+// 👇 Importem el client bàsic també
+import { createClient as createSupabaseClient } from '@supabase/supabase-js'
+import { Database } from '@/types/database.types'
 
 export async function createClient() {
   const cookieStore = await cookies()
 
-  return createServerClient(
+  return createServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        getAll() {
-          return cookieStore.getAll()
-        },
+        getAll() { return cookieStore.getAll() },
         setAll(cookiesToSet) {
           try {
             cookiesToSet.forEach(({ name, value, options }) =>
               cookieStore.set(name, value, options)
             )
-          } catch {
-            // El mètode `setAll` es va cridar des d'un Server Component.
-            // Això pot passar si hi ha middleware refrescant la sessió,
-            // però no podem setar cookies en un component de servidor pur 
-            // que no sigui una Server Action o Route Handler.
-            // Ho ignorem tranquil·lament.
-          }
+          } catch { }
         },
       },
+    }
+  )
+}
+
+// 👇 NOVA FUNCIÓ: Client Admin (Bypass RLS)
+// Aquest client NO fa servir cookies, fa servir la clau secreta
+export function createAdminClient() {
+  return createSupabaseClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!, // <--- Aquesta clau és CRÍTICA
+    {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
     }
   )
 }
@@ -509,6 +1121,94 @@ export const config = {
   ],
 };
 
+// =================== FILE: src/repositories/interfaces/IAuditRepository.ts ===================
+
+import { AuditDTO } from '@/types/models';
+
+export interface IAuditRepository {
+  getAuditsByUserEmail(email: string): Promise<AuditDTO[]>;
+  getAuditById(id: string): Promise<AuditDTO | null>;
+  createAudit(url: string, email: string): Promise<AuditDTO>;
+  updateStatus(id: string, status: AuditDTO['status'], data?: Record<string, unknown>): Promise<void>;
+}
+
+// =================== FILE: src/repositories/supabase/SupabaseAuditRepository.ts ===================
+
+import { createClient, createAdminClient } from '@/lib/supabase/server'; // 👈 Importa l'Admin
+import { IAuditRepository } from '../interfaces/IAuditRepository';
+import { AuditDTO } from '@/types/models';
+import { Database } from '@/types/database.types';
+
+type AuditRow = Database['public']['Tables']['web_audits']['Row'];
+
+export class SupabaseAuditRepository implements IAuditRepository {
+  
+  private mapToDTO(row: AuditRow): AuditDTO {
+    // ... (el mateix codi de mapToDTO que tenies)
+    return {
+      id: row.id,
+      url: row.url,
+      status: row.status as AuditDTO['status'],
+      seoScore: row.seo_score,
+      performanceScore: row.performance_score,
+      createdAt: row.created_at ? new Date(row.created_at) : new Date(),
+      reportData: row.report_data,
+    };
+  }
+
+  // ... (getAuditsByUserEmail i getAuditById es queden igual, usant createClient normal)
+  async getAuditsByUserEmail(email: string): Promise<AuditDTO[]> {
+      const supabase = await createClient(); // Client normal (respecta RLS)
+      // ... resta del codi
+      const { data, error } = await supabase.from('web_audits').select('*').eq('email', email).order('created_at', { ascending: false });
+      if (error) throw new Error(error.message);
+      return data.map(this.mapToDTO);
+  }
+
+  async getAuditById(id: string): Promise<AuditDTO | null> {
+      const supabase = await createClient(); // Client normal
+      // ... resta del codi
+      const { data } = await supabase.from('web_audits').select('*').eq('id', id).single();
+      return data ? this.mapToDTO(data) : null;
+  }
+
+  // 👇 AQUÍ ESTÀ LA MÀGIA I ELS CONSOLES
+  async createAudit(url: string, email: string): Promise<AuditDTO> {
+    console.log(`[Repo] Creant auditoria per: ${email} - URL: ${url}`);
+    
+    // Usem el CLIENT ADMIN per saltar-nos la restricció de lectura
+    const supabaseAdmin = createAdminClient();
+    
+    const { data, error } = await supabaseAdmin
+      .from('web_audits')
+      .insert({
+        url,
+        email,
+        status: 'processing'
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error('[Repo] Error Supabase:', error); // Log d'error
+      throw new Error(`Error creating audit: ${error.message}`);
+    }
+    
+    console.log('[Repo] Auditoria creada OK:', data.id); // Log d'èxit
+    return this.mapToDTO(data);
+  }
+
+  async updateStatus(id: string, status: AuditDTO['status'], data?: AuditDTO['reportData']): Promise<void> {
+     // Aquest també pot necessitar Admin si l'actualitza un worker, 
+     // però si ho fa l'usuari, usa createClient()
+     const supabaseAdmin = createAdminClient(); 
+     await supabaseAdmin.from('web_audits').update({
+        status: status,
+        report_data: data as Database['public']['Tables']['web_audits']['Row']['report_data'] // type assertion to Json | undefined
+     }).eq('id', id);
+  }
+}
+
 // =================== FILE: src/routing.ts ===================
 
 import { defineRouting } from 'next-intl/routing';
@@ -525,3 +1225,448 @@ export type Locale = (typeof routing.locales)[number];
 
 export const { Link, redirect, usePathname, useRouter, getPathname } =
   createNavigation(routing);
+
+// =================== FILE: src/services/container.ts ===================
+
+import { SupabaseAuditRepository } from '@/repositories/supabase/SupabaseAuditRepository';
+
+// Singleton bàsic per a Next.js App Router
+export const auditRepository = new SupabaseAuditRepository();
+
+// Si en el futur tens un AuthService, el poses aquí:
+// export const authService = new AuthService();
+
+// =================== FILE: src/types/database.types.ts ===================
+
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[]
+
+export type Database = {
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  __InternalSupabase: {
+    PostgrestVersion: "13.0.5"
+  }
+  public: {
+    Tables: {
+      analytics_events: {
+        Row: {
+          created_at: string | null
+          event_name: string
+          id: number
+          meta: Json | null
+          path: string
+          user_id: string | null
+          visitor_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          event_name: string
+          id?: never
+          meta?: Json | null
+          path: string
+          user_id?: string | null
+          visitor_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          event_name?: string
+          id?: never
+          meta?: Json | null
+          path?: string
+          user_id?: string | null
+          visitor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "analytics_events_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "analytics_events_visitor_id_fkey"
+            columns: ["visitor_id"]
+            isOneToOne: false
+            referencedRelation: "analytics_visitors"
+            referencedColumns: ["visitor_id"]
+          },
+        ]
+      }
+      analytics_visitors: {
+        Row: {
+          country: string | null
+          device_type: string | null
+          first_seen_at: string | null
+          last_seen_at: string | null
+          referrer: string | null
+          visitor_id: string
+        }
+        Insert: {
+          country?: string | null
+          device_type?: string | null
+          first_seen_at?: string | null
+          last_seen_at?: string | null
+          referrer?: string | null
+          visitor_id: string
+        }
+        Update: {
+          country?: string | null
+          device_type?: string | null
+          first_seen_at?: string | null
+          last_seen_at?: string | null
+          referrer?: string | null
+          visitor_id?: string
+        }
+        Relationships: []
+      }
+      content_queue: {
+        Row: {
+          created_at: string | null
+          generated_mdx: string | null
+          id: string
+          image_prompt: string | null
+          prompt_context: string | null
+          status: Database["public"]["Enums"]["content_status"] | null
+          target_keywords: string[] | null
+          topic: string
+        }
+        Insert: {
+          created_at?: string | null
+          generated_mdx?: string | null
+          id?: string
+          image_prompt?: string | null
+          prompt_context?: string | null
+          status?: Database["public"]["Enums"]["content_status"] | null
+          target_keywords?: string[] | null
+          topic: string
+        }
+        Update: {
+          created_at?: string | null
+          generated_mdx?: string | null
+          id?: string
+          image_prompt?: string | null
+          prompt_context?: string | null
+          status?: Database["public"]["Enums"]["content_status"] | null
+          target_keywords?: string[] | null
+          topic?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string | null
+          email: string
+          full_name: string | null
+          id: string
+          role: Database["public"]["Enums"]["user_role"] | null
+          stripe_customer_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string | null
+          email: string
+          full_name?: string | null
+          id: string
+          role?: Database["public"]["Enums"]["user_role"] | null
+          stripe_customer_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string | null
+          email?: string
+          full_name?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["user_role"] | null
+          stripe_customer_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      projects: {
+        Row: {
+          client_id: string
+          created_at: string | null
+          domain: string | null
+          features_enabled: Json | null
+          hosting_url: string | null
+          id: string
+          name: string
+          repository_url: string | null
+          status: Database["public"]["Enums"]["project_status"] | null
+        }
+        Insert: {
+          client_id: string
+          created_at?: string | null
+          domain?: string | null
+          features_enabled?: Json | null
+          hosting_url?: string | null
+          id?: string
+          name: string
+          repository_url?: string | null
+          status?: Database["public"]["Enums"]["project_status"] | null
+        }
+        Update: {
+          client_id?: string
+          created_at?: string | null
+          domain?: string | null
+          features_enabled?: Json | null
+          hosting_url?: string | null
+          id?: string
+          name?: string
+          repository_url?: string | null
+          status?: Database["public"]["Enums"]["project_status"] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "projects_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      web_audits: {
+        Row: {
+          created_at: string | null
+          email: string | null
+          id: string
+          performance_score: number | null
+          report_data: Json | null
+          seo_score: number | null
+          status: Database["public"]["Enums"]["audit_status"] | null
+          url: string
+          user_id: string | null
+          visitor_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          performance_score?: number | null
+          report_data?: Json | null
+          seo_score?: number | null
+          status?: Database["public"]["Enums"]["audit_status"] | null
+          url: string
+          user_id?: string | null
+          visitor_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          performance_score?: number | null
+          report_data?: Json | null
+          seo_score?: number | null
+          status?: Database["public"]["Enums"]["audit_status"] | null
+          url?: string
+          user_id?: string | null
+          visitor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "web_audits_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      [_ in never]: never
+    }
+    Enums: {
+      audit_status: "processing" | "completed" | "failed"
+      content_status: "queued" | "generating" | "review" | "published"
+      project_status: "pending" | "active" | "maintenance" | "archived"
+      user_role: "admin" | "client" | "lead"
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
+}
+
+type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
+
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
+
+export type Tables<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+      Row: infer R
+    }
+    ? R
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+        Row: infer R
+      }
+      ? R
+      : never
+    : never
+
+export type TablesInsert<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Insert: infer I
+    }
+    ? I
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Insert: infer I
+      }
+      ? I
+      : never
+    : never
+
+export type TablesUpdate<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Update: infer U
+    }
+    ? U
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Update: infer U
+      }
+      ? U
+      : never
+    : never
+
+export type Enums<
+  DefaultSchemaEnumNameOrOptions extends
+    | keyof DefaultSchema["Enums"]
+    | { schema: keyof DatabaseWithoutInternals },
+  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+    : never = never,
+> = DefaultSchemaEnumNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
+    : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof DefaultSchema["CompositeTypes"]
+    | { schema: keyof DatabaseWithoutInternals },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+    : never
+
+export const Constants = {
+  public: {
+    Enums: {
+      audit_status: ["processing", "completed", "failed"],
+      content_status: ["queued", "generating", "review", "published"],
+      project_status: ["pending", "active", "maintenance", "archived"],
+      user_role: ["admin", "client", "lead"],
+    },
+  },
+} as const
+
+
+// =================== FILE: src/types/index.ts ===================
+
+import { Database } from './database.types';
+
+// Exportem el tipus base per als clients de Supabase
+export type { Database };
+
+// Helpers per tenir tipus nets als components
+// En lloc d'escriure la ruta llarga, faràs servir 'Audit' o 'Profile'
+export type Audit = Database['public']['Tables']['web_audits']['Row'];
+export type NewAudit = Database['public']['Tables']['web_audits']['Insert']; // Per formularis
+export type Profile = Database['public']['Tables']['profiles']['Row'];
+export type Project = Database['public']['Tables']['projects']['Row'];
+
+// Tipus per als Enums (molt útil per dropdowns)
+export type UserRole = Database['public']['Enums']['user_role'];
+export type AuditStatus = Database['public']['Enums']['audit_status'];
+
+// =================== FILE: src/types/models.ts ===================
+
+// 1. DTO - Així és com la nostra UI vol veure una auditoria (Tipatge net)
+export type AuditDTO = {
+  id: string;
+  url: string;
+  status: 'processing' | 'completed' | 'failed';
+  seoScore: number | null; // CamelCase per JS
+  performanceScore: number | null;
+  createdAt: Date; // Objecte Date real, no string
+  reportData: unknown; // O un tipus més específic si en tenim
+};
+
+// 2. Interface del Repository - El contracte
+// Això permetrà fer mocks per tests fàcilment
+export interface IAuditRepository {
+  getAuditsByUserEmail(email: string): Promise<AuditDTO[]>;
+  getAuditById(id: string): Promise<AuditDTO | null>;
+  createAudit(url: string, email: string): Promise<AuditDTO>;
+  updateStatus(id: string, status: AuditDTO['status'], data?: unknown): Promise<void>;
+}

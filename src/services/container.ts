@@ -1,7 +1,14 @@
 import { SupabaseAuditRepository } from '@/repositories/supabase/SupabaseAuditRepository';
+import { PageSpeedAdapter } from '@/adapters/google/PageSpeedAdapter';
+import { AuditService } from '@/services/AuditService';
 
-// Singleton bàsic per a Next.js App Router
+// 1. Repositori (DB)
 export const auditRepository = new SupabaseAuditRepository();
 
-// Si en el futur tens un AuthService, el poses aquí:
-// export const authService = new AuthService();
+// 2. Escàner (Google)
+// Assegura't de tenir la variable d'entorn, o posa un string buit per fallar controladament
+const googleKey = process.env.GOOGLE_PAGESPEED_API_KEY || '';
+export const webScanner = new PageSpeedAdapter(googleKey);
+
+// 3. Servei (El que utilitzarem a les Actions)
+export const auditService = new AuditService(auditRepository, webScanner);

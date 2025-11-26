@@ -6,14 +6,23 @@ export type AuditDTO = {
   seoScore: number | null; // CamelCase per JS
   performanceScore: number | null;
   createdAt: Date; // Objecte Date real, no string
-  reportData: unknown; // O un tipus més específic si en tenim
+  reportData: Record<string, unknown> | null;
 };
 
-// 2. Interface del Repository - El contracte
-// Això permetrà fer mocks per tests fàcilment
+
 export interface IAuditRepository {
   getAuditsByUserEmail(email: string): Promise<AuditDTO[]>;
   getAuditById(id: string): Promise<AuditDTO | null>;
   createAudit(url: string, email: string): Promise<AuditDTO>;
-  updateStatus(id: string, status: AuditDTO['status'], data?: unknown): Promise<void>;
+  
+  updateStatus(
+    id: string, 
+    status: AuditDTO['status'], 
+    results?: { 
+      seoScore?: number; 
+      performanceScore?: number; 
+      // ✅ Coherència de tipus
+      reportData?: Record<string, unknown> 
+    }
+  ): Promise<void>;
 }

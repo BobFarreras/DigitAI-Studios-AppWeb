@@ -3,10 +3,9 @@
 import { z } from 'zod';
 import { redirect } from 'next/navigation';
 import { getLocale } from 'next-intl/server';
-// 👇 Importem el repositori des del container
-import { auditRepository } from '@/services/container';
+// Només necessitem el servei, ja no cridem al repositori directament des d'aquí
+import { auditService } from '@/services/container';
 
-// Esquema de validació
 const AuditSchema = z.object({
   url: z.string().url({ message: "La URL ha de ser vàlida (https://...)" }),
   email: z.string().email({ message: "L'email no és correcte" }),
@@ -38,13 +37,15 @@ export async function processWebAudit(prevState: FormState, formData: FormData):
   }
 
   try {
-    // 👇 ARA USEM EL REPOSITORI (Codi net!)
-    // Ja no cal fer createClient() ni saber que usem Supabase
-    await auditRepository.createAudit(validation.data.url, validation.data.email);
-    console.log("ACCION REBUDA AL SERVIDOR:", validation.data);
+    // ❌ LÍNIA ELIMINADA: await auditRepository.createAudit(...)
+    
+    // ✅ CORRECTE: Cridem al servei que orquestra tot el procés (Crear + Escanejar)
+    await auditService.performFullAudit(validation.data.url, validation.data.email);
+    
+    console.log("AUDITORIA INICIADA:", validation.data);
   } catch (err) {
     console.error(err);
-    return { message: "Error al guardar la sol·licitud. Torna-ho a provar." };
+    return { message: "Error durant l'anàlisi. Verifica la URL o prova més tard." };
   }
 
   // Redirecció
