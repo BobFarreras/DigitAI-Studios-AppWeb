@@ -1,6 +1,21 @@
 {
   "HomePage": {
     "title": "Automatitza la teva presència web",
-    "cta": "Auditoria Gratuïta"
+    "cta": "Auditoria Gratuïta",
+    "form_title": "Analitza la teva web en segons"
+  },
+  "Auth": {
+    "register_title": "Crea el teu compte",
+    "register_subtitle": "Per veure l'informe complet de la teva auditoria",
+    "cta_register": "Registrar-se",
+    "already_have_account": "Ja tens compte?",
+    "login_link": "Inicia sessió",
+    "check_email_confirmation": "T'hem enviat un enllaç de confirmació al teu correu.",
+    "email_sent": "Correu enviat!"
+  },
+  "Dashboard": {
+    "welcome": "Benvingut, {name}",
+    "my_audits": "Les meves Auditories"
   }
+  
 }

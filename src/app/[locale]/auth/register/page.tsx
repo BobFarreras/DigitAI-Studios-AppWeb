@@ -1,6 +1,6 @@
 import { getTranslations } from 'next-intl/server'; // 👈 Canvi clau: importem del server
 import { Link } from '@/routing';
-import { RegisterForm } from '@/components/auth/register-form';
+import { RegisterForm } from '@/features/auth/ui/RegisterForm';
 
 type Props = {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;

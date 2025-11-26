@@ -1,8 +1,8 @@
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
+// 👇 Importem el client bàsic també
+import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 import { Database } from '@/types/database.types'
-
-// 👇 Afegeix el genèric <Database> aquí
 
 export async function createClient() {
   const cookieStore = await cookies()
@@ -12,23 +12,30 @@ export async function createClient() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        getAll() {
-          return cookieStore.getAll()
-        },
+        getAll() { return cookieStore.getAll() },
         setAll(cookiesToSet) {
           try {
             cookiesToSet.forEach(({ name, value, options }) =>
               cookieStore.set(name, value, options)
             )
-          } catch {
-            // El mètode `setAll` es va cridar des d'un Server Component.
-            // Això pot passar si hi ha middleware refrescant la sessió,
-            // però no podem setar cookies en un component de servidor pur 
-            // que no sigui una Server Action o Route Handler.
-            // Ho ignorem tranquil·lament.
-          }
+          } catch { }
         },
       },
+    }
+  )
+}
+
+// 👇 NOVA FUNCIÓ: Client Admin (Bypass RLS)
+// Aquest client NO fa servir cookies, fa servir la clau secreta
+export function createAdminClient() {
+  return createSupabaseClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!, // <--- Aquesta clau és CRÍTICA
+    {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
     }
   )
 }

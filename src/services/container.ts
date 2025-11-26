@@ -1,4 +1,4 @@
-import { SupabaseAuditRepository } from '@/repository/supabase-audit.repository';
+import { SupabaseAuditRepository } from '@/repositories/supabase/SupabaseAuditRepository';
 
 // Singleton bàsic per a Next.js App Router
 export const auditRepository = new SupabaseAuditRepository();

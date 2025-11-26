@@ -2,7 +2,7 @@
 
 import { useActionState } from 'react';
 import { useTranslations } from 'next-intl';
-import { submitAuditAction } from '@/actions/submit-audit';
+import { processWebAudit } from '../actions';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,7 +11,7 @@ export function AuditForm() {
   const t = useTranslations('HomePage'); // Assegura't que tens les claus al JSON
   
   // Hook de Next.js 16 / React 19 per gestionar Server Actions
-  const [state, action, isPending] = useActionState(submitAuditAction, {
+  const [state, action, isPending] = useActionState(processWebAudit, {
     message: '',
     errors: {}
   });

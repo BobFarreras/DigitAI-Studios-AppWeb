@@ -1,5 +1,5 @@
 import { useTranslations } from 'next-intl';
-import { AuditForm } from './components/audit-form';
+import { AuditForm } from '@/features/web-audit/ui/AuditForm';
 
 export default function MarketingPage() {
   const t = useTranslations('HomePage');
