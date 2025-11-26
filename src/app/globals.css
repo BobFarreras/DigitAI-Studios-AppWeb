@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @plugin "tailwindcss-animate";
-
+/* 👇 AQUESTA ÉS LA LÍNIA MÀGICA 👇 */
+@custom-variant dark (&:is(.dark *));
 /* =========================================
    1. VARIABLES DE COLOR
    ========================================= */

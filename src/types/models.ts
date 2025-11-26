@@ -43,5 +43,12 @@ export type AnalyticsEventDTO = {
   event_name: string;
   path: string;
   session_id: string;
+  // Dades que venen del client
+  duration?: number; 
+  referrer?: string;
+  // Dades tècniques (meta)
   meta?: Record<string, unknown>;
+  // Dades que omplirem al servidor (Geo, Device)
+  geo?: { country: string; city: string };
+  device?: { type: string; browser: string; os: string };
 };

@@ -16,27 +16,48 @@ export type Database = {
     Tables: {
       analytics_events: {
         Row: {
+          browser: string | null
+          city: string | null
+          country: string | null
           created_at: string | null
+          device_type: string | null
+          duration_seconds: number | null
           event_name: string
           id: number
           meta: Json | null
+          os: string | null
           path: string | null
+          referrer: string | null
           session_id: string
         }
         Insert: {
+          browser?: string | null
+          city?: string | null
+          country?: string | null
           created_at?: string | null
+          device_type?: string | null
+          duration_seconds?: number | null
           event_name: string
           id?: never
           meta?: Json | null
+          os?: string | null
           path?: string | null
+          referrer?: string | null
           session_id: string
         }
         Update: {
+          browser?: string | null
+          city?: string | null
+          country?: string | null
           created_at?: string | null
+          device_type?: string | null
+          duration_seconds?: number | null
           event_name?: string
           id?: never
           meta?: Json | null
+          os?: string | null
           path?: string | null
+          referrer?: string | null
           session_id?: string
         }
         Relationships: []
