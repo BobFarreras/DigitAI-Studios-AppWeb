@@ -11,4 +11,6 @@ export interface IAuditRepository {
     status: AuditDTO['status'],
     results?: { seoScore?: number; performanceScore?: number; reportData?: unknown }
   ): Promise<void>;
+  getAuditsByUserEmail(email: string): Promise<AuditDTO[]>; // Aquest ja el tenies, assegura't d'usar-lo!
+  getAuditsByUserId(userId: string): Promise<AuditDTO[]>; // 👈 Mètode nou
 }

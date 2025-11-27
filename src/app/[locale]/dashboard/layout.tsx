@@ -1,56 +1,43 @@
+import { Sidebar } from '@/components/dashboard/Sidebar';
+import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { createClient } from '@/lib/supabase/server';
-import { getTranslations } from 'next-intl/server';
-import { Link } from '@/routing'; // 👈 IMPORTANT: Importar del nostre routing, no de next/link
-import { redirect } from 'next/navigation'; // 👈 Usar el redirect natiu és més segur en Server Components
+import { redirect } from '@/routing';
 
 type Props = {
   children: React.ReactNode;
-  params: Promise<{ locale: string }>; // 👈 Necessitem saber l'idioma
+  params: Promise<{ locale: string }>; // 👈 CANVI CLAU: Ara és una Promesa
 };
 
-export default async function DashboardLayout({
-  children,
-  params
-}: Props) {
-  const { locale } = await params; // Resolem la promesa
+export default async function DashboardLayout({ children, params }: Props) {
+  // 1. Verificació de Seguretat al Servidor
   const supabase = await createClient();
-  const t = await getTranslations('Dashboard');
-
-  // 1. Verificació de Sessió al Servidor
   const { data: { user }, error } = await supabase.auth.getUser();
+  
+  // 2. 👇 AWAIT DELS PARAMS (Solució de l'error)
+  const { locale } = await params;
 
   if (error || !user) {
-    // Redirecció manual incloent l'idioma
-    redirect(`/${locale}/auth/login`);
+    redirect({ href: '/auth/login', locale });
   }
 
   return (
-    <div className="flex min-h-screen flex-col md:flex-row">
-      {/* Sidebar */}
-      <aside className="w-full md:w-64 bg-slate-900 text-white p-6 flex flex-col">
-        <div className="font-bold text-xl mb-8">DigitAI Studios</div>
-        <nav className="flex flex-col gap-4">
-          <Link href="/dashboard" className="hover:text-slate-300">Resum</Link>
-          <Link href="/dashboard/audits" className="hover:text-slate-300 font-bold text-blue-400">
-            {t('my_audits')}
-          </Link>
-          {/* Exemple de ruta futura */}
-          <button className="text-left hover:text-slate-300 text-slate-500 cursor-not-allowed">
-            Configuració (Aviat)
-          </button>
-          
-          <form action="/auth/signout" method="post" className="mt-auto">
-            <button className="text-sm text-slate-400 hover:text-white w-full text-left">
-              Tancar Sessió
-            </button>
-          </form>
-        </nav>
-      </aside>
+    <div className="min-h-screen bg-[#020817] flex font-sans text-slate-200">
+      {/* SIDEBAR (Fixa a l'esquerra) */}
+      <div className="hidden md:block w-64 shrink-0">
+         <Sidebar />
+      </div>
 
-      {/* Contingut Principal */}
-      <main className="flex-1 bg-slate-50 p-8">
-        {children}
-      </main>
+      {/* AREA PRINCIPAL */}
+      <div className="flex-1 flex flex-col min-h-screen relative overflow-hidden bg-[#020817]">
+         {/* Fons decoratiu global per al dashboard */}
+         <div className="absolute top-0 left-0 w-full h-[500px] bg-primary/5 blur-[150px] pointer-events-none"></div>
+
+         <DashboardHeader userEmail={user?.email ?? ''} />
+         
+         <main className="flex-1 p-6 md:p-8 overflow-y-auto relative z-10">
+            {children}
+         </main>
+      </div>
     </div>
   );
 }

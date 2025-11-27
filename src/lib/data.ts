@@ -38,7 +38,7 @@ export const TESTIMONIALS: Testimonial[] = [
     text: "Han entès la nostra idea d'App a la primera.", 
     rating: 5,
     projectType: 'app',
-    image: '/images/salutflow.png' // 📱 Captura de l'app real
+    image: '/images/prova.png' // 📱 Captura de l'app real
   },
 
   // Nous exemples per al carrousel

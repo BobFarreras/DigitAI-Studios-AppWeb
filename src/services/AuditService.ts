@@ -8,7 +8,7 @@ export class AuditService {
     private auditRepo: IAuditRepository,
     private scanner: IWebScanner,
     private emailService: ResendEmailService // 👈 INJECCIÓ NOVA
-  ) {}
+  ) { }
 
   async performFullAudit(url: string, email: string) {
     // 1. Crear DB (Processing)
@@ -17,23 +17,26 @@ export class AuditService {
     try {
       // 2. Escanejar (Google)
       const scanResult = await this.scanner.scanUrl(url);
-
-      // 3. Actualitzar DB (Completed)
+      
       await this.auditRepo.updateStatus(newAudit.id, 'completed', {
         seoScore: scanResult.seoScore,
         performanceScore: scanResult.performanceScore,
-        reportData: scanResult.reportData
+        // Guardem tot l'objecte scanResult (amb issues i screenshot) dins de reportData
+        // Així el frontend ho tindrà tot disponible
+        reportData: scanResult
       });
+
 
       // 4. ✨ ENVIAR EMAIL MÀGIC ✨
       // Ho fem sense 'await' (fire and forget) o amb await si volem assegurar?
       // Millor amb await dins del try per loguejar, però ràpid.
       await this.emailService.sendAuditResult(email, {
-          url: url,
-          seo: scanResult.seoScore,
-          perf: scanResult.performanceScore,
-          id: newAudit.id
+        url: url,
+        seo: scanResult.seoScore,
+        perf: scanResult.performanceScore,
+        id: newAudit.id
       });
+
 
       return newAudit.id;
 

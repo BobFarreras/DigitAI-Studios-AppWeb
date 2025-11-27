@@ -97,4 +97,15 @@ export class SupabaseAuditRepository implements IAuditRepository {
 
     if (error) throw new Error(error.message);
   }
+  async getAuditsByUserId(userId: string): Promise<AuditDTO[]> {
+      const supabase = await createClient();
+      const { data, error } = await supabase
+        .from('web_audits')
+        .select('*')
+        .eq('user_id', userId) // 👈 Filtrem per ID, molt més robust
+        .order('created_at', { ascending: false });
+      
+      if (error) throw new Error(error.message);
+      return data.map(this.mapToDTO);
+  }
 }
