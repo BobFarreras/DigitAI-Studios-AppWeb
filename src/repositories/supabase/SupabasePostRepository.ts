@@ -18,7 +18,9 @@ export class SupabasePostRepository implements IPostRepository {
       description: row.description,
       content: row.content_mdx, // Aquí fem el canvi de nom
       tags: row.tags ? (row.tags as string[]) : [], // Assegurem que és array
-      coverImage: row.cover_image
+      coverImage: row.cover_image,
+      published: row.status === 'published',
+      
     };
   }
 
@@ -30,6 +32,7 @@ export class SupabasePostRepository implements IPostRepository {
       .select('*')
       .eq('slug', slug)
       .eq('status', 'published')
+      .eq('published', true) // 👈 Seguretat extra: si endevinen l'URL d'un esborrany, no es veurà
       .single();
 
     if (error || !data) return null;
@@ -44,6 +47,7 @@ export class SupabasePostRepository implements IPostRepository {
       .from('posts')
       .select('*') // Seleccionem tot per simplificar el tipatge, o especifica columnes
       .eq('status', 'published')
+      .eq('published', true) // 👈 Seguretat extra: si endevinen l'URL d'un esborrany, no es veurà
       .order('published_at', { ascending: false });
 
     if (!data) return [];

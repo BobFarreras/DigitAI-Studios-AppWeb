@@ -2,12 +2,16 @@ import { MDXRemote } from 'next-mdx-remote/rsc';
 import { Button } from '@/components/ui/button';
 import React, { ComponentPropsWithoutRef } from 'react';
 import { CheckCircle2 } from 'lucide-react';
-
+import remarkGfm from 'remark-gfm'; // 👈 1. IMPORTA EL PLUGIN
 // Tipus per als components HTML estàndard
 type HeadingProps = ComponentPropsWithoutRef<'h1'>;
 type ParagraphProps = ComponentPropsWithoutRef<'p'>;
 type ListProps = ComponentPropsWithoutRef<'ul'>;
 type CalloutProps = { children: React.ReactNode };
+// Tipus per a taules
+type TableProps = ComponentPropsWithoutRef<'table'>;
+type ThProps = ComponentPropsWithoutRef<'th'>;
+type TdProps = ComponentPropsWithoutRef<'td'>;
 
 // Component de Vídeo (YouTube)
 const Video = ({ id }: { id: string }) => (
@@ -33,14 +37,14 @@ const components = {
   h3: (props: HeadingProps) => (
     <h3 {...props} className="text-xl md:text-2xl font-bold mt-8 mb-4 text-foreground" />
   ),
-  
+
   // PARÀGRAFS: CORRECCIÓ DE CONTRAST
   // Light: text-slate-900 (Negre intens per llegibilitat)
   // Dark: text-slate-200 (Blanc suau per no cremar els ulls)
   p: (props: ParagraphProps) => (
     <p {...props} className="text-xl leading-8 text-slate-900 dark:text-slate-500 mb-8 font-sans" />
   ),
-  
+
   // ELEMENTS INLINE
   strong: (props: ComponentPropsWithoutRef<'strong'>) => <strong {...props} className="font-bold text-foreground" />,
   a: (props: ComponentPropsWithoutRef<'a'>) => <a {...props} className="text-primary underline underline-offset-4 hover:text-primary/80 font-medium transition-colors" />,
@@ -54,15 +58,38 @@ const components = {
   // CITES (Blockquote)
   blockquote: (props: ComponentPropsWithoutRef<'blockquote'>) => (
     <blockquote {...props} className="border-l-4 border-primary pl-6 py-4 my-10 italic text-2xl text-slate-800 dark:text-slate-100 bg-muted/30 rounded-r-lg" />
+
+
   ),
-  
+  // ✨ ESTILS DE TAULA (NOU)
+  table: (props: TableProps) => (
+    <div className="my-12 w-full overflow-x-auto rounded-xl border border-border shadow-sm">
+      <table {...props} className="w-full text-left text-sm" />
+    </div>
+  ),
+  thead: (props: ComponentPropsWithoutRef<'thead'>) => (
+    <thead {...props} className="bg-muted/50 text-foreground border-b border-border" />
+  ),
+  tbody: (props: ComponentPropsWithoutRef<'tbody'>) => (
+    <tbody {...props} className="divide-y divide-border bg-card" />
+  ),
+  tr: (props: ComponentPropsWithoutRef<'tr'>) => (
+    <tr {...props} className="transition-colors hover:bg-muted/20" />
+  ),
+  th: (props: ThProps) => (
+    <th {...props} className="px-6 py-4 font-bold text-foreground uppercase tracking-wider text-xs align-middle" />
+  ),
+  td: (props: TdProps) => (
+    <td {...props} className="px-6 py-4 text-slate-600 dark:text-slate-300 align-middle leading-relaxed" />
+  ),
+
   // COMPONENTS PERSONALITZATS (Botons i Callouts)
   Button: (props: React.ComponentProps<typeof Button>) => (
     <div className="my-12 flex justify-center">
       <Button size="lg" className="px-8 py-6 text-lg shadow-lg hover:scale-105 transition-transform" {...props} />
     </div>
   ),
-  
+
   Callout: ({ children }: CalloutProps) => (
     <div className="flex gap-4 bg-primary/5 border border-primary/20 text-foreground p-6 my-10 rounded-xl shadow-sm">
       <div className="shrink-0 mt-1">
@@ -81,9 +108,17 @@ export function MDXContent({ source }: { source: string }) {
   if (!source) return null;
 
   return (
-    // Sense 'prose' per tenir control total dels colors
     <article className="max-w-none w-full">
-      <MDXRemote source={source} components={components} />
+      <MDXRemote 
+        source={source} 
+        components={components} 
+        // 👇 2. AFEGEIX AQUESTA CONFIGURACIÓ
+        options={{
+          mdxOptions: {
+            remarkPlugins: [remarkGfm],
+          },
+        }}
+      />
     </article>
   );
 }

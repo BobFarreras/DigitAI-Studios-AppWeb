@@ -37,6 +37,7 @@ export type BlogPostDTO = {
   content: string | null;  // Mapejat des de content_mdx
   tags: string[];
   coverImage: string | null; // Mapejat des de cover_image
+  published: boolean;
 };
 
 export type AnalyticsEventDTO = {
