@@ -8,6 +8,49 @@ import { ThemeProvider } from "@/components/theme-provider"; // 👈 Importa el 
 // ✅ IMPORT ABSOLUT DELS ESTILS TAILWIND V4
 import "@/app/globals.css"; 
 import { AnalyticsTracker } from '@/features/analytics/ui/AnalyticsTracker'; // 👈 Importa l'espia d'analytics
+import { Metadata } from 'next';
+
+// 👇 1. DEFINICIÓ MESTRA DE METADADES
+export const metadata: Metadata = {
+  title: {
+    template: '%s | DigitAI Studios', // %s se substitueix pel títol de cada pàgina
+    default: 'DigitAI Studios - Automatització i IA per a Empreses',
+  },
+  description: 'Transformem negocis amb Intel·ligència Artificial, Automatitzacions n8n i Desenvolupament Web Modern. Demana la teva auditoria gratuïta.',
+  keywords: ['IA', 'Automatització', 'n8n', 'Desenvolupament Web', 'SaaS', 'SEO'],
+  authors: [{ name: 'DigitAI Team' }],
+  creator: 'DigitAI Studios',
+  
+  // Com es veu a Facebook/LinkedIn/WhatsApp
+  openGraph: {
+    type: 'website',
+    locale: 'ca_ES',
+    url: 'https://digitai.studios', // Posa el teu domini real quan el tinguis
+    siteName: 'DigitAI Studios',
+    images: [
+      {
+        url: '/images/og-default.jpg', // Has de posar una imatge a public/images/
+        width: 1200,
+        height: 630,
+        alt: 'DigitAI Studios Hero Image',
+      },
+    ],
+  },
+  
+  // Com es veu a Twitter
+  twitter: {
+    card: 'summary_large_image',
+    title: 'DigitAI Studios - Automatització IA',
+    description: 'Estalvia temps i diners automatitzant el teu negoci.',
+    images: ['/images/og-default.jpg'], 
+  },
+  
+  // Icones (Favicon)
+  icons: {
+    icon: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
+  },
+};
 // Configurem la font
 const inter = Inter({ 
   subsets: ['latin'], 
@@ -15,10 +58,6 @@ const inter = Inter({
   display: 'swap',
 });
 
-export const metadata = {
-  title: 'DigitAI Studios - Automatització i IA',
-  description: 'Transforma el teu negoci amb solucions d\'intel·ligència artificial.',
-};
 
 export default async function LocaleLayout({
   children,

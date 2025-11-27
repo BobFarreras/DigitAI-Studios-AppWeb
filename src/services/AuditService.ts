@@ -1,37 +1,43 @@
 import { IAuditRepository } from '@/repositories/interfaces/IAuditRepository';
 import { IWebScanner } from '@/adapters/IWebScanner';
+// Importem el tipus del servei d'email (encara que no tinguem interfície estricta per simplificar ara)
+import { ResendEmailService } from '@/services/email/ResendEmailService';
 
 export class AuditService {
   constructor(
     private auditRepo: IAuditRepository,
-    private scanner: IWebScanner
+    private scanner: IWebScanner,
+    private emailService: ResendEmailService // 👈 INJECCIÓ NOVA
   ) {}
 
-  /**
-   * Flux complet: Crea a DB -> Escaneja -> Actualitza DB
-   */
   async performFullAudit(url: string, email: string) {
-    // 1. Crear l'auditoria en estat "Processing"
-    // (Això ja ho feies, però ara ho centralitzem aquí)
+    // 1. Crear DB (Processing)
     const newAudit = await this.auditRepo.createAudit(url, email);
 
-    // 2. Executar l'escàner (això pot trigar uns segons)
-    // NOTA: En una app molt gran, això s'enviaria a una cua (Background Job).
-    // Per ara, ho fem "await" aquí mateix.
     try {
+      // 2. Escanejar (Google)
       const scanResult = await this.scanner.scanUrl(url);
 
-      // 3. Actualitzar amb els resultats reals
+      // 3. Actualitzar DB (Completed)
       await this.auditRepo.updateStatus(newAudit.id, 'completed', {
         seoScore: scanResult.seoScore,
         performanceScore: scanResult.performanceScore,
         reportData: scanResult.reportData
       });
 
-      return newAudit.id; // Retornem ID per redirigir
+      // 4. ✨ ENVIAR EMAIL MÀGIC ✨
+      // Ho fem sense 'await' (fire and forget) o amb await si volem assegurar?
+      // Millor amb await dins del try per loguejar, però ràpid.
+      await this.emailService.sendAuditResult(email, {
+          url: url,
+          seo: scanResult.seoScore,
+          perf: scanResult.performanceScore,
+          id: newAudit.id
+      });
+
+      return newAudit.id;
 
     } catch (error) {
-      // Si falla l'escàner, marquem com fallida a la DB
       await this.auditRepo.updateStatus(newAudit.id, 'failed');
       throw error;
     }
