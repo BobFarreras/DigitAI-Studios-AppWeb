@@ -23,7 +23,7 @@ export function BarListChart({ title, data }: Props) {
               dataKey="name" 
               type="category" 
               width={100} 
-              tick={{ fill: '#94a3b8', fontSize: 11 }} 
+              tick={{ fill: '#94a3b8', fontSize: 14 }} 
               interval={0}
               tickLine={false}
               axisLine={false}

@@ -20,7 +20,7 @@ export function VerticalBarChart({ title, data }: Props) {
             <XAxis 
               dataKey="name" 
               stroke="#64748b" 
-              fontSize={10} 
+              fontSize={14} 
               tickLine={false}
               axisLine={false}
               interval={0} // Mostra totes les etiquetes

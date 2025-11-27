@@ -37,7 +37,7 @@ export function TopPagesCard({ data }: Props) {
                 <XAxis 
                   dataKey="path" 
                   stroke="#94a3b8" 
-                  fontSize={10} 
+                  fontSize={13} 
                   tickLine={false} 
                   axisLine={false}
                   interval={0} // Intentem mostrar-les totes

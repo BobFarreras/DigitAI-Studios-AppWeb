@@ -49,11 +49,11 @@ export function ProblemSolutionSection() {
           
           {/* --- CARD 1: EL PROBLEMA ("Web Aparador") --- */}
           <motion.div 
-            initial={{ opacity: 0, rotate: -5, x: -20 }}
-            whileInView={{ opacity: 1, rotate: -5, x: -20 }}
+            initial={{ opacity: 0, rotate: -6, x: -35 }}
+            whileInView={{ opacity: 1, rotate: -6, x: -35 }}
             viewport={{ once: true }}
             // LIGHT: bg-slate-100 (Gris clar) | DARK: bg-[#0f111a] (Negre)
-            className="absolute left-0 w-[300px] p-6 rounded-2xl border border-slate-200 dark:border-white/5 bg-slate-100/80 dark:bg-[#0f111a]/80 backdrop-blur-sm z-0 grayscale opacity-70"
+            className="absolute left-0 w-[280px] p-6 rounded-2xl border border-slate-200 dark:border-white/5 bg-slate-100/80 dark:bg-[#0f111a]/80 backdrop-blur-sm z-0 grayscale opacity-70"
           >
              <div className="flex items-center gap-2 mb-4 text-slate-500">
                 <Store className="w-5 h-5" />
