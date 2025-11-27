@@ -6,7 +6,12 @@ import { ArrowRight, ExternalLink, Layers, Sparkles } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
-// Dades dels projectes (sense canvis, només estructura)
+// ✅ IMPORTEM LES IMATGES REALMENT (Evita errors 404 a Vercel)
+import ribotFlowImg from '@/assets/images/ribotflow.png';
+import salutFlowImg from '@/assets/images/salutflow.png';
+// Si no tens captures de pantalla encara, pots usar els mateixos logos o placeholders
+// import ribotScreen from '@/assets/images/pantalla-ribotflow.jpg'; 
+
 const PROJECTS = [
   {
     id: 'ribotflow',
@@ -16,7 +21,8 @@ const PROJECTS = [
     stats: ['CRM + Facturació', 'Automatització IA', 'Control Financer'],
     tags: ['ERP', 'Business', 'IA', 'Supabase'],
     color: 'from-purple-500 to-pink-500',
-    image: '@/assets/images/pantalla-ribotflow.jpg',
+    // Usem la variable importada, no un string
+    image: ribotFlowImg, 
     link: 'https://ribotflow.com'
   },
   {
@@ -27,7 +33,7 @@ const PROJECTS = [
     stats: ['App PWA', 'Pagaments Stripe', 'Llistes d\'Espera'],
     tags: ['SaaS', 'Sport', 'PWA', 'Stripe'],
     color: 'from-cyan-400 to-blue-600',
-    image: '@/assets/images/pantalla-salutflow.jpg',
+    image: salutFlowImg,
     link: 'https://getsalutflow.com'
   }
 ];
@@ -77,7 +83,7 @@ export default function ProjectsPage() {
                      className="w-full lg:flex-1 relative group"
                   >
                      {/* Glow */}
-                     <div className={`absolute inset-0 bg-linear-to-r ${project.color} opacity-20 blur-[60px] group-hover:opacity-30 transition-opacity duration-500 pointer-events-none`}></div>
+                     <div className={`absolute inset-0 bg-gradient-to-r ${project.color} opacity-20 blur-[60px] group-hover:opacity-30 transition-opacity duration-500 pointer-events-none`}></div>
                      
                      {/* Marc Navegador */}
                      <div className="relative rounded-xl border border-border bg-card shadow-2xl overflow-hidden transform transition-transform duration-500 group-hover:scale-[1.02] md:group-hover:-translate-y-2">
@@ -100,6 +106,7 @@ export default function ProjectsPage() {
                                  fill 
                                  className="object-cover object-top" 
                                  sizes="(max-width: 768px) 100vw, 50vw"
+                                 placeholder="blur" // Opcional si la imatge és gran
                               /> 
                            ) : (
                               <div className="absolute inset-0 flex flex-col items-center justify-center text-muted-foreground/20">
@@ -120,11 +127,11 @@ export default function ProjectsPage() {
                      className="w-full lg:flex-1 space-y-6 md:space-y-8"
                   >
                      <div>
-                        <div className={`inline-block px-3 py-1 rounded-lg bg-linear-to-r ${project.color} bg-opacity-10 text-[10px] md:text-xs font-bold text-white mb-4`}>
+                        <div className={`inline-block px-3 py-1 rounded-lg bg-gradient-to-r ${project.color} bg-opacity-10 text-[10px] md:text-xs font-bold text-white mb-4`}>
                            {project.tags[0]}
                         </div>
                         <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-2">{project.title}</h2>
-                        <p className={`text-lg md:text-xl font-medium bg-linear-to-r ${project.color} bg-clip-text text-transparent`}>
+                        <p className={`text-lg md:text-xl font-medium bg-gradient-to-r ${project.color} bg-clip-text text-transparent`}>
                            {project.tagline}
                         </p>
                      </div>
@@ -136,7 +143,7 @@ export default function ProjectsPage() {
                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
                         {project.stats.map((stat, i) => (
                            <div key={i} className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-300 font-medium">
-                              <div className={`w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-linear-to-r ${project.color}`}></div>
+                              <div className={`w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-gradient-to-r ${project.color}`}></div>
                               {stat}
                            </div>
                         ))}

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Star, Quote, ChevronLeft, ChevronRight, Globe, Smartphone, Zap, Users, Code, ExternalLink } from 'lucide-react';
-import Image from 'next/image';
+import Image, { StaticImageData } from 'next/image'; // 👈 Importem el tipus
 import Link from 'next/link';
 import type { Testimonial } from '@/lib/data';
 
@@ -38,7 +38,6 @@ export function TestimonialsSection({ testimonials }: Props) {
         {/* CAPÇALERA */}
         <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
            <div className="max-w-2xl">
-          
               <h2 className="text-3xl lg:text-5xl font-bold text-foreground leading-tight">
                 No ens creguis a nosaltres. <br/>
                 Mira el que hem <span className="gradient-text">Construït</span>.
@@ -86,10 +85,6 @@ function TestimonialCard({ item }: { item: Testimonial }) {
       <div className="relative w-full h-full group">
          
          {/* CAPA 1: EL PROJECTE (FITXER) */}
-         {/* MILLORA 1: Ara puja molt més (-translate-y-24) perquè es vegi bé la web/app.
-            Afegim z-index dinàmic perquè al pujar es posi per sobre si calgués, 
-            però mantenim l'efecte de "sortir de la carpeta".
-         */}
          <div className="absolute inset-x-4 top-4 bottom-20  transition-all duration-500 cubic-bezier(0.25, 0.8, 0.25, 1) group-hover:-translate-y-20 ">
             <div className="w-full h-full rounded-t-xl overflow-hidden border border-primary/20 bg-slate-900 dark:bg-black shadow-2xl group-hover:shadow-primary/20">
                {item.projectType === 'web' && <MockupWeb url={item.projectUrl} image={item.image} title={item.company} />}
@@ -104,7 +99,7 @@ function TestimonialCard({ item }: { item: Testimonial }) {
             <Quote className="absolute top-6 right-6 text-primary/10 w-12 h-12 rotate-180" />
 
             <div className="flex items-center gap-3 mb-4">
-               <div className="w-12 h-12 rounded-full bg-linear-to-br from-primary/20 to-blue-500/20 border border-primary/30 flex items-center justify-center text-lg font-bold text-primary">
+               <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary/20 to-blue-500/20 border border-primary/30 flex items-center justify-center text-lg font-bold text-primary">
                   {item.name.charAt(0)}
                </div>
                <div>
@@ -134,14 +129,14 @@ function TestimonialCard({ item }: { item: Testimonial }) {
 
 // --- MOCKUPS VISUALS ---
 
-function MockupWeb({ url, image, title }: { url?: string, image?: string, title: string }) {
+// ✅ CORRECCIÓ: Acceptem 'string | StaticImageData'
+function MockupWeb({ url, image, title }: { url?: string, image?: string | StaticImageData, title: string }) {
    const Wrapper = url ? Link : 'div';
    return (
-    
+      
       <Wrapper href={url || '#'} target={url ? "_blank" : undefined} className="block w-full h-full cursor-pointer group/mockup">
          <div className="w-full h-full bg-slate-50 dark:bg-[#0f111a] flex flex-col relative">
             
-            {/* MILLORA 2: OVERLAY AMB BOTÓ "VISITAR" */}
             {url && (
                <div className="absolute inset-0 z-30 bg-black/60 backdrop-blur-[2px] flex items-center justify-center opacity-0 group-hover/mockup:opacity-100 transition-opacity duration-300">
                   <span className="bg-white text-black px-4 py-2 rounded-full font-bold text-xs flex items-center gap-2 shadow-lg transform scale-90 group-hover/mockup:scale-100 transition-transform">
@@ -172,11 +167,11 @@ function MockupWeb({ url, image, title }: { url?: string, image?: string, title:
    )
 }
 
-function MockupApp({ image, title }: { image?: string, title: string }) {
+// ✅ CORRECCIÓ: Acceptem 'string | StaticImageData'
+function MockupApp({ image, title }: { image?: string | StaticImageData, title: string }) {
    return (
       <div className="w-full h-full bg-slate-800 dark:bg-black flex items-end justify-center p-4 pb-0 group/mockup relative">
          
-         {/* MILLORA 2: OVERLAY APP */}
          <div className="absolute inset-0 z-30 bg-black/60 backdrop-blur-[2px] flex items-center justify-center opacity-0 group-hover/mockup:opacity-100 transition-opacity duration-300 rounded-t-xl">
              <span className="bg-white text-black px-4 py-2 rounded-full font-bold text-xs flex items-center gap-2 shadow-lg">
                 Veure App <ExternalLink className="w-3 h-3" />
@@ -197,18 +192,17 @@ function MockupApp({ image, title }: { image?: string, title: string }) {
    )
 }
 
-// ✅ L'ANIMACIÓ D'AUTOMATITZACIÓ (Responsive)
+// L'ANIMACIÓ D'AUTOMATITZACIÓ (Sense imatges, no cal tocar tipus)
 function MockupAutomation() {
    return (
       <div className="w-full h-full bg-[#1a1d2d] relative overflow-hidden group/mockup">
-         {/* Overlay per coherència (opcional en automation, però queda bé) */}
          <div className="absolute inset-0 z-30 bg-black/60 backdrop-blur-[2px] flex items-center justify-center opacity-0 group-hover/mockup:opacity-100 transition-opacity duration-300">
              <span className="bg-white text-black px-4 py-2 rounded-full font-bold text-xs flex items-center gap-2 shadow-lg">
                 Veure Flux <Zap className="w-3 h-3" />
              </span>
          </div>
 
-         <div className="absolute inset-0 bg-[radial-gradient(#ffffff10_1px,transparent_1px)] bg-size-[12px_12px]"></div>
+         <div className="absolute inset-0 bg-[radial-gradient(#ffffff10_1px,transparent_1px)] [background-size:12px_12px]"></div>
          
          <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none">
             <defs>
