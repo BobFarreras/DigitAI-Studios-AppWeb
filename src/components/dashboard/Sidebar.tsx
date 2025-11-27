@@ -10,8 +10,8 @@ import { useRouter } from '@/routing';
 const MENU_ITEMS = [
   { icon: LayoutDashboard, label: 'Resum', href: '/dashboard' },
   { icon: FileText, label: 'Auditories', href: '/dashboard/audits' },
-  { icon: FolderKanban, label: 'Projectes', href: '/dashboard/projects' },
-  { icon: Settings, label: 'Configuració', href: '/dashboard/settings' },
+  { icon: FolderKanban, label: 'Projectes', href: '#projectes' },
+  { icon: Settings, label: 'Configuració', href: '#config' },
 ];
 
 export function Sidebar() {
@@ -25,13 +25,22 @@ export function Sidebar() {
     router.push('/auth/login');
   };
 
+  const handleClick = (e: React.MouseEvent, href: string, label: string) => {
+    if (href.startsWith('#')) {
+      e.preventDefault();
+      alert(`${label} estarà disponible properament! 🚀`);
+    }
+  };
+
+  // Funció per netejar l'idioma del path (ex: /es/dashboard -> /dashboard)
+  const cleanPath = pathname.replace(/^\/[a-z]{2}/, '') || '/';
+
   return (
-    // CANVI: bg-card (adapta el fons), border-border (adapta la vora)
     <aside className="w-64 h-screen bg-card border-r border-border flex flex-col sticky top-0 transition-colors duration-300">
       
       {/* LOGO AREA */}
       <div className="p-6 border-b border-border">
-        <Link href="/dashboard" className="flex items-center gap-2 text-xl font-bold text-foreground">
+        <Link href="/" className="flex items-center gap-2 text-xl font-bold text-foreground">
            DigitAI <span className="text-primary">Hub</span>
         </Link>
       </div>
@@ -43,11 +52,25 @@ export function Sidebar() {
         </div>
         
         {MENU_ITEMS.map((item) => {
-          const isActive = pathname === item.href;
+          // LÒGICA MILLORADA D'ACTIU:
+          // 1. Si és un placeholder (#), mai és actiu.
+          // 2. Si és el Dashboard principal, ha de ser EXACTE ('/dashboard').
+          // 3. Si és qualsevol altre (ex: /dashboard/audits), ha de COMENÇAR per la ruta.
+          
+          let isActive = false;
+          if (!item.href.startsWith('#')) {
+             if (item.href === '/dashboard') {
+                isActive = cleanPath === '/dashboard';
+             } else {
+                isActive = cleanPath.startsWith(item.href);
+             }
+          }
+          
           return (
             <Link 
-              key={item.href} 
+              key={item.label} 
               href={item.href}
+              onClick={(e) => handleClick(e, item.href, item.label)}
               className={cn(
                 "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200",
                 isActive 

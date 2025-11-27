@@ -41,7 +41,7 @@ export default async function NewAuditPage() {
 
             {/* El formulari client-side */}
             {/* Ara TypeScript no es queixa perquè sap que user existeix segur */}
-            <CreateAuditForm userId={user.id} />
+            <CreateAuditForm  />
          </div>
       </div>
     </div>

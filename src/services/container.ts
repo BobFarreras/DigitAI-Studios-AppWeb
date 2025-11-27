@@ -22,8 +22,7 @@ const googleKey = process.env.GOOGLE_PAGESPEED_API_KEY || '';
 const webScanner = new GooglePageSpeedAdapter(googleKey);
 
 // 👇 2. INSTANCIEM EL SERVEI D'EMAIL
-const resendKey = process.env.RESEND_API_KEY || '';
-export const emailService = new ResendEmailService(resendKey);
+export const emailService = new ResendEmailService();
 // ---------------------------------------------------------------------------
 // 4. Instanciem els Serveis (Capa de Negoci)
 //    Aquí fem la Injecció de Dependències
