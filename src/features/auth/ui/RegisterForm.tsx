@@ -5,8 +5,9 @@ import { useTranslations } from 'next-intl';
 import { useRouter, Link } from '@/routing';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Checkbox } from '@/components/ui/checkbox';
 import { createClient } from '@/lib/supabase/client';
-import { Loader2, UserPlus, Github } from 'lucide-react';
+import { Loader2, UserPlus, Github, Info } from 'lucide-react';
 
 export function RegisterForm({ prefilledEmail }: { prefilledEmail: string }) {
   const t = useTranslations('Auth');
@@ -15,18 +16,28 @@ export function RegisterForm({ prefilledEmail }: { prefilledEmail: string }) {
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState(prefilledEmail);
   const [password, setPassword] = useState('');
-  const [fullName, setFullName] = useState(''); // Nou camp
+  const [fullName, setFullName] = useState('');
+  
+  // Estat del Checkbox
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validació Checkbox
+    if (!termsAccepted) {
+        setError("Has d'acceptar la política de privacitat per crear el compte.");
+        return;
+    }
+
     setIsLoading(true);
     setError(null);
 
     const supabase = createClient();
 
     // 1. Registre a Supabase Auth
-    const { error: authError, data } = await supabase.auth.signUp({
+    const { error: authError } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -42,13 +53,18 @@ export function RegisterForm({ prefilledEmail }: { prefilledEmail: string }) {
       return;
     }
 
-    // Si el registre és correcte, redirigim
-    // (Supabase gestiona la sessió automàticament si no hi ha confirmació d'email obligatòria)
+    // Redirecció si tot va bé
     router.refresh();
     router.push('/dashboard');
   };
 
   const handleOAuth = async (provider: 'github') => {
+    // Validació Checkbox també per Social Login
+    if (!termsAccepted) {
+        setError("Si us plau, accepta els termes i la privacitat abans de continuar amb GitHub.");
+        return;
+    }
+
     const supabase = createClient();
     await supabase.auth.signInWithOAuth({
       provider,
@@ -65,7 +81,11 @@ export function RegisterForm({ prefilledEmail }: { prefilledEmail: string }) {
 
       {/* Social Register */}
       <div className="grid grid-cols-1 gap-4">
-        <Button variant="outline" onClick={() => handleOAuth('github')} className="w-full h-12 border-border bg-card hover:bg-muted text-foreground gap-2">
+        <Button 
+            variant="outline" 
+            onClick={() => handleOAuth('github')} 
+            className="w-full h-12 border-border bg-card hover:bg-muted text-foreground gap-2"
+        >
           <Github className="w-5 h-5" /> Registre amb GitHub
         </Button>
       </div>
@@ -120,14 +140,44 @@ export function RegisterForm({ prefilledEmail }: { prefilledEmail: string }) {
           />
         </div>
 
+        {/* Checkbox Legal */}
+        <div className="flex items-start space-x-3 pt-2">
+            <Checkbox 
+                id="privacy" 
+                checked={termsAccepted}
+                onCheckedChange={(checked) => {
+                    setTermsAccepted(checked as boolean);
+                    if(checked) setError(null); // Netegem l'error visual si l'usuari marca la casella
+                }}
+                className="mt-1 border-muted-foreground/30 data-[state=checked]:bg-primary data-[state=checked]:border-primary" 
+            />
+            <div className="grid gap-1.5 leading-none">
+                <label 
+                    htmlFor="privacy" 
+                    className="text-sm text-muted-foreground leading-snug cursor-pointer select-none"
+                >
+                    He llegit i accepto la <Link href="/legal/privacitat" target="_blank" className="underline hover:text-primary transition-colors">política de privacitat</Link> i les <Link href="/legal/avis-legal" target="_blank" className="underline hover:text-primary transition-colors">condicions d'ús</Link>.
+                </label>
+            </div>
+        </div>
+
         {error && (
-          <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 text-sm text-center">
-            {error}
+          <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 text-sm flex items-center gap-2 animate-in fade-in slide-in-from-top-2">
+            <Info className="w-4 h-4 shrink-0" /> 
+            <span>{error}</span>
           </div>
         )}
 
-        <Button type="submit" disabled={isLoading} className="w-full h-12 gradient-bg text-white font-bold rounded-lg hover:opacity-90 transition-all shadow-lg shadow-primary/20">
-          {isLoading ? <Loader2 className="animate-spin" /> : <><UserPlus className="w-4 h-4 mr-2" /> Crear Compte</>}
+        <Button 
+            type="submit" 
+            disabled={isLoading} 
+            className={`w-full h-12 font-bold rounded-lg transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2 ${
+                termsAccepted 
+                ? 'gradient-bg text-white hover:opacity-90' 
+                : 'bg-muted text-muted-foreground cursor-not-allowed opacity-70'
+            }`}
+        >
+          {isLoading ? <Loader2 className="animate-spin" /> : <><UserPlus className="w-4 h-4" /> Crear Compte</>}
         </Button>
       </form>
 

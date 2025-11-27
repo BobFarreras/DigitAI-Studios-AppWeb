@@ -5,17 +5,21 @@ import { submitContactForm } from '@/actions/contact';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Link } from '@/routing';
 import { Loader2, Send, Bot, Code2, Rocket, Shield, Users } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export function ContactSection() {
   const [state, action, isPending] = useActionState(submitContactForm, { success: false });
   const [serviceType, setServiceType] = useState('ia'); // 'ia' o 'web'
+  
+  // Estat del checkbox
+  const [termsAccepted, setTermsAccepted] = useState(false);
 
   return (
     <section id="contacte" className="py-24 bg-background relative overflow-hidden transition-colors duration-300">
       
-      {/* Fons decoratiu (opcional) */}
+      {/* Fons decoratiu */}
       <div className="absolute top-0 left-0 w-full h-full bg-linear-to-b from-transparent via-primary/5 to-transparent pointer-events-none" />
 
       <div className="container mx-auto px-4 grid lg:grid-cols-2 gap-16 items-start relative z-10">
@@ -57,10 +61,10 @@ export function ContactSection() {
 
         {/* COLUMNA DRETA: Formulari Adaptable */}
         <motion.div 
-            initial={{ opacity: 0, x: 20 }} 
-            whileInView={{ opacity: 1, x: 0 }} 
-            viewport={{ once: true }}
-            className="bg-card border border-border rounded-3xl p-8 lg:p-10 shadow-2xl relative overflow-hidden"
+           initial={{ opacity: 0, x: 20 }} 
+           whileInView={{ opacity: 1, x: 0 }} 
+           viewport={{ once: true }}
+           className="bg-card border border-border rounded-3xl p-8 lg:p-10 shadow-2xl relative overflow-hidden"
         >
           {/* Glow interior */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 blur-[80px] rounded-full pointer-events-none"></div>
@@ -111,45 +115,78 @@ export function ContactSection() {
               <div className="space-y-2">
                  <label className="text-sm font-bold text-foreground ml-1">Email corporatiu</label>
                  <Input 
-                    name="email" 
-                    type="email" 
-                    placeholder="joan@empresa.com" 
-                    required 
-                    className="bg-background border-input focus:border-primary h-12 text-foreground placeholder:text-muted-foreground/50" 
+                   name="email" 
+                   type="email" 
+                   placeholder="joan@empresa.com" 
+                   required 
+                   className="bg-background border-input focus:border-primary h-12 text-foreground placeholder:text-muted-foreground/50" 
                  />
               </div>
 
               <div className="space-y-2">
                  <label className="text-sm font-bold text-foreground ml-1">Explica'ns el teu projecte...</label>
                  <textarea 
-                    name="message" 
-                    rows={4} 
-                    placeholder="Vull automatitzar les reserves o crear una app per a..."
-                    className="w-full rounded-lg border border-input bg-background px-4 py-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all resize-none placeholder:text-muted-foreground/50"
+                   name="message" 
+                   rows={4} 
+                   placeholder="Vull automatitzar les reserves o crear una app per a..."
+                   className="w-full rounded-lg border border-input bg-background px-4 py-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all resize-none placeholder:text-muted-foreground/50"
                  />
               </div>
             </div>
 
+            {/* CHECKBOX LEGAL CONTROLAT */}
             <div className="flex items-start space-x-3 pt-2">
-              <Checkbox id="privacy" name="privacy" value="on" required className="mt-1 border-muted-foreground/30 data-[state=checked]:bg-primary data-[state=checked]:border-primary" />
-              <label htmlFor="privacy" className="text-sm text-muted-foreground leading-tight cursor-pointer">
-                He llegit i accepto la política de privacitat i el tractament de les meves dades.
+              <Checkbox 
+                id="privacy-contact" 
+                name="privacy" 
+                value="on" 
+                checked={termsAccepted}
+                onCheckedChange={(checked) => setTermsAccepted(checked as boolean)}
+                required 
+                className="mt-1 border-muted-foreground/30 data-[state=checked]:bg-primary data-[state=checked]:border-primary" 
+              />
+              <label htmlFor="privacy-contact" className="text-sm text-muted-foreground leading-snug cursor-pointer select-none">
+                He llegit i accepto la <Link href="/legal/privacitat" target="_blank" className="underline hover:text-primary transition-colors">política de privacitat</Link> i el tractament de les meves dades.
               </label>
             </div>
 
-            <Button 
-              type="submit" 
-              disabled={isPending} 
-              className="w-full h-14 text-lg font-bold rounded-xl gradient-bg text-white hover:opacity-90 shadow-lg shadow-primary/25 transition-all"
-            >
-               {isPending ? <Loader2 className="animate-spin mr-2" /> : <Send className="mr-2 w-5 h-5" />}
-               Enviar Missatge
-            </Button>
+            {/* BOTÓ AMB ESTAT DISABLED I TOOLTIP */}
+            <div className="relative group">
+                <Button 
+                  type="submit" 
+                  // Desactivem si està enviant (isPending) O si NO ha acceptat termes
+                  disabled={isPending || !termsAccepted} 
+                  className={`w-full h-14 text-lg font-bold rounded-xl transition-all shadow-lg shadow-primary/25 flex items-center justify-center ${
+                     termsAccepted 
+                     ? 'gradient-bg text-white hover:opacity-90' 
+                     : 'bg-muted text-muted-foreground cursor-not-allowed opacity-60'
+                  }`}
+                >
+                  {isPending ? <Loader2 className="animate-spin mr-2" /> : <Send className="mr-2 w-5 h-5" />}
+                  Enviar Missatge
+                </Button>
+                
+                {/* Tooltip flotant si intenten passar per sobre sense acceptar */}
+                {!termsAccepted && (
+                    <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-foreground text-background text-xs px-3 py-1.5 rounded-md shadow-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap font-medium z-20">
+                        Marca la casella per continuar
+                        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-foreground rotate-45"></div>
+                    </div>
+                )}
+            </div>
 
             {state?.message && (
-                <p className={`text-center text-sm font-medium mt-4 p-3 rounded-lg ${state.success ? 'bg-green-500/10 text-green-600 dark:text-green-400' : 'bg-red-500/10 text-red-600 dark:text-red-400'}`}>
+                <motion.div 
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className={`text-center text-sm font-medium mt-4 p-3 rounded-lg border ${
+                        state.success 
+                        ? 'bg-green-500/10 border-green-500/20 text-green-600 dark:text-green-400' 
+                        : 'bg-red-500/10 border-red-500/20 text-red-600 dark:text-red-400'
+                    }`}
+                >
                     {state.message}
-                </p>
+                </motion.div>
             )}
 
           </form>

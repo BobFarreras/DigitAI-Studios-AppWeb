@@ -29,7 +29,7 @@ export const TESTIMONIALS: Testimonial[] = [
     rating: 5,
     projectType: 'web',
     projectUrl: 'https://bioshop-exemple.com',
-    image: '/images/projects/testimoni-garatgeestacio.jpg' // 📸 Captura de la web real
+    image: '@/assets/images/testimoni-garatgeestacio.jpg' // 📸 Captura de la web real
   },
   { 
     id: 3, 
@@ -38,7 +38,7 @@ export const TESTIMONIALS: Testimonial[] = [
     text: "Han entès la nostra idea d'App a la primera.", 
     rating: 5,
     projectType: 'app',
-    image: '/images/prova.png' // 📱 Captura de l'app real
+    image: '@/assets/images/salutflow.png' // 📱 Captura de l'app real
   },
 
   // Nous exemples per al carrousel

@@ -59,7 +59,7 @@ export const metadata: Metadata = {
     siteName: 'DigitAI Studios',
     images: [
       {
-        url: '/images/og-image.jpg', // 👈 Crea aquesta imatge (1200x630) a public/images
+        url: '@/assets/images/og-image.jpg', // 👈 Crea aquesta imatge (1200x630) a public/images
         width: 1200,
         height: 630,
         alt: 'DigitAI Studios Cover',

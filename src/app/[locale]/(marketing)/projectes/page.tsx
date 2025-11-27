@@ -16,7 +16,7 @@ const PROJECTS = [
     stats: ['CRM + Facturació', 'Automatització IA', 'Control Financer'],
     tags: ['ERP', 'Business', 'IA', 'Supabase'],
     color: 'from-purple-500 to-pink-500',
-    image: '/images/projects/pantalla-ribotflow.jpg',
+    image: '@/assets/images/pantalla-ribotflow.jpg',
     link: 'https://ribotflow.com'
   },
   {
@@ -27,7 +27,7 @@ const PROJECTS = [
     stats: ['App PWA', 'Pagaments Stripe', 'Llistes d\'Espera'],
     tags: ['SaaS', 'Sport', 'PWA', 'Stripe'],
     color: 'from-cyan-400 to-blue-600',
-    image: '/images/projects/pantalla-salutflow.jpg',
+    image: '@/assets/images/pantalla-salutflow.jpg',
     link: 'https://getsalutflow.com'
   }
 ];
