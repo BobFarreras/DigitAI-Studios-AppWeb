@@ -4,9 +4,9 @@ import Link from 'next/link';
 import { Facebook, Instagram, Linkedin, Mail, MapPin} from 'lucide-react';
 
 const SOCIALS = [
-  { icon: Linkedin, href: 'https://linkedin.com', label: 'LinkedIn' },
-  { icon: Instagram, href: 'https://instagram.com', label: 'Instagram' },
-  { icon: Facebook, href: 'https://facebook.com', label: 'Facebook' },
+  { icon: Linkedin, href: "https://www.linkedin.com/in/digitai-studios-105a0136a/" , label: 'LinkedIn' },
+  { icon: Instagram, href: "https://www.instagram.com/digitaistudios/", label: 'Instagram' },
+  { icon: Facebook, href: "https://www.facebook.com/profile.php?id=61576974390567" , label: 'Facebook' },
   // Pots afegir Twitter/X si vols
 ];
 
@@ -24,7 +24,7 @@ const FOOTER_LINKS = [
     title: 'Empresa',
     links: [
       { label: 'Sobre Nosaltres', href: '#hero' },
-      { label: 'Projectes', href: '#projectes' },
+      { label: 'Projectes', href: '/projectes' },
       { label: 'Blog', href: '/blog' },
       { label: 'Contacte', href: '#contacte' },
     ],
