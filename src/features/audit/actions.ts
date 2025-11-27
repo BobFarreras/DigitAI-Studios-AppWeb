@@ -50,7 +50,7 @@ export async function processWebAudit(prevState: FormState, formData: FormData):
   try {
     // 2. Cridem al servei per fer l'auditoria PÚBLICA
     // (Aquest mètode s'encarregarà de crear l'usuari o lligar-ho per email)
-    await auditService.performPublicAudit(validation.data.url, validation.data.email);
+    await auditService.performPublicAudit(validation.data.url, validation.data.email, locale);
     
   } catch (err) {
     console.error(err);
@@ -84,7 +84,7 @@ export async function createAuditAction(url: string) {
 
   try {
     // 3. Cridem al servei per fer l'auditoria PRIVADA (ja tenim user.id)
-    auditId = await auditService.performUserAudit(url, user.id, user.email);
+    auditId = await auditService.performUserAudit(url, user.id, user.email, locale);
 
   } catch (e) {
     console.error(e);
