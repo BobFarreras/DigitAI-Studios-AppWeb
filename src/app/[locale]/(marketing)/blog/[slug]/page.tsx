@@ -4,13 +4,44 @@ import { MDXContent } from '@/features/blog/ui/MDXContent';
 import { Link } from '@/routing';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Calendar, User } from 'lucide-react';
-
+import { Metadata } from 'next';
 type Props = {
   params: Promise<{ slug: string }>;
 };
 
 export const revalidate = 3600;
+// 👇 FUNCIÓ MÀGICA: Genera el SEO específic d'aquest post
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const post = await postService.getPost(slug);
 
+  if (!post) {
+    return {
+      title: 'Article no trobat',
+    };
+  }
+
+  return {
+    title: post.title,
+    description: post.description,
+    openGraph: {
+      title: post.title,
+      description: post.description || '',
+      type: 'article',
+      publishedTime: post.date || undefined,
+      tags: post.tags,
+      images: post.coverImage
+        ? [{ url: post.coverImage }]
+        : undefined, // Si té imatge, la fem servir per la preview de xarxes
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.title,
+      description: post.description || '',
+      images: post.coverImage ? [post.coverImage] : [],
+    },
+  };
+}
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;
   const post = await postService.getPost(slug);
@@ -39,7 +70,7 @@ export default async function BlogPostPage({ params }: Props) {
           {/* Un degradat que va de negre (baix) a transparent (dalt) */}
           <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/50 to-black/20" />
         </div>
-        
+
         {/* Contingut del Hero (Text Blanc sempre, perquè el fons és fosc) */}
         <div className="relative z-10 container px-4 text-center max-w-4xl mx-auto">
           <div className="flex justify-center gap-2 mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
