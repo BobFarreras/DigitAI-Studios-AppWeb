@@ -1,41 +1,32 @@
 import { Resend } from 'resend';
-import { AuditReadyEmail } from '../../features/email/templates/AuditReadyEmail';
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export class ResendEmailService {
-  private resend: Resend;
-  private fromEmail = 'onboarding@resend.dev'; 
-  // ⚠️ NOTA IMPORTANT: Si estàs en pla gratis de Resend, només pots enviar correus 
-  // AL MATEIX EMAIL amb el que t'has registrat.
-  // Quan verifiquis el teu domini (ex: info@digitai.com), podràs enviar a tothom.
-
-  constructor(apiKey: string) {
-    this.resend = new Resend(apiKey);
-  }
-
-  async sendAuditResult(to: string, data: { url: string; seo: number; perf: number; id: string }) {
+  async sendAuditResult(to: string, data: { url: string, seo: number, perf: number, id: string }) {
     try {
-      const { error } = await this.resend.emails.send({
-        from: 'DigitAI Studios <onboarding@resend.dev>', // Canvia això quan tinguis domini
+      await resend.emails.send({
+        from: 'DigitAI Studios <info@digitaistudios.com>', // ⚠️ Canviarem això després a Hostinger
         to: [to],
-        subject: `🚀 Auditoria completada: ${data.url}`,
-        react: AuditReadyEmail({
-            url: data.url,
-            seoScore: data.seo,
-            perfScore: data.perf,
-            auditId: data.id
-        }),
+        subject: `Resultats de l'Auditoria: ${data.url}`,
+        html: `
+          <div style="font-family: sans-serif; color: #333;">
+            <h1>L'informe de ${data.url} està llest</h1>
+            <p>Hem analitzat la teva web i aquests són els resultats preliminars:</p>
+            <ul>
+              <li><strong>SEO:</strong> ${data.seo}/100</li>
+              <li><strong>Rendiment:</strong> ${data.perf}/100</li>
+            </ul>
+            <p>
+              <a href="https://digitaistudios.com/dashboard/audits/${data.id}" style="background: #6366f1; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
+                Veure Informe Complet
+              </a>
+            </p>
+          </div>
+        `
       });
-
-      if (error) {
-        console.error("Error enviant email:", error);
-        throw new Error(error.message);
-      }
-      
-      console.log(`📧 Email enviat correctament a ${to}`);
-
-    } catch (err) {
-      console.error("Fallada crítica al servei d'email:", err);
-      // No fem 'throw' per no trencar el flux de l'usuari si falla l'email
+    } catch (error) {
+      console.error("Resend Error:", error);
     }
   }
 }

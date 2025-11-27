@@ -16,6 +16,7 @@ type Props = {
     screenshot?: string;
     // 👇 2. Corregim 'any[]' per 'AuditIssue[]'
     issues: AuditIssue[];
+    
   }
 };
 

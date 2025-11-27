@@ -16,7 +16,8 @@ export function ScoreGrid({ seo, perf }: Props) {
 
 function ScoreCard({ score, label }: { score: number; label: string }) {
   return (
-    <Card className="bg-[#0f111a]/50 border border-white/5 hover:border-white/10 transition-colors backdrop-blur-sm">
+    // Canviem bg-[#0f111a]/50 per bg-background/40 o bg-card
+    <Card className="bg-background/40 border border-border hover:border-primary/20 transition-colors backdrop-blur-md shadow-sm">
       <CardContent className="pt-6 pb-6 flex justify-center">
         <ScoreRing score={score} label={label} />
       </CardContent>

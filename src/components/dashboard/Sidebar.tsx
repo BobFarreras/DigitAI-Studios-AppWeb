@@ -26,18 +26,19 @@ export function Sidebar() {
   };
 
   return (
-    <aside className="w-64 h-screen bg-[#0f111a] border-r border-white/5 flex flex-col sticky top-0">
+    // CANVI: bg-card (adapta el fons), border-border (adapta la vora)
+    <aside className="w-64 h-screen bg-card border-r border-border flex flex-col sticky top-0 transition-colors duration-300">
       
       {/* LOGO AREA */}
-      <div className="p-6 border-b border-white/5">
-        <Link href="/dashboard" className="flex items-center gap-2 text-xl font-bold text-white">
-           DigitAI <span className="text-[#a855f7]">Hub</span>
+      <div className="p-6 border-b border-border">
+        <Link href="/dashboard" className="flex items-center gap-2 text-xl font-bold text-foreground">
+           DigitAI <span className="text-primary">Hub</span>
         </Link>
       </div>
 
       {/* NAVIGATION */}
       <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
-        <div className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4 px-2">
+        <div className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-4 px-2">
            Plataforma
         </div>
         
@@ -50,35 +51,35 @@ export function Sidebar() {
               className={cn(
                 "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200",
                 isActive 
-                  ? "bg-primary/10 text-primary border border-primary/20 shadow-[0_0_15px_rgba(168,85,247,0.15)]" 
-                  : "text-slate-400 hover:text-white hover:bg-white/5"
+                  ? "bg-primary/10 text-primary border border-primary/20 shadow-sm" 
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted"
               )}
             >
-              <item.icon className={cn("w-5 h-5", isActive ? "text-primary" : "text-slate-500")} />
+              <item.icon className={cn("w-5 h-5", isActive ? "text-primary" : "text-muted-foreground")} />
               {item.label}
             </Link>
           );
         })}
 
-        {/* CAIXA PROMO (Opcional) */}
-        <div className="mt-8 p-4 rounded-xl bg-linear-to-br from-primary/10 to-blue-500/10 border border-primary/20 relative overflow-hidden">
+        {/* CAIXA PROMO */}
+        <div className="mt-8 p-4 rounded-xl bg-gradient-to-br from-primary/10 to-blue-500/10 border border-primary/20 relative overflow-hidden">
            <div className="absolute top-0 right-0 w-20 h-20 bg-primary/20 blur-2xl rounded-full pointer-events-none"></div>
-           <div className="flex items-center gap-2 text-white font-bold text-sm mb-2">
+           <div className="flex items-center gap-2 text-foreground font-bold text-sm mb-2">
               <Sparkles className="w-4 h-4 text-primary" />
               Pla Pro
            </div>
-           <p className="text-xs text-slate-400 mb-3">Desbloqueja auditories il·limitades.</p>
-           <button className="w-full py-1.5 text-xs font-bold bg-primary text-white rounded-lg hover:opacity-90 transition-opacity">
+           <p className="text-xs text-muted-foreground mb-3">Desbloqueja auditories il·limitades.</p>
+           <button className="w-full py-1.5 text-xs font-bold bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity">
               Millorar
            </button>
         </div>
       </nav>
 
       {/* FOOTER / LOGOUT */}
-      <div className="p-4 border-t border-white/5">
+      <div className="p-4 border-t border-border">
         <button 
           onClick={handleSignOut}
-          className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+          className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-red-500 hover:bg-red-500/10 transition-colors"
         >
           <LogOut className="w-5 h-5" />
           Tancar Sessió

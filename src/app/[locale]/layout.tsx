@@ -1,63 +1,72 @@
-// src/app/[locale]/layout.tsx
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing, type Locale } from '@/routing'; 
-import { Inter } from 'next/font/google'; // Importem la font aquí
-import { ThemeProvider } from "@/components/theme-provider"; // 👈 Importa el nou provider
-// ✅ IMPORT ABSOLUT DELS ESTILS TAILWIND V4
+import { Inter } from 'next/font/google';
+import { ThemeProvider } from "@/components/theme-provider";
 import "@/app/globals.css"; 
-import { AnalyticsTracker } from '@/features/analytics/ui/AnalyticsTracker'; // 👈 Importa l'espia d'analytics
-import { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next'; // 👈 Importem tipus
 
-// 👇 1. DEFINICIÓ MESTRA DE METADADES
-export const metadata: Metadata = {
-  title: {
-    template: '%s | DigitAI Studios', // %s se substitueix pel títol de cada pàgina
-    default: 'DigitAI Studios - Automatització i IA per a Empreses',
-  },
-  description: 'Transformem negocis amb Intel·ligència Artificial, Automatitzacions n8n i Desenvolupament Web Modern. Demana la teva auditoria gratuïta.',
-  keywords: ['IA', 'Automatització', 'n8n', 'Desenvolupament Web', 'SaaS', 'SEO'],
-  authors: [{ name: 'DigitAI Team' }],
-  creator: 'DigitAI Studios',
-  
-  // Com es veu a Facebook/LinkedIn/WhatsApp
-  openGraph: {
-    type: 'website',
-    locale: 'ca_ES',
-    url: 'https://digitai.studios', // Posa el teu domini real quan el tinguis
-    siteName: 'DigitAI Studios',
-    images: [
-      {
-        url: '/images/og-default.jpg', // Has de posar una imatge a public/images/
-        width: 1200,
-        height: 630,
-        alt: 'DigitAI Studios Hero Image',
-      },
-    ],
-  },
-  
-  // Com es veu a Twitter
-  twitter: {
-    card: 'summary_large_image',
-    title: 'DigitAI Studios - Automatització IA',
-    description: 'Estalvia temps i diners automatitzant el teu negoci.',
-    images: ['/images/og-default.jpg'], 
-  },
-  
-  // Icones (Favicon)
-  icons: {
-    icon: '/favicon.ico',
-    apple: '/apple-touch-icon.png',
-  },
-};
-// Configurem la font
 const inter = Inter({ 
   subsets: ['latin'], 
   variable: '--font-inter',
   display: 'swap',
 });
 
+// 1. CONFIGURACIÓ DEL VIEWPORT (Colors de la barra del navegador mòbil)
+export const viewport: Viewport = {
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: 'white' },
+    { media: '(prefers-color-scheme: dark)', color: '#020817' }, // Color Midnight Indigo
+  ],
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1, // Evita zoom accidental en inputs (opcional, millora sensació App)
+};
+
+// 2. METADADES GLOBALS (SEO + Icones)
+export const metadata: Metadata = {
+  title: {
+    default: 'DigitAI Studios | Desenvolupament Web & IA',
+    template: '%s | DigitAI Studios'
+  },
+  description: 'Transformem negocis amb AppWebs, Apps Natives i Automatització IA. Solucions digitals 360°.',
+  keywords: ['Desenvolupament Web', 'App', 'React Native', 'Next.js', 'IA', 'Automatització', 'Girona'],
+  authors: [{ name: 'DigitAI Studios' }],
+  creator: 'DigitAI Studios',
+  
+  // Enllaç al manifest que hem creat
+  manifest: '/manifest.webmanifest',
+  
+  // Icones (Next.js les buscarà automàticament si estan a src/app, però així ho forcem)
+  icons: {
+    icon: '/icons/icon-192.png', // O favicon.ico
+    shortcut: '/icons/icon-192.png',
+    apple: '/icons/apple-icon.png', // Icona per a iPhone
+    other: {
+      rel: 'apple-touch-icon-precomposed',
+      url: '/icons/apple-icon.png',
+    },
+  },
+  
+  // OpenGraph (Per quan comparteixes l'enllaç a WhatsApp/Twitter)
+  openGraph: {
+    type: 'website',
+    locale: 'ca_ES',
+    url: 'https://digitaistudios.com',
+    title: 'DigitAI Studios | Innovació Digital',
+    description: 'Apps, Webs i Automatització IA per a empreses modernes.',
+    siteName: 'DigitAI Studios',
+    images: [
+      {
+        url: '/images/og-image.jpg', // 👈 Crea aquesta imatge (1200x630) a public/images
+        width: 1200,
+        height: 630,
+        alt: 'DigitAI Studios Cover',
+      },
+    ],
+  },
+};
 
 export default async function LocaleLayout({
   children,
@@ -68,21 +77,16 @@ export default async function LocaleLayout({
 }) {
   const { locale } = await params;
 
-  // 1. Validar que l'idioma existeix (seguretat)
   if (!routing.locales.includes(locale as Locale)) {
     notFound();
   }
 
-  // 2. Obtenir els textos de traducció
   const messages = await getMessages();
 
- return (
-    // ⚠️ CRÍTIC: suppressHydrationWarning és necessari per a next-themes
+  return (
     <html lang={locale} className={inter.variable} suppressHydrationWarning>
       <body className="antialiased bg-background text-foreground overflow-x-hidden transition-colors duration-300">
         <NextIntlClientProvider messages={messages}>
-          {/* 👇 AQUI INJECTEM L'ESPIA */}
-          <AnalyticsTracker />
           <ThemeProvider
             attribute="class"
             defaultTheme="system"

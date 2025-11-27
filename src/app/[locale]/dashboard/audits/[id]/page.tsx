@@ -1,29 +1,31 @@
 import { notFound } from 'next/navigation';
 import { auditRepository } from '@/services/container';
-import { ScanResult } from '@/adapters/IWebScanner';
-
 import { AuditHeader } from '@/features/audit/ui/components/AuditHeader';
 import { ScoreGrid } from '@/features/audit/ui/components/ScoreGrid';
-import { CoreVitalsGrid, AuditMetric } from '@/features/audit/ui/components/CoreVitalsGrid'; 
+// Importem CoreVitalsGrid i el seu tipus
+import { CoreVitalsGrid, AuditMetric } from '@/features/audit/ui/components/CoreVitalsGrid';
 import { IssuesList } from '@/features/audit/ui/components/IssuesList';
 import { MobilePreview } from '@/features/audit/ui/components/MobilePreviw';
+// Tipus d'errors (Adaptats)
+import { AuditIssue } from '@/adapters/IWebScanner';
 
-type LighthouseMetric = AuditMetric & {
+// Tipus per llegir el JSON de Google
+type LighthouseAudit = {
   id: string;
   title: string;
   description: string;
-  details?: { data?: string };
+  score: number | null;
   displayValue?: string;
   numericValue?: number;
-  score: number | null; // 👈 ABANS era number | null | undefined
+  details?: unknown; 
 };
 
-type GoogleLighthouseResponse = {
-  lighthouseResult?: {
-    audits: Record<string, LighthouseMetric>
-  };
-  audits?: Record<string, LighthouseMetric>;
-};
+interface GoogleRawData {
+  lighthouseResult?: { audits: Record<string, LighthouseAudit> };
+  audits?: Record<string, LighthouseAudit>;
+  issues?: AuditIssue[];
+  screenshot?: string;
+}
 
 type Props = {
   params: Promise<{ id: string; locale: string }>;
@@ -36,53 +38,76 @@ export default async function AuditDetailsPage({ params }: Props) {
   if (!audit) notFound();
 
   if (audit.status === 'processing') {
-    return <div className="p-8 text-center">Carregant resultats...</div>;
+    return <div className="p-12 text-center text-foreground">Carregant resultats...</div>;
   }
 
-  // Cast de tipus per manipular les dades
-  const report = audit.reportData as unknown as ScanResult;
-  const googleData = audit.reportData as unknown as GoogleLighthouseResponse;
-  
-  // Obtenim les auditories crues
-  const googleAudits = googleData?.lighthouseResult?.audits || googleData?.audits || {};
+  // 1. Recuperar dades
+  const rawData = audit.reportData as unknown as GoogleRawData;
+  const googleAudits = rawData?.lighthouseResult?.audits || rawData?.audits || {};
 
-  // Lògica de filtratge d'errors
-  let displayIssues = report.issues || [];
+  // 2. Helper per extreure mètriques segures
+  const extract = (key: string): AuditMetric => {
+    const a = googleAudits[key];
+    if (!a) return { score: null, value: 'N/A', description: '' };
+    return {
+      score: a.score,
+      value: a.displayValue || (a.numericValue ? a.numericValue.toFixed(2) : 'N/A'),
+      description: a.title
+    };
+  };
+
+  // 3. Construir l'objecte de mètriques pel Grid
+  const metrics = {
+    fcp: extract('first-contentful-paint'),
+    lcp: extract('largest-contentful-paint'),
+    cls: extract('cumulative-layout-shift'),
+    tbt: extract('total-blocking-time'),
+    si: extract('speed-index')
+  };
+
+  // 4. Processar Issues (Errors)
+  let displayIssues: AuditIssue[] = rawData?.issues || [];
+
   if (displayIssues.length === 0 && Object.keys(googleAudits).length > 0) {
     displayIssues = Object.values(googleAudits)
-      .filter(a => {
+      .filter((a: LighthouseAudit) => {
         const score = a.score ?? 1;
-        return score < 0.9 && a.score !== null; // Filtrem nulls
+        // Filtrem score < 0.9 i que no sigui només informatiu (score null)
+        return score < 0.9 && a.score !== null;
       })
-      .map(a => ({
+      .map((a: LighthouseAudit) => ({
         title: a.title || 'Problema detectat',
         description: a.description || '',
         score: a.score ?? 0,
-        displayValue: a.displayValue
-      }));
+        displayValue: a.displayValue,
+        // Assignem valors per defecte si falten a la interfície
+        impact: (a.score === 0 ? 'high' : 'medium') as 'high' | 'medium' | 'low',
+        type: (a.score === 0 ? 'error' : 'warning') as 'error' | 'warning'
+      }))
+      .sort((a, b) => (a.score || 0) - (b.score || 0))
+      .slice(0, 8); // Top 8 errors
   }
+
+  // 5. Captura
+  type ScreenshotDetails = { data?: string };
+  const screenshotData = 
+      rawData?.screenshot || 
+      (googleAudits['final-screenshot']?.details as ScreenshotDetails)?.data || 
+      '';
 
   const seoScore = audit.seoScore ?? 0;
   const perfScore = audit.performanceScore ?? 0;
-  
-  // Busquem la captura de pantalla
-  const screenshotData = report.screenshot || googleAudits['final-screenshot']?.details?.data || '';
 
   return (
     <div className="space-y-10 pb-20 max-w-7xl mx-auto">
-
-      <AuditHeader
-        url={audit.url}
+      
+      <AuditHeader 
+        url={audit.url} 
         date={new Date(audit.createdAt)}
         pdfData={{
           url: audit.url,
           date: new Date(audit.createdAt).toLocaleDateString(),
-          scores: {
-            seo: seoScore,
-            perf: perfScore,
-            a11y: 85, 
-            best: 92
-          },
+          scores: { seo: seoScore, perf: perfScore, a11y: 85, best: 92 },
           screenshot: screenshotData,
           issues: displayIssues
         }}
@@ -91,22 +116,17 @@ export default async function AuditDetailsPage({ params }: Props) {
       <ScoreGrid seo={seoScore} perf={perfScore} />
 
       <div className="grid lg:grid-cols-3 gap-8 lg:gap-12">
-        <div className="lg:col-span-2 space-y-10">
-          
-          {/* ✅ CORRECCIÓ 2: Ara googleAudits és compatible perquè hem arreglat el tipus a dalt */}
-          <CoreVitalsGrid
-            metrics={report.metrics}
-            googleAudits={googleAudits}
-          />
-          
-          <IssuesList issues={displayIssues} />
-        </div>
+         <div className="lg:col-span-2 space-y-10">
+            {/* Passem l'objecte metrics net */}
+            <CoreVitalsGrid metrics={metrics} />
+            <IssuesList issues={displayIssues} />
+         </div>
 
-        <div className="lg:col-span-1">
-          <div className="sticky top-8">
-            <MobilePreview screenshot={screenshotData} />
-          </div>
-        </div>
+         <div className="lg:col-span-1">
+            <div className="sticky top-8">
+                <MobilePreview screenshot={screenshotData} />
+            </div>
+         </div>
       </div>
 
     </div>

@@ -7,8 +7,7 @@ import { ResendEmailService } from '@/services/email/ResendEmailService';
 import { AuditService } from '@/services/AuditService';
 import { PostService } from '@/services/PostService';
 
-import { PageSpeedAdapter } from '@/adapters/google/PageSpeedAdapter';
-
+import { GooglePageSpeedAdapter } from '@/adapters/GooglePageSpeedAdapter'; // 👈 El nou adaptador
 // ---------------------------------------------------------------------------
 // 2. Instanciem els Repositoris (Capa de Dades)
 // ---------------------------------------------------------------------------
@@ -20,7 +19,7 @@ export const analyticsRepository = new SupabaseAnalyticsRepository();
 // 3. Instanciem els Adaptadors (Capa Externa)
 // ---------------------------------------------------------------------------
 const googleKey = process.env.GOOGLE_PAGESPEED_API_KEY || '';
-export const webScanner = new PageSpeedAdapter(googleKey);
+const webScanner = new GooglePageSpeedAdapter(googleKey);
 
 // 👇 2. INSTANCIEM EL SERVEI D'EMAIL
 const resendKey = process.env.RESEND_API_KEY || '';

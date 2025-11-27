@@ -1,18 +1,18 @@
-import {  Zap, LayoutTemplate, MoveHorizontal, Clock, Gauge } from 'lucide-react';
+import { Zap, LayoutTemplate, MoveHorizontal, Clock, Gauge } from 'lucide-react';
 
-// Tipus per a les dades de Google Lighthouse (del JSON que m'has passat)
+// 1. Definició local del tipus de Google (Relaxada)
 type LighthouseAudit = {
   id: string;
   title: string;
   description: string;
-  score: number | null;
+  score?: number | null; // 👈 AFEGIT EL '?' (Ara accepta undefined)
   displayValue?: string;
   numericValue?: number;
 };
 
-// Tipus unificat per al component
+// 2. Tipus unificat exportat
 export type AuditMetric = {
-  score?: number | null;
+  score?: number | null; // 👈 També aquí
   value?: string;
   description?: string;
 };
@@ -22,29 +22,28 @@ type CoreVitalsGridProps = {
     fcp?: AuditMetric;
     lcp?: AuditMetric;
     cls?: AuditMetric;
-    tbt?: AuditMetric; // Total Blocking Time
-    si?: AuditMetric;  // Speed Index
+    tbt?: AuditMetric;
+    si?: AuditMetric;
   };
-  // Afegeixo una prop opcional per passar les dades crues de Google si cal
+  // Ara accepta el tipus relaxat
   googleAudits?: Record<string, LighthouseAudit>;
 };
 
 export function CoreVitalsGrid({ metrics, googleAudits }: CoreVitalsGridProps) {
   
-  // Funció helper per extreure dades (prioritza 'metrics', si no busca a 'googleAudits')
   const getMetric = (key: string, googleKey: string): AuditMetric => {
-    // 1. Intentem llegir de l'objecte normalitzat 'metrics'
+    // 1. Prioritat: Dades normalitzades
     if (metrics && metrics[key as keyof typeof metrics]) {
       return metrics[key as keyof typeof metrics]!;
     }
     
-    // 2. Si no, intentem llegir del JSON cru de Google
+    // 2. Fallback: Dades crues de Google
     if (googleAudits && googleAudits[googleKey]) {
       const audit = googleAudits[googleKey];
       return {
         score: audit.score,
         value: audit.displayValue,
-        description: audit.title // Usem el títol com a descripció curta
+        description: audit.title
       };
     }
 
@@ -57,7 +56,6 @@ export function CoreVitalsGrid({ metrics, googleAudits }: CoreVitalsGridProps) {
   const tbt = getMetric('tbt', 'total-blocking-time');
   const si = getMetric('si', 'speed-index');
 
-  // Si no tenim dades de cap tipus, no mostrem res
   if (fcp.value === 'N/A' && lcp.value === 'N/A') return null;
 
   return (
@@ -68,52 +66,16 @@ export function CoreVitalsGrid({ metrics, googleAudits }: CoreVitalsGridProps) {
       </h2>
       
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-        <MetricCard
-          title="FCP"
-          subtitle="First Contentful Paint"
-          value={fcp.value || "N/A"}
-          score={fcp.score}
-          icon={Zap}
-          tooltip="Temps fins que es veu el primer contingut."
-        />
-        <MetricCard
-          title="LCP"
-          subtitle="Largest Contentful Paint"
-          value={lcp.value || "N/A"}
-          score={lcp.score}
-          icon={LayoutTemplate}
-          tooltip="Temps fins que es veu l'element més gran (imatge o text)."
-        />
-        <MetricCard
-          title="CLS"
-          subtitle="Cumulative Layout Shift"
-          value={cls.value || "N/A"}
-          score={cls.score}
-          icon={MoveHorizontal}
-          tooltip="Quant es mou la pantalla inesperadament mentre carrega."
-        />
-        <MetricCard
-          title="TBT"
-          subtitle="Total Blocking Time"
-          value={tbt.value || "N/A"}
-          score={tbt.score}
-          icon={Clock}
-          tooltip="Temps que la web està bloquejada i no respon als clics."
-        />
-        <MetricCard
-          title="SI"
-          subtitle="Speed Index"
-          value={si.value || "N/A"}
-          score={si.score}
-          icon={Gauge}
-          tooltip="Velocitat visual de càrrega de la pàgina."
-        />
+        <MetricCard title="FCP" subtitle="First Contentful Paint" value={fcp.value || "N/A"} score={fcp.score} icon={Zap} tooltip="Temps fins primer contingut." />
+        <MetricCard title="LCP" subtitle="Largest Contentful Paint" value={lcp.value || "N/A"} score={lcp.score} icon={LayoutTemplate} tooltip="Temps element més gran." />
+        <MetricCard title="CLS" subtitle="Cumulative Layout Shift" value={cls.value || "N/A"} score={cls.score} icon={MoveHorizontal} tooltip="Estabilitat visual." />
+        <MetricCard title="TBT" subtitle="Total Blocking Time" value={tbt.value || "N/A"} score={tbt.score} icon={Clock} tooltip="Temps de bloqueig." />
+        <MetricCard title="SI" subtitle="Speed Index" value={si.value || "N/A"} score={si.score} icon={Gauge} tooltip="Índex de velocitat." />
       </div>
     </div>
   );
 }
 
-// ... (MetricCard component es manté igual o amb petites millores) ...
 type MetricCardProps = {
     title: string;
     subtitle: string;
@@ -128,6 +90,7 @@ function MetricCard({ title, subtitle, value, score, icon: Icon, tooltip }: Metr
     let bgClass = 'bg-slate-100 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700';
     let iconColor = 'text-slate-400';
 
+    // Comprovem que score sigui un número vàlid abans de comparar
     if (typeof score === 'number') {
         if (score >= 0.9) {
             colorClass = 'text-green-600 dark:text-green-400';
