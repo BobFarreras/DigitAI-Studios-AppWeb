@@ -13,4 +13,7 @@ export interface IAuditRepository {
   ): Promise<void>;
   getAuditsByUserEmail(email: string): Promise<AuditDTO[]>; // Aquest ja el tenies, assegura't d'usar-lo!
   getAuditsByUserId(userId: string): Promise<AuditDTO[]>; // 👈 Mètode nou
+
+  createAuditForUser(url: string, userId: string, email: string): Promise<AuditDTO>; // 👈 Mètode nou
+  createPublicAudit(url: string, email: string): Promise<AuditDTO>; // 👈 Mètode nou
 }

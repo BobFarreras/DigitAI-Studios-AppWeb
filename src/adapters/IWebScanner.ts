@@ -1,3 +1,5 @@
+import { AuditMetric } from '@/features/audit/ui/components/CoreVitalsGrid';
+
 export type AuditIssue = {
   title: string;
   description: string;
@@ -11,6 +13,11 @@ export type ScanResult = {
   screenshot?: string; // Base64 de la imatge
   issues: AuditIssue[]; // Llista de problemes detectats
   reportData: unknown; // El JSON complet per si de cas
+  metrics?: {
+    fcp?: AuditMetric;
+    lcp?: AuditMetric;
+    cls?: AuditMetric;
+  };
 };
 
 export interface IWebScanner {

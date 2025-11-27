@@ -1,20 +1,24 @@
+'use server';
 
-'use server'
-
-
+import { auditService } from '@/services/container';
 import { z } from 'zod';
 import { redirect } from 'next/navigation';
 import { getLocale } from 'next-intl/server';
-// Només necessitem el servei, ja no cridem al repositori directament des d'aquí
-import { auditService } from '@/services/container';
 import { createClient } from '@/lib/supabase/server';
 
-const AuditSchema = z.object({
+// --- 1. SCHEMAS DE VALIDACIÓ ---
+
+const PublicAuditSchema = z.object({
   url: z.string().url({ message: "La URL ha de ser vàlida (https://...)" }),
   email: z.string().email({ message: "L'email no és correcte" }),
 });
 
+const PrivateAuditSchema = z.string().url();
+
+// --- 2. TIPUS PER A ELS FORMULARIS ---
+
 export type FormState = {
+  success?: boolean;
   message?: string;
   errors?: {
     url?: string[];
@@ -22,6 +26,8 @@ export type FormState = {
   };
 };
 
+// --- 3. ACTION PÚBLICA (Landing Page) ---
+// Aquesta és la que crida l'AuditForm de la home
 export async function processWebAudit(prevState: FormState, formData: FormData): Promise<FormState> {
   const locale = await getLocale();
 
@@ -30,96 +36,65 @@ export async function processWebAudit(prevState: FormState, formData: FormData):
     email: formData.get('email'),
   };
 
-  const validation = AuditSchema.safeParse(rawData);
+  // 1. Validem URL i Email
+  const validation = PublicAuditSchema.safeParse(rawData);
 
   if (!validation.success) {
     return {
+      success: false,
       errors: validation.error.flatten().fieldErrors,
       message: "Revisa les dades del formulari.",
     };
   }
 
   try {
-    // ❌ LÍNIA ELIMINADA: await auditRepository.createAudit(...)
-
-    // ✅ CORRECTE: Cridem al servei que orquestra tot el procés (Crear + Escanejar)
-    await auditService.performFullAudit(validation.data.url, validation.data.email);
-
-    console.log("AUDITORIA INICIADA:", validation.data);
+    // 2. Cridem al servei per fer l'auditoria PÚBLICA
+    // (Aquest mètode s'encarregarà de crear l'usuari o lligar-ho per email)
+    await auditService.performPublicAudit(validation.data.url, validation.data.email);
+    
   } catch (err) {
     console.error(err);
-    return { message: "Error durant l'anàlisi. Verifica la URL o prova més tard." };
+    return { success: false, message: "Error durant l'anàlisi. Prova més tard." };
   }
 
-  // Redirecció
+  // 3. Redirecció a Registre (perquè vegi el resultat allà)
   redirect(`/${locale}/auth/register?email=${encodeURIComponent(validation.data.email)}`);
 }
 
-// Schema simple
-const UrlSchema = z.string().url();
 
-// MOCK DATA GENERATOR (Per simular un anàlisi real)
-function generateMockReport(url: string) {
-  const score = Math.floor(Math.random() * (98 - 60) + 60); // Random entre 60 i 98
-  return {
-    seo_score: score,
-    performance_score: Math.floor(Math.random() * (100 - 50) + 50),
-    report_data: {
-      summary: `Anàlisi completa realitzada per a ${url}`,
-      issues: [
-        { type: 'warning', text: 'Falten etiquetes Meta Description', impact: 'Mitjà' },
-        { type: 'success', text: 'Certificat SSL correcte', impact: 'Bo' },
-        { type: 'error', text: 'Imatges no optimitzades (>2MB)', impact: 'Alt' }
-      ]
-    }
-  };
-}
-
-// ⚠️ CANVI IMPORTANT: Ja no cal passar userId com argument, l'agafem de la sessió
+// --- 4. ACTION PRIVADA (Dashboard) ---
+// Aquesta és la que crida el CreateAuditForm del panell
 export async function createAuditAction(url: string) {
-  // 1. Validació URL
-  const validation = UrlSchema.safeParse(url);
+  const locale = await getLocale();
+  let auditId = null;
+
+  // 1. Validem només URL
+  const validation = PrivateAuditSchema.safeParse(url);
   if (!validation.success) {
-    return { success: false, message: 'URL invàlida. Assegura\'t de posar https://' };
+    return { success: false, message: 'URL invàlida.' };
   }
 
+  // 2. Comprovem sessió
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
 
-  // 2. 🔐 SEGURETAT: Obtenim l'usuari DINS del servidor
-  // Això garanteix que auth.uid() coincideixi amb la política RLS
-  const { data: { user }, error: authError } = await supabase.auth.getUser();
-
-  if (authError || !user) {
+  if (!user || !user.email) {
     return { success: false, message: 'No estàs autenticat.' };
   }
 
   try {
-    const mockResults = generateMockReport(url);
-
-    // 3. Inserció
-    const { data, error } = await supabase
-      .from('web_audits')
-      .insert({
-        user_id: user.id, // 👈 Usem l'ID de la sessió segura
-        url: url,
-        email: user.email, // 👈 AFEGEIX AQUESTA LÍNIA CLAU!
-        status: 'completed',
-        seo_score: mockResults.seo_score,
-        performance_score: mockResults.performance_score,
-        report_data: mockResults.report_data
-      })
-      .select()
-      .single();
-
-    if (error) {
-      console.error('Supabase Error:', error); // Això et sortirà a la terminal si falla
-      return { success: false, message: `Error DB: ${error.message}` };
-    }
-
-    return { success: true, auditId: data.id };
+    // 3. Cridem al servei per fer l'auditoria PRIVADA (ja tenim user.id)
+    auditId = await auditService.performUserAudit(url, user.id, user.email);
 
   } catch (e) {
     console.error(e);
-    return { success: false, message: 'Error del servidor.' };
+    return { success: false, message: 'Error al processar l\'auditoria.' };
   }
+
+  // 4. Redirecció al detall de l'informe
+  if (auditId) {
+    redirect(`/${locale}/dashboard/audits/${auditId}`);
+  }
+  
+  return { success: false, message: 'Error desconegut al crear.' };
 }

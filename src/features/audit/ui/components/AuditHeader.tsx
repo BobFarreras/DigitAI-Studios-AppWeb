@@ -1,10 +1,25 @@
 import { Link } from '@/routing';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Download, Share2 } from 'lucide-react';
+import { ArrowLeft, Share2 } from 'lucide-react';
+// 👇 Importem el botó real
+import { DownloadAuditButton } from './DownloadAuditButton';
+// 👇 1. Importem el tipus correcte per als issues
+import { AuditIssue } from '@/adapters/IWebScanner';
 
-type Props = { url: string; date: Date };
+type Props = { 
+  url: string; 
+  date: Date;
+  pdfData: {
+    url: string;
+    date: string;
+    scores: { seo: number; perf: number; a11y: number; best: number };
+    screenshot?: string;
+    // 👇 2. Corregim 'any[]' per 'AuditIssue[]'
+    issues: AuditIssue[];
+  }
+};
 
-export function AuditHeader({ url, date }: Props) {
+export function AuditHeader({ url, date, pdfData }: Props) {
   return (
     <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-white/5 pb-6">
       <div>
@@ -18,13 +33,14 @@ export function AuditHeader({ url, date }: Props) {
           ID: {date.getTime().toString(36).toUpperCase()} • Generat el {date.toLocaleDateString()}
         </p>
       </div>
+      
       <div className="flex gap-3">
         <Button variant="outline" className="border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white">
             <Share2 className="w-4 h-4 mr-2" /> Compartir
         </Button>
-        <Button className="bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20">
-            <Download className="w-4 h-4 mr-2" /> PDF
-        </Button>
+        
+        {/* Botó de descarrega */}
+        <DownloadAuditButton data={pdfData} />
       </div>
     </div>
   );

@@ -108,4 +108,47 @@ export class SupabaseAuditRepository implements IAuditRepository {
       if (error) throw new Error(error.message);
       return data.map(this.mapToDTO);
   }
+
+  // CAS 1: Des del Dashboard (Tenim ID segur)
+  async createAuditForUser(url: string, userId: string, email: string): Promise<AuditDTO> {
+    const supabaseAdmin = createAdminClient();
+    const { data, error } = await supabaseAdmin
+      .from('web_audits')
+      .insert({
+        url,
+        user_id: userId, // ✅ Clau
+        email: email,
+        status: 'processing'
+      })
+      .select()
+      .single();
+
+    if (error) throw new Error(error.message);
+    return this.mapToDTO(data);
+  }
+
+  // CAS 2: Des de la Landing (Només tenim Email)
+  async createPublicAudit(url: string, email: string): Promise<AuditDTO> {
+    const supabaseAdmin = createAdminClient();
+    
+    // Opcional: Buscar si ja existeix un usuari amb aquest email per lligar-ho?
+    // Per ara, ho guardem sense user_id (o amb un user_id temporal si la taula ho requereix)
+    // NOTA: Si la taula 'web_audits' té 'user_id' com NOT NULL, necessitem una estratègia aquí.
+    // L'estratègia habitual és crear un usuari "fantasma" o deixar el camp nullable.
+    // Assumint que user_id pot ser null o gestionem el registre després.
+    
+    const { data, error } = await supabaseAdmin
+      .from('web_audits')
+      .insert({
+        url,
+        email: email,
+        status: 'processing'
+        // user_id: null (si la DB ho permet)
+      })
+      .select()
+      .single();
+
+    if (error) throw new Error(error.message);
+    return this.mapToDTO(data);
+  }
 }
