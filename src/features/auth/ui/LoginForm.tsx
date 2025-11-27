@@ -36,12 +36,9 @@ export function LoginForm() {
   };
 
   const handleOAuth = async (provider: 'github' | 'google') => {
-    await supabase.auth.signInWithOAuth({
-      provider,
-      options: {
-        redirectTo: `${location.origin}/auth/callback`,
-      },
-    });
+    // Simplement mostrem el missatge i parem
+    setError("🚧 El login social està en manteniment. Utilitza el teu email i contrasenya.");
+    return;
   };
 
   return (
@@ -71,9 +68,9 @@ export function LoginForm() {
       <form onSubmit={handleLogin} className="space-y-4">
         <div className="space-y-2">
           <label className="text-sm font-medium text-foreground ml-1">Email</label>
-          <Input 
-            type="email" 
-            placeholder="nom@empresa.com" 
+          <Input
+            type="email"
+            placeholder="nom@empresa.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="bg-card border-border text-foreground h-12 focus:border-primary"
@@ -87,9 +84,9 @@ export function LoginForm() {
               Has oblidat la contrasenya?
             </Link>
           </div>
-          <Input 
-            type="password" 
-            placeholder="••••••••" 
+          <Input
+            type="password"
+            placeholder="••••••••"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="bg-card border-border text-foreground h-12 focus:border-primary"

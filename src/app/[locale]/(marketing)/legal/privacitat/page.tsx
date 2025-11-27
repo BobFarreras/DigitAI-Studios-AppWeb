@@ -1,64 +1,84 @@
 import LegalLayout from '@/components/layout/LegalLayout';
+import { ShieldCheck, Server, Eye, Lock } from 'lucide-react';
 
 export const metadata = {
   title: 'Política de Privacitat | DigitAI Studios',
-  description: 'Com tractem les teves dades personals a DigitAI Studios.',
 };
 
 export default function PrivacitatPage() {
   return (
     <LegalLayout>
-      <h1>Política de Privacitat</h1>
-      <p className="lead">
-        A DigitAI Studios ens prenem molt seriosament la teva privacitat. Aquesta política detalla com recollim, utilitzem i protegim les teves dades personals d'acord amb el Reglament General de Protecció de Dades (RGPD).
-      </p>
+      <div className="border-b border-border pb-8 mb-8">
+        <h1 className="text-3xl md:text-4xl font-extrabold mb-4">Política de Privacitat</h1>
+        <p className="text-xl text-muted-foreground leading-relaxed">
+          La teva privacitat és sagrada. Aquí t'expliquem clarament quines dades recollim, per què, i com les protegim.
+        </p>
+      </div>
 
-      <h2>1. Responsable del Tractament</h2>
-      <p>
-        Les dades recollides són responsabilitat de <strong>DigitAI Studios</strong> (veure dades a l'Avís Legal).
-      </p>
+      <div className="space-y-12">
+          
+          {/* BLOC 1: RESPONSABLE */}
+          <section>
+              <h2 className="text-2xl font-bold flex items-center gap-2 mb-4">
+                  <ShieldCheck className="text-green-500" /> 1. Qui és el responsable de les teves dades?
+              </h2>
+              <div className="bg-muted/30 p-6 rounded-xl border border-border">
+                  <p className="m-0">
+                      El responsable és <strong>DigitAI Studios</strong> (veure Avís Legal per a dades completes). Pots contactar amb el nostre Delegat de Protecció de Dades a: <a href="mailto:dpd@digitaistudios.com">dpd@digitaistudios.com</a>.
+                  </p>
+              </div>
+          </section>
 
-      <h2>2. Quines dades recollim?</h2>
-      <p>Recollim les dades mínimes necessàries per oferir els nostres serveis:</p>
-      <ul>
-        <li><strong>Formulari d'Auditoria:</strong> URL de la web a analitzar i correu electrònic per enviar l'informe.</li>
-        <li><strong>Registre d'Usuari:</strong> Correu electrònic i contrasenya (encriptada) per accedir al Dashboard.</li>
-        <li><strong>Dades de Navegació:</strong> Adreça IP, tipus de dispositiu i navegador (mitjançant cookies tècniques).</li>
-      </ul>
+          {/* BLOC 2: QUINES DADES */}
+          <section>
+              <h2>2. Quines dades recollim?</h2>
+              <p>Només recollim les dades estrictament necessàries per oferir els nostres serveis:</p>
+              <div className="grid md:grid-cols-2 gap-6 not-prose my-6">
+                  <div className="p-4 rounded-lg border border-border bg-card">
+                      <h4 className="font-bold text-lg mb-2 flex items-center gap-2">🔍 Auditoria Web</h4>
+                      <p className="text-sm text-muted-foreground">La URL de la web que vols analitzar i el teu correu electrònic per enviar-te l'informe.</p>
+                  </div>
+                  <div className="p-4 rounded-lg border border-border bg-card">
+                      <h4 className="font-bold text-lg mb-2 flex items-center gap-2">👤 Compte d'Usuari</h4>
+                      <p className="text-sm text-muted-foreground">El teu nom, correu electrònic i contrasenya encriptada quan et registres al Dashboard.</p>
+                  </div>
+              </div>
+          </section>
 
-      <h2>3. Finalitat del Tractament</h2>
-      <p>Utilitzem les teves dades per a les següents finalitats:</p>
-      <ul>
-        <li><strong>Realitzar l'auditoria web:</strong> Processar la URL amb l'API de Google PageSpeed Insights i enviar-te els resultats.</li>
-        <li><strong>Gestió del compte:</strong> Permetre l'accés al teu panell privat i guardar l'històric d'auditories.</li>
-        <li><strong>Comunicacions:</strong> Enviar-te l'informe sol·licitat i, si ens has donat consentiment, informació sobre els nostres serveis.</li>
-      </ul>
+          {/* BLOC 3: TERCERS */}
+          <section>
+              <h2 className="flex items-center gap-2"><Server className="text-blue-500" /> 3. Amb qui compartim les dades?</h2>
+              <p>No venem les teves dades a ningú. Només les compartim amb proveïdors tecnològics necessaris per al funcionament del servei:</p>
+              <ul className="not-prose space-y-2 mt-4">
+                  <li className="flex items-center gap-3 p-2 rounded hover:bg-muted/50">
+                      <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                      <span><strong>Supabase:</strong> Base de dades i autenticació (Allotjat a la UE/AWS).</span>
+                  </li>
+                  <li className="flex items-center gap-3 p-2 rounded hover:bg-muted/50">
+                      <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                      <span><strong>Resend:</strong> Enviament d'emails transaccionals.</span>
+                  </li>
+                  <li className="flex items-center gap-3 p-2 rounded hover:bg-muted/50">
+                      <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                      <span><strong>Google Cloud:</strong> API per processar les auditories web.</span>
+                  </li>
+              </ul>
+          </section>
 
-      <h2>4. Serveis de Tercers (Subencarregats)</h2>
-      <p>Per oferir els nostres serveis, compartim dades estrictament necessàries amb proveïdors tecnològics de confiança que compleixen amb el RGPD:</p>
-      <ul>
-        <li><strong>Supabase (Base de Dades):</strong> Allotjament segur de les dades d'usuari i auditories.</li>
-        <li><strong>Google Cloud (PageSpeed API):</strong> Per realitzar l'anàlisi tècnica de les webs.</li>
-        <li><strong>Resend (Email):</strong> Per a l'enviament automatitzat de correus electrònics transaccionals.</li>
-        <li><strong>Vercel (Hosting):</strong> Proveïdor d'allotjament web i infraestructura.</li>
-      </ul>
+          {/* BLOC 4: DRETS */}
+          <section>
+              <h2 className="flex items-center gap-2"><Lock className="text-primary" /> 4. Els teus drets</h2>
+              <p>Tens el control total sobre les teves dades. En qualsevol moment pots:</p>
+              <ul>
+                  <li>Accedir, rectificar o suprimir les teves dades.</li>
+                  <li>Limitar el seu tractament.</li>
+                  <li>Oposar-te a rebre comunicacions.</li>
+                  <li>Sol·licitar la portabilitat de les dades.</li>
+              </ul>
+              <p>Per exercir-los, envia un email a <strong>info@digitaistudios.com</strong>.</p>
+          </section>
 
-      <h2>5. Drets de l'Usuari</h2>
-      <p>Tens dret a:</p>
-      <ul>
-        <li>Accedir a les teves dades.</li>
-        <li>Rectificar dades inexactes.</li>
-        <li>Sol·licitar la supressió (dret a l'oblit) quan ja no siguin necessàries.</li>
-        <li>Oposar-te al tractament o limitar-lo.</li>
-      </ul>
-      <p>
-        Pots exercir aquests drets enviant un correu a <a href="mailto:info@digitaistudios.com">info@digitaistudios.com</a>.
-      </p>
-
-      <h2>6. Seguretat</h2>
-      <p>
-        Apliquem mesures de seguretat tècniques i organitzatives (encriptació SSL, contrasenyes segures a la base de dades) per protegir les teves dades contra pèrdues o accessos no autoritzats.
-      </p>
+      </div>
     </LegalLayout>
   );
 }
