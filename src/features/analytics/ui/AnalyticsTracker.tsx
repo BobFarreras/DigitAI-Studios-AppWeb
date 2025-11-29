@@ -1,106 +1,51 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
-import { v4 as uuidv4 } from 'uuid';
-import { trackEventAction } from '../actions';
+import { createClient } from '@/lib/supabase/client'; // Assegura't que tens aquest fitxer client
 
 export function AnalyticsTracker() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const startTime = useRef<number>(0);
+  const supabase = createClient();
 
   useEffect(() => {
-    // ---------------------------------------------------------
-    // 1. SISTEMA D'IMMUNITAT (CAPA D'INVISIBILITAT)
-    // ---------------------------------------------------------
-    
-    // A) Si estem entrant a la zona admin, ens marquem com a "VIP" per sempre
-    if (pathname?.startsWith('/admin')) {
-      localStorage.setItem('digitai_is_admin', 'true');
-      return; // No trackegem res a dins de l'admin
-    }
+    // Aquest log T'HA DE SORTIR a la consola del navegador
+    console.log("👀 AnalyticsTracker iniciat a:", pathname);
 
-    // B) Si tenim la marca de VIP, sortim immediatament. 
-    // Així, quan visitis la Home, tampoc et comptarà.
-    const isAdminBrowser = localStorage.getItem('digitai_is_admin');
-    if (isAdminBrowser === 'true') {
-      return;
-    }
+    const trackView = async () => {
+      // 1. Netejem la URL (treiem l'idioma)
+      const rawPath = pathname || '/';
+      // Expressió regular per treure /ca, /es, /en del principi
+      const cleanPath = rawPath.replace(/^\/(ca|es|en)(\/|$)/, '$2') || '/';
+      
+      // Si ha quedat buit (era només /ca), posem /
+      const finalPath = cleanPath === '' ? '/' : cleanPath;
+      // Si no comença per /, li posem (per coherència estètica)
+      const pathStored = finalPath.startsWith('/') ? finalPath : `/${finalPath}`;
 
-    // ---------------------------------------------------------
-    // 2. GESTIÓ DE SESSIÓ I UTMS
-    // ---------------------------------------------------------
-    let sessionId = localStorage.getItem('digitai_session');
-    if (!sessionId) {
-      sessionId = uuidv4();
-      localStorage.setItem('digitai_session', sessionId);
-    }
+      console.log(`📡 Enviant dades... Path Original: ${rawPath} -> Guardat: ${pathStored}`);
 
-    // Guardem les UTMs a la sessió per no perdre-les si l'usuari navega
-    const utmSource = searchParams.get('utm_source');
-    const utmMedium = searchParams.get('utm_medium');
-    const utmCampaign = searchParams.get('utm_campaign');
+      const { error } = await supabase.from('analytics_events').insert({
+        event_name: 'page_view',
+        path: pathStored,
+        // Generem ID sessió ràpid si no en tenim (per test)
+        session_id: localStorage.getItem('digitai_session') || 'session-' + Math.random().toString(36).slice(2),
+        meta: {
+          raw_url: window.location.href,
+          referrer: document.referrer
+        }
+      });
 
-    if (utmSource) localStorage.setItem('utm_source', utmSource);
-    if (utmMedium) localStorage.setItem('utm_medium', utmMedium);
-    if (utmCampaign) localStorage.setItem('utm_campaign', utmCampaign);
-
-    // ---------------------------------------------------------
-    // 3. PREPARAR DADES
-    // ---------------------------------------------------------
-    const fullUrl = `${pathname}${searchParams.toString() ? '?' + searchParams.toString() : ''}`;
-    
-    // Recuperem les UTMs (de la URL actual o de la memòria si ve d'una altra pàgina)
-    const activeSource = utmSource || localStorage.getItem('utm_source');
-    const activeMedium = utmMedium || localStorage.getItem('utm_medium');
-    const activeCampaign = utmCampaign || localStorage.getItem('utm_campaign');
-
-    // Construïm l'objecte meta
-    const metaData: Record<string, string | number> = {
-        screen: `${window.innerWidth}x${window.innerHeight}`,
+      if (error) console.error("❌ Error Supabase:", error.message);
+      else console.log("✅ DADA GUARDADA!");
     };
 
-    if (activeSource) metaData.utm_source = activeSource;
-    if (activeMedium) metaData.utm_medium = activeMedium;
-    if (activeCampaign) metaData.utm_campaign = activeCampaign;
+    // Petit retard per no bloquejar la navegació visual
+    const timeout = setTimeout(trackView, 500);
+    return () => clearTimeout(timeout);
 
-    // ---------------------------------------------------------
-    // 4. ENVIAR PAGE VIEW
-    // ---------------------------------------------------------
-    trackEventAction({
-      event_name: 'page_view',
-      path: fullUrl,
-      session_id: sessionId!,
-      referrer: document.referrer || 'direct', // Si és buit, posem 'direct'
-      meta: metaData as Record<string, unknown>
-    });
-
-    // Resetegem cronòmetre
-    startTime.current = Date.now();
-
-    // ---------------------------------------------------------
-    // 5. PAGE LEAVE (SORTIDA)
-    // ---------------------------------------------------------
-    return () => {
-      if (startTime.current === 0) return;
-      
-      const duration = Math.round((Date.now() - startTime.current) / 1000);
-      
-      if (duration > 0) {
-        trackEventAction({
-          event_name: 'page_leave',
-          path: pathname,
-          session_id: sessionId!,
-          meta: { 
-              scroll: window.scrollY,
-              duration: duration 
-          } as Record<string, unknown>,
-          duration: duration
-        });
-      }
-    };
-  }, [pathname, searchParams]);
+  }, [pathname, searchParams, supabase]);
 
   return null;
 }

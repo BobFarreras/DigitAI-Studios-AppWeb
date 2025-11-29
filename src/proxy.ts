@@ -1,19 +1,21 @@
+// =================== FILE: src/proxy.ts ===================
+
 import createMiddleware from 'next-intl/middleware';
-import { routing } from '@/routing'; // 👈 IMPORTEM CONFIG
+import { routing } from '@/routing';
 import { updateSession } from '@/lib/supabase/middleware';
 import { NextRequest } from 'next/server';
 
-const intlMiddleware = createMiddleware(routing); // 👈 LI PASSEM LA CONFIG
+const intlMiddleware = createMiddleware(routing);
 
 export async function proxy(request: NextRequest) {
-  // 1. Next-intl fa la feina de routing (idiomes)
   const response = intlMiddleware(request);
-
-  // 2. Supabase fa la feina de sessió
   return await updateSession(request, response);
 }
 
 export const config = {
   matcher: [
-    '/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|mp4|webm|xml|txt)$).*)',],
+    // 👇 HE AFEGIT 'webmanifest' i 'mp4' A L'EXCEPCIÓ DEL REGEX
+    // Això diu: "Executa el middleware a tot ARREU EXCEPTE api, next, imatges, manifest i videos"
+    '/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|webmanifest|mp4)$).*)',
+  ],
 };

@@ -168,7 +168,7 @@ export class SupabaseAnalyticsRepository implements IAnalyticsRepository {
     const topPages: PageStat[] = Array.from(pagesMap.entries())
       .map(([path, views]) => ({ path, views }))
       .sort((a, b) => b.views - a.views)
-      .slice(0, 5);
+      .slice(0, 15);
 
     const deviceColors = ['#8884d8', '#00C49F', '#FFBB28'];
     const devices: DeviceStat[] = Array.from(devicesMap.entries())

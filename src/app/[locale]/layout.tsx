@@ -5,7 +5,11 @@ import { routing, type Locale } from '@/routing';
 import { Inter } from 'next/font/google';
 import { ThemeProvider } from "@/components/theme-provider";
 import "@/app/globals.css"; 
-import type { Metadata, Viewport } from 'next'; // 👈 Importem tipus
+import type { Metadata, Viewport } from 'next';
+
+// 👇 1. IMPORTACIONS NOVES
+import { Suspense } from 'react'; 
+import { AnalyticsTracker } from '@/features/analytics/ui/AnalyticsTracker';
 
 const inter = Inter({ 
   subsets: ['latin'], 
@@ -13,18 +17,18 @@ const inter = Inter({
   display: 'swap',
 });
 
-// 1. CONFIGURACIÓ DEL VIEWPORT (Colors de la barra del navegador mòbil)
+// 1. CONFIGURACIÓ DEL VIEWPORT
 export const viewport: Viewport = {
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: 'white' },
-    { media: '(prefers-color-scheme: dark)', color: '#020817' }, // Color Midnight Indigo
+    { media: '(prefers-color-scheme: dark)', color: '#020817' },
   ],
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1, // Evita zoom accidental en inputs (opcional, millora sensació App)
+  maximumScale: 1,
 };
 
-// 2. METADADES GLOBALS (SEO + Icones)
+// 2. METADADES GLOBALS
 export const metadata: Metadata = {
   title: {
     default: 'DigitAI Studios | Desenvolupament Web & IA',
@@ -34,22 +38,16 @@ export const metadata: Metadata = {
   keywords: ['Desenvolupament Web', 'App', 'React Native', 'Next.js', 'IA', 'Automatització', 'Girona'],
   authors: [{ name: 'DigitAI Studios' }],
   creator: 'DigitAI Studios',
-  
-  // Enllaç al manifest que hem creat
   manifest: '/manifest.webmanifest',
-  
-  // Icones (Next.js les buscarà automàticament si estan a src/app, però així ho forcem)
   icons: {
-    icon: '/icons/icon-192.png', // O favicon.ico
+    icon: '/icons/icon-192.png',
     shortcut: '/icons/icon-192.png',
-    apple: '/icons/apple-icon.png', // Icona per a iPhone
+    apple: '/icons/apple-icon.png',
     other: {
       rel: 'apple-touch-icon-precomposed',
       url: '/icons/apple-icon.png',
     },
   },
-  
-  // OpenGraph (Per quan comparteixes l'enllaç a WhatsApp/Twitter)
   openGraph: {
     type: 'website',
     locale: 'ca_ES',
@@ -59,7 +57,7 @@ export const metadata: Metadata = {
     siteName: 'DigitAI Studios',
     images: [
       {
-        url: '@/assets/images/og-image.jpg', // 👈 Crea aquesta imatge (1200x630) a public/images
+        url: '/images/og-image.jpg', // Nota: Millor ruta pública directa que '@/assets'
         width: 1200,
         height: 630,
         alt: 'DigitAI Studios Cover',
@@ -93,6 +91,12 @@ export default async function LocaleLayout({
             enableSystem
             disableTransitionOnChange
           >
+            {/* 👇 2. AQUÍ ESTÀ LA MÀGIA: SUSPENSE + TRACKER */}
+            {/* Suspense evita que el layout es bloquegi esperant paràmetres de URL */}
+            <Suspense fallback={null}>
+              <AnalyticsTracker />
+            </Suspense>
+
             {children}
           </ThemeProvider>
         </NextIntlClientProvider>

@@ -1,36 +1,54 @@
 'use server';
 
-import { analyticsRepository } from '@/services/container';
-import { AnalyticsEventDTO } from '@/types/models';
-import { headers } from 'next/headers';
-// ✅ CORRECCIÓ: Afegim claus { } per importar la classe correctament
-import { UAParser } from 'ua-parser-js';
+import { createClient } from '@/lib/supabase/server';
 
-export async function trackEventAction(data: AnalyticsEventDTO) {
-  const headersList = await headers();
-  const userAgent = headersList.get('user-agent') || '';
-  
-  // Ara sí que funcionarà el 'new'
-  const parser = new UAParser(userAgent);
-  const deviceResult = parser.getResult();
+type AnalyticsPayload = {
+  event_name: string;
+  path: string;
+  session_id: string;
+  referrer?: string;
+  duration?: number;
+  meta?: Record<string, unknown>;
+};
 
-  // Detecció de Geolocalització (Vercel o Fallback)
-  const country = headersList.get('x-vercel-ip-country') || 'Unknown';
-  const city = headersList.get('x-vercel-ip-city') || 'Unknown';
+export async function trackEventAction(data: AnalyticsPayload) {
+  // LOG SERVER 1: Confirmem que la petició arriba al backend
+  console.log("SERVER ACTION: Rebuda petició per:", data.path);
 
-  // Preparem l'objecte complet
-  const enrichedData: AnalyticsEventDTO = {
-    ...data,
-    geo: {
-      country,
-      city
-    },
-    device: {
-      type: deviceResult.device.type || 'desktop',
-      browser: deviceResult.browser.name || 'Unknown',
-      os: deviceResult.os.name || 'Unknown'
+  try {
+    const supabase = await createClient();
+
+    // Comprovem si tenim usuari (opcional, només per info)
+    const { data: { user } } = await supabase.auth.getUser();
+
+    // LOG SERVER 2: Intentant inserir
+    console.log("SERVER ACTION: Intentant inserir a Supabase...");
+
+    const { error, data: insertedData } = await supabase.from('analytics_events').insert({
+      event_name: data.event_name,
+      path: data.path,
+      session_id: data.session_id,
+      user_id: user?.id || null,
+      meta: {
+        ...data.meta,
+        referrer: data.referrer,
+        duration: data.duration
+      }
+    })
+    .select(); // Afegim select per veure si retorna alguna cosa
+
+    // LOG SERVER 3: Resultat
+    if (error) {
+      console.error("❌❌ SUPABASE ERROR (CRÍTIC):", error);
+      console.error("Detalls:", error.message, error.details, error.hint);
+      return { success: false, error: error.message };
     }
-  };
 
-  await analyticsRepository.trackEvent(enrichedData);
+    console.log("✅✅ SUPABASE ÈXIT. ID inserit:", insertedData?.[0]?.id || 'Desconegut');
+    return { success: true };
+
+  } catch (err) {
+    console.error("💥💥 ERROR INTERN NO CONTROLAT:", err);
+    return { success: false, error: 'Internal Server Error' };
+  }
 }
