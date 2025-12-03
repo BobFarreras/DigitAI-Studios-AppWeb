@@ -25,43 +25,47 @@ export class AuditService {
 
     let newAudit;
     if (user.userId) {
-       newAudit = await this.auditRepo.createAuditForUser(url, user.userId, user.email);
+      newAudit = await this.auditRepo.createAuditForUser(url, user.userId, user.email);
     } else {
-       newAudit = await this.auditRepo.createPublicAudit(url, user.email);
+      newAudit = await this.auditRepo.createPublicAudit(url, user.email);
     }
 
     try {
       const scanResult = await this.scanner.scanUrl(url);
-      
+
       await this.auditRepo.updateStatus(newAudit.id, 'completed', {
         seoScore: scanResult.seoScore,
         performanceScore: scanResult.performanceScore,
         reportData: {
-            screenshot: scanResult.screenshot,
-            issues: scanResult.issues,
-            metrics: scanResult.metrics,
-            raw: scanResult.reportData
+          screenshot: scanResult.screenshot,
+          issues: scanResult.issues,
+          metrics: scanResult.metrics,
+          raw: scanResult.reportData
         }
       });
 
       // ENVIAR EMAIL AMB LOCALE
       try {
-          await this.emailService.sendAuditResult(user.email, {
-            url: url,
-            seo: scanResult.seoScore,
-            perf: scanResult.performanceScore,
-            id: newAudit.id
-          }, locale); // 👈 Passem l'idioma aquí
+        await this.emailService.sendAuditResult(user.email, {
+          url: url,
+          seo: scanResult.seoScore,
+          perf: scanResult.performanceScore,
+          id: newAudit.id
+        }, locale); // 👈 Passem l'idioma aquí
       } catch (emailErr) {
-          console.error("Error enviant email:", emailErr);
+        console.error("Error enviant email:", emailErr);
       }
 
       return newAudit.id;
 
     } catch (error) {
-      console.error("Error audit service:", error);
+      console.error("Error audit service (LOG PRIVAT):", error);
+
       await this.auditRepo.updateStatus(newAudit.id, 'failed');
-      throw error;
+
+      // ⚠️ MAI re-llencis l'error original al client si no estàs segur de què conté.
+      // Llança un error genèric.
+      throw new Error("No s'ha pogut completar l'auditoria. Verifica la URL o prova més tard.");
     }
   }
 }

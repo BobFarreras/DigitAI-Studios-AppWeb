@@ -16,6 +16,39 @@
   "Dashboard": {
     "welcome": "Benvingut, {name}",
     "my_audits": "Les meves Auditories"
+  },
+  "AuditIssues": {
+    "is-on-https": {
+      "title": "El lloc web no utilitza HTTPS segur",
+      "description": "La teva web no és segura. Això espanta els clients i Google et penalitza greument."
+    },
+    "meta-description": {
+      "title": "Manca la Meta Descripció",
+      "description": "Google no sap de què tracta la teva web. Necessites un resum atractiu per aparèixer als resultats."
+    },
+    "document-title": {
+      "title": "La pàgina no té títol",
+      "description": "El títol és l'element més important per al SEO. Sense ell, ets invisible."
+    },
+    "server-response-time": {
+      "title": "El servidor és massa lent",
+      "description": "El temps de resposta inicial és alt. Considera canviar de hosting o optimitzar el backend."
+    },
+    "render-blocking-resources": {
+      "title": "Recursos que bloquegen la visualització",
+      "description": "Hi ha CSS o JS que impedeixen que la web es mostri ràpidament."
+    },
+    "uses-optimized-images": {
+      "title": "Imatges no optimitzades",
+      "description": "Les imatges pesen massa. Usa formats moderns com WebP."
+    },
+    "largest-contentful-paint": {
+      "title": "Càrrega lenta (LCP)",
+      "description": "L'element més gran triga massa a aparèixer. Això frustra els usuaris."
+    },
+    "cumulative-layout-shift": {
+      "title": "Moviments inesperats (CLS)",
+      "description": "La web es 'mou' mentre carrega, causant clics erronis."
+    }
   }
-  
 }

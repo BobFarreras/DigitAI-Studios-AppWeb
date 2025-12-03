@@ -13,6 +13,7 @@ export interface Project {
   color: string;
   image: StaticImageData | null;
   link: string;
+  imageAlt: string; // 👈 NOU CAMP AFEGIT
 }
 
 export const PROJECTS: Project[] = [
@@ -20,22 +21,26 @@ export const PROJECTS: Project[] = [
     id: 'ribotflow',
     title: 'RibotFlow',
     tagline: 'El Sistema Operatiu Integral',
-    description: 'Plataforma de gestió "Tot en Un" que unifica CRM, facturació i xarxes socials. Elimina el caos de tenir la informació dispersa i utilitza IA per redactar correus i gestionar oportunitats.',
+    description: '...',
     stats: ['CRM + Facturació', 'Automatització IA', 'Control Financer'],
     tags: ['ERP', 'Business', 'IA', 'Supabase'],
     color: 'from-purple-500 to-pink-500',
-    image: ribotFlowImg, 
+    image: ribotFlowImg,
+    // 👇 DESCRIU LA IMATGE REALMENT
+    imageAlt: "Panell de control fosc de RibotFlow mostrant gràfiques de rendiment i llistat de clients", 
     link: 'https://ribotflow.com'
   },
   {
     id: 'salutflow',
     title: 'SalutFlow',
     tagline: 'El teu Centre Esportiu, Digitalitzat',
-    description: 'Crea la teva pròpia App Web (PWA) en minuts sense programar. Gestiona reserves, pagaments recurrents (Stripe) i aforaments automàticament. Ideal per gimnasos i estudis.',
+    description: '...',
     stats: ['App PWA', 'Pagaments Stripe', 'Llistes d\'Espera'],
     tags: ['SaaS', 'Sport', 'PWA', 'Stripe'],
     color: 'from-cyan-400 to-blue-600',
     image: salutFlowImg,
+    // 👇 DESCRIU LA IMATGE REALMENT
+    imageAlt: "Captura de l'aplicació mòbil SalutFlow amb el calendari de reserves de classes",
     link: 'https://getsalutflow.com'
   }
 ];

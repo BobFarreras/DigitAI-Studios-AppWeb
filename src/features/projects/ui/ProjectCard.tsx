@@ -44,7 +44,7 @@ export function ProjectCard({ project, index }: Props) {
                         {project.image ? (
                             <Image
                                 src={project.image}
-                                alt={project.title}
+                                alt={project.imageAlt}
                                 fill
                                 // Canviem a 'object-top' per defecte (per webs), però si són apps, potser millor 'object-center'
                                 className="object-cover object-top transition-transform duration-700 group-hover:scale-105"

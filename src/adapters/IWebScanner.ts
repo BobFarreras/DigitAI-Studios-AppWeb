@@ -1,13 +1,12 @@
 import { AuditMetric } from '@/features/audit/ui/components/CoreVitalsGrid';
 
 export type AuditIssue = {
-  title: string;       // ✅ ABANS NO HI ERA O ES DEIA 'text' AL MAPATGE
+  id: string;          // 👈 AFEGIT: Necessari per traduir a la UI
+  title: string;
   description: string;
   score: number;       
   displayValue?: string;
-  
-  // ✨ AFEGIM AQUESTS CAMPS PER A LA UI
-  impact?: string;     // Ex: "Crític", "Millorable"
+  impact?: string;     
   type?: 'error' | 'warning' | 'success';
 };
 

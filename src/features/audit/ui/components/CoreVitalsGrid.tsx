@@ -1,20 +1,18 @@
 import { Zap, LayoutTemplate, MoveHorizontal, Clock, Gauge } from 'lucide-react';
 
-// 1. Definició local del tipus de Google (Relaxada)
-type LighthouseAudit = {
-  id: string;
-  title: string;
-  description: string;
-  score?: number | null; // 👈 AFEGIT EL '?' (Ara accepta undefined)
-  displayValue?: string;
-  numericValue?: number;
-};
-
-// 2. Tipus unificat exportat
+// Tipus locals per la UI (no cal importar el Zod schema aquí, per mantenir desacoblament)
 export type AuditMetric = {
-  score?: number | null; // 👈 També aquí
+  score?: number | null;
   value?: string;
   description?: string;
+};
+
+type LighthouseAuditUI = {
+  id: string;
+  title?: string;
+  description?: string;
+  score?: number | null;
+  displayValue?: string;
 };
 
 type CoreVitalsGridProps = {
@@ -25,19 +23,18 @@ type CoreVitalsGridProps = {
     tbt?: AuditMetric;
     si?: AuditMetric;
   };
-  // Ara accepta el tipus relaxat
-  googleAudits?: Record<string, LighthouseAudit>;
+  googleAudits?: Record<string, LighthouseAuditUI>;
 };
 
 export function CoreVitalsGrid({ metrics, googleAudits }: CoreVitalsGridProps) {
   
   const getMetric = (key: string, googleKey: string): AuditMetric => {
-    // 1. Prioritat: Dades normalitzades
+    // 1. Prioritat: Dades netes processades
     if (metrics && metrics[key as keyof typeof metrics]) {
       return metrics[key as keyof typeof metrics]!;
     }
     
-    // 2. Fallback: Dades crues de Google
+    // 2. Fallback: Dades crues
     if (googleAudits && googleAudits[googleKey]) {
       const audit = googleAudits[googleKey];
       return {
@@ -56,6 +53,7 @@ export function CoreVitalsGrid({ metrics, googleAudits }: CoreVitalsGridProps) {
   const tbt = getMetric('tbt', 'total-blocking-time');
   const si = getMetric('si', 'speed-index');
 
+  // Si no hi ha dades, no pintem res
   if (fcp.value === 'N/A' && lcp.value === 'N/A') return null;
 
   return (
@@ -76,6 +74,7 @@ export function CoreVitalsGrid({ metrics, googleAudits }: CoreVitalsGridProps) {
   );
 }
 
+// ... (El component MetricCard es queda igual que al teu codi original)
 type MetricCardProps = {
     title: string;
     subtitle: string;
@@ -90,7 +89,6 @@ function MetricCard({ title, subtitle, value, score, icon: Icon, tooltip }: Metr
     let bgClass = 'bg-slate-100 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700';
     let iconColor = 'text-slate-400';
 
-    // Comprovem que score sigui un número vàlid abans de comparar
     if (typeof score === 'number') {
         if (score >= 0.9) {
             colorClass = 'text-green-600 dark:text-green-400';

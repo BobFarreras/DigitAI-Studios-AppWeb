@@ -1,17 +1,7 @@
 import { IWebScanner, ScanResult, AuditIssue } from './IWebScanner';
 import { translateIssue } from '@/lib/audit-dictionary';
-
-// 1. Definim el tipus per a l'audit "cru" que ve de l'API de Google
-// Això evita els errors de "Unexpected any"
-type LighthouseAuditRaw = {
-  id: string;
-  title: string;
-  description: string;
-  score: number | null;
-  displayValue?: string;
-  numericValue?: number;
-  details?: unknown;
-};
+// Assegura't que la ruta d'importació és correcta
+import { PageSpeedResponseSchema } from './google/schemas';
 
 export class GooglePageSpeedAdapter implements IWebScanner {
     private apiKey?: string;
@@ -22,124 +12,119 @@ export class GooglePageSpeedAdapter implements IWebScanner {
     }
 
     async scanUrl(url: string): Promise<ScanResult> {
-        // 1. PRE-CHECK: Validem que la web existeix (evita 100% score en webs 404)
+        // 1. PRE-CHECK
         try {
             const check = await fetch(url, { method: 'HEAD' });
             if (check.status >= 400) {
-                throw new Error(`La web retorna un error ${check.status}. Verifica que sigui pública.`);
+                throw new Error(`La web retorna un error ${check.status}.`);
             }
         } catch (e) {
             console.error("Error connectant amb la web:", e);
             throw new Error(`No s'ha pogut accedir a la web: ${url}`);
         }
 
-        // 2. PREPARAR URL API
-        // Construïm la query string manualment per assegurar que els arrays (category) es passen bé
+        // 2. PREPARAR URL
         const params = new URLSearchParams({
             url: url,
-            strategy: 'mobile', // Mobile first, com Google vol
-            locale: 'ca',       // Demanem els textos en català
+            strategy: 'mobile',
+            locale: 'ca',
         });
-
-        let queryString = params.toString();
-        
-        // Afegim totes les categories d'anàlisi
-        const categories = ['PERFORMANCE', 'SEO', 'ACCESSIBILITY', 'BEST_PRACTICES'];
-        categories.forEach(cat => {
-             queryString += `&category=${cat}`;
+        ['PERFORMANCE', 'SEO', 'ACCESSIBILITY', 'BEST_PRACTICES'].forEach(cat => {
+            params.append('category', cat);
         });
-
         if (this.apiKey) {
-            queryString += `&key=${this.apiKey}`;
+            params.append('key', this.apiKey);
         }
 
         // 3. CRIDA A GOOGLE
-        const response = await fetch(`${this.apiUrl}?${queryString}`);
+        const response = await fetch(`${this.apiUrl}?${params.toString()}`);
 
         if (!response.ok) {
             const errText = await response.text();
-            // Gestionem errors comuns de l'API
-            if (response.status === 400) throw new Error("URL invàlida o no analitzable.");
-            if (response.status === 500) throw new Error("Error intern de Google PageSpeed. Prova més tard.");
             throw new Error(`Google API Error (${response.status}): ${errText}`);
         }
 
-        const data = await response.json();
-        
-        // Verificació de seguretat per si l'API canvia l'estructura
-        if (!data.lighthouseResult || !data.lighthouseResult.audits) {
-             throw new Error("Format de resposta de Google inesperat.");
+        const rawJson = await response.json();
+
+        // 🛡️ VALIDACIÓ ZOD
+        const validation = PageSpeedResponseSchema.safeParse(rawJson);
+
+        if (!validation.success) {
+            console.error("❌ Dades invàlides de Google API:", validation.error);
+            throw new Error("Error processant l'auditoria: L'estructura de dades de Google no és correcta.");
         }
 
+        // Ara TypeScript sap perfectament què és 'data'
+        const data = validation.data;
         const lh = data.lighthouseResult;
 
-        // 4. EXTRACCIÓ DE PUNTUACIONS (0-100)
+        // 4. EXTRACCIÓ DE PUNTUACIONS
         const scores = {
             performance: Math.round((lh.categories.performance?.score || 0) * 100),
             seo: Math.round((lh.categories.seo?.score || 0) * 100),
-            accessibility: Math.round((lh.categories.accessibility?.score || 0) * 100),
-            best_practices: Math.round((lh.categories['best-practices']?.score || 0) * 100),
         };
 
-        // Fem un cast segur a un diccionari tipat
-        const audits = lh.audits as Record<string, LighthouseAuditRaw>;
+        const audits = lh.audits;
 
-        // 5. EXTRACCIÓ DE CORE WEB VITALS (Per al Dashboard)
-        // Això és el que faltava al codi antic i és vital per a la UI nova
+        // 5. EXTRACCIÓ DE CORE WEB VITALS
+        const getMetric = (key: string, desc: string) => {
+            const audit = audits[key];
+            return {
+                value: audit?.displayValue,
+                score: audit?.score ?? 0,
+                description: desc
+            };
+        };
+
         const metrics = {
-            fcp: {
-                value: audits['first-contentful-paint']?.displayValue,
-                score: audits['first-contentful-paint']?.score,
-                description: "Temps fins al primer contingut visible."
-            },
-            lcp: {
-                value: audits['largest-contentful-paint']?.displayValue,
-                score: audits['largest-contentful-paint']?.score,
-                description: "Temps de càrrega de l'element més gran."
-            },
-            cls: {
-                value: audits['cumulative-layout-shift']?.displayValue,
-                score: audits['cumulative-layout-shift']?.score,
-                description: "Estabilitat visual."
-            },
-            tbt: {
-                value: audits['total-blocking-time']?.displayValue,
-                score: audits['total-blocking-time']?.score,
-                description: "Temps de bloqueig del navegador."
-            },
-            si: {
-                value: audits['speed-index']?.displayValue,
-                score: audits['speed-index']?.score,
-                description: "Índex de velocitat visual."
-            }
+            fcp: getMetric('first-contentful-paint', "Temps fins al primer contingut visible."),
+            lcp: getMetric('largest-contentful-paint', "Temps de càrrega de l'element més gran."),
+            cls: getMetric('cumulative-layout-shift', "Estabilitat visual."),
+            tbt: getMetric('total-blocking-time', "Temps de bloqueig del navegador."),
+            si: getMetric('speed-index', "Índex de velocitat visual.")
         };
 
         // 6. PROCESSAMENT D'ERRORS (ISSUES)
-        // Filtrem qualsevol auditoria amb puntuació baixa (< 0.9)
         const issues: AuditIssue[] = Object.values(audits)
-            .filter((a) => a.score !== null && a.score < 0.9 && a.details) 
+            .filter((a) => {
+                return typeof a.score === 'number' && a.score < 0.9;
+            })
             .map((a) => {
-                // Traduïm el títol usant el nostre diccionari 'audit-dictionary.ts'
-                const translated = translateIssue(a.id, a.title, a.description);
+                // JA NO TRADUÏM AQUÍ. Passem l'ID i el text original.
+                // Netejem una mica la descripció original (treure enllaços [Learn more])
+                const cleanDescription = a.description ? a.description.split('[')[0].replace(/\.$/, '') : '';
+
                 return {
-                    title: translated.title,
-                    description: translated.description,
+                    id: a.id, // 👈 Passem l'ID
+                    title: a.title || 'Unknown Issue',
+                    description: cleanDescription,
                     score: a.score || 0,
                     displayValue: a.displayValue
                 };
             })
-            // Ordenem per gravetat (score 0 primer)
             .sort((a, b) => a.score - b.score)
-            .slice(0, 8); // Agafem els 8 pitjors
+            .slice(0, 8);
 
-        // 7. RETORNAR RESULTAT FINAL
+        // 7. EXTRACCIÓ DE CAPTURA (Amb Type Guard)
+        const screenshotAudit = audits['final-screenshot'];
+        let screenshotData: string | undefined;
+
+        // Verifiquem que 'details' existeixi i tingui la propietat 'data'
+        if (screenshotAudit?.details && typeof screenshotAudit.details === 'object') {
+            // Fem un cast segur perquè sabem que Google torna { type: 'screenshot', data: 'base64...' }
+            const details = screenshotAudit.details as { data?: string };
+            if (details.data) {
+                screenshotData = details.data;
+            }
+        }
+
         return {
             seoScore: scores.seo,
             performanceScore: scores.performance,
-            screenshot: lh.audits['final-screenshot']?.details?.data, // Base64
+            screenshot: screenshotData,
             issues: issues,
             metrics: metrics,
-            reportData: data // Guardem el JSON original per si de cas
+            reportData: data
         };
     }
 }
