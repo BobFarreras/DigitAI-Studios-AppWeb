@@ -17,6 +17,7 @@ interface SidebarProps {
 }
 
 export function Sidebar({ userRole }: SidebarProps) {
+  console.log("🔍 [CLIENT SIDEBAR] Prop rebuda userRole:", userRole);
   const t = useTranslations('Sidebar');
   const pathname = usePathname();
   const router = useRouter();
@@ -56,47 +57,48 @@ export function Sidebar({ userRole }: SidebarProps) {
 
   return (
     <aside className="w-64 h-screen bg-card border-r border-border flex flex-col sticky top-0 transition-colors duration-300">
-      
+
       {/* LOGO AREA */}
       <div className="p-6 border-b border-border">
         <Link href="/" className="flex items-center gap-2 text-xl font-bold text-foreground">
-           DigitAI <span className="text-primary">Hub</span>
+          DigitAI <span className="text-primary">Hub</span>
         </Link>
       </div>
 
       {/* NAVIGATION */}
       <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
         <div className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-4 px-2">
-           {t('platform')}
+          {t('platform')}
         </div>
-        
+
         {MENU_ITEMS.map((item) => {
           let isActive = false;
           // Lògica per marcar actiu /admin i subrutes
           if (!item.href.startsWith('#')) {
-             if (item.href === '/dashboard') {
-                 isActive = cleanPath === '/dashboard';
-             } else {
-                isActive = cleanPath.startsWith(item.href);
-             }
+            if (item.href === '/dashboard') {
+              isActive = cleanPath === '/dashboard';
+            } else {
+              isActive = cleanPath.startsWith(item.href);
+            }
           }
-          
+          // Detectem si és el botó d'admin per donar-li estil especial encara que no estigui actiu
+          const isAdminItem = item.href === '/admin';
           return (
-            <Link 
-              key={item.label} 
+            <Link
+              key={item.label}
               href={item.href}
-              // Afegim onClick només si és un link '#'
               onClick={(e) => item.href.startsWith('#') && handleClick(e, item.href, item.label)}
               className={cn(
                 "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200",
-                isActive 
-                  ? "bg-primary/10 text-primary border border-primary/20 shadow-sm" 
+                isActive
+                  ? "bg-primary/10 text-primary border border-primary/20 shadow-sm"
                   : "text-muted-foreground hover:text-foreground hover:bg-muted",
-                // Estil especial per a l'ítem d'Admin
-                item.href === '/admin' && !isActive && "text-purple-500 hover:text-purple-600 hover:bg-purple-500/10"
+                // Estil específic per l'ítem Admin quan NO està actiu (perquè destaqui una mica)
+                (isAdminItem && !isActive) && "text-red-500 hover:text-red-600 hover:bg-red-500/10"
               )}
             >
-              <item.icon className={cn("w-5 h-5", isActive ? "text-primary" : "text-currentColor")} />
+              {/* 👇 Corregit "text-currentColor" a "text-current" o simplement hereta del pare */}
+              <item.icon className={cn("w-5 h-5", isActive ? "text-primary" : "text-current")} />
               {item.label}
             </Link>
           );
@@ -104,23 +106,23 @@ export function Sidebar({ userRole }: SidebarProps) {
 
         {/* CAIXA PROMO (Només visible per a no-admins, opcional) */}
         {userRole !== 'admin' && (
-            <div className="mt-8 p-4 rounded-xl bg-linear-to-br from-primary/10 to-blue-500/10 border border-primary/20 relative overflow-hidden">
+          <div className="mt-8 p-4 rounded-xl bg-linear-to-br from-primary/10 to-blue-500/10 border border-primary/20 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-20 h-20 bg-primary/20 blur-2xl rounded-full pointer-events-none"></div>
             <div className="flex items-center gap-2 text-foreground font-bold text-sm mb-2">
-                <Sparkles className="w-4 h-4 text-primary" />
-                {t('pro_badge')}
+              <Sparkles className="w-4 h-4 text-primary" />
+              {t('pro_badge')}
             </div>
             <p className="text-xs text-muted-foreground mb-3">{t('pro_text')}</p>
             <button className="w-full py-1.5 text-xs font-bold bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity">
-                {t('pro_button')}
+              {t('pro_button')}
             </button>
-            </div>
+          </div>
         )}
       </nav>
 
       {/* FOOTER / LOGOUT */}
       <div className="p-4 border-t border-border">
-        <button 
+        <button
           onClick={handleSignOut}
           className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-red-500 hover:bg-red-500/10 transition-colors"
         >

@@ -1,5 +1,3 @@
-// FITXER: src/app/[locale]/dashboard/layout.tsx
-
 import { Sidebar } from '@/components/dashboard/Sidebar';
 import { MobileBottomBar } from './MobilBottomBar';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
@@ -20,21 +18,26 @@ export default async function DashboardLayout({ children, params }: Props) {
     redirect({ href: '/auth/login', locale });
   }
 
-  // 👇 1. OBTENIM EL ROL DE L'USUARI (Consulta extra ràpida)
-  const { data: profile } = await supabase
+  // 👇 CORRECCIÓ: NO usem .single() perquè pot tenir múltiples perfils
+  const { data: profiles } = await supabase
     .from('profiles')
     .select('role')
-    .eq('id', user!.id)
-    .single();
+    .eq('id', user!.id);
 
-  const userRole = profile?.role || 'lead'; // Fallback segur
+  // Busquem si en ALGUN dels seus perfils és admin
+  // També pots afegir el "Super Admin Override" per email per seguretat extra
+  const isAdmin = profiles?.some(p => p.role === 'admin') || user!.email === process.env.ADMIN_EMAIL;
+  
+  const userRole = isAdmin ? 'admin' : 'client';
+
+  // (Opcional) Deixem un log net per confirmar que ara funciona
+  console.log(`✅ Rol calculat per ${user!.email}: ${userRole} (Perfils trobats: ${profiles?.length})`);
 
   return (
     <div className="min-h-screen bg-muted/10 flex font-sans text-foreground">
       
       {/* SIDEBAR */}
       <div className="hidden md:block w-64 shrink-0 z-40">
-         {/* 👇 2. PASSEM EL ROL A LA SIDEBAR */}
          <Sidebar userRole={userRole} />
       </div>
 
@@ -49,7 +52,7 @@ export default async function DashboardLayout({ children, params }: Props) {
          </main>
 
          <div className="md:hidden">
-            <MobileBottomBar />
+            <MobileBottomBar userRole={userRole} />
          </div>
       </div>
     </div>

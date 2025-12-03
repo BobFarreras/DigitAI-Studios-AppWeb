@@ -11,14 +11,15 @@ import {
   Zap,
   FolderGit2,
   BookOpen,
-  User
+  User,
+  ShieldAlert
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import type { User as SupabaseUser } from '@supabase/supabase-js';
-import { LanguageSwitcher } from './LanguageSwitcher'; 
+import { LanguageSwitcher } from './LanguageSwitcher';
 import { useTranslations } from 'next-intl';
 
 type Props = {
@@ -50,7 +51,9 @@ export function Navbar({ user }: Props) {
     { name: t('projects'), href: '/projectes', icon: FolderGit2 },
     { name: t('blog'), href: '/blog', icon: BookOpen },
   ];
-
+  // 2. DEFINIM SI ÉS ADMIN (Pots usar una variable d'entorn pública o hardcodejar el teu email aquí per UI)
+  // Nota: La seguretat real està a /admin/layout.tsx, això és només visual.
+  const isAdmin = user?.email === 'digitaistudios.developer@gmail.com';
   return (
     <>
       {/* 1. TOP NAVBAR */}
@@ -90,7 +93,19 @@ export function Navbar({ user }: Props) {
             <div className="h-6 w-px bg-border mx-2"></div>
             <ThemeToggle />
             <LanguageSwitcher />
-            
+            {/* 3. BOTÓ ADMIN (EXCLUSIU PER A TU) */}
+            {isAdmin && (
+              <Link
+                href="/admin"
+                className={cn(
+                  "flex flex-col items-center justify-center w-full h-full gap-1 active:scale-95 transition-transform",
+                  pathname.startsWith('/admin') ? "text-red-500" : "text-muted-foreground hover:text-red-500"
+                )}
+              >
+                <ShieldAlert className="w-6 h-6" strokeWidth={2} />
+                <span className="text-[10px] font-bold">Admin</span>
+              </Link>
+            )}
             {/* AUTH BUTTONS */}
             {user ? (
               <div className="flex items-center gap-4">
