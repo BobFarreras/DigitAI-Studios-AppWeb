@@ -1,18 +1,22 @@
 import LegalLayout from '@/components/layout/LegalLayout';
 import { Cookie, Settings, BarChart3, XCircle } from 'lucide-react';
+import { getTranslations } from 'next-intl/server';
+import { Link } from '@/routing'; // Necessari per Link
 
 export const metadata = {
   title: 'Política de Cookies | DigitAI Studios',
   description: 'Informació sobre l\'ús de cookies a DigitAI Studios.',
 };
 
-export default function CookiesPage() {
+export default async function CookiesPage() {
+  const t = await getTranslations('Legal.cookies');
+
   return (
     <LegalLayout>
       <div className="border-b border-border pb-8 mb-8">
-        <h1 className="text-3xl md:text-4xl font-extrabold mb-4">Política de Cookies</h1>
+        <h1 className="text-3xl md:text-4xl font-extrabold mb-4">{t('title')}</h1>
         <p className="text-xl text-muted-foreground leading-relaxed">
-          Utilitzem galetes (cookies) per assegurar que la web funcioni correctament i per entendre com podem millorar-la. Aquí tens tots els detalls.
+          {t('subtitle')}
         </p>
       </div>
 
@@ -21,19 +25,19 @@ export default function CookiesPage() {
         {/* BLOC 1: DEFINICIÓ */}
         <section>
           <h2 className="text-2xl font-bold flex items-center gap-2 mb-4">
-            <Cookie className="text-orange-500" /> 1. Què són les Cookies?
+            <Cookie className="text-orange-500" /> {t('section1_title')}
           </h2>
           <div className="bg-muted/30 p-6 rounded-xl border border-border">
             <p className="m-0">
-              Una cookie és un petit fitxer de text que s'emmagatzema al teu navegador quan visites gairebé qualsevol pàgina web. La seva utilitat és que la web sigui capaç de recordar la teva visita quan tornis a navegar per aquesta pàgina, o mantenir la teva sessió oberta.
+              {t('section1_quote')}
             </p>
           </div>
         </section>
 
         {/* BLOC 2: TIPUS DE COOKIES (GRID) */}
         <section>
-          <h2>2. Quines cookies utilitzem?</h2>
-          <p>Aquesta web utilitza els següents tipus de cookies:</p>
+          <h2>{t('section2_title')}</h2>
+          <p>{t('section2_p1')}</p>
           
           <div className="grid md:grid-cols-2 gap-6 not-prose my-6">
              {/* Cookies Tècniques */}
@@ -42,19 +46,19 @@ export default function CookiesPage() {
                    <div className="p-2 bg-primary/10 rounded-lg text-primary">
                       <Settings className="w-5 h-5" />
                    </div>
-                   <h4 className="font-bold text-lg">Necessàries (Tècniques)</h4>
+                   <h4 className="font-bold text-lg">{t('tech_title')}</h4>
                 </div>
                 <p className="text-sm text-muted-foreground mb-4">
-                   Són imprescindibles per al funcionament de la web. Sense elles, no podries iniciar sessió ni navegar correctament.
+                   {t('tech_desc')}
                 </p>
                 <ul className="space-y-2 text-sm">
                    <li className="flex items-center gap-2">
                       <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>
-                      <strong>Supabase Auth:</strong> Gestiona la sessió segura.
+                      <strong>{t.rich('tech_1', { strong: (chunks) => <strong>{chunks}</strong> })}</strong>
                    </li>
                    <li className="flex items-center gap-2">
                       <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>
-                      <strong>Next-Intl:</strong> Recorda l'idioma preferit.
+                      <strong>{t.rich('tech_2', { strong: (chunks) => <strong>{chunks}</strong> })}</strong>
                    </li>
                 </ul>
              </div>
@@ -65,15 +69,15 @@ export default function CookiesPage() {
                    <div className="p-2 bg-blue-500/10 rounded-lg text-blue-500">
                       <BarChart3 className="w-5 h-5" />
                    </div>
-                   <h4 className="font-bold text-lg">Analítiques</h4>
+                   <h4 className="font-bold text-lg">{t('analytics_title')}</h4>
                 </div>
                 <p className="text-sm text-muted-foreground mb-4">
-                   Ens permeten quantificar el nombre d'usuaris i analitzar la utilització que fan del servei per millorar-lo.
+                   {t('analytics_desc')}
                 </p>
                 <ul className="space-y-2 text-sm">
                    <li className="flex items-center gap-2">
                       <span className="w-1.5 h-1.5 bg-blue-500 rounded-full"></span>
-                      <strong>Analytics Propi:</strong> Estadístiques anònimes respectuoses amb la privacitat (sense rastreig invasiu de Google).
+                      <strong>{t.rich('analytics_1', { strong: (chunks) => <strong>{chunks}</strong> })}</strong>
                    </li>
                 </ul>
              </div>
@@ -83,10 +87,10 @@ export default function CookiesPage() {
         {/* BLOC 3: DESACTIVACIÓ */}
         <section>
            <h2 className="flex items-center gap-2">
-              <XCircle className="text-red-500" /> 3. Com desactivar-les?
+              <XCircle className="text-red-500" /> {t('section3_title')}
            </h2>
            <p>
-             Pots permetre, bloquejar o eliminar les cookies instal·lades al teu equip mitjançant la configuració de les opcions del navegador:
+             {t('section3_p1')}
            </p>
            
            <div className="flex flex-wrap gap-4 not-prose mt-4">

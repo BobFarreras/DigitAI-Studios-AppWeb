@@ -3,6 +3,30 @@ import { translateIssue } from '@/lib/audit-dictionary';
 // Assegura't que la ruta d'importació és correcta
 import { PageSpeedResponseSchema } from './google/schemas';
 
+export const AUDIT_TRANSLATIONS: Record<
+    string, // id de l'auditoria
+    Record<
+        string, // locale, p.ex. 'ca', 'es', 'en'
+        { title: string; description: string }
+    >
+> = {
+    'is-on-https': {
+        ca: {
+            title: 'El lloc web no utilitza HTTPS segur',
+            description: 'La teva web no és segura. Això espanta els clients i Google et penalitza greument.'
+        },
+        es: {
+            title: 'El sitio web no usa HTTPS seguro',
+            description: 'Tu web no es segura. Esto asusta a los clientes y Google te penaliza.'
+        },
+        en: {
+            title: 'Website is not using secure HTTPS',
+            description: 'Your website is not secure. This scares users and Google may penalize you.'
+        }
+    },
+    // ... altres auditories
+};
+
 export class GooglePageSpeedAdapter implements IWebScanner {
     private apiKey?: string;
     private apiUrl = 'https://www.googleapis.com/pagespeedonline/v5/runPagespeed';
@@ -11,8 +35,12 @@ export class GooglePageSpeedAdapter implements IWebScanner {
         this.apiKey = apiKey;
     }
 
-    async scanUrl(url: string): Promise<ScanResult> {
-        // 1. PRE-CHECK
+    async scanUrl(url: string, locale: string = 'ca'): Promise<ScanResult> {
+        const params = new URLSearchParams({
+            url,
+            strategy: 'mobile',
+            locale, // ara ve de fora
+        });
         try {
             const check = await fetch(url, { method: 'HEAD' });
             if (check.status >= 400) {
@@ -23,12 +51,8 @@ export class GooglePageSpeedAdapter implements IWebScanner {
             throw new Error(`No s'ha pogut accedir a la web: ${url}`);
         }
 
-        // 2. PREPARAR URL
-        const params = new URLSearchParams({
-            url: url,
-            strategy: 'mobile',
-            locale: 'ca',
-        });
+
+
         ['PERFORMANCE', 'SEO', 'ACCESSIBILITY', 'BEST_PRACTICES'].forEach(cat => {
             params.append('category', cat);
         });
@@ -86,18 +110,18 @@ export class GooglePageSpeedAdapter implements IWebScanner {
 
         // 6. PROCESSAMENT D'ERRORS (ISSUES)
         const issues: AuditIssue[] = Object.values(audits)
-            .filter((a) => {
-                return typeof a.score === 'number' && a.score < 0.9;
-            })
-            .map((a) => {
-                // JA NO TRADUÏM AQUÍ. Passem l'ID i el text original.
-                // Netejem una mica la descripció original (treure enllaços [Learn more])
-                const cleanDescription = a.description ? a.description.split('[')[0].replace(/\.$/, '') : '';
-
-                return {
-                    id: a.id, // 👈 Passem l'ID
-                    title: a.title || 'Unknown Issue',
-                    description: cleanDescription,
+            .filter(a => typeof a.score === 'number' && a.score < 0.9)
+            .map(a => {
+                const cleanDescription = a.description?.split('[')[0].replace(/\.$/, '') || '';
+                const translated = translateIssue(
+                    a.id,
+                    a.title || 'Unknown Issue',
+                    a.description || '',
+                    locale
+                ); return {
+                    id: a.id,
+                    title: translated.title || a.title || 'Unknown Issue',
+                    description: translated.description || cleanDescription,
                     score: a.score || 0,
                     displayValue: a.displayValue
                 };

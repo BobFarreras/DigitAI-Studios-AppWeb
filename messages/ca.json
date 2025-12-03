@@ -46,13 +46,22 @@
     "form_title": "Analitza la teva web en segons"
   },
   "Auth": {
+    "login_title": "Benvingut de nou",
+    "login_subtitle": "Entra al teu panell de control digital.",
+    "social_github": "Continuar amb GitHub",
+    "or_email": "O amb email",
+    "label_email": "Email",
+    "label_password": "Contrasenya",
+    "forgot_password": "Has oblidat la contrasenya?",
+    "cta_login": "Entrar",
+    "cta_loading": "Entrant...",
+    "no_account_prefix": "Encara no tens compte?",
+    "register_link": "Registra't gratis",
+    "social_maintenance_error": "🚧 El login social està en manteniment. Utilitza el teu email i contrasenya.",
     "register_title": "Crea el teu compte",
-    "register_subtitle": "Per veure l'informe complet de la teva auditoria",
-    "cta_register": "Registrar-se",
+    "register_subtitle": "Per veure el teu informe complet d'auditoria",
     "already_have_account": "Ja tens compte?",
-    "login_link": "Inicia sessió",
-    "check_email_confirmation": "T'hem enviat un enllaç de confirmació al teu correu.",
-    "email_sent": "Correu enviat!"
+    "login_link": "Entrar"
   },
   "Dashboard": {
     "welcome": "Benvingut, {name}",
@@ -195,7 +204,7 @@
     "badge": "INNOVATION LAB",
     "title_prefix": "No només venem software.",
     "title_highlight": "Creem Productes.",
-    "description": "Descobreix <strong>SalutFlow</strong> i <strong>RibotFlow</strong>, les nostres plataformes SaaS pròpies.<br><br>Utilitzem la mateixa tecnologia punta per als teus projectes.",
+    "description": "Descobreix <strong>SalutFlow</strong> i <strong>RibotFlow</strong>, les nostres plataformes SaaS pròpies.<br /><br />Utilitzem la mateixa tecnologia punta per als teus projectes.",
     "cta": "Explorar Productes"
   },
   "Footer": {
@@ -344,6 +353,75 @@
     "reset_password": {
       "title": "Nova Contrasenya",
       "subtitle": "Escriu la teva nova contrasenya segura."
+    }
+  },
+  "Legal": {
+    "last_update_prefix": "Última actualització:",
+    "common": {
+      "transparency_desc": "La transparència és la nostra prioritat. Aquí tens tota la informació legal sobre qui som i les regles d'aquest lloc web."
+    },
+    "avis_legal": {
+      "title": "Avís Legal",
+      "section1_title": "1. Dades Identificatives",
+      "section1_desc": "En compliment de la Llei 34/2002 (LSSI-CE), informem que el titular del lloc web és:",
+      "data_card_company_label": "Raó Social / Nom",
+      "data_card_nif_label": "NIF / CIF",
+      "data_card_address_label": "Domicili Social",
+      "data_card_contact_label": "Contacte",
+      "data_card_address_value": "[Carrer Exemple 123], Girona, Espanya",
+      "section2_title": "2. Condicions d'Ús",
+      "section2_p1": "L'accés a aquest lloc web és lliure i gratuït. El simple accés no implica l'establiment de cap relació comercial entre <strong>DigitAI Studios</strong> i l'usuari.",
+      "section2_p2": "L'usuari es compromet a utilitzar el lloc web de conformitat amb la llei i el present Avís Legal, abstenint-se d'utilitzar-lo amb finalitats il·lícites o que puguin danyar els interessos de tercers.",
+      "section3_title": "3. Propietat Intel·lectual i Industrial",
+      "section3_quote": "Tots els continguts (marques, logotips, textos, fotografies, icones, imatges, etc.), així com el disseny gràfic, codi font i software, són propietat exclusiva de <strong>DigitAI Studios</strong> o de tercers que han autoritzat el seu ús, estant protegits per la legislació nacional i internacional.",
+      "section4_title": "Exempció de Responsabilitat",
+      "section4_p1": "DigitAI Studios no es fa responsable de:",
+      "section4_list_1": "Les possibles fallades de seguretat que es puguin produir ni dels possibles danys al sistema informàtic de l'usuari (virus, malware, etc.).",
+      "section4_list_2": "La informació i continguts emmagatzemats en fòrums, xarxes socials o qualsevol altre mitjà que permeti a tercers publicar continguts de forma independent.",
+      "section4_list_3": "La precisió exacta de les auditories automàtiques, que són orientatives i basades en l'API de Google Lighthouse.",
+      "section5_title": "Llei Aplicable i Jurisdicció",
+      "section5_p1": "Per a la resolució de totes les controvèrsies relacionades amb el present lloc web, serà d'aplicació la legislació espanyola, a la qual se sotmeten expressament les parts, sent competents per a la resolució de tots els conflictes els Jutjats i Tribunals de la ciutat de Girona."
+    },
+    "privacitat": {
+      "title": "Política de Privacitat",
+      "subtitle": "La teva privacitat és sagrada. Aquí t'expliquem clarament quines dades recollim, per què, i com les protegim.",
+      "section1_title": "1. Qui és el responsable de les teves dades?",
+      "section1_text": "El responsable és <strong>DigitAI Studios</strong> (veure Avís Legal per a dades completes). Pots contactar amb el nostre Delegat de Protecció de Dades a: <link>dpd@digitaistudios.com</link>.",
+      "section2_title": "2. Quines dades recollim?",
+      "section2_desc": "Només recollim les dades estrictament necessàries per oferir els nostres serveis:",
+      "data_audit_title": "Auditoria Web",
+      "data_audit_desc": "La URL de la web que vols analitzar i el teu correu electrònic per enviar-te l'informe.",
+      "data_account_title": "Compte d'Usuari",
+      "data_account_desc": "El teu nom, correu electrònic i contrasenya encriptada quan et registres al Dashboard.",
+      "section3_title": "3. Amb qui compartim les dades?",
+      "section3_desc": "No venem les teves dades a ningú. Només les compartim amb proveïdors tecnològics necessaris per al funcionament del servei:",
+      "provider_supabase": "Supabase: Base de dades i autenticació (Allotjat a la UE/AWS).",
+      "provider_resend": "Resend: Enviament d'emails transaccionals.",
+      "provider_google": "Google Cloud: API per processar les auditories web.",
+      "section4_title": "4. Els teus drets",
+      "section4_p1": "Tens el control total sobre les teves dades. En qualsevol moment pots:",
+      "rights_list_1": "Accedir, rectificar o suprimir les teves dades.",
+      "rights_list_2": "Limitar el seu tractament.",
+      "rights_list_3": "Oposar-te a rebre comunicacions.",
+      "rights_list_4": "Sol·licitar la portabilitat de les dades.",
+      "rights_contact": "Per exercir-los, envia un email a <strong>info@digitaistudios.com</strong>."
+    },
+    "cookies": {
+      "title": "Política de Cookies",
+      "subtitle": "Utilitzem galetes (cookies) per assegurar que la web funcioni correctament i per entendre com podem millorar-la. Aquí tens tots els detalls.",
+      "section1_title": "1. Què són les Cookies?",
+      "section1_quote": "Una cookie és un petit fitxer de text que s'emmagatzema al teu navegador quan visites gairebé qualsevol pàgina web. La seva utilitat és que la web sigui capaç de recordar la teva visita quan tornis a navegar per aquesta pàgina, o mantenir la teva sessió oberta.",
+      "section2_title": "2. Quines cookies utilitzem?",
+      "section2_p1": "Aquesta web utilitza els següents tipus de cookies:",
+      "tech_title": "Necessàries (Tècniques)",
+      "tech_desc": "Són imprescindibles per al funcionament de la web. Sense elles, no podries iniciar sessió ni navegar correctament.",
+      "tech_1": "Supabase Auth: Gestiona la sessió segura.",
+      "tech_2": "Next-Intl: Recorda l'idioma preferit.",
+      "analytics_title": "Analítiques",
+      "analytics_desc": "Ens permeten quantificar el nombre d'usuaris i analitzar la utilització que fan del servei per millorar-lo.",
+      "analytics_1": "Analytics Propi: Estadístiques anònimes respectuoses amb la privacitat (sense rastreig invasiu de Google).",
+      "section3_title": "3. Com desactivar-les?",
+      "section3_p1": "Pots permetre, bloquejar o eliminar les cookies instal·lades al teu equip mitjançant la configuració de les opcions del navegador:"
     }
   }
 }

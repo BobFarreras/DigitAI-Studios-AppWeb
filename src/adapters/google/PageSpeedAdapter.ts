@@ -53,6 +53,7 @@ export class PageSpeedAdapter implements IWebScanner {
         // Si existeix i la puntuació no és perfecta (< 0.9) o és informativa
         if (audit && typeof audit.score === 'number' && audit.score < 0.9) {
             issues.push({
+                id: key,
                 title: audit.title,
                 description: audit.description,
                 score: audit.score,

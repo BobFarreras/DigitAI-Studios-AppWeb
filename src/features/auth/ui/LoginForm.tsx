@@ -5,14 +5,17 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { createClient } from '@/lib/supabase/client';
 import { Loader2, LogIn, Github } from 'lucide-react';
-import { useRouter } from '@/routing'; // Import del teu routing i18n
+import { useRouter } from '@/routing'; 
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 
 export function LoginForm() {
+  const t = useTranslations('Auth'); // Namespace Auth
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  // Nota: L'error de Supabase es mostra directament al component, no el traduïm.
+  const [error, setError] = useState<string | null>(null); 
   const router = useRouter();
   const supabase = createClient();
 
@@ -36,24 +39,27 @@ export function LoginForm() {
   };
 
   const handleOAuth = async (provider: 'github' | 'google') => {
-    // Simplement mostrem el missatge i parem
-    setError("🚧 El login social està en manteniment. Utilitza el teu email i contrasenya.");
+    // Simplement mostrem el missatge traduït
+    setError(t('social_maintenance_error'));
     return;
   };
 
   return (
     <div className="w-full max-w-md mx-auto space-y-6">
       <div className="text-center space-y-2">
-        <h1 className="text-3xl font-bold text-foreground">Benvingut de nou</h1>
-        <p className="text-muted-foreground">Entra al teu panell de control digital.</p>
+        <h1 className="text-3xl font-bold text-foreground">{t('login_title')}</h1>
+        <p className="text-muted-foreground">{t('login_subtitle')}</p>
       </div>
 
       {/* Social Login */}
       <div className="grid grid-cols-1 gap-4">
-        <Button variant="outline" onClick={() => handleOAuth('github')} className="w-full h-12 border-border bg-card hover:bg-muted text-foreground gap-2">
-          <Github className="w-5 h-5" /> Continuar amb GitHub
+        <Button 
+          variant="outline" 
+          onClick={() => handleOAuth('github')} 
+          className="w-full h-12 border-border bg-card hover:bg-muted text-foreground gap-2"
+        >
+          <Github className="w-5 h-5" /> {t('social_github')}
         </Button>
-        {/* Pots afegir Google aquí */}
       </div>
 
       <div className="relative">
@@ -61,13 +67,13 @@ export function LoginForm() {
           <span className="w-full border-t border-border" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">O amb email</span>
+          <span className="bg-background px-2 text-muted-foreground">{t('or_email')}</span>
         </div>
       </div>
 
       <form onSubmit={handleLogin} className="space-y-4">
         <div className="space-y-2">
-          <label className="text-sm font-medium text-foreground ml-1">Email</label>
+          <label className="text-sm font-medium text-foreground ml-1">{t('label_email')}</label>
           <Input
             type="email"
             placeholder="nom@empresa.com"
@@ -79,9 +85,9 @@ export function LoginForm() {
         </div>
         <div className="space-y-2">
           <div className="flex justify-between">
-            <label className="text-sm font-medium text-foreground ml-1">Contrasenya</label>
+            <label className="text-sm font-medium text-foreground ml-1">{t('label_password')}</label>
             <Link href="/auth/forgot-password" className="text-sm text-primary hover:underline">
-              Has oblidat la contrasenya?
+              {t('forgot_password')}
             </Link>
           </div>
           <Input
@@ -101,14 +107,17 @@ export function LoginForm() {
         )}
 
         <Button type="submit" disabled={isLoading} className="w-full h-12 gradient-bg text-white font-bold rounded-lg hover:opacity-90 transition-all shadow-lg shadow-primary/20">
-          {isLoading ? <Loader2 className="animate-spin" /> : <><LogIn className="w-4 h-4 mr-2" /> Entrar</>}
+          {isLoading 
+            ? <Loader2 className="animate-spin" /> 
+            : <><LogIn className="w-4 h-4 mr-2" /> {t('cta_login')}</>
+          }
         </Button>
       </form>
 
       <p className="text-center text-sm text-muted-foreground">
-        Encara no tens compte?{' '}
+        {t('no_account_prefix')}{' '}
         <Link href="/auth/register" className="text-primary hover:underline font-medium">
-          Registra't gratis
+          {t('register_link')}
         </Link>
       </p>
     </div>

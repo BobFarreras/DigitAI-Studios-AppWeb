@@ -1,104 +1,427 @@
 {
   "Navbar": {
-    "home": "Inici",
-    "solutions": "Solucions",
-    "projects": "Projectes",
+    "home": "Inicio",
+    "solutions": "Soluciones",
+    "projects": "Proyectos",
     "blog": "Blog",
     "login": "Entrar",
-    "register": "Registra't",
-    "dashboard": "Dashboard",
-    "logout": "Tancar Sessió"
+    "register": "Registrarse",
+    "dashboard": "Panel",
+    "logout": "Cerrar Sesión"
   },
   "Hero": {
-    "title_start": "Creem la teva",
+    "title_start": "Creamos tu",
     "title_highlight_1": "AppWeb",
-    "title_middle": "Automatitzem el",
-    "title_highlight_2": "dia a dia",
-    "subtitle": "Deixa de perdre temps en tasques manuals. Desenvolupem plataformes a mida i t'ensenyem a utilitzar la IA per escalar el teu negoci.",
-    "cta_primary": "Parlem del teu Projecte",
-    "cta_secondary": "Auditoria Gratuïta"
+    "title_middle": "Automatizamos el",
+    "title_highlight_2": "día a día",
+    "subtitle": "Deja de perder tiempo con tareas manuales. Desarrollamos plataformas a medida y te enseñamos a usar la IA para escalar tu negocio.",
+    "cta_primary": "Hablemos de tu Proyecto",
+    "cta_secondary": "Auditoría Gratuita"
   },
   "TechStack": {
-    "subtitle": "Potenciat per l'stack tecnològic del futur"
+    "subtitle": "Impulsado por el stack tecnológico del futuro"
   },
   "AuditSection": {
-    "title_prefix": "La teva web és un",
-    "title_cost": "cost",
+    "title_prefix": "Tu web es un",
+    "title_cost": "coste",
     "title_connector": "o una",
-    "title_investment": "Inversió",
-    "description_stat": "El 40% dels usuaris abandonen una web si triga més de 3 segons.",
-    "description_cta": "Deixa que la nostra IA analitzi el teu site i et digui exactament què està fallant."
+    "title_investment": "Inversión",
+    "description_stat": "El 40% de los usuarios abandona una web si tarda más de 3 segundos en cargar.",
+    "description_cta": "Deja que nuestra IA analice tu sitio y te diga exactamente qué está fallando."
   },
   "AuditForm": {
-    "title": "Analitza la teva web en segons",
-    "placeholder_url": "https://la-teva-web.com",
-    "placeholder_email": "el-teu@email.com",
-    "cta_button": "Obtenir Informe Gratuït",
-    "cta_loading": "Analitzant...",
-    "privacy_note": "No compartim les teves dades. Informe 100% gratuït.",
-    "error_url": "La URL ha de ser vàlida",
-    "error_email": "L'email no és correcte",
-    "success_message": "Revisa les dades del formulari."
+    "title": "Analiza tu web en segundos",
+    "placeholder_url": "https://tu-web.com",
+    "placeholder_email": "tu@email.com",
+    "cta_button": "Obtener Informe Gratuito",
+    "cta_loading": "Analizando...",
+    "privacy_note": "No compartimos tus datos. Informe 100% gratuito.",
+    "error_url": "La URL debe ser válida",
+    "error_email": "El email no es correcto",
+    "success_message": "Revisa los datos del formulario."
   },
   "HomePage": {
-    "title": "Automatitza la teva presència web",
-    "cta": "Auditoria Gratuïta",
-    "form_title": "Analitza la teva web en segons"
+    "title": "Automatiza tu presencia digital",
+    "cta": "Auditoría Gratuita",
+    "form_title": "Analiza tu web en segundos"
   },
   "Auth": {
-    "register_title": "Crea el teu compte",
-    "register_subtitle": "Per veure l'informe complet de la teva auditoria",
-    "cta_register": "Registrar-se",
-    "already_have_account": "Ja tens compte?",
-    "login_link": "Inicia sessió",
-    "check_email_confirmation": "T'hem enviat un enllaç de confirmació al teu correu.",
-    "email_sent": "Correu enviat!"
+    "login_title": "Bienvenido de nuevo",
+    "login_subtitle": "Accede a tu panel de control digital.",
+    "social_github": "Continuar con GitHub",
+    "or_email": "O con email",
+    "label_email": "Email",
+    "label_password": "Contraseña",
+    "forgot_password": "¿Olvidaste tu contraseña?",
+    "cta_login": "Entrar",
+    "cta_loading": "Iniciando sesión...",
+    "no_account_prefix": "¿No tienes cuenta?",
+    "register_link": "Regístrate gratis",
+    "social_maintenance_error": "🚧 El inicio de sesión social está en mantenimiento. Por favor, utiliza tu email y contraseña.",
+    "register_title": "Crea tu cuenta",
+    "register_subtitle": "Para ver tu informe completo de auditoría",
+    "already_have_account": "¿Ya tienes cuenta?",
+    "login_link": "Iniciar sesión"
   },
   "Dashboard": {
-    "welcome": "Benvingut, {name}",
-    "my_audits": "Les meves Auditories"
+    "welcome": "Bienvenido, {name}",
+    "my_audits": "Mis Auditorías"
   },
   "AuditIssues": {
     "is-on-https": {
-      "title": "El lloc web no utilitza HTTPS segur",
-      "description": "La teva web no és segura. Això espanta els clients i Google et penalitza greument."
+      "title": "El sitio web no utiliza HTTPS seguro",
+      "description": "Tu web no es segura. Esto ahuyenta a los clientes y Google te penaliza."
     },
     "meta-description": {
-      "title": "Manca la Meta Descripció",
-      "description": "Google no sap de què tracta la teva web. Necessites un resum atractiu per aparèixer als resultats."
+      "title": "Falta la Meta Descripción",
+      "description": "Google no sabe de qué trata tu web. Necesitas un resumen atractivo para aparecer en los resultados."
     },
     "document-title": {
-      "title": "La pàgina no té títol",
-      "description": "El títol és l'element més important per al SEO. Sense ell, ets invisible."
+      "title": "La página no tiene título",
+      "description": "El título es el elemento más importante para el SEO. Sin él, eres invisible."
     },
     "server-response-time": {
-      "title": "El servidor és massa lent",
-      "description": "El temps de resposta inicial és alt. Considera canviar de hosting o optimitzar el backend."
+      "title": "El servidor es demasiado lento",
+      "description": "El tiempo de respuesta inicial es alto. Considera cambiar de hosting u optimizar el backend."
     },
     "render-blocking-resources": {
-      "title": "Recursos que bloquegen la visualització",
-      "description": "Hi ha CSS o JS que impedeixen que la web es mostri ràpidament."
+      "title": "Recursos que bloquean la visualización",
+      "description": "Hay CSS o JS que impiden que la web se muestre rápidamente."
     },
     "uses-optimized-images": {
-      "title": "Imatges no optimitzades",
-      "description": "Les imatges pesen massa. Usa formats moderns com WebP."
+      "title": "Imágenes no optimizadas",
+      "description": "Las imágenes pesan demasiado. Usa formatos modernos como WebP."
     },
     "largest-contentful-paint": {
-      "title": "Càrrega lenta (LCP)",
-      "description": "L'element més gran triga massa a aparèixer. Això frustra els usuaris."
+      "title": "Carga lenta (LCP)",
+      "description": "El elemento más grande tarda demasiado en aparecer. Esto frustra a los usuarios."
     },
     "cumulative-layout-shift": {
-      "title": "Moviments inesperats (CLS)",
-      "description": "La web es 'mou' mentre carrega, causant clics erronis."
+      "title": "Movimientos inesperados (CLS)",
+      "description": "La web \"se mueve\" mientras carga, causando clics erróneos."
     }
   },
   "Common": {
-    "loading": "Carregant...",
-    "error": "Hi ha hagut un error",
+    "loading": "Cargando...",
+    "error": "Ha ocurrido un error",
     "languages": {
-      "ca": "Català",
+      "ca": "Catalán",
       "es": "Español",
       "en": "English"
+    }
+  },
+  "Services": {
+    "badge": "SOLUCIONES 360°",
+    "title_prefix": "Todo para",
+    "title_highlight": "Dominar el Digital",
+    "subtitle": "Desarrollo, Producto y Automatización.",
+    "cards": {
+      "appwebs": {
+        "title": "AppWebs & SAAS",
+        "description": "Portales de clientes y CRMs a medida. El núcleo operativo de tu negocio."
+      },
+      "apps": {
+        "title": "Apps Nativas",
+        "description": "iOS y Android con React Native."
+      },
+      "automation": {
+        "title": "Automatización",
+        "description": "Conectamos CRM, Email e IA."
+      },
+      "training": {
+        "title": "Formación & Consultoría",
+        "description": "Formación in-company para tu equipo sobre IA, n8n y herramientas No-Code.",
+        "cta": "Ver temario"
+      }
+    }
+  },
+  "ProblemSolution": {
+    "badge": "Más que una página web",
+    "title_prefix": "Tu web debe",
+    "title_highlight": "Facturar",
+    "title_suffix": "no solo 'estar'.",
+    "description_problem": "La mayoría de negocios tienen una 'Tarjeta de Visita' digital: bonita, pero inútil. No permite reservar, no vende y no fideliza.",
+    "description_solution": "Nosotros transformamos tu web en una <strong>AppWeb (PWA)</strong>: una herramienta potente donde tus clientes pueden comprar, reservar hora e interactuar contigo desde el móvil, sin descargar nada.",
+    "benefits": {
+      "appointments": "Citas previas y reservas automáticas.",
+      "ecommerce": "Tienda online y pagos integrados.",
+      "pwa": "Instalable en el móvil (PWA) como una App nativa."
+    },
+    "visual": {
+      "problem_card": {
+        "title": "Web 'Aparador'",
+        "item1": "Reservas Online",
+        "item2": "Panel de Ventas",
+        "item3": "App Móvil"
+      },
+      "solution_card": {
+        "title": "Ecosistema DigitAI",
+        "subtitle": "Todo conectado, todo automático.",
+        "widget1_title": "Agenda Llena",
+        "widget1_desc": "Reservas 24/7 automáticas",
+        "widget2_title": "+150% Conversión",
+        "widget2_desc": "Analítica en tiempo real",
+        "widget3_title": "App Instalable",
+        "widget3_desc": "Acceso directo en el móvil (PWA)"
+      }
+    }
+  },
+  "ContactSection": {
+    "title_prefix": "Empieza tu",
+    "title_highlight": "transformación",
+    "description": "Toda gran empresa comienza con una decisión. Contáctanos y descubre cómo la automatización puede revolucionar tu negocio.",
+    "features": {
+      "agile": {
+        "title": "Implementación Ágil",
+        "desc": "Sin meses de espera. Lanzamos en semanas."
+      },
+      "tech": {
+        "title": "Tecnología Sólida",
+        "desc": "Next.js, React Native y Supabase. Nada de Wordpress antiguo."
+      },
+      "partners": {
+        "title": "Partners, no Proveedores",
+        "desc": "Te acompañamos en la estrategia, no solo en el código."
+      }
+    },
+    "options": {
+      "ia": "IA & Automatización",
+      "web": "Webs & Apps"
+    },
+    "form": {
+      "name_label": "Nombre completo",
+      "name_placeholder": "Juan García",
+      "email_label": "Email corporativo",
+      "email_placeholder": "juan@empresa.com",
+      "message_label": "Cuéntanos tu proyecto...",
+      "message_placeholder": "Quiero automatizar las reservas o crear una app para...",
+      "submit_button": "Enviar Mensaje"
+    },
+    "privacy_text": "He leído y acepto la <link>política de privacidad</link> y el tratamiento de mis datos.",
+    "tooltip_privacy": "Marca la casilla para continuar"
+  },
+  "ProductTeaser": {
+    "badge": "INNOVATION LAB",
+    "title_prefix": "No solo vendemos software.",
+    "title_highlight": "Creamos Productos.",
+    "description": "Descubre <strong>SalutFlow</strong> y <strong>RibotFlow</strong>, nuestras plataformas SaaS propias.<br/><br/>Usamos la misma tecnología puntera para tus proyectos.",
+    "cta": "Explorar Productos"
+  },
+  "Footer": {
+    "description": "Transformamos negocios tradicionales en líderes digitales mediante desarrollo a medida e inteligencia artificial.",
+    "services_title": "Servicios",
+    "company_title": "Empresa",
+    "legal_title": "Legal",
+    "about": "Sobre Nosotros",
+    "contact": "Contacto",
+    "legal_notice": "Aviso Legal",
+    "privacy": "Política de Privacidad",
+    "cookies": "Política de Cookies",
+    "rights_reserved": "Todos los derechos reservados.",
+    "made_with_love": "Hecho con ❤️ en Cataluña"
+  },
+  "Sidebar": {
+    "platform": "Plataforma",
+    "summary": "Resumen",
+    "audits": "Auditorías",
+    "projects": "Proyectos",
+    "settings": "Configuración",
+    "logout": "Cerrar Sesión",
+    "pro_badge": "Plan Pro",
+    "pro_text": "Desbloquea auditorías ilimitadas.",
+    "pro_button": "Mejorar"
+  },
+  "DashboardHeader": {
+    "search_placeholder": "Buscar...",
+    "account": "Cuenta"
+  },
+  "DashboardHome": {
+    "welcome": "Hola, {name} 👋",
+    "subtitle": "Aquí tienes el resumen de tu ecosistema digital.",
+    "new_audit": "Nueva Auditoría",
+    "kpi_audits": "Auditorías Realizadas",
+    "kpi_seo": "SEO Medio",
+    "kpi_system": "Estado del Sistema",
+    "system_status": "Operativo",
+    "recent_projects": "Proyectos Recientes",
+    "view_all": "Ver todo",
+    "empty_title": "Aún no tienes proyectos",
+    "empty_desc": "Analiza tu primera web para descubrir errores de SEO y rendimiento.",
+    "empty_button": "Empezar Auditoría"
+  },
+  "AuditList": {
+    "title": "Mis Auditorías",
+    "subtitle": "Historial completo y análisis de rendimiento.",
+    "new_audit_button": "Nueva Auditoría",
+    "performance": "Rendimiento",
+    "status": {
+      "completed": "COMPLETADO",
+      "failed": "ERROR",
+      "processing": "PROCESANDO"
+    },
+    "empty_title": "No tienes ninguna auditoría registrada",
+    "empty_description": "Comienza analizando tu primera página web para obtener métricas de SEO y rendimiento.",
+    "create_first_audit": "Crear primera auditoría"
+  },
+  "AuditDetails": {
+    "processing_message": "Cargando resultados..."
+  },
+  "NewAudit": {
+    "back_to_list": "Volver al listado",
+    "title": "Nueva Auditoría Web",
+    "description": "Introduce la URL del sitio web que quieres analizar. Nuestra IA escaneará el SEO, el rendimiento y la accesibilidad en tiempo real."
+  },
+  "LegalLayout": {
+    "sidebar_title": "Centro Legal",
+    "sidebar_desc": "Documentación oficial y normativas.",
+    "links": {
+      "notice": "Aviso Legal",
+      "privacy": "Política de Privacidad",
+      "cookies": "Política de Cookies"
+    }
+  },
+  "ProjectsHero": {
+    "badge": "DigitAI Innovation Lab",
+    "title_prefix": "No solo vendemos código.",
+    "title_highlight": "Construimos Empresas.",
+    "description": "Estos son nuestros productos propios. Utilizamos la misma tecnología y metodología para tus proyectos que la que usamos para escalar los nuestros."
+  },
+  "ProjectsCTA": {
+    "title_prefix": "¿Tienes una idea para el próximo",
+    "title_highlight": "Gran Producto",
+    "title_suffix": "?",
+    "description": "Hemos convertido nuestras ideas en negocios rentables. Ahora deja que te ayudemos a hacer lo mismo con el tuyo.",
+    "button": "Hablemos de tu Proyecto"
+  },
+  "ProjectCard": {
+    "view_web": "Ver Web",
+    "ribotflow": {
+      "tagline": "El Sistema Operativo Integral",
+      "description": "Plataforma de gestión \"Todo en Uno\" que unifica CRM, facturación y redes sociales. Elimina el caos de tener la información dispersa y utiliza IA para redactar correos y gestionar oportunidades.",
+      "stats": {
+        "0": "CRM + Facturación",
+        "1": "Automatización IA",
+        "2": "Control Financiero"
+      }
+    },
+    "salutflow": {
+      "tagline": "Tu Centro Deportivo, Digitalizado",
+      "description": "Crea tu propia App Web (PWA) en minutos sin programar. Gestiona reservas, pagos recurrentes (Stripe) y aforos automáticamente. Ideal para gimnasios y estudios.",
+      "stats": {
+        "0": "App PWA",
+        "1": "Pagos Stripe",
+        "2": "Listas de Espera"
+      }
+    }
+  },
+  "BlogIndex": {
+    "title": "Blog & Recursos",
+    "subtitle": "Aprende a optimizar tu presencia digital con nuestras guías.",
+    "no_posts": "Todavía no hay artículos publicados.",
+    "read_more": "Leer más",
+    "published_recently": "Recientemente",
+    "fallback_image": "Sin Imagen"
+  },
+  "BlogPost": {
+    "back_button": "Otros Artículos",
+    "cta_audit": "Auditar mi web",
+    "share_title": "¿Te ha resultado útil?",
+    "share_subtitle": "Comparte este artículo o descubre cómo podemos ayudarte.",
+    "by_author": "DigitAI Team",
+    "published_prefix": "Publicado el"
+  },
+  "AuthPages": {
+    "login": {
+      "marketing_title": "Gestiona tu ecosistema digital desde un solo lugar.",
+      "marketing_subtitle": "Accede a tus auditorías, gestiona tus proyectos web y controla tus automatizaciones.",
+      "footer": "© DigitAI Studios. Todos los derechos reservados.",
+      "back_home": "Volver al inicio"
+    },
+    "register": {
+      "marketing_badge": "ÚNETE A LA REVOLUCIÓN",
+      "marketing_title": "Empieza a construir el futuro de tu negocio hoy mismo.",
+      "feature_1": "Auditorías web gratuitas e ilimitadas.",
+      "feature_2": "Acceso al panel de control de proyectos.",
+      "feature_3": "Soporte prioritario para digitalización.",
+      "back_home": "Inicio"
+    },
+    "forgot_password": {
+      "title": "Recuperar cuenta",
+      "subtitle": "Introduce tu email y te enviaremos las instrucciones.",
+      "back_login": "Volver al login"
+    },
+    "reset_password": {
+      "title": "Nueva Contraseña",
+      "subtitle": "Escribe tu nueva contraseña segura."
+    }
+  },
+  "Legal": {
+    "last_update_prefix": "Última actualización:",
+    "common": {
+      "transparency_desc": "La transparencia es nuestra prioridad. Aquí tienes toda la información legal sobre quiénes somos y las normas de este sitio web."
+    },
+    "avis_legal": {
+      "title": "Aviso Legal",
+      "section1_title": "1. Datos Identificativos",
+      "section1_desc": "En cumplimiento de la Ley 34/2002 (LSSI-CE), informamos que el titular del sitio web es:",
+      "data_card_company_label": "Razón Social / Nombre",
+      "data_card_nif_label": "NIF / CIF",
+      "data_card_address_label": "Domicilio Social",
+      "data_card_contact_label": "Contacto",
+      "data_card_address_value": "[Calle Ejemplo 123], Girona, España",
+      "section2_title": "2. Condiciones de Uso",
+      "section2_p1": "El acceso a este sitio web es libre y gratuito. El simple acceso no implica el establecimiento de ninguna relación comercial entre <strong>DigitAI Studios</strong> y el usuario.",
+      "section2_p2": "El usuario se compromete a utilizar el sitio web de conformidad con la ley y el presente Aviso Legal, absteniéndose de usarlo con fines ilícitos o que puedan dañar los intereses de terceros.",
+      "section3_title": "3. Propiedad Intelectual e Industrial",
+      "section3_quote": "Todos los contenidos (marcas, logotipos, textos, fotografías, iconos, imágenes, etc.), así como el diseño gráfico, código fuente y software, son propiedad exclusiva de <strong>DigitAI Studios</strong> o de terceros que han autorizado su uso, estando protegidos por la legislación nacional e internacional.",
+      "section4_title": "Exención de Responsabilidad",
+      "section4_p1": "DigitAI Studios no se hace responsable de:",
+      "section4_list_1": "Las posibles fallas de seguridad que puedan producirse ni de los posibles daños al sistema informático del usuario (virus, malware, etc.).",
+      "section4_list_2": "La información y contenidos almacenados en foros, redes sociales o cualquier otro medio que permita a terceros publicar contenidos de forma independiente.",
+      "section4_list_3": "La precisión exacta de las auditorías automáticas, que son orientativas y basadas en la API de Google Lighthouse.",
+      "section5_title": "Ley Aplicable y Jurisdicción",
+      "section5_p1": "Para la resolución de todas las controversias relacionadas con este sitio web, será de aplicación la legislación española, a la cual se someten expresamente las partes, siendo competentes los Juzgados y Tribunales de la ciudad de Girona."
+    },
+    "privacitat": {
+      "title": "Política de Privacidad",
+      "subtitle": "Tu privacidad es sagrada. Aquí te explicamos claramente qué datos recogemos, por qué y cómo los protegemos.",
+      "section1_title": "1. ¿Quién es el responsable de tus datos?",
+      "section1_text": "El responsable es <strong>DigitAI Studios</strong> (ver Aviso Legal para datos completos). Puedes contactar con nuestro Delegado de Protección de Datos en: <link>dpd@digitaistudios.com</link>.",
+      "section2_title": "2. ¿Qué datos recogemos?",
+      "section2_desc": "Solo recogemos los datos estrictamente necesarios para ofrecer nuestros servicios:",
+      "data_audit_title": "Auditoría Web",
+      "data_audit_desc": "La URL de la web que quieres analizar y tu correo electrónico para enviarte el informe.",
+      "data_account_title": "Cuenta de Usuario",
+      "data_account_desc": "Tu nombre, correo electrónico y contraseña encriptada cuando te registras en el Panel.",
+      "section3_title": "3. ¿Con quién compartimos los datos?",
+      "section3_desc": "No vendemos tus datos a nadie. Solo los compartimos con proveedores tecnológicos necesarios para el funcionamiento del servicio:",
+      "provider_supabase": "Supabase: Base de datos y autenticación (Alojado en UE/AWS).",
+      "provider_resend": "Resend: Envío de emails transaccionales.",
+      "provider_google": "Google Cloud: API para procesar auditorías web.",
+      "section4_title": "4. Tus derechos",
+      "section4_p1": "Tienes control total sobre tus datos. En cualquier momento puedes:",
+      "rights_list_1": "Acceder, rectificar o eliminar tus datos.",
+      "rights_list_2": "Limitar su tratamiento.",
+      "rights_list_3": "Oponerte a recibir comunicaciones.",
+      "rights_list_4": "Solicitar la portabilidad de los datos.",
+      "rights_contact": "Para ejercerlos, envía un email a <strong>info@digitaistudios.com</strong>."
+    },
+    "cookies": {
+      "title": "Política de Cookies",
+      "subtitle": "Utilizamos cookies para asegurar que la web funcione correctamente y para entender cómo podemos mejorarla. Aquí tienes todos los detalles.",
+      "section1_title": "1. ¿Qué son las Cookies?",
+      "section1_quote": "Una cookie es un pequeño archivo de texto que se almacena en tu navegador cuando visitas casi cualquier página web. Su utilidad es que la web sea capaz de recordar tu visita cuando regreses a navegar por ella, o mantener tu sesión abierta.",
+      "section2_title": "2. ¿Qué cookies utilizamos?",
+      "section2_p1": "Esta web utiliza los siguientes tipos de cookies:",
+      "tech_title": "Necesarias (Técnicas)",
+      "tech_desc": "Son imprescindibles para el funcionamiento de la web. Sin ellas, no podrías iniciar sesión ni navegar correctamente.",
+      "tech_1": "Supabase Auth: Gestiona la sesión segura.",
+      "tech_2": "Next-Intl: Recuerda el idioma preferido.",
+      "analytics_title": "Analíticas",
+      "analytics_desc": "Nos permiten cuantificar el número de usuarios y analizar la utilización que hacen del servicio para mejorarlo.",
+      "analytics_1": "Analytics Propio: Estadísticas anónimas respetuosas con la privacidad (sin rastreo invasivo de Google).",
+      "section3_title": "3. ¿Cómo desactivarlas?",
+      "section3_p1": "Puedes permitir, bloquear o eliminar las cookies instaladas en tu equipo mediante la configuración del navegador:"
     }
   }
 }
