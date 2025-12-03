@@ -9,6 +9,8 @@ ESTRUCTURA DEL PROJECTE (./src)
 │   ├── interfaces
 │   └── IWebScanner.ts
 ├── app
+│   ├── actions
+│   │   └── get-users.ts
 │   ├── api
 │   │   ├── track
 │   │   └── web-audit
@@ -38,14 +40,22 @@ ESTRUCTURA DEL PROJECTE (./src)
 │       ├── admin
 │       │   ├── analytics
 │       │   │   └── page.tsx
+│       │   ├── debug
+│       │   │   └── page.tsx
 │       │   ├── layout.tsx
-│       │   └── page.tsx
+│       │   ├── page.tsx
+│       │   └── users
+│       │       └── page.tsx
 │       ├── auth
 │       │   ├── callback
 │       │   │   └── route.ts
+│       │   ├── forgot-password
+│       │   │   └── page.tsx
 │       │   ├── login
 │       │   │   └── page.tsx
-│       │   └── register
+│       │   ├── register
+│       │   │   └── page.tsx
+│       │   └── reset-password
 │       │       └── page.tsx
 │       ├── dashboard
 │       │   ├── audits
@@ -68,6 +78,8 @@ ESTRUCTURA DEL PROJECTE (./src)
 │       ├── salutflow.png
 │       └── testimoni-garatgeestacio.jpg
 ├── components
+│   ├── admin
+│   │   └── AminMobileMenu.tsx
 │   ├── charts
 │   │   └── ScoreRing.tsx
 │   ├── dashboard
@@ -105,6 +117,7 @@ ESTRUCTURA DEL PROJECTE (./src)
 │   │       ├── DeviceChart.tsx
 │   │       ├── TopPagesCard.tsx
 │   │       ├── TrafficChart.tsx
+│   │       ├── UnifiedStatBar.tsx
 │   │       └── VerticalBarChart.tsx
 │   ├── audit
 │   │   ├── actions.ts
@@ -121,16 +134,29 @@ ESTRUCTURA DEL PROJECTE (./src)
 │   │       └── pdf
 │   │           └── AuditPdfDocument.tsx
 │   ├── auth
+│   │   ├── actions
+│   │   │   └── reset-password.ts
 │   │   └── ui
+│   │       ├── ForgotPasswordForm.tsx
 │   │       ├── LoginForm.tsx
-│   │       └── RegisterForm.tsx
+│   │       ├── RegisterForm.tsx
+│   │       └── ResetPasswordForm.tsx
 │   ├── blog
 │   │   ├── types.ts
 │   │   └── ui
 │   │       └── MDXContent.tsx
-│   └── email
-│       └── templates
-│           └── AuditReadyEmail.tsx
+│   ├── email
+│   │   └── templates
+│   │       └── AuditReadyEmail.tsx
+│   └── projects
+│       ├── data
+│       │   └── projects-data.ts
+│       ├── index.ts
+│       └── ui
+│           ├── ProjectCard.tsx
+│           ├── ProjectList.tsx
+│           ├── ProjectsCTA.tsx
+│           └── ProjectsHero.tsx
 ├── i18n
 │   └── request.ts
 ├── lib
@@ -504,6 +530,61 @@ export type ScanResult = {
 
 export interface IWebScanner {
   scanUrl(url: string): Promise<ScanResult>;
+}
+
+// =================== FILE: src/app/actions/get-users.ts ===================
+
+'use server'
+
+import { createClient } from '@/lib/supabase/server';
+import { redirect } from 'next/navigation';
+
+export type UserProfile = {
+  id: string;
+  email: string;
+  role: 'admin' | 'client' | 'lead';
+  created_at: string;
+  full_name: string | null;
+};
+
+export async function getAdminUsersList(): Promise<UserProfile[]> {
+  const supabase = await createClient();
+ 
+  // 1. Verificar sessió actual
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError || !user) redirect('/auth/login');
+
+  // 2. 🛡️ SUPER ADMIN CHECK
+  // Si el correu és el de la variable d'entorn, ets admin SI o SI.
+  const isSuperAdmin = user.email === process.env.ADMIN_EMAIL;
+
+  if (!isSuperAdmin) {
+    // Si no ets el Super Admin per variable, comprovem la base de dades
+    const { data: currentUserProfile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single();
+
+    if (currentUserProfile?.role !== 'admin') {
+      redirect('/'); // Fora d'aquí
+    }
+  }
+
+  // 3. Obtenir dades
+  // NOTA IMPORTANT: Encara que el codi et deixi passar, el RLS (Row Level Security) 
+  // de Supabase et pot bloquejar les dades si el teu rol a la DB no és 'admin'.
+  const { data: profiles, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching users:', error);
+    return [];
+  }
+
+  return profiles as UserProfile[];
 }
 
 // =================== FILE: src/app/globals.css ===================
@@ -1043,6 +1124,7 @@ export default async function MarketingLayout({
 // =================== FILE: src/app/[locale]/(marketing)/legal/avis-legal/page.tsx ===================
 
 import LegalLayout from '@/components/layout/LegalLayout';
+import { Building2, Mail, MapPin, Fingerprint, AlertTriangle, Gavel } from 'lucide-react';
 
 export const metadata = {
   title: 'Avís Legal | DigitAI Studios',
@@ -1052,54 +1134,122 @@ export const metadata = {
 export default function AvisLegalPage() {
   return (
     <LegalLayout>
-      <h1>Avís Legal i Condicions d'Ús</h1>
-      <p className="lead">
-        En compliment de la Llei 34/2002, d'11 de juliol, de Serveis de la Societat de la Informació i de Comerç Electrònic (LSSI-CE), informem als usuaris de les dades del propietari d'aquest lloc web.
-      </p>
+      <div className="border-b border-border pb-8 mb-8">
+        <h1 className="text-3xl md:text-4xl font-extrabold mb-4">Avís Legal</h1>
+        <p className="text-xl text-muted-foreground leading-relaxed">
+          La transparència és la nostra prioritat. Aquí tens tota la informació legal sobre qui som i les regles d'aquest lloc web.
+        </p>
+        <p className="text-sm text-muted-foreground mt-4">Última actualització: {new Date().toLocaleDateString()}</p>
+      </div>
 
-      <h2>1. Dades Identificatives</h2>
-      <ul>
-        <li><strong>Nom Comercial:</strong> DigitAI Studios</li>
-        <li><strong>Titular:</strong> [EL TEU NOM O NOM EMPRESA]</li>
-        <li><strong>NIF/CIF:</strong> [EL TEU NIF]</li>
-        <li><strong>Domicili Social:</strong> [LA TEVA ADREÇA], Girona, Espanya</li>
-        <li><strong>Email de contacte:</strong> info@digitaistudios.com</li>
-      </ul>
+      {/* SECCIÓ 1: DADES IDENTIFICATIVES (GRID VISUAL) */}
+      <section className="mb-12">
+        <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+            1. Dades Identificatives
+        </h2>
+        <p className="mb-6">
+           En compliment de la Llei 34/2002 (LSSI-CE), informem que el titular del lloc web és:
+        </p>
+        
+        <div className="grid sm:grid-cols-2 gap-4 not-prose">
+           <InfoCard 
+              icon={Building2} 
+              label="Raó Social / Nom" 
+              value="[EL TEU NOM EMPRESA]" 
+           />
+           <InfoCard 
+              icon={Fingerprint} 
+              label="NIF / CIF" 
+              value="[EL TEU NIF]" 
+           />
+           <InfoCard 
+              icon={MapPin} 
+              label="Domicili Social" 
+              value="[Carrer Exemple 123], Girona, Espanya" 
+           />
+           <InfoCard 
+              icon={Mail} 
+              label="Contacte" 
+              value="info@digitaistudios.com" 
+           />
+        </div>
+      </section>
 
-      <h2>2. Objecte i Àmbit d'Aplicació</h2>
-      <p>
-        Aquestes condicions regulen l'ús del lloc web <strong>digitaistudios.com</strong>, que ofereix serveis de desenvolupament de programari, auditoria web i consultoria tecnològica. L'accés a la web implica l'acceptació sense reserves d'aquestes condicions.
-      </p>
+      {/* SECCIÓ 2: OBJECTE */}
+      <section className="mb-12">
+        <h2>2. Condicions d'Ús</h2>
+        <p>
+          L'accés a aquest lloc web és lliure i gratuït. El simple accés no implica l'establiment de cap relació comercial entre <strong>DigitAI Studios</strong> i l'usuari.
+        </p>
+        <p>
+          L'usuari es compromet a utilitzar el lloc web de conformitat amb la llei i el present Avís Legal, abstenint-se d'utilitzar-lo amb finalitats il·lícites o que puguin danyar els interessos de tercers.
+        </p>
+      </section>
 
-      <h2>3. Propietat Intel·lectual</h2>
-      <p>
-        Tots els continguts (textos, imatges, codi font, logotips, dissenys) són propietat intel·lectual de DigitAI Studios o de tercers que n'han autoritzat l'ús. Està prohibida la seva reproducció, distribució o modificació sense autorització prèvia.
-      </p>
+      {/* SECCIÓ 3: PROPIETAT INTEL·LECTUAL */}
+      <section className="mb-12">
+        <h2>3. Propietat Intel·lectual i Industrial</h2>
+        <div className="bg-muted/30 p-6 rounded-xl border-l-4 border-primary not-prose">
+            <p className="text-sm text-muted-foreground">
+                Tots els continguts (marques, logotips, textos, fotografies, icones, imatges, etc.), així com el disseny gràfic, codi font i software, són propietat exclusiva de <strong>DigitAI Studios</strong> o de tercers que han autoritzat el seu ús, estant protegits per la legislació nacional i internacional.
+            </p>
+        </div>
+      </section>
 
-      <h2>4. Responsabilitat</h2>
-      <p>
-        DigitAI Studios no es fa responsable de:
-      </p>
-      <ul>
-        <li>Interrupcions del servei per manteniment tècnic o causes de força major.</li>
-        <li>L'ús incorrecte que els usuaris puguin fer de la web o dels seus continguts.</li>
-        <li>Els enllaços externs que puguin aparèixer a la web, ja que no tenim control sobre ells.</li>
-      </ul>
-      <p>
-        L'eina d'auditoria web es proporciona "tal qual" i els resultats són orientatius. No garantim que la implementació de les recomanacions millori automàticament el posicionament o rendiment en tots els casos.
-      </p>
+      {/* SECCIÓ 4: RESPONSABILITAT */}
+      <section className="mb-12">
+         <h2 className="flex items-center gap-2">
+            <AlertTriangle className="w-6 h-6 text-yellow-500" /> Exempció de Responsabilitat
+         </h2>
+         <p>DigitAI Studios no es fa responsable de:</p>
+         <ul>
+            <li>Les possibles fallades de seguretat que es puguin produir ni dels possibles danys al sistema informàtic de l'usuari (virus, malware, etc.).</li>
+            <li>La informació i continguts emmagatzemats en fòrums, xarxes socials o qualsevol altre mitjà que permeti a tercers publicar continguts de forma independent.</li>
+            <li>La precisió exacta de les auditories automàtiques, que són orientatives i basades en l'API de Google Lighthouse.</li>
+         </ul>
+      </section>
 
-      <h2>5. Llei Aplicable i Jurisdicció</h2>
-      <p>
-        Aquestes condicions es regeixen per la llei espanyola. Per a qualsevol controvèrsia que pugui sorgir, les parts se sotmeten als jutjats i tribunals de la ciutat de Girona, renunciant a qualsevol altre fur que els pogués correspondre.
-      </p>
+      {/* SECCIÓ 5: LLEI */}
+      <section>
+         <h2 className="flex items-center gap-2">
+            <Gavel className="w-6 h-6 text-primary" /> Llei Aplicable i Jurisdicció
+         </h2>
+         <p>
+            Per a la resolució de totes les controvèrsies relacionades amb el present lloc web, serà d'aplicació la legislació espanyola, a la qual se sotmeten expressament les parts, sent competents per a la resolució de tots els conflictes els Jutjats i Tribunals de la ciutat de Girona.
+         </p>
+      </section>
+
     </LegalLayout>
   );
+}
+
+// Component petit per a les targetes de dades
+import { LucideIcon } from 'lucide-react';
+
+interface InfoCardProps {
+    icon: LucideIcon;
+    label: string;
+    value: string;
+}
+
+function InfoCard({ icon: Icon, label, value }: InfoCardProps) {
+    return (
+        <div className="bg-background border border-border p-4 rounded-lg flex items-start gap-4 shadow-sm hover:border-primary/30 transition-colors">
+            <div className="p-2 bg-primary/10 rounded-md shrink-0">
+                <Icon className="w-5 h-5 text-primary" />
+            </div>
+            <div>
+                <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">{label}</p>
+                <p className="text-sm font-bold text-foreground mt-1">{value}</p>
+            </div>
+        </div>
+    )
 }
 
 // =================== FILE: src/app/[locale]/(marketing)/legal/cookies/page.tsx ===================
 
 import LegalLayout from '@/components/layout/LegalLayout';
+import { Cookie, Settings, BarChart3, XCircle } from 'lucide-react';
 
 export const metadata = {
   title: 'Política de Cookies | DigitAI Studios',
@@ -1109,44 +1259,103 @@ export const metadata = {
 export default function CookiesPage() {
   return (
     <LegalLayout>
-      <h1>Política de Cookies</h1>
-      <p className="lead">
-        Aquesta web utilitza cookies pròpies i de tercers per millorar l'experiència d'usuari i analitzar el trànsit.
-      </p>
+      <div className="border-b border-border pb-8 mb-8">
+        <h1 className="text-3xl md:text-4xl font-extrabold mb-4">Política de Cookies</h1>
+        <p className="text-xl text-muted-foreground leading-relaxed">
+          Utilitzem galetes (cookies) per assegurar que la web funcioni correctament i per entendre com podem millorar-la. Aquí tens tots els detalls.
+        </p>
+      </div>
 
-      <h2>1. Què són les Cookies?</h2>
-      <p>
-        Una cookie és un petit fitxer de text que s'emmagatzema al teu navegador quan visites gairebé qualsevol pàgina web. La seva utilitat és que la web sigui capaç de recordar la teva visita quan tornis a navegar per aquesta pàgina.
-      </p>
+      <div className="space-y-12">
 
-      <h2>2. Tipus de Cookies que utilitzem</h2>
-      
-      <h3>Cookies Tècniques (Necessàries)</h3>
-      <p>
-        Són aquelles imprescindibles per al funcionament de la web. Per exemple, per saber si has iniciat sessió al Dashboard o per recordar les teves preferències de consentiment.
-      </p>
-      <ul>
-        <li><strong>Supabase Auth:</strong> Gestiona la sessió de l'usuari.</li>
-        <li><strong>Next-Intl:</strong> Recorda l'idioma preferit.</li>
-      </ul>
+        {/* BLOC 1: DEFINICIÓ */}
+        <section>
+          <h2 className="text-2xl font-bold flex items-center gap-2 mb-4">
+            <Cookie className="text-orange-500" /> 1. Què són les Cookies?
+          </h2>
+          <div className="bg-muted/30 p-6 rounded-xl border border-border">
+            <p className="m-0">
+              Una cookie és un petit fitxer de text que s'emmagatzema al teu navegador quan visites gairebé qualsevol pàgina web. La seva utilitat és que la web sigui capaç de recordar la teva visita quan tornis a navegar per aquesta pàgina, o mantenir la teva sessió oberta.
+            </p>
+          </div>
+        </section>
 
-      <h3>Cookies Analítiques</h3>
-      <p>
-        Ens permeten quantificar el nombre d'usuaris i realitzar l'anàlisi estadística de la utilització que fan del servei ofert.
-      </p>
-      <ul>
-        <li>Utilitzem un sistema d'analítica propi respectuós amb la privacitat (sense Google Analytics invasiu).</li>
-      </ul>
+        {/* BLOC 2: TIPUS DE COOKIES (GRID) */}
+        <section>
+          <h2>2. Quines cookies utilitzem?</h2>
+          <p>Aquesta web utilitza els següents tipus de cookies:</p>
+          
+          <div className="grid md:grid-cols-2 gap-6 not-prose my-6">
+             {/* Cookies Tècniques */}
+             <div className="p-5 rounded-xl border border-border bg-card shadow-sm">
+                <div className="flex items-center gap-3 mb-3">
+                   <div className="p-2 bg-primary/10 rounded-lg text-primary">
+                      <Settings className="w-5 h-5" />
+                   </div>
+                   <h4 className="font-bold text-lg">Necessàries (Tècniques)</h4>
+                </div>
+                <p className="text-sm text-muted-foreground mb-4">
+                   Són imprescindibles per al funcionament de la web. Sense elles, no podries iniciar sessió ni navegar correctament.
+                </p>
+                <ul className="space-y-2 text-sm">
+                   <li className="flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>
+                      <strong>Supabase Auth:</strong> Gestiona la sessió segura.
+                   </li>
+                   <li className="flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>
+                      <strong>Next-Intl:</strong> Recorda l'idioma preferit.
+                   </li>
+                </ul>
+             </div>
 
-      <h2>3. Com desactivar les Cookies?</h2>
-      <p>
-        Pots permetre, bloquejar o eliminar les cookies instal·lades al teu equip mitjançant la configuració de les opcions del navegador instal·lat al teu ordinador:
-      </p>
-      <ul>
-        <li><a href="https://support.google.com/chrome/answer/95647" target="_blank" rel="noopener">Google Chrome</a></li>
-        <li><a href="https://support.apple.com/es-es/guide/safari/sfri11471/mac" target="_blank" rel="noopener">Safari</a></li>
-        <li><a href="https://support.mozilla.org/es/kb/habilitar-y-deshabilitar-cookies-sitios-web-rastrear-preferencias" target="_blank" rel="noopener">Firefox</a></li>
-      </ul>
+             {/* Cookies Analítiques */}
+             <div className="p-5 rounded-xl border border-border bg-card shadow-sm">
+                <div className="flex items-center gap-3 mb-3">
+                   <div className="p-2 bg-blue-500/10 rounded-lg text-blue-500">
+                      <BarChart3 className="w-5 h-5" />
+                   </div>
+                   <h4 className="font-bold text-lg">Analítiques</h4>
+                </div>
+                <p className="text-sm text-muted-foreground mb-4">
+                   Ens permeten quantificar el nombre d'usuaris i analitzar la utilització que fan del servei per millorar-lo.
+                </p>
+                <ul className="space-y-2 text-sm">
+                   <li className="flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 bg-blue-500 rounded-full"></span>
+                      <strong>Analytics Propi:</strong> Estadístiques anònimes respectuoses amb la privacitat (sense rastreig invasiu de Google).
+                   </li>
+                </ul>
+             </div>
+          </div>
+        </section>
+
+        {/* BLOC 3: DESACTIVACIÓ */}
+        <section>
+           <h2 className="flex items-center gap-2">
+              <XCircle className="text-red-500" /> 3. Com desactivar-les?
+           </h2>
+           <p>
+             Pots permetre, bloquejar o eliminar les cookies instal·lades al teu equip mitjançant la configuració de les opcions del navegador:
+           </p>
+           
+           <div className="flex flex-wrap gap-4 not-prose mt-4">
+              <a href="https://support.google.com/chrome/answer/95647" target="_blank" rel="noopener" className="px-4 py-2 bg-card border border-border rounded-lg text-sm font-medium hover:border-primary transition-colors">
+                 Google Chrome
+              </a>
+              <a href="https://support.apple.com/es-es/guide/safari/sfri11471/mac" target="_blank" rel="noopener" className="px-4 py-2 bg-card border border-border rounded-lg text-sm font-medium hover:border-primary transition-colors">
+                 Safari
+              </a>
+              <a href="https://support.mozilla.org/es/kb/habilitar-y-deshabilitar-cookies-sitios-web-rastrear-preferencias" target="_blank" rel="noopener" className="px-4 py-2 bg-card border border-border rounded-lg text-sm font-medium hover:border-primary transition-colors">
+                 Firefox
+              </a>
+              <a href="https://support.microsoft.com/es-es/microsoft-edge/eliminar-las-cookies-en-microsoft-edge-63947406-40ac-c23d-37fd-6b7ac978ce4a" target="_blank" rel="noopener" className="px-4 py-2 bg-card border border-border rounded-lg text-sm font-medium hover:border-primary transition-colors">
+                 Microsoft Edge
+              </a>
+           </div>
+        </section>
+
+      </div>
     </LegalLayout>
   );
 }
@@ -1154,66 +1363,86 @@ export default function CookiesPage() {
 // =================== FILE: src/app/[locale]/(marketing)/legal/privacitat/page.tsx ===================
 
 import LegalLayout from '@/components/layout/LegalLayout';
+import { ShieldCheck, Server, Eye, Lock } from 'lucide-react';
 
 export const metadata = {
   title: 'Política de Privacitat | DigitAI Studios',
-  description: 'Com tractem les teves dades personals a DigitAI Studios.',
 };
 
 export default function PrivacitatPage() {
   return (
     <LegalLayout>
-      <h1>Política de Privacitat</h1>
-      <p className="lead">
-        A DigitAI Studios ens prenem molt seriosament la teva privacitat. Aquesta política detalla com recollim, utilitzem i protegim les teves dades personals d'acord amb el Reglament General de Protecció de Dades (RGPD).
-      </p>
+      <div className="border-b border-border pb-8 mb-8">
+        <h1 className="text-3xl md:text-4xl font-extrabold mb-4">Política de Privacitat</h1>
+        <p className="text-xl text-muted-foreground leading-relaxed">
+          La teva privacitat és sagrada. Aquí t'expliquem clarament quines dades recollim, per què, i com les protegim.
+        </p>
+      </div>
 
-      <h2>1. Responsable del Tractament</h2>
-      <p>
-        Les dades recollides són responsabilitat de <strong>DigitAI Studios</strong> (veure dades a l'Avís Legal).
-      </p>
+      <div className="space-y-12">
+          
+          {/* BLOC 1: RESPONSABLE */}
+          <section>
+              <h2 className="text-2xl font-bold flex items-center gap-2 mb-4">
+                  <ShieldCheck className="text-green-500" /> 1. Qui és el responsable de les teves dades?
+              </h2>
+              <div className="bg-muted/30 p-6 rounded-xl border border-border">
+                  <p className="m-0">
+                      El responsable és <strong>DigitAI Studios</strong> (veure Avís Legal per a dades completes). Pots contactar amb el nostre Delegat de Protecció de Dades a: <a href="mailto:dpd@digitaistudios.com">dpd@digitaistudios.com</a>.
+                  </p>
+              </div>
+          </section>
 
-      <h2>2. Quines dades recollim?</h2>
-      <p>Recollim les dades mínimes necessàries per oferir els nostres serveis:</p>
-      <ul>
-        <li><strong>Formulari d'Auditoria:</strong> URL de la web a analitzar i correu electrònic per enviar l'informe.</li>
-        <li><strong>Registre d'Usuari:</strong> Correu electrònic i contrasenya (encriptada) per accedir al Dashboard.</li>
-        <li><strong>Dades de Navegació:</strong> Adreça IP, tipus de dispositiu i navegador (mitjançant cookies tècniques).</li>
-      </ul>
+          {/* BLOC 2: QUINES DADES */}
+          <section>
+              <h2>2. Quines dades recollim?</h2>
+              <p>Només recollim les dades estrictament necessàries per oferir els nostres serveis:</p>
+              <div className="grid md:grid-cols-2 gap-6 not-prose my-6">
+                  <div className="p-4 rounded-lg border border-border bg-card">
+                      <h4 className="font-bold text-lg mb-2 flex items-center gap-2">🔍 Auditoria Web</h4>
+                      <p className="text-sm text-muted-foreground">La URL de la web que vols analitzar i el teu correu electrònic per enviar-te l'informe.</p>
+                  </div>
+                  <div className="p-4 rounded-lg border border-border bg-card">
+                      <h4 className="font-bold text-lg mb-2 flex items-center gap-2">👤 Compte d'Usuari</h4>
+                      <p className="text-sm text-muted-foreground">El teu nom, correu electrònic i contrasenya encriptada quan et registres al Dashboard.</p>
+                  </div>
+              </div>
+          </section>
 
-      <h2>3. Finalitat del Tractament</h2>
-      <p>Utilitzem les teves dades per a les següents finalitats:</p>
-      <ul>
-        <li><strong>Realitzar l'auditoria web:</strong> Processar la URL amb l'API de Google PageSpeed Insights i enviar-te els resultats.</li>
-        <li><strong>Gestió del compte:</strong> Permetre l'accés al teu panell privat i guardar l'històric d'auditories.</li>
-        <li><strong>Comunicacions:</strong> Enviar-te l'informe sol·licitat i, si ens has donat consentiment, informació sobre els nostres serveis.</li>
-      </ul>
+          {/* BLOC 3: TERCERS */}
+          <section>
+              <h2 className="flex items-center gap-2"><Server className="text-blue-500" /> 3. Amb qui compartim les dades?</h2>
+              <p>No venem les teves dades a ningú. Només les compartim amb proveïdors tecnològics necessaris per al funcionament del servei:</p>
+              <ul className="not-prose space-y-2 mt-4">
+                  <li className="flex items-center gap-3 p-2 rounded hover:bg-muted/50">
+                      <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                      <span><strong>Supabase:</strong> Base de dades i autenticació (Allotjat a la UE/AWS).</span>
+                  </li>
+                  <li className="flex items-center gap-3 p-2 rounded hover:bg-muted/50">
+                      <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                      <span><strong>Resend:</strong> Enviament d'emails transaccionals.</span>
+                  </li>
+                  <li className="flex items-center gap-3 p-2 rounded hover:bg-muted/50">
+                      <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                      <span><strong>Google Cloud:</strong> API per processar les auditories web.</span>
+                  </li>
+              </ul>
+          </section>
 
-      <h2>4. Serveis de Tercers (Subencarregats)</h2>
-      <p>Per oferir els nostres serveis, compartim dades estrictament necessàries amb proveïdors tecnològics de confiança que compleixen amb el RGPD:</p>
-      <ul>
-        <li><strong>Supabase (Base de Dades):</strong> Allotjament segur de les dades d'usuari i auditories.</li>
-        <li><strong>Google Cloud (PageSpeed API):</strong> Per realitzar l'anàlisi tècnica de les webs.</li>
-        <li><strong>Resend (Email):</strong> Per a l'enviament automatitzat de correus electrònics transaccionals.</li>
-        <li><strong>Vercel (Hosting):</strong> Proveïdor d'allotjament web i infraestructura.</li>
-      </ul>
+          {/* BLOC 4: DRETS */}
+          <section>
+              <h2 className="flex items-center gap-2"><Lock className="text-primary" /> 4. Els teus drets</h2>
+              <p>Tens el control total sobre les teves dades. En qualsevol moment pots:</p>
+              <ul>
+                  <li>Accedir, rectificar o suprimir les teves dades.</li>
+                  <li>Limitar el seu tractament.</li>
+                  <li>Oposar-te a rebre comunicacions.</li>
+                  <li>Sol·licitar la portabilitat de les dades.</li>
+              </ul>
+              <p>Per exercir-los, envia un email a <strong>info@digitaistudios.com</strong>.</p>
+          </section>
 
-      <h2>5. Drets de l'Usuari</h2>
-      <p>Tens dret a:</p>
-      <ul>
-        <li>Accedir a les teves dades.</li>
-        <li>Rectificar dades inexactes.</li>
-        <li>Sol·licitar la supressió (dret a l'oblit) quan ja no siguin necessàries.</li>
-        <li>Oposar-te al tractament o limitar-lo.</li>
-      </ul>
-      <p>
-        Pots exercir aquests drets enviant un correu a <a href="mailto:info@digitaistudios.com">info@digitaistudios.com</a>.
-      </p>
-
-      <h2>6. Seguretat</h2>
-      <p>
-        Apliquem mesures de seguretat tècniques i organitzatives (encriptació SSL, contrasenyes segures a la base de dades) per protegir les teves dades contra pèrdues o accessos no autoritzats.
-      </p>
+      </div>
     </LegalLayout>
   );
 }
@@ -1255,189 +1484,15 @@ export default function MarketingPage() {
 
 // =================== FILE: src/app/[locale]/(marketing)/projectes/page.tsx ===================
 
-'use client';
-
-import { Button } from '@/components/ui/button';
-import { motion } from 'framer-motion';
-import { ArrowRight, ExternalLink, Layers, Sparkles } from 'lucide-react';
-import Image from 'next/image';
-import Link from 'next/link';
-
-// Dades dels projectes (sense canvis, només estructura)
-const PROJECTS = [
-  {
-    id: 'ribotflow',
-    title: 'RibotFlow',
-    tagline: 'El Sistema Operatiu Integral',
-    description: 'Plataforma de gestió "Tot en Un" que unifica CRM, facturació i xarxes socials. Elimina el caos de tenir la informació dispersa i utilitza IA per redactar correus i gestionar oportunitats.',
-    stats: ['CRM + Facturació', 'Automatització IA', 'Control Financer'],
-    tags: ['ERP', 'Business', 'IA', 'Supabase'],
-    color: 'from-purple-500 to-pink-500',
-    image: '@/assets/images/pantalla-ribotflow.jpg',
-    link: 'https://ribotflow.com'
-  },
-  {
-    id: 'salutflow',
-    title: 'SalutFlow',
-    tagline: 'El teu Centre Esportiu, Digitalitzat',
-    description: 'Crea la teva pròpia App Web (PWA) en minuts sense programar. Gestiona reserves, pagaments recurrents (Stripe) i aforaments automàticament. Ideal per gimnasos i estudis.',
-    stats: ['App PWA', 'Pagaments Stripe', 'Llistes d\'Espera'],
-    tags: ['SaaS', 'Sport', 'PWA', 'Stripe'],
-    color: 'from-cyan-400 to-blue-600',
-    image: '@/assets/images/pantalla-salutflow.jpg',
-    link: 'https://getsalutflow.com'
-  }
-];
+// ARA (Import net des de la feature):
+import { ProjectsHero, ProjectsList, ProjectsCTA } from '@/features/projects';
 
 export default function ProjectsPage() {
   return (
-    <main className="min-h-screen flex flex-col bg-background selection:bg-primary/30">
-
-      {/* --- HERO SECTION --- */}
-      <section className="pt-32 pb-16 md:pt-48 md:pb-24 relative overflow-hidden">
-         {/* Fons */}
-         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] md:w-[1000px] h-[300px] md:h-[500px] bg-primary/10 blur-[80px] md:blur-[120px] rounded-full pointer-events-none opacity-50" />
-         
-         <div className="container mx-auto px-4 text-center relative z-10">
-            <motion.div
-               initial={{ opacity: 0, y: 20 }}
-               animate={{ opacity: 1, y: 0 }}
-               transition={{ duration: 0.8 }}
-            >
-               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/20 bg-primary/5 text-primary text-[10px] md:text-xs font-bold mb-6 uppercase tracking-widest">
-                  <Sparkles className="w-3 h-3" />
-                  DigitAI Innovation Lab
-               </div>
-               <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 text-foreground leading-tight">
-                  No només venem codi. <br className="hidden md:block" />
-                  <span className="gradient-text">Construïm Empreses.</span>
-               </h1>
-               <p className="text-base md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed px-4">
-                  Aquests són els nostres productes propis. Utilitzem la mateixa tecnologia i metodologia per als teus projectes que la que fem servir per escalar els nostres negocis.
-               </p>
-            </motion.div>
-         </div>
-      </section>
-
-      {/* --- PROJECT SHOWCASE --- */}
-      <section className="py-10 pb-20 md:pb-32">
-         <div className="container mx-auto px-4 space-y-20 md:space-y-32">
-            {PROJECTS.map((project, index) => (
-               <div key={project.id} className={`flex flex-col lg:flex-row gap-8 md:gap-16 items-center ${index % 2 !== 0 ? 'lg:flex-row-reverse' : ''}`}>
-                  
-                  {/* COLUMNA VISUAL */}
-                  <motion.div 
-                     initial={{ opacity: 0, y: 30 }}
-                     whileInView={{ opacity: 1, y: 0 }}
-                     viewport={{ once: true }}
-                     transition={{ duration: 0.8 }}
-                     className="w-full lg:flex-1 relative group"
-                  >
-                     {/* Glow */}
-                     <div className={`absolute inset-0 bg-linear-to-r ${project.color} opacity-20 blur-[60px] group-hover:opacity-30 transition-opacity duration-500 pointer-events-none`}></div>
-                     
-                     {/* Marc Navegador */}
-                     <div className="relative rounded-xl border border-border bg-card shadow-2xl overflow-hidden transform transition-transform duration-500 group-hover:scale-[1.02] md:group-hover:-translate-y-2">
-                        {/* Header Navegador (Més petit en mòbil) */}
-                        <div className="h-6 md:h-8 border-b border-border bg-muted/30 flex items-center px-3 gap-1.5 md:gap-2">
-                           <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-red-500/50"></div>
-                           <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-yellow-500/50"></div>
-                           <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-green-500/50"></div>
-                           <div className="ml-2 md:ml-4 px-2 py-0.5 rounded bg-background/50 text-[8px] md:text-[10px] text-muted-foreground font-mono border border-border w-full max-w-[150px] md:max-w-[200px] opacity-50 truncate">
-                              https://{project.id}.com
-                           </div>
-                        </div>
-                        
-                        {/* Imatge (Aspect ratio adaptatiu) */}
-                        <div className="aspect-4/3 md:aspect-video relative bg-slate-100 dark:bg-slate-900">
-                           {project.image ? (
-                              <Image 
-                                 src={project.image} 
-                                 alt={project.title} 
-                                 fill 
-                                 className="object-cover object-top" 
-                                 sizes="(max-width: 768px) 100vw, 50vw"
-                              /> 
-                           ) : (
-                              <div className="absolute inset-0 flex flex-col items-center justify-center text-muted-foreground/20">
-                                 <Layers className="w-12 h-12 md:w-16 md:h-16 mb-4" />
-                                 <span className="text-xs md:text-sm font-bold uppercase tracking-widest">Captura de {project.title}</span>
-                              </div>
-                           )}
-                        </div>
-                     </div>
-                  </motion.div>
-
-                  {/* COLUMNA TEXT */}
-                  <motion.div 
-                     initial={{ opacity: 0, y: 30 }}
-                     whileInView={{ opacity: 1, y: 0 }}
-                     viewport={{ once: true }}
-                     transition={{ duration: 0.8, delay: 0.2 }}
-                     className="w-full lg:flex-1 space-y-6 md:space-y-8"
-                  >
-                     <div>
-                        <div className={`inline-block px-3 py-1 rounded-lg bg-linear-to-r ${project.color} bg-opacity-10 text-[10px] md:text-xs font-bold text-white mb-4`}>
-                           {project.tags[0]}
-                        </div>
-                        <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-2">{project.title}</h2>
-                        <p className={`text-lg md:text-xl font-medium bg-linear-to-r ${project.color} bg-clip-text text-transparent`}>
-                           {project.tagline}
-                        </p>
-                     </div>
-
-                     <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
-                        {project.description}
-                     </p>
-
-                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
-                        {project.stats.map((stat, i) => (
-                           <div key={i} className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-300 font-medium">
-                              <div className={`w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-linear-to-r ${project.color}`}></div>
-                              {stat}
-                           </div>
-                        ))}
-                     </div>
-
-                     <div className="flex flex-wrap gap-2 pt-2">
-                        {project.tags.map((tag) => (
-                           <span key={tag} className="px-2.5 py-0.5 md:px-3 md:py-1 rounded-full border border-border bg-muted/20 text-[10px] md:text-xs font-medium text-muted-foreground">
-                              {tag}
-                           </span>
-                        ))}
-                     </div>
-
-                     <div className="flex gap-4 pt-4">
-                        <a href={project.link} target="_blank" rel="noreferrer" className="w-full sm:w-auto">
-                           <Button className="w-full sm:w-auto gradient-bg text-white border-0 shadow-lg hover:opacity-90">
-                              Veure Web <ExternalLink className="ml-2 w-4 h-4" />
-                           </Button>
-                        </a>
-                     </div>
-                  </motion.div>
-
-               </div>
-            ))}
-         </div>
-      </section>
-
-      {/* CTA FINAL */}
-      <section className="py-16 md:py-24 border-t border-border bg-muted/10">
-         <div className="container mx-auto px-4 text-center">
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4 md:mb-6">
-               Tens una idea per al pròxim <span className="gradient-text">Gran Producte</span>?
-            </h2>
-            <p className="text-sm md:text-base text-muted-foreground mb-8 md:mb-10 max-w-xl mx-auto px-4">
-               Hem convertit les nostres idees en negocis rendibles. Ara deixa que t'ajudem a fer el mateix amb la teva.
-            </p>
-            <Link href="/#contacte">
-               <Button size="lg" className="h-12 md:h-14 px-6 md:px-8 text-base md:text-lg rounded-full gradient-bg text-white hover:opacity-90 shadow-xl w-full sm:w-auto">
-                  Parlem del teu Projecte <ArrowRight className="ml-2 w-5 h-5" />
-               </Button>
-            </Link>
-         </div>
-      </section>
-
+    <main className="min-h-screen flex flex-col bg-background selection:bg-primary/30 transition-colors duration-300">
+      <ProjectsHero />
+      <ProjectsList />
+      <ProjectsCTA />
     </main>
   );
 }
@@ -1451,9 +1506,8 @@ import { TopPagesCard } from '@/features/analytics/ui/TopPagesCard';
 import { DeviceChart } from '@/features/analytics/ui/DeviceChart';
 import { BarListChart } from '@/features/analytics/ui/BarListChart';
 import { VerticalBarChart } from '@/features/analytics/ui/VerticalBarChart';
-import { Card } from '@/components/ui/card';
-import { Users, Eye, MousePointerClick, Clock, TrendingUp } from 'lucide-react';
-import React from 'react';
+import { UnifiedStatBar } from '@/features/analytics/ui/UnifiedStatBar';
+
 
 export const revalidate = 60;
 
@@ -1469,10 +1523,12 @@ export default async function AdminAnalyticsPage() {
   const totalVisitors = dailyStats.reduce((acc, day) => acc + day.visitors, 0);
 
   return (
-    // LAYOUT MAESTRE: Ocupa 100% alçada, sense scroll al body
-    <div className="h-[calc(100vh-2rem)] flex flex-col gap-4 overflow-hidden pb-2">
+    // CANVI CLAU:
+    // Mòbil: h-auto (alçada automàtica) + overflow-y-auto (scroll vertical)
+    // Escriptori (lg): h-[calc(100vh-2rem)] (alçada fixa) + overflow-hidden (sense scroll global)
+    <div className="flex flex-col gap-4 pb-4 h-auto overflow-y-auto lg:h-[calc(100vh-2rem)] lg:overflow-hidden">
       
-      {/* 1. BARRA D'ESTAT UNIFICADA (KPIs) */}
+      {/* 1. BARRA D'ESTAT UNIFICADA */}
       <div className="shrink-0">
          <UnifiedStatBar 
             views={totalViews} 
@@ -1482,45 +1538,46 @@ export default async function AdminAnalyticsPage() {
          />
       </div>
 
-      {/* 2. GRAELLA PRINCIPAL (L'espai restant) */}
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-4 min-h-0">
+      {/* 2. GRAELLA PRINCIPAL */}
+      {/* Mòbil: flex-col (un sota l'altre). Escriptori: grid (graella original) */}
+      <div className="flex-1 flex flex-col lg:grid lg:grid-cols-3 gap-4 min-h-0">
          
-         {/* --- COLUMNA ESQUERRA (Principal - 2/3) --- */}
-         <div className="lg:col-span-2 flex flex-col gap-4 h-full min-h-0">
+         {/* --- COLUMNA ESQUERRA --- */}
+         <div className="lg:col-span-2 flex flex-col gap-4 lg:h-full lg:min-h-0">
             
-            {/* A. Trànsit (Ocupa la meitat de dalt) */}
-            <div className="h-1/2 min-h-0">
+            {/* A. Trànsit */}
+            {/* Mòbil: Alçada fixa 300px. Escriptori: 50% de l'espai */}
+            <div className="h-[300px] lg:h-1/2 lg:min-h-0">
                 <TrafficChart data={dailyStats} />
             </div>
 
-            {/* B. Detalls Importants (Ocupa la meitat de baix, dividit en 2) */}
-            <div className="h-1/2 min-h-0 grid grid-cols-2 gap-4">
-                {/* Top Pàgines (Onada) */}
-                <div className="h-full min-h-0">
+            {/* B. Detalls Importants */}
+            {/* Mòbil: flex-col (stack). Escriptori: grid-cols-2 */}
+            <div className="flex flex-col lg:grid lg:grid-cols-2 gap-4 lg:h-1/2 lg:min-h-0">
+                <div className="h-[300px] lg:h-full lg:min-h-0">
                     <TopPagesCard data={adv.topPages} />
                 </div>
-                {/* Fonts de Trànsit (Mogut aquí segons petició) */}
-                <div className="h-full min-h-0">
+                <div className="h-[300px] lg:h-full lg:min-h-0">
                     <BarListChart title="Fonts de Trànsit" data={adv.referrers} />
                 </div>
             </div>
          </div>
 
-         {/* --- COLUMNA DRETA (Secundària - 1/3) --- */}
-         <div className="lg:col-span-1 flex flex-col gap-4 h-full min-h-0">
+         {/* --- COLUMNA DRETA --- */}
+         <div className="lg:col-span-1 flex flex-col gap-4 lg:h-full lg:min-h-0">
             
-            {/* C. Dispositius (33%) */}
-            <div className="flex-1 min-h-0">
+            {/* C. Dispositius */}
+            <div className="h-[300px] lg:flex-1 lg:min-h-0">
                <DeviceChart data={adv.devices} />
             </div>
 
-            {/* D. Països (33% - Mogut aquí) */}
-            <div className="flex-1 min-h-0">
+            {/* D. Països */}
+            <div className="h-[300px] lg:flex-1 lg:min-h-0">
                <VerticalBarChart title="Top Països" data={adv.countries} />
             </div>
 
-            {/* E. Navegadors (33%) */}
-            <div className="flex-1 min-h-0">
+            {/* E. Navegadors */}
+            <div className="h-[300px] lg:flex-1 lg:min-h-0">
                <BarListChart title="Navegadors" data={adv.browsers} />
             </div>
          </div>
@@ -1530,67 +1587,121 @@ export default async function AdminAnalyticsPage() {
   );
 }
 
-// --- COMPONENT NOU: BARRA D'ESTAT UNIFICADA ---
-interface UnifiedStatBarProps {
-  views: number;
-  visitors: number;
-  events: number;
-  avgTime: string;
+// =================== FILE: src/app/[locale]/admin/debug/page.tsx ===================
+
+'use client';
+
+import { useState, useEffect } from 'react';
+import { createClient } from '@/lib/supabase/client';
+
+// Definim una interfície simple per al resultat que esperem de Supabase
+interface SupabaseCountResult {
+  count: number | null;
+  error: {
+    message: string;
+    code?: string;
+  } | null;
 }
 
-function UnifiedStatBar({ views, visitors, events, avgTime }: UnifiedStatBarProps) {
+export default function DebugAnalyticsPage() {
+  const [logs, setLogs] = useState<string[]>([]);
+  const [envStatus] = useState({
+    url: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
+    key: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  });
+
+  // 1. Comprovem variables només carregar
+  // Eliminat useEffect perquè la inicialització es fa directament a useState
+
+  const addLog = (msg: string) => setLogs(prev => [...prev, `${new Date().toLocaleTimeString()} > ${msg}`]);
+
+  const testConnection = async () => {
+    addLog('🚀 INICIANT TEST...');
+    
+    // Validació prèvia
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
+      addLog('❌ ERROR FATAL: Falta NEXT_PUBLIC_SUPABASE_URL');
+      return;
+    }
+
+    try {
+      addLog('1. Creant client Supabase...');
+      const supabase = createClient();
+      
+      addLog('2. Enviant petició (SELECT)...');
+      
+      // Fem un timeout manual per si es queda penjat
+      const timeoutPromise = new Promise<never>((_, reject) => 
+        setTimeout(() => reject(new Error("Timeout: La xarxa està bloquejada (AdBlock?)")), 5000)
+      );
+
+      const dbPromise = supabase
+        .from('analytics_events')
+        .select('count', { count: 'exact', head: true });
+
+      // Cursa entre la DB i el Timeout. Forcem el tipus a 'unknown' primer i després al nostre tipus.
+      const result = await Promise.race([dbPromise, timeoutPromise]) as unknown as SupabaseCountResult;
+
+      if (result.error) {
+        addLog(`❌ ERROR DB: ${result.error.message}`);
+        console.error(result.error);
+      } else {
+        addLog(`✅ CONNEXIÓ CORRECTA! Files a la taula: ${result.count}`);
+      }
+
+    } catch (err: unknown) { 
+      // CANVI CLAU: Usem 'unknown' en lloc de 'any'
+      let errorMessage = 'Error desconegut';
+      
+      if (err instanceof Error) {
+        errorMessage = err.message;
+      } else if (typeof err === 'string') {
+        errorMessage = err;
+      }
+
+      addLog(`💥 EXCEPCIÓ: ${errorMessage}`);
+      console.error(err);
+    }
+  };
+
   return (
-    <Card className="bg-slate-900 border-slate-800 text-slate-200 p-4 flex items-center justify-between shadow-lg">
-        
-        {/* Títol Integrat */}
-        <div className="flex items-center gap-3 pr-8 border-r border-slate-800">
-            <div className="p-2 bg-primary/10 rounded-lg">
-                <TrendingUp className="text-primary h-6 w-6" />
-            </div>
-            <div>
-                <h1 className="text-lg font-bold text-white leading-tight">Dashboard</h1>
-                <p className="text-xs text-slate-500">Temps real</p>
-            </div>
+    <div className="p-8 text-white bg-slate-950 min-h-screen">
+      <h1 className="text-3xl font-bold mb-6 text-red-500">🚑 DIAGNÒSTIC D'URGÈNCIA</h1>
+      
+      {/* Estat Variables */}
+      <div className="grid grid-cols-2 gap-4 mb-6">
+        <div className={`p-4 rounded border ${envStatus.url ? 'border-green-500 bg-green-900/20' : 'border-red-500 bg-red-900/20'}`}>
+          <div className="font-bold">SUPABASE_URL</div>
+          <div className="text-2xl">{envStatus.url ? '✅ OK' : '❌ MISSING'}</div>
         </div>
+        <div className={`p-4 rounded border ${envStatus.key ? 'border-green-500 bg-green-900/20' : 'border-red-500 bg-red-900/20'}`}>
+          <div className="font-bold">ANON_KEY</div>
+          <div className="text-2xl">{envStatus.key ? '✅ OK' : '❌ MISSING'}</div>
+        </div>
+      </div>
 
-        {/* Mètriques en línia */}
-        <div className="flex-1 flex justify-around items-center">
-            <StatItem label="Vistes (7d)" value={views} icon={<Eye className="h-4 w-4 text-blue-400" />} />
-            <div className="h-8 w-px bg-slate-800" />
-            <StatItem label="Usuaris" value={visitors} icon={<Users className="h-4 w-4 text-green-400" />} />
-            <div className="h-8 w-px bg-slate-800" />
-            <StatItem label="Events" value={events} icon={<MousePointerClick className="h-4 w-4 text-purple-400" />} />
-            <div className="h-8 w-px bg-slate-800" />
-            <StatItem label="Temps Mitjà" value={avgTime} icon={<Clock className="h-4 w-4 text-orange-400" />} />
-        </div>
-    </Card>
+      <button 
+        onClick={testConnection}
+        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-lg text-lg mb-6 transition-colors"
+      >
+        FORÇAR PROVA DE CONNEXIÓ
+      </button>
+
+      <div className="bg-black rounded-lg p-4 font-mono text-sm border border-slate-800 h-64 overflow-y-auto">
+        {logs.length === 0 ? <span className="text-slate-500">Els logs apareixeran aquí...</span> : logs.map((log, i) => (
+          <div key={i} className="mb-1 border-b border-slate-900 pb-1">{log}</div>
+        ))}
+      </div>
+    </div>
   );
-}
-
-interface StatItemProps {
-    label: string;
-    value: string | number;
-    icon: React.ReactNode;
-}
-
-function StatItem({ label, value, icon }: StatItemProps) {
-    return (
-        <div className="flex flex-col items-center gap-1 min-w-[100px]">
-            <span className="text-[10px] uppercase tracking-wider text-slate-500 font-bold flex items-center gap-2">
-                {icon} {label}
-            </span>
-            <span className="text-2xl font-bold text-white leading-none">
-                {value}
-            </span>
-        </div>
-    )
 }
 
 // =================== FILE: src/app/[locale]/admin/layout.tsx ===================
 
 import { requireAdmin } from '@/lib/auth/admin-guard';
 import { Link } from '@/routing';
-import { ShieldAlert } from 'lucide-react';
+import { ShieldAlert, LayoutDashboard, BarChart3, Users, Home } from 'lucide-react';
+import { AdminBottomNav } from '@/components/admin/AminMobileMenu';
 
 export default async function AdminLayout({
   children,
@@ -1598,35 +1709,57 @@ export default async function AdminLayout({
   children: React.ReactNode;
 }) {
   // ⛔ BLOQUEIG DE SEGURETAT
-  // Només amb aquesta línia, protegim totes les pàgines filles
   await requireAdmin();
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200 flex">
-      {/* Sidebar Admin Minimalista */}
-      <aside className="w-64 border-r border-slate-800 p-6 flex flex-col">
+    <div className="flex h-screen overflow-hidden bg-slate-950 text-slate-200">
+      
+      {/* === 1. SIDEBAR DESKTOP (Només visible en pantalles mitjanes/grans) === */}
+      <aside className="hidden md:flex w-64 border-r border-slate-800 p-6 flex-col bg-slate-950">
         <div className="flex items-center gap-2 font-bold text-white mb-10 text-xl">
            <ShieldAlert className="text-red-500" />
            TORRE DE CONTROL
         </div>
         
         <nav className="flex flex-col gap-2">
-          <Link href="/admin" className="px-4 py-2 rounded hover:bg-slate-900 transition-colors">
-             Dashboard
+          <Link href="/admin" className="flex items-center gap-3 px-4 py-2 rounded hover:bg-slate-900 transition-colors text-slate-300 hover:text-white">
+              <LayoutDashboard className="w-5 h-5" /> Dashboard
           </Link>
-          <Link href="/admin/analytics" className="px-4 py-2 rounded hover:bg-slate-900 transition-colors text-blue-400">
-             Analítiques
+          <Link href="/admin/analytics" className="flex items-center gap-3 px-4 py-2 rounded hover:bg-slate-900 transition-colors text-blue-400 font-medium">
+              <BarChart3 className="w-5 h-5" /> Analítiques
           </Link>
-          <Link href="/" className="px-4 py-2 rounded hover:bg-slate-900 transition-colors mt-auto text-slate-500 text-sm">
-             ← Tornar a la Web
+          <Link href="/admin/users" className="flex items-center gap-3 px-4 py-2 rounded hover:bg-slate-900 transition-colors text-blue-400 font-medium">
+              <Users className="w-5 h-5" /> Usuaris
           </Link>
+          
+          <div className="mt-auto pt-4 border-t border-slate-800">
+            <Link href="/" className="flex items-center gap-3 px-4 py-2 rounded hover:bg-slate-900 transition-colors text-slate-500 text-sm">
+               <Home className="w-4 h-4" /> ← Tornar a la Web
+            </Link>
+          </div>
         </nav>
       </aside>
 
-      {/* Contingut */}
-      <main className="flex-1 p-8 overflow-y-auto">
-        {children}
-      </main>
+      {/* === CONTINGUT PRINCIPAL === */}
+      <div className="flex-1 flex flex-col min-w-0 relative">
+        
+        {/* Header Mòbil (Opcional: Només títol, sense menú perquè tenim bottombar) */}
+        <header className="md:hidden h-14 border-b border-slate-800 flex items-center justify-center bg-slate-950 shrink-0">
+           <span className="flex items-center gap-2 font-bold text-white text-sm">
+             <ShieldAlert className="w-4 h-4 text-red-500" /> ADMIN PANEL
+           </span>
+        </header>
+
+        {/* Zona de contingut amb scroll */}
+        {/* Afegim 'mb-16' a mòbil per evitar que la bottombar tapi el final del contingut */}
+        <main className="flex-1 overflow-y-auto p-4 md:p-8 mb-16 md:mb-0">
+          {children}
+        </main>
+
+        {/* === 2. BOTTOM BAR (Només visible a mòbil) === */}
+        <AdminBottomNav />
+        
+      </div>
     </div>
   );
 }
@@ -1649,6 +1782,95 @@ export default function AdminDashboard() {
              <div className="text-2xl font-bold text-green-500">OPERATIU 🟢</div>
            </CardContent>
         </Card>
+      </div>
+    </div>
+  );
+}
+
+// =================== FILE: src/app/[locale]/admin/users/page.tsx ===================
+
+import { getAdminUsersList } from '@/app/actions/get-users';
+import { getTranslations } from 'next-intl/server';
+
+export default async function AdminUsersPage() {
+  const users = await getAdminUsersList();
+  const t = await getTranslations('AdminDashboard');
+
+  return (
+    <div className="p-8">
+      <div className="flex justify-between items-center mb-6">
+        <div>
+          <h1 className="text-2xl font-bold">Usuaris Registrats</h1>
+          <p className="text-gray-500">Gestió de leads i clients ({users.length})</p>
+        </div>
+        <button className="bg-black text-white px-4 py-2 rounded-md text-sm">
+          Exportar CSV
+        </button>
+      </div>
+
+      <div className="border rounded-lg overflow-hidden bg-white shadow-sm">
+        <table className="w-full text-sm text-left">
+          <thead className="bg-gray-50 text-gray-700 font-medium border-b">
+            <tr>
+              <th className="px-6 py-3">Data Registre</th>
+              <th className="px-6 py-3">Usuari / Email</th>
+              <th className="px-6 py-3">Rol</th>
+              <th className="px-6 py-3 text-right">Accions</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-100">
+            {users.map((user) => (
+              <tr key={user.id} className="hover:bg-gray-50 transition-colors">
+                <td className="px-6 py-4 text-gray-500">
+                  {/* SOLUCIÓN: Verificamos si existe created_at */}
+                  {user.created_at ? (
+                    <>
+                      {new Date(user.created_at).toLocaleDateString('ca-ES', {
+                        day: '2-digit', month: 'short', year: 'numeric'
+                      })}
+                      <div className="text-xs text-gray-400">
+                        {new Date(user.created_at).toLocaleTimeString('ca-ES', { hour: '2-digit', minute: '2-digit' })}
+                      </div>
+                    </>
+                  ) : (
+                    <span className="text-gray-300">-</span>
+                  )}
+                </td>
+                <td className="px-6 py-4">
+                  <div className="font-medium text-gray-900">
+                    {user.full_name || 'Sense nom'}
+                  </div>
+                  <div className="text-gray-500">{user.email}</div>
+                </td>
+                <td className="px-6 py-4">
+                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                    ${user.role === 'admin' ? 'bg-purple-100 text-purple-800' :
+                      user.role === 'client' ? 'bg-green-100 text-green-800' :
+                        'bg-blue-100 text-blue-800'
+                    }`}>
+                    {user.role ? user.role.toUpperCase() : 'UNKNOWN'}
+                  </span>
+                </td>
+                <td className="px-6 py-4 text-right">
+                  <a
+                    href={`mailto:${user.email}`}
+                    className="text-indigo-600 hover:text-indigo-900 font-medium"
+                  >
+                    Contactar
+                  </a>
+                </td>
+              </tr>
+            ))}
+
+            {users.length === 0 && (
+              <tr>
+                <td colSpan={4} className="px-6 py-8 text-center text-gray-500">
+                  Encara no hi ha usuaris registrats.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
       </div>
     </div>
   );
@@ -1680,6 +1902,39 @@ export async function GET(request: Request) {
 
   // Si hi ha error, tornem al login amb un missatge
   return NextResponse.redirect(`${origin}/ca/auth/login?error=auth-code-error`)
+}
+
+// =================== FILE: src/app/[locale]/auth/forgot-password/page.tsx ===================
+
+// =================== FILE: src/app/[locale]/auth/forgot-password/page.tsx ===================
+
+import { getTranslations } from 'next-intl/server';
+import { Link } from '@/routing';
+import { ForgotPasswordForm } from '@/features/auth/ui/ForgotPasswordForm';
+
+export default async function ForgotPasswordPage() {
+  const t = await getTranslations('Auth');
+
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-muted/20 px-4 py-12">
+      <div className="w-full max-w-md space-y-6">
+        <div className="text-center">
+          <h1 className="text-3xl font-bold tracking-tight">Recuperar compte</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Introdueix el teu email i t'enviarem les instruccions.
+          </p>
+        </div>
+
+        <ForgotPasswordForm />
+
+        <div className="text-center text-sm">
+          <Link href="/auth/login" className="font-medium text-primary hover:underline">
+            ← Tornar al login
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 // =================== FILE: src/app/[locale]/auth/login/page.tsx ===================
@@ -1812,6 +2067,43 @@ export default async function RegisterPage({ searchParams }: Props) {
 
          {/* Injectem el formulari amb l'email si ve de l'auditoria */}
          <RegisterForm prefilledEmail={emailParam} />
+      </div>
+    </div>
+  );
+}
+
+// =================== FILE: src/app/[locale]/auth/reset-password/page.tsx ===================
+
+// =================== FILE: src/app/[locale]/auth/reset-password/page.tsx ===================
+
+import { redirect } from 'next/navigation';
+import { createClient } from '@/lib/supabase/server';
+import { getTranslations } from 'next-intl/server';
+import { ResetPasswordForm } from '@/features/auth/ui/ResetPasswordForm';
+
+export default async function ResetPasswordPage() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  // Si l'usuari no té sessió, vol dir que l'enllaç ha caducat o és invàlid.
+  // El redirigim a "forgot-password" de nou.
+  if (!user) {
+    // Nota: Aquí hauries de posar el locale dinàmicament
+    // Per simplicitat poso 'ca', però pots usar `params.locale`
+    redirect('/ca/auth/forgot-password'); 
+  }
+
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-muted/20 px-4 py-12">
+      <div className="w-full max-w-md space-y-6">
+        <div className="text-center">
+          <h1 className="text-3xl font-bold tracking-tight">Nova Contrasenya</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Escriu la teva nova contrasenya segura.
+          </p>
+        </div>
+
+        <ResetPasswordForm />
       </div>
     </div>
   );
@@ -2417,7 +2709,11 @@ import { routing, type Locale } from '@/routing';
 import { Inter } from 'next/font/google';
 import { ThemeProvider } from "@/components/theme-provider";
 import "@/app/globals.css"; 
-import type { Metadata, Viewport } from 'next'; // 👈 Importem tipus
+import type { Metadata, Viewport } from 'next';
+
+// 👇 1. IMPORTACIONS NOVES
+import { Suspense } from 'react'; 
+import { AnalyticsTracker } from '@/features/analytics/ui/AnalyticsTracker';
 
 const inter = Inter({ 
   subsets: ['latin'], 
@@ -2425,18 +2721,18 @@ const inter = Inter({
   display: 'swap',
 });
 
-// 1. CONFIGURACIÓ DEL VIEWPORT (Colors de la barra del navegador mòbil)
+// 1. CONFIGURACIÓ DEL VIEWPORT
 export const viewport: Viewport = {
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: 'white' },
-    { media: '(prefers-color-scheme: dark)', color: '#020817' }, // Color Midnight Indigo
+    { media: '(prefers-color-scheme: dark)', color: '#020817' },
   ],
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1, // Evita zoom accidental en inputs (opcional, millora sensació App)
+  maximumScale: 1,
 };
 
-// 2. METADADES GLOBALS (SEO + Icones)
+// 2. METADADES GLOBALS
 export const metadata: Metadata = {
   title: {
     default: 'DigitAI Studios | Desenvolupament Web & IA',
@@ -2446,22 +2742,16 @@ export const metadata: Metadata = {
   keywords: ['Desenvolupament Web', 'App', 'React Native', 'Next.js', 'IA', 'Automatització', 'Girona'],
   authors: [{ name: 'DigitAI Studios' }],
   creator: 'DigitAI Studios',
-  
-  // Enllaç al manifest que hem creat
   manifest: '/manifest.webmanifest',
-  
-  // Icones (Next.js les buscarà automàticament si estan a src/app, però així ho forcem)
   icons: {
-    icon: '/icons/icon-192.png', // O favicon.ico
+    icon: '/icons/icon-192.png',
     shortcut: '/icons/icon-192.png',
-    apple: '/icons/apple-icon.png', // Icona per a iPhone
+    apple: '/icons/apple-icon.png',
     other: {
       rel: 'apple-touch-icon-precomposed',
       url: '/icons/apple-icon.png',
     },
   },
-  
-  // OpenGraph (Per quan comparteixes l'enllaç a WhatsApp/Twitter)
   openGraph: {
     type: 'website',
     locale: 'ca_ES',
@@ -2471,7 +2761,7 @@ export const metadata: Metadata = {
     siteName: 'DigitAI Studios',
     images: [
       {
-        url: '@/assets/images/og-image.jpg', // 👈 Crea aquesta imatge (1200x630) a public/images
+        url: '/images/og-image.jpg', // Nota: Millor ruta pública directa que '@/assets'
         width: 1200,
         height: 630,
         alt: 'DigitAI Studios Cover',
@@ -2505,11 +2795,84 @@ export default async function LocaleLayout({
             enableSystem
             disableTransitionOnChange
           >
+            {/* 👇 2. AQUÍ ESTÀ LA MÀGIA: SUSPENSE + TRACKER */}
+            {/* Suspense evita que el layout es bloquegi esperant paràmetres de URL */}
+            <Suspense fallback={null}>
+              <AnalyticsTracker />
+            </Suspense>
+
             {children}
           </ThemeProvider>
         </NextIntlClientProvider>
       </body>
     </html>
+  );
+}
+
+// =================== FILE: src/components/admin/AminMobileMenu.tsx ===================
+
+'use client';
+
+import { Link, usePathname } from '@/routing';
+import { LayoutDashboard, BarChart3, Users, Home } from 'lucide-react';
+import { cn } from '@/lib/utils';
+
+export function AdminBottomNav() {
+  const pathname = usePathname();
+
+  const navLinks = [
+    { 
+      href: '/admin', 
+      label: 'Inici', 
+      icon: LayoutDashboard 
+    },
+    { 
+      href: '/admin/analytics', 
+      label: 'Mètriques', 
+      icon: BarChart3 
+    },
+    { 
+      href: '/admin/users', 
+      label: 'Usuaris', 
+      icon: Users 
+    },
+  ];
+
+  return (
+    <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-slate-950 border-t border-slate-800 pb-safe">
+      <nav className="flex items-center justify-around h-16">
+        {navLinks.map((link) => {
+          const Icon = link.icon;
+          // Comprovem si la ruta coincideix exactament o si és una subruta
+          const isActive = pathname === link.href;
+
+          return (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={cn(
+                "flex flex-col items-center justify-center w-full h-full space-y-1 transition-colors duration-200",
+                isActive 
+                  ? "text-blue-400" 
+                  : "text-slate-500 hover:text-slate-300"
+              )}
+            >
+              <Icon className={cn("w-6 h-6", isActive && "fill-current/20")} />
+              <span className="text-[10px] font-medium">{link.label}</span>
+            </Link>
+          );
+        })}
+
+        {/* Botó separat per tornar a la web pública */}
+        <Link
+          href="/"
+          className="flex flex-col items-center justify-center w-full h-full space-y-1 text-slate-600 hover:text-slate-400"
+        >
+          <Home className="w-6 h-6" />
+          <span className="text-[10px] font-medium">Web</span>
+        </Link>
+      </nav>
+    </div>
   );
 }
 
@@ -4057,7 +4420,7 @@ export function TechStackSection() {
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Star, Quote, ChevronLeft, ChevronRight, Globe, Smartphone, Zap, Users, Code, ExternalLink } from 'lucide-react';
-import Image from 'next/image';
+import Image, { StaticImageData } from 'next/image'; // 👈 Importem el tipus
 import Link from 'next/link';
 import type { Testimonial } from '@/lib/data';
 
@@ -4092,7 +4455,6 @@ export function TestimonialsSection({ testimonials }: Props) {
         {/* CAPÇALERA */}
         <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
            <div className="max-w-2xl">
-          
               <h2 className="text-3xl lg:text-5xl font-bold text-foreground leading-tight">
                 No ens creguis a nosaltres. <br/>
                 Mira el que hem <span className="gradient-text">Construït</span>.
@@ -4140,10 +4502,6 @@ function TestimonialCard({ item }: { item: Testimonial }) {
       <div className="relative w-full h-full group">
          
          {/* CAPA 1: EL PROJECTE (FITXER) */}
-         {/* MILLORA 1: Ara puja molt més (-translate-y-24) perquè es vegi bé la web/app.
-            Afegim z-index dinàmic perquè al pujar es posi per sobre si calgués, 
-            però mantenim l'efecte de "sortir de la carpeta".
-         */}
          <div className="absolute inset-x-4 top-4 bottom-20  transition-all duration-500 cubic-bezier(0.25, 0.8, 0.25, 1) group-hover:-translate-y-20 ">
             <div className="w-full h-full rounded-t-xl overflow-hidden border border-primary/20 bg-slate-900 dark:bg-black shadow-2xl group-hover:shadow-primary/20">
                {item.projectType === 'web' && <MockupWeb url={item.projectUrl} image={item.image} title={item.company} />}
@@ -4158,7 +4516,7 @@ function TestimonialCard({ item }: { item: Testimonial }) {
             <Quote className="absolute top-6 right-6 text-primary/10 w-12 h-12 rotate-180" />
 
             <div className="flex items-center gap-3 mb-4">
-               <div className="w-12 h-12 rounded-full bg-linear-to-br from-primary/20 to-blue-500/20 border border-primary/30 flex items-center justify-center text-lg font-bold text-primary">
+               <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary/20 to-blue-500/20 border border-primary/30 flex items-center justify-center text-lg font-bold text-primary">
                   {item.name.charAt(0)}
                </div>
                <div>
@@ -4188,14 +4546,14 @@ function TestimonialCard({ item }: { item: Testimonial }) {
 
 // --- MOCKUPS VISUALS ---
 
-function MockupWeb({ url, image, title }: { url?: string, image?: string, title: string }) {
+// ✅ CORRECCIÓ: Acceptem 'string | StaticImageData'
+function MockupWeb({ url, image, title }: { url?: string, image?: string | StaticImageData, title: string }) {
    const Wrapper = url ? Link : 'div';
    return (
-    
+      
       <Wrapper href={url || '#'} target={url ? "_blank" : undefined} className="block w-full h-full cursor-pointer group/mockup">
          <div className="w-full h-full bg-slate-50 dark:bg-[#0f111a] flex flex-col relative">
             
-            {/* MILLORA 2: OVERLAY AMB BOTÓ "VISITAR" */}
             {url && (
                <div className="absolute inset-0 z-30 bg-black/60 backdrop-blur-[2px] flex items-center justify-center opacity-0 group-hover/mockup:opacity-100 transition-opacity duration-300">
                   <span className="bg-white text-black px-4 py-2 rounded-full font-bold text-xs flex items-center gap-2 shadow-lg transform scale-90 group-hover/mockup:scale-100 transition-transform">
@@ -4226,11 +4584,11 @@ function MockupWeb({ url, image, title }: { url?: string, image?: string, title:
    )
 }
 
-function MockupApp({ image, title }: { image?: string, title: string }) {
+// ✅ CORRECCIÓ: Acceptem 'string | StaticImageData'
+function MockupApp({ image, title }: { image?: string | StaticImageData, title: string }) {
    return (
       <div className="w-full h-full bg-slate-800 dark:bg-black flex items-end justify-center p-4 pb-0 group/mockup relative">
          
-         {/* MILLORA 2: OVERLAY APP */}
          <div className="absolute inset-0 z-30 bg-black/60 backdrop-blur-[2px] flex items-center justify-center opacity-0 group-hover/mockup:opacity-100 transition-opacity duration-300 rounded-t-xl">
              <span className="bg-white text-black px-4 py-2 rounded-full font-bold text-xs flex items-center gap-2 shadow-lg">
                 Veure App <ExternalLink className="w-3 h-3" />
@@ -4251,18 +4609,17 @@ function MockupApp({ image, title }: { image?: string, title: string }) {
    )
 }
 
-// ✅ L'ANIMACIÓ D'AUTOMATITZACIÓ (Responsive)
+// L'ANIMACIÓ D'AUTOMATITZACIÓ (Sense imatges, no cal tocar tipus)
 function MockupAutomation() {
    return (
       <div className="w-full h-full bg-[#1a1d2d] relative overflow-hidden group/mockup">
-         {/* Overlay per coherència (opcional en automation, però queda bé) */}
          <div className="absolute inset-0 z-30 bg-black/60 backdrop-blur-[2px] flex items-center justify-center opacity-0 group-hover/mockup:opacity-100 transition-opacity duration-300">
              <span className="bg-white text-black px-4 py-2 rounded-full font-bold text-xs flex items-center gap-2 shadow-lg">
                 Veure Flux <Zap className="w-3 h-3" />
              </span>
          </div>
 
-         <div className="absolute inset-0 bg-[radial-gradient(#ffffff10_1px,transparent_1px)] bg-size-[12px_12px]"></div>
+         <div className="absolute inset-0 bg-[radial-gradient(#ffffff10_1px,transparent_1px)] [background-size:12px_12px]"></div>
          
          <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none">
             <defs>
@@ -4306,9 +4663,9 @@ import Link from 'next/link';
 import { Facebook, Instagram, Linkedin, Mail, MapPin} from 'lucide-react';
 
 const SOCIALS = [
-  { icon: Linkedin, href: 'https://linkedin.com', label: 'LinkedIn' },
-  { icon: Instagram, href: 'https://instagram.com', label: 'Instagram' },
-  { icon: Facebook, href: 'https://facebook.com', label: 'Facebook' },
+  { icon: Linkedin, href: "https://www.linkedin.com/in/digitai-studios-105a0136a/" , label: 'LinkedIn' },
+  { icon: Instagram, href: "https://www.instagram.com/digitaistudios/", label: 'Instagram' },
+  { icon: Facebook, href: "https://www.facebook.com/profile.php?id=61576974390567" , label: 'Facebook' },
   // Pots afegir Twitter/X si vols
 ];
 
@@ -4326,7 +4683,7 @@ const FOOTER_LINKS = [
     title: 'Empresa',
     links: [
       { label: 'Sobre Nosaltres', href: '#hero' },
-      { label: 'Projectes', href: '#projectes' },
+      { label: 'Projectes', href: '/projectes' },
       { label: 'Blog', href: '/blog' },
       { label: 'Contacte', href: '#contacte' },
     ],
@@ -4426,19 +4783,122 @@ export function Footer() {
 
 // =================== FILE: src/components/layout/LegalLayout.tsx ===================
 
+'use client';
 
+import { Navbar } from "@/components/layout/Navbar";
+import { Footer } from "@/components/layout/Footer";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
+import { Scale, Shield, Cookie, FileText } from "lucide-react";
+// Si tens un hook d'autenticació o context, pots obtenir l'usuari aquí. 
+// Si no, pots passar user={null} a la Navbar com a placeholder.
+import { createClient } from '@/lib/supabase/client';
+import { useEffect, useState } from "react";
+import type { User } from '@supabase/supabase-js';
+
+const LEGAL_NAV = [
+  { name: 'Avís Legal', href: '/legal/avis-legal', icon: Scale },
+  { name: 'Política de Privacitat', href: '/legal/privacitat', icon: Shield },
+  { name: 'Política de Cookies', href: '/legal/cookies', icon: Cookie },
+];
 
 export default function LegalLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const [user, setUser] = useState<User | null>(null);
+  
+  // Opcional: Recuperar usuari per pintar bé la Navbar (si vols que surti l'avatar)
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data }) => setUser(data.user));
+  }, []);
+
+  // 🧹 LÒGICA CLAU: Netegem l'idioma de la ruta (ex: /ca/legal -> /legal)
+  // Això assegura que la comparació funcioni en qualsevol idioma
+  const cleanPath = pathname.replace(/^\/[a-z]{2}\//, '/').replace(/^\/[a-z]{2}$/, '');
+
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
-    
-      <main className="flex-1 container mx-auto px-4 py-32 max-w-4xl">
-        {/* Estils base per a textos legals llargs (prose) */}
-        <div className="prose prose-slate dark:prose-invert max-w-none">
-            {children}
+      {/* Passem l'usuari a la Navbar perquè es vegi consistent */}
+      <Navbar user={user} />
+      
+      <main className="flex-1 container mx-auto px-4 py-32">
+        <div className="grid lg:grid-cols-4 gap-10">
+          
+          {/* SIDEBAR NAVEGACIÓ (Sticky) */}
+          <aside className="lg:col-span-1 hidden lg:block">
+             <div className="sticky top-32 space-y-4">
+                <div className="px-4">
+                    <h3 className="font-bold text-lg flex items-center gap-2 text-foreground">
+                        <FileText className="w-5 h-5 text-primary" /> 
+                        Centre Legal
+                    </h3>
+                    <p className="text-xs text-muted-foreground mt-1">
+                        Documentació oficial i normatives.
+                    </p>
+                </div>
+
+                <nav className="flex flex-col space-y-1">
+                   {LEGAL_NAV.map((item) => {
+                      // Comprovem si la ruta neta coincideix o si comença per ella
+                      const isActive = cleanPath === item.href || pathname.endsWith(item.href);
+
+                      return (
+                        <Link 
+                           key={item.href} 
+                           href={item.href}
+                           className={cn(
+                             "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200",
+                             isActive 
+                               ? "bg-primary/10 text-primary border border-primary/20 shadow-sm font-bold" 
+                               : "text-muted-foreground hover:bg-muted hover:text-foreground border border-transparent"
+                           )}
+                        >
+                           <item.icon className={cn("w-4 h-4", isActive && "text-primary")} />
+                           {item.name}
+                        </Link>
+                      )
+                   })}
+                </nav>
+             </div>
+          </aside>
+
+          {/* MENU MÒBIL (Horitzontal, només visible en pantalles petites) */}
+          <div className="lg:hidden col-span-1 mb-6 overflow-x-auto pb-2 scrollbar-hide">
+             <div className="flex gap-2 w-max">
+                {LEGAL_NAV.map((item) => {
+                    const isActive = cleanPath === item.href || pathname.endsWith(item.href);
+                    return (
+                        <Link 
+                           key={item.href} 
+                           href={item.href}
+                           className={cn(
+                             "flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border transition-colors whitespace-nowrap",
+                             isActive 
+                               ? "bg-primary text-primary-foreground border-primary" 
+                               : "bg-background border-border text-muted-foreground"
+                           )}
+                        >
+                           <item.icon className="w-4 h-4" />
+                           {item.name}
+                        </Link>
+                    )
+                })}
+             </div>
+          </div>
+
+          {/* CONTINGUT PRINCIPAL */}
+          <div className="lg:col-span-3">
+             <div className="bg-card border border-border rounded-3xl p-8 md:p-12 shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <article className="prose prose-slate dark:prose-invert max-w-none prose-headings:font-bold prose-a:text-primary hover:prose-a:underline prose-img:rounded-xl">
+                   {children}
+                </article>
+             </div>
+          </div>
+
         </div>
       </main>
-    
+      <Footer />
     </div>
   );
 }
@@ -4829,146 +5289,109 @@ export function ThemeToggle() {
 
 'use server';
 
-import { analyticsRepository } from '@/services/container';
-import { AnalyticsEventDTO } from '@/types/models';
-import { headers } from 'next/headers';
-// ✅ CORRECCIÓ: Afegim claus { } per importar la classe correctament
-import { UAParser } from 'ua-parser-js';
+import { createClient } from '@/lib/supabase/server';
 
-export async function trackEventAction(data: AnalyticsEventDTO) {
-  const headersList = await headers();
-  const userAgent = headersList.get('user-agent') || '';
-  
-  // Ara sí que funcionarà el 'new'
-  const parser = new UAParser(userAgent);
-  const deviceResult = parser.getResult();
+type AnalyticsPayload = {
+  event_name: string;
+  path: string;
+  session_id: string;
+  referrer?: string;
+  duration?: number;
+  meta?: Record<string, unknown>;
+};
 
-  // Detecció de Geolocalització (Vercel o Fallback)
-  const country = headersList.get('x-vercel-ip-country') || 'Unknown';
-  const city = headersList.get('x-vercel-ip-city') || 'Unknown';
+export async function trackEventAction(data: AnalyticsPayload) {
+  // LOG SERVER 1: Confirmem que la petició arriba al backend
+  console.log("SERVER ACTION: Rebuda petició per:", data.path);
 
-  // Preparem l'objecte complet
-  const enrichedData: AnalyticsEventDTO = {
-    ...data,
-    geo: {
-      country,
-      city
-    },
-    device: {
-      type: deviceResult.device.type || 'desktop',
-      browser: deviceResult.browser.name || 'Unknown',
-      os: deviceResult.os.name || 'Unknown'
+  try {
+    const supabase = await createClient();
+
+    // Comprovem si tenim usuari (opcional, només per info)
+    const { data: { user } } = await supabase.auth.getUser();
+
+    // LOG SERVER 2: Intentant inserir
+    console.log("SERVER ACTION: Intentant inserir a Supabase...");
+
+    const { error, data: insertedData } = await supabase.from('analytics_events').insert({
+      event_name: data.event_name,
+      path: data.path,
+      session_id: data.session_id,
+      user_id: user?.id || null,
+      meta: {
+        ...data.meta,
+        referrer: data.referrer,
+        duration: data.duration
+      }
+    })
+    .select(); // Afegim select per veure si retorna alguna cosa
+
+    // LOG SERVER 3: Resultat
+    if (error) {
+      console.error("❌❌ SUPABASE ERROR (CRÍTIC):", error);
+      console.error("Detalls:", error.message, error.details, error.hint);
+      return { success: false, error: error.message };
     }
-  };
 
-  await analyticsRepository.trackEvent(enrichedData);
+    console.log("✅✅ SUPABASE ÈXIT. ID inserit:", insertedData?.[0]?.id || 'Desconegut');
+    return { success: true };
+
+  } catch (err) {
+    console.error("💥💥 ERROR INTERN NO CONTROLAT:", err);
+    return { success: false, error: 'Internal Server Error' };
+  }
 }
 
 // =================== FILE: src/features/analytics/ui/AnalyticsTracker.tsx ===================
 
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
-import { v4 as uuidv4 } from 'uuid';
-import { trackEventAction } from '../actions';
+import { createClient } from '@/lib/supabase/client'; // Assegura't que tens aquest fitxer client
 
 export function AnalyticsTracker() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const startTime = useRef<number>(0);
+  const supabase = createClient();
 
   useEffect(() => {
-    // ---------------------------------------------------------
-    // 1. SISTEMA D'IMMUNITAT (CAPA D'INVISIBILITAT)
-    // ---------------------------------------------------------
-    
-    // A) Si estem entrant a la zona admin, ens marquem com a "VIP" per sempre
-    if (pathname?.startsWith('/admin')) {
-      localStorage.setItem('digitai_is_admin', 'true');
-      return; // No trackegem res a dins de l'admin
-    }
+    // Aquest log T'HA DE SORTIR a la consola del navegador
+    console.log("👀 AnalyticsTracker iniciat a:", pathname);
 
-    // B) Si tenim la marca de VIP, sortim immediatament. 
-    // Així, quan visitis la Home, tampoc et comptarà.
-    const isAdminBrowser = localStorage.getItem('digitai_is_admin');
-    if (isAdminBrowser === 'true') {
-      return;
-    }
+    const trackView = async () => {
+      // 1. Netejem la URL (treiem l'idioma)
+      const rawPath = pathname || '/';
+      // Expressió regular per treure /ca, /es, /en del principi
+      const cleanPath = rawPath.replace(/^\/(ca|es|en)(\/|$)/, '$2') || '/';
+      
+      // Si ha quedat buit (era només /ca), posem /
+      const finalPath = cleanPath === '' ? '/' : cleanPath;
+      // Si no comença per /, li posem (per coherència estètica)
+      const pathStored = finalPath.startsWith('/') ? finalPath : `/${finalPath}`;
 
-    // ---------------------------------------------------------
-    // 2. GESTIÓ DE SESSIÓ I UTMS
-    // ---------------------------------------------------------
-    let sessionId = localStorage.getItem('digitai_session');
-    if (!sessionId) {
-      sessionId = uuidv4();
-      localStorage.setItem('digitai_session', sessionId);
-    }
+      console.log(`📡 Enviant dades... Path Original: ${rawPath} -> Guardat: ${pathStored}`);
 
-    // Guardem les UTMs a la sessió per no perdre-les si l'usuari navega
-    const utmSource = searchParams.get('utm_source');
-    const utmMedium = searchParams.get('utm_medium');
-    const utmCampaign = searchParams.get('utm_campaign');
+      const { error } = await supabase.from('analytics_events').insert({
+        event_name: 'page_view',
+        path: pathStored,
+        // Generem ID sessió ràpid si no en tenim (per test)
+        session_id: localStorage.getItem('digitai_session') || 'session-' + Math.random().toString(36).slice(2),
+        meta: {
+          raw_url: window.location.href,
+          referrer: document.referrer
+        }
+      });
 
-    if (utmSource) localStorage.setItem('utm_source', utmSource);
-    if (utmMedium) localStorage.setItem('utm_medium', utmMedium);
-    if (utmCampaign) localStorage.setItem('utm_campaign', utmCampaign);
-
-    // ---------------------------------------------------------
-    // 3. PREPARAR DADES
-    // ---------------------------------------------------------
-    const fullUrl = `${pathname}${searchParams.toString() ? '?' + searchParams.toString() : ''}`;
-    
-    // Recuperem les UTMs (de la URL actual o de la memòria si ve d'una altra pàgina)
-    const activeSource = utmSource || localStorage.getItem('utm_source');
-    const activeMedium = utmMedium || localStorage.getItem('utm_medium');
-    const activeCampaign = utmCampaign || localStorage.getItem('utm_campaign');
-
-    // Construïm l'objecte meta
-    const metaData: Record<string, string | number> = {
-        screen: `${window.innerWidth}x${window.innerHeight}`,
+      if (error) console.error("❌ Error Supabase:", error.message);
+      else console.log("✅ DADA GUARDADA!");
     };
 
-    if (activeSource) metaData.utm_source = activeSource;
-    if (activeMedium) metaData.utm_medium = activeMedium;
-    if (activeCampaign) metaData.utm_campaign = activeCampaign;
+    // Petit retard per no bloquejar la navegació visual
+    const timeout = setTimeout(trackView, 500);
+    return () => clearTimeout(timeout);
 
-    // ---------------------------------------------------------
-    // 4. ENVIAR PAGE VIEW
-    // ---------------------------------------------------------
-    trackEventAction({
-      event_name: 'page_view',
-      path: fullUrl,
-      session_id: sessionId!,
-      referrer: document.referrer || 'direct', // Si és buit, posem 'direct'
-      meta: metaData as Record<string, unknown>
-    });
-
-    // Resetegem cronòmetre
-    startTime.current = Date.now();
-
-    // ---------------------------------------------------------
-    // 5. PAGE LEAVE (SORTIDA)
-    // ---------------------------------------------------------
-    return () => {
-      if (startTime.current === 0) return;
-      
-      const duration = Math.round((Date.now() - startTime.current) / 1000);
-      
-      if (duration > 0) {
-        trackEventAction({
-          event_name: 'page_leave',
-          path: pathname,
-          session_id: sessionId!,
-          meta: { 
-              scroll: window.scrollY,
-              duration: duration 
-          } as Record<string, unknown>,
-          duration: duration
-        });
-      }
-    };
-  }, [pathname, searchParams]);
+  }, [pathname, searchParams, supabase]);
 
   return null;
 }
@@ -4986,32 +5409,32 @@ type Props = {
 };
 
 export function BarListChart({ title, data }: Props) {
- return (
-    <Card className="bg-slate-900 border-slate-800 text-slate-200 h-full flex flex-col min-h-0">
-      <CardHeader className="pb-2 pt-4 px-4 shrink-0">
-        <CardTitle className="text-sm font-medium text-slate-400">{title}</CardTitle>
-      </CardHeader>
+  return (
+    <Card className="bg-slate-900 border-slate-800 text-slate-200 h-full flex flex-col min-h-0">      
+    <CardHeader className="pb-2 pt-4 px-4 shrink-0">
+      <CardTitle className="text-sm font-medium text-slate-400">{title}</CardTitle>
+    </CardHeader>
       <CardContent className="flex-1 min-h-0 pb-2 px-2">
         <ResponsiveContainer width="100%" height="100%">
           {/* layout="vertical" fa les barres horitzontals */}
           <BarChart layout="vertical" data={data} margin={{ left: 0, right: 30, bottom: 0, top: 0 }} barCategoryGap={4}>
             <XAxis type="number" hide />
-            <YAxis 
-              dataKey="name" 
-              type="category" 
-              width={100} 
-              tick={{ fill: '#94a3b8', fontSize: 14 }} 
+            <YAxis
+              dataKey="name"
+              type="category"
+              width={100}
+              tick={{ fill: '#94a3b8', fontSize: 14 }}
               interval={0}
               tickLine={false}
               axisLine={false}
               // Trunquem textos llargs
               tickFormatter={(val) => val.length > 12 ? `${val.substring(0, 12)}...` : val}
             />
-            <Tooltip cursor={{fill: '#334155', opacity: 0.2}} contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', fontSize: '12px', color: '#fff' }} />
+            <Tooltip cursor={{ fill: '#334155', opacity: 0.2 }} contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', fontSize: '12px', color: '#fff' }} />
             <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={16}>
-               {data.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color || '#6366f1'} />
-               ))}
+              {data.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.color || '#6366f1'} />
+              ))}
             </Bar>
           </BarChart>
         </ResponsiveContainer>
@@ -5071,7 +5494,6 @@ export function DeviceChart({ data }: Props) {
 
 'use client';
 
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 type Props = {
@@ -5079,66 +5501,62 @@ type Props = {
 };
 
 export function TopPagesCard({ data }: Props) {
+  // 1. Ordenem per vistes (de més a menys) per seguretat
+  const sortedData = [...data].sort((a, b) => b.views - a.views);
+  
+  // 2. Calculem el màxim per fer les barres relatives (regla de 3)
+  const maxViews = sortedData[0]?.views || 0;
+
   return (
     <Card className="bg-slate-900 border-slate-800 text-slate-200 h-full flex flex-col min-h-0">
       <CardHeader className="pb-2 pt-4 px-4 shrink-0">
-        <CardTitle className="text-sm font-medium text-slate-400">Top Pàgines (Vistes)</CardTitle>
+        <div className="flex justify-between items-center">
+             <CardTitle className="text-sm font-medium text-slate-400">Top Pàgines</CardTitle>
+             <span className="text-xs text-slate-500 font-mono">Vistes</span>
+        </div>
       </CardHeader>
+      
       <CardContent className="flex-1 min-h-0 pb-2 px-2">
-        <div className="h-full w-full">
-          {/* Si no hi ha dades, mostrem missatge */}
-          {data.length === 0 ? (
-             <div className="flex items-center justify-center h-full text-slate-500 text-xs">
-               Sense dades suficients
-             </div>
+        {/* CONTENIDOR SCROLLABLE:
+            - h-full: Ocupa tot l'espai disponible
+            - overflow-y-auto: Activa l'scroll vertical si no hi cap
+            - pr-2: Un petit marge a la dreta perquè l'scroll no tapi text
+        */}
+        <div className="h-full w-full overflow-y-auto pr-2 custom-scrollbar">
+          
+          {sortedData.length === 0 ? (
+            <div className="flex items-center justify-center h-full text-slate-500 text-xs">
+              Sense dades suficients
+            </div>
           ) : (
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                {/* 1. GRADIENT LILA/BLAU (Igual que Traffic) */}
-                <defs>
-                  <linearGradient id="colorPagesWave" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8}/>
-                    <stop offset="95%" stopColor="#8884d8" stopOpacity={0}/>
-                  </linearGradient>
-                </defs>
+            <div className="flex flex-col gap-3">
+              {sortedData.map((page, index) => {
+                // Calculem el % d'amplada de la barra
+                const percentage = maxViews > 0 ? (page.views / maxViews) * 100 : 0;
 
-                <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
-                
-                {/* Eix X: Les rutes (Paths) */}
-                <XAxis 
-                  dataKey="path" 
-                  stroke="#94a3b8" 
-                  fontSize={13} 
-                  tickLine={false} 
-                  axisLine={false}
-                  interval={0} // Intentem mostrar-les totes
-                  // Trunquem el text perquè càpiga a l'eix
-                  tickFormatter={(val) => val.length > 8 ? `..${val.slice(-8)}` : val}
-                />
-                
-                <YAxis 
-                  stroke="#94a3b8" 
-                  fontSize={10} 
-                  tickLine={false} 
-                  axisLine={false} 
-                />
-                
-                <Tooltip 
-                  contentStyle={{ backgroundColor: '#1e293b', borderColor: '#334155', color: '#f1f5f9', borderRadius: '8px', fontSize: '12px' }}
-                />
-                
-                {/* 2. L'ONADA (Area) */}
-                <Area 
-                  type="monotone" // Això fa la corba suau
-                  dataKey="views" 
-                  stroke="#8884d8" 
-                  strokeWidth={2}
-                  fillOpacity={1} 
-                  fill="url(#colorPagesWave)" 
-                  name="Vistes"
-                />
-              </AreaChart>
-            </ResponsiveContainer>
+                return (
+                  <div key={index} className="group">
+                    {/* Fila superior: URL i Número */}
+                    <div className="flex justify-between text-xs mb-1">
+                      <span className="truncate pr-4 text-slate-300 font-medium" title={page.path}>
+                        {page.path}
+                      </span>
+                      <span className="text-slate-400 font-mono tabular-nums">
+                        {page.views}
+                      </span>
+                    </div>
+                    
+                    {/* Barra de progrés visual */}
+                    <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-indigo-500 rounded-full transition-all duration-500 ease-out group-hover:bg-indigo-400"
+                        style={{ width: `${percentage}%` }}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           )}
         </div>
       </CardContent>
@@ -5159,28 +5577,27 @@ type Props = {
 
 export function TrafficChart({ data }: Props) {
   return (
-    <Card className="bg-slate-900 border-slate-800 text-slate-200 col-span-2 h-full flex flex-col min-h-0">
-      <CardHeader>
-        <CardTitle>Trànsit (Últims 7 dies)</CardTitle>
-      </CardHeader>
+    <Card className="bg-slate-900 border-slate-800 text-slate-200 col-span-2 h-full flex flex-col min-h-0">      <CardHeader>
+      <CardTitle>Trànsit (Últims 7 dies)</CardTitle>
+    </CardHeader>
       <CardContent className="flex-1 min-h-0 pb-2 px-2">
         <div className="h-full flex flex-col min-h-0">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={data}>
               <defs>
                 <linearGradient id="colorViews" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#8884d8" stopOpacity={0.3}/>
-                  <stop offset="95%" stopColor="#8884d8" stopOpacity={0}/>
+                  <stop offset="5%" stopColor="#8884d8" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#8884d8" stopOpacity={0} />
                 </linearGradient>
                 <linearGradient id="colorVisitors" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#82ca9d" stopOpacity={0.3}/>
-                  <stop offset="95%" stopColor="#82ca9d" stopOpacity={0}/>
+                  <stop offset="5%" stopColor="#82ca9d" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#82ca9d" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
               <XAxis dataKey="date" stroke="#94a3b8" />
               <YAxis stroke="#94a3b8" />
-              <Tooltip 
+              <Tooltip
                 contentStyle={{ backgroundColor: '#1e293b', borderColor: '#334155', color: '#f1f5f9' }}
               />
               <Area type="monotone" dataKey="views" stroke="#8884d8" fillOpacity={1} fill="url(#colorViews)" name="Vistes de Pàgina" />
@@ -5191,6 +5608,76 @@ export function TrafficChart({ data }: Props) {
       </CardContent>
     </Card>
   );
+}
+
+// =================== FILE: src/features/analytics/ui/UnifiedStatBar.tsx ===================
+
+import { Card } from '@/components/ui/card';
+import { Users, Eye, MousePointerClick, Clock, TrendingUp } from 'lucide-react';
+
+interface UnifiedStatBarProps {
+  views: number;
+  visitors: number;
+  events: number;
+  avgTime: string;
+}
+
+interface StatItemProps {
+  label: string;
+  value: number | string;
+  icon: React.ReactNode;
+}
+
+export function UnifiedStatBar({ views, visitors, events, avgTime }: UnifiedStatBarProps) {
+  return (
+    <Card className="bg-slate-900 border-slate-800 text-slate-200 p-4 shadow-lg">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+        
+            {/* Títol: Al mòbil a dalt, a l'escriptori a l'esquerra amb vora */}
+            <div className="flex items-center gap-3 lg:pr-8 lg:border-r lg:border-slate-800 pb-4 lg:pb-0 border-b border-slate-800 lg:border-b-0">
+                <div className="p-2 bg-primary/10 rounded-lg">
+                    <TrendingUp className="text-primary h-6 w-6" />
+                </div>
+                <div>
+                    <h1 className="text-lg font-bold text-white leading-tight">Dashboard</h1>
+                    <p className="text-xs text-slate-500">Temps real</p>
+                </div>
+            </div>
+
+            {/* Mètriques: Grid 2x2 al mòbil, Flex row a l'escriptori */}
+            <div className="flex-1 grid grid-cols-2 gap-y-6 lg:flex lg:justify-around lg:items-center">
+                <StatItem label="Vistes (7d)" value={views} icon={<Eye className="h-4 w-4 text-blue-400" />} />
+                
+                {/* Separador només en escriptori */}
+                <div className="hidden lg:block h-8 w-px bg-slate-800" />
+                
+                <StatItem label="Usuaris" value={visitors} icon={<Users className="h-4 w-4 text-green-400" />} />
+                
+                <div className="hidden lg:block h-8 w-px bg-slate-800" />
+                
+                <StatItem label="Events" value={events} icon={<MousePointerClick className="h-4 w-4 text-purple-400" />} />
+                
+                <div className="hidden lg:block h-8 w-px bg-slate-800" />
+                
+                <StatItem label="Temps Mitjà" value={avgTime} icon={<Clock className="h-4 w-4 text-orange-400" />} />
+            </div>
+        </div>
+    </Card>
+  );
+}
+
+// StatItem es queda igual
+function StatItem({ label, value, icon }: StatItemProps) {
+    return (
+        <div className="flex flex-col items-center gap-1 min-w-[100px]">
+            <span className="text-[10px] uppercase tracking-wider text-slate-500 font-bold flex items-center gap-2">
+                {icon} {label}
+            </span>
+            <span className="text-2xl font-bold text-white leading-none">
+                {value}
+            </span>
+        </div>
+    )
 }
 
 // =================== FILE: src/features/analytics/ui/VerticalBarChart.tsx ===================
@@ -6023,6 +6510,167 @@ export const AuditPDFDocument = ({ url, date, scores, screenshot, issues }: Prop
   </Document>
 );
 
+// =================== FILE: src/features/auth/actions/reset-password.ts ===================
+
+// =================== FILE: src/features/auth/actions/reset-password.ts ===================
+
+'use server'
+
+import { z } from 'zod';
+import { createClient } from '@/lib/supabase/server';
+import { getLocale } from 'next-intl/server';
+import { redirect } from '@/routing'; // Usem el teu routing tipat
+
+// Esquema per sol·licitar el reset
+const ForgotPasswordSchema = z.object({
+  email: z.string().email({ message: "L'email no és vàlid." }),
+});
+
+// Esquema per actualitzar la contrasenya
+const ResetPasswordSchema = z.object({
+  password: z.string().min(6, { message: "La contrasenya ha de tenir mínim 6 caràcters." }),
+  confirmPassword: z.string()
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Les contrasenyes no coincideixen",
+  path: ["confirmPassword"],
+});
+
+export type AuthState = {
+  message?: string;
+  success?: boolean;
+  errors?: Record<string, string[]>;
+};
+
+/**
+ * 1. L'usuari demana restablir la contrasenya via email
+ */
+export async function requestPasswordReset(prevState: AuthState, formData: FormData): Promise<AuthState> {
+  const email = formData.get('email') as string;
+  const locale = await getLocale();
+
+  const validated = ForgotPasswordSchema.safeParse({ email });
+
+  if (!validated.success) {
+    return { errors: validated.error.flatten().fieldErrors };
+  }
+
+  const supabase = await createClient();
+  
+  // Aquest URL és on anirà l'usuari després de fer clic al correu.
+  // IMPORTANT: Redirigim al callback, que intercanviarà el codi per sessió,
+  // i després el callback redirigirà a /auth/reset-password
+  const redirectUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/${locale}/auth/callback?next=/auth/reset-password`;
+
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: redirectUrl,
+  });
+
+  if (error) {
+    // Per seguretat, a vegades és millor no dir si l'email existeix o no, 
+    // però per UX aquí mostrem l'error si és genèric.
+    return { message: error.message, success: false };
+  }
+
+  return { 
+    success: true, 
+    message: "Si l'email existeix, rebràs un enllaç per restablir la contrasenya." 
+  };
+}
+
+/**
+ * 2. L'usuari (ja autenticat via link màgic) posa la nova contrasenya
+ */
+export async function updatePassword(prevState: AuthState, formData: FormData): Promise<AuthState> {
+  const password = formData.get('password') as string;
+  const confirmPassword = formData.get('confirmPassword') as string;
+
+  const validated = ResetPasswordSchema.safeParse({ password, confirmPassword });
+
+  if (!validated.success) {
+    return { errors: validated.error.flatten().fieldErrors };
+  }
+
+  const supabase = await createClient();
+
+  const { error } = await supabase.auth.updateUser({
+    password: validated.data.password
+  });
+
+  if (error) {
+    return { message: "Error actualitzant la contrasenya.", success: false };
+  }
+
+  // Si tot va bé, redirigim al dashboard
+  const locale = await getLocale();
+  redirect({ href: '/dashboard', locale });
+  return { success: true }; // Codi mort per la redirecció, però necessari per TS
+}
+
+// =================== FILE: src/features/auth/ui/ForgotPasswordForm.tsx ===================
+
+// =================== FILE: src/features/auth/ui/ForgotPasswordForm.tsx ===================
+
+'use client'
+
+import { useActionState } from 'react';
+import { useTranslations } from 'next-intl';
+import { requestPasswordReset } from '../actions/reset-password';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent } from '@/components/ui/card';
+import { Loader2, CheckCircle2 } from 'lucide-react';
+
+export function ForgotPasswordForm() {
+  const t = useTranslations('Auth'); // Assegura't de tenir les traduccions
+  
+  const [state, action, isPending] = useActionState(requestPasswordReset, {
+    message: '',
+    errors: {}
+  });
+
+  if (state.success) {
+    return (
+      <Card className="border-green-200 bg-green-50">
+        <CardContent className="pt-6 text-center space-y-4">
+          <CheckCircle2 className="w-12 h-12 text-green-600 mx-auto" />
+          <p className="text-green-800 font-medium">{state.message}</p>
+          <p className="text-sm text-green-700">Revisa la teva safata d'entrada.</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card>
+      <CardContent className="pt-6">
+        <form action={action} className="space-y-4">
+          <div className="space-y-2">
+            <label htmlFor="email" className="text-sm font-medium">Email</label>
+            <Input 
+              id="email" 
+              name="email" 
+              type="email" 
+              placeholder="tu@exemple.com"
+              className={state.errors?.email ? "border-red-500" : ""}
+            />
+            {state.errors?.email && (
+              <p className="text-sm text-red-500">{state.errors.email[0]}</p>
+            )}
+          </div>
+
+          {state.message && !state.success && (
+            <p className="text-sm text-red-500 text-center bg-red-50 p-2 rounded">{state.message}</p>
+          )}
+
+          <Button type="submit" className="w-full" disabled={isPending}>
+            {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Enviar enllaç de recuperació"}
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
+  );
+}
+
 // =================== FILE: src/features/auth/ui/LoginForm.tsx ===================
 
 'use client';
@@ -6063,12 +6711,9 @@ export function LoginForm() {
   };
 
   const handleOAuth = async (provider: 'github' | 'google') => {
-    await supabase.auth.signInWithOAuth({
-      provider,
-      options: {
-        redirectTo: `${location.origin}/auth/callback`,
-      },
-    });
+    // Simplement mostrem el missatge i parem
+    setError("🚧 El login social està en manteniment. Utilitza el teu email i contrasenya.");
+    return;
   };
 
   return (
@@ -6098,9 +6743,9 @@ export function LoginForm() {
       <form onSubmit={handleLogin} className="space-y-4">
         <div className="space-y-2">
           <label className="text-sm font-medium text-foreground ml-1">Email</label>
-          <Input 
-            type="email" 
-            placeholder="nom@empresa.com" 
+          <Input
+            type="email"
+            placeholder="nom@empresa.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="bg-card border-border text-foreground h-12 focus:border-primary"
@@ -6114,9 +6759,9 @@ export function LoginForm() {
               Has oblidat la contrasenya?
             </Link>
           </div>
-          <Input 
-            type="password" 
-            placeholder="••••••••" 
+          <Input
+            type="password"
+            placeholder="••••••••"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="bg-card border-border text-foreground h-12 focus:border-primary"
@@ -6161,23 +6806,23 @@ import { Loader2, UserPlus, Github, Info } from 'lucide-react';
 export function RegisterForm({ prefilledEmail }: { prefilledEmail: string }) {
   const t = useTranslations('Auth');
   const router = useRouter();
-  
+
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState(prefilledEmail);
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
-  
+
   // Estat del Checkbox
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validació Checkbox
     if (!termsAccepted) {
-        setError("Has d'acceptar la política de privacitat per crear el compte.");
-        return;
+      setError("Has d'acceptar la política de privacitat per crear el compte.");
+      return;
     }
 
     setIsLoading(true);
@@ -6208,17 +6853,14 @@ export function RegisterForm({ prefilledEmail }: { prefilledEmail: string }) {
   };
 
   const handleOAuth = async (provider: 'github') => {
-    // Validació Checkbox també per Social Login
-    if (!termsAccepted) {
-        setError("Si us plau, accepta els termes i la privacitat abans de continuar amb GitHub.");
-        return;
-    }
+    // Opció A: Si vols que sigui un error vermell
+    setError("🚧 El registre amb GitHub està en construcció. Si us plau, utilitza l'email.");
 
-    const supabase = createClient();
-    await supabase.auth.signInWithOAuth({
-      provider,
-      options: { redirectTo: `${location.origin}/auth/callback` },
-    });
+    // Opció B (Millor): Si tens 'useToast', pots fer un toast informatiu
+    // toast({ title: "En construcció", description: "Aviat podràs entrar amb GitHub!" });
+
+    // No fem res més (no cridem a Supabase)
+    return;
   };
 
   return (
@@ -6230,10 +6872,10 @@ export function RegisterForm({ prefilledEmail }: { prefilledEmail: string }) {
 
       {/* Social Register */}
       <div className="grid grid-cols-1 gap-4">
-        <Button 
-            variant="outline" 
-            onClick={() => handleOAuth('github')} 
-            className="w-full h-12 border-border bg-card hover:bg-muted text-foreground gap-2"
+        <Button
+          variant="outline"
+          onClick={() => handleOAuth('github')}
+          className="w-full h-12 border-border bg-card hover:bg-muted text-foreground gap-2"
         >
           <Github className="w-5 h-5" /> Registre amb GitHub
         </Button>
@@ -6251,10 +6893,10 @@ export function RegisterForm({ prefilledEmail }: { prefilledEmail: string }) {
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
           <label className="text-sm font-medium text-foreground ml-1">Nom Complet</label>
-          <Input 
+          <Input
             id="fullName"
-            type="text" 
-            placeholder="Joan Garcia" 
+            type="text"
+            placeholder="Joan Garcia"
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
             className="bg-card border-border text-foreground h-12 focus:border-primary"
@@ -6264,10 +6906,10 @@ export function RegisterForm({ prefilledEmail }: { prefilledEmail: string }) {
 
         <div className="space-y-2">
           <label className="text-sm font-medium text-foreground ml-1">Email</label>
-          <Input 
+          <Input
             id="email"
-            type="email" 
-            placeholder="nom@empresa.com" 
+            type="email"
+            placeholder="nom@empresa.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="bg-card border-border text-foreground h-12 focus:border-primary"
@@ -6277,10 +6919,10 @@ export function RegisterForm({ prefilledEmail }: { prefilledEmail: string }) {
 
         <div className="space-y-2">
           <label className="text-sm font-medium text-foreground ml-1">Contrasenya</label>
-          <Input 
+          <Input
             id="password"
-            type="password" 
-            placeholder="Crear contrasenya" 
+            type="password"
+            placeholder="Crear contrasenya"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="bg-card border-border text-foreground h-12 focus:border-primary"
@@ -6291,39 +6933,38 @@ export function RegisterForm({ prefilledEmail }: { prefilledEmail: string }) {
 
         {/* Checkbox Legal */}
         <div className="flex items-start space-x-3 pt-2">
-            <Checkbox 
-                id="privacy" 
-                checked={termsAccepted}
-                onCheckedChange={(checked) => {
-                    setTermsAccepted(checked as boolean);
-                    if(checked) setError(null); // Netegem l'error visual si l'usuari marca la casella
-                }}
-                className="mt-1 border-muted-foreground/30 data-[state=checked]:bg-primary data-[state=checked]:border-primary" 
-            />
-            <div className="grid gap-1.5 leading-none">
-                <label 
-                    htmlFor="privacy" 
-                    className="text-sm text-muted-foreground leading-snug cursor-pointer select-none"
-                >
-                    He llegit i accepto la <Link href="/legal/privacitat" target="_blank" className="underline hover:text-primary transition-colors">política de privacitat</Link> i les <Link href="/legal/avis-legal" target="_blank" className="underline hover:text-primary transition-colors">condicions d'ús</Link>.
-                </label>
-            </div>
+          <Checkbox
+            id="privacy"
+            checked={termsAccepted}
+            onCheckedChange={(checked) => {
+              setTermsAccepted(checked as boolean);
+              if (checked) setError(null); // Netegem l'error visual si l'usuari marca la casella
+            }}
+            className="mt-1 border-muted-foreground/30 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+          />
+          <div className="grid gap-1.5 leading-none">
+            <label
+              htmlFor="privacy"
+              className="text-sm text-muted-foreground leading-snug cursor-pointer select-none"
+            >
+              He llegit i accepto la <Link href="/legal/privacitat" target="_blank" className="underline hover:text-primary transition-colors">política de privacitat</Link> i les <Link href="/legal/avis-legal" target="_blank" className="underline hover:text-primary transition-colors">condicions d'ús</Link>.
+            </label>
+          </div>
         </div>
 
         {error && (
           <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 text-sm flex items-center gap-2 animate-in fade-in slide-in-from-top-2">
-            <Info className="w-4 h-4 shrink-0" /> 
+            <Info className="w-4 h-4 shrink-0" />
             <span>{error}</span>
           </div>
         )}
 
-        <Button 
-            type="submit" 
-            disabled={isLoading} 
-            className={`w-full h-12 font-bold rounded-lg transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2 ${
-                termsAccepted 
-                ? 'gradient-bg text-white hover:opacity-90' 
-                : 'bg-muted text-muted-foreground cursor-not-allowed opacity-70'
+        <Button
+          type="submit"
+          disabled={isLoading}
+          className={`w-full h-12 font-bold rounded-lg transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2 ${termsAccepted
+              ? 'gradient-bg text-white hover:opacity-90'
+              : 'bg-muted text-muted-foreground cursor-not-allowed opacity-70'
             }`}
         >
           {isLoading ? <Loader2 className="animate-spin" /> : <><UserPlus className="w-4 h-4" /> Crear Compte</>}
@@ -6337,6 +6978,68 @@ export function RegisterForm({ prefilledEmail }: { prefilledEmail: string }) {
         </Link>
       </p>
     </div>
+  );
+}
+
+// =================== FILE: src/features/auth/ui/ResetPasswordForm.tsx ===================
+
+// =================== FILE: src/features/auth/ui/ResetPasswordForm.tsx ===================
+
+'use client'
+
+import { useActionState } from 'react';
+import { updatePassword } from '../actions/reset-password';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent } from '@/components/ui/card';
+import { Loader2 } from 'lucide-react';
+
+export function ResetPasswordForm() {
+  const [state, action, isPending] = useActionState(updatePassword, {
+    message: '',
+    errors: {}
+  });
+
+  return (
+    <Card>
+      <CardContent className="pt-6">
+        <form action={action} className="space-y-4">
+          <div className="space-y-2">
+            <label htmlFor="password" className="text-sm font-medium">Nova Contrasenya</label>
+            <Input 
+              id="password" 
+              name="password" 
+              type="password" 
+              className={state.errors?.password ? "border-red-500" : ""}
+            />
+            {state.errors?.password && (
+              <p className="text-sm text-red-500">{state.errors.password[0]}</p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <label htmlFor="confirmPassword" className="text-sm font-medium">Confirmar Contrasenya</label>
+            <Input 
+              id="confirmPassword" 
+              name="confirmPassword" 
+              type="password" 
+              className={state.errors?.confirmPassword ? "border-red-500" : ""}
+            />
+            {state.errors?.confirmPassword && (
+              <p className="text-sm text-red-500">{state.errors.confirmPassword[0]}</p>
+            )}
+          </div>
+
+          {state.message && (
+            <p className="text-sm text-red-500 text-center">{state.message}</p>
+          )}
+
+          <Button type="submit" className="w-full" disabled={isPending}>
+            {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Guardar nova contrasenya"}
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -6357,12 +7060,16 @@ import { MDXRemote } from 'next-mdx-remote/rsc';
 import { Button } from '@/components/ui/button';
 import React, { ComponentPropsWithoutRef } from 'react';
 import { CheckCircle2 } from 'lucide-react';
-
+import remarkGfm from 'remark-gfm'; // 👈 1. IMPORTA EL PLUGIN
 // Tipus per als components HTML estàndard
 type HeadingProps = ComponentPropsWithoutRef<'h1'>;
 type ParagraphProps = ComponentPropsWithoutRef<'p'>;
 type ListProps = ComponentPropsWithoutRef<'ul'>;
 type CalloutProps = { children: React.ReactNode };
+// Tipus per a taules
+type TableProps = ComponentPropsWithoutRef<'table'>;
+type ThProps = ComponentPropsWithoutRef<'th'>;
+type TdProps = ComponentPropsWithoutRef<'td'>;
 
 // Component de Vídeo (YouTube)
 const Video = ({ id }: { id: string }) => (
@@ -6388,14 +7095,14 @@ const components = {
   h3: (props: HeadingProps) => (
     <h3 {...props} className="text-xl md:text-2xl font-bold mt-8 mb-4 text-foreground" />
   ),
-  
+
   // PARÀGRAFS: CORRECCIÓ DE CONTRAST
   // Light: text-slate-900 (Negre intens per llegibilitat)
   // Dark: text-slate-200 (Blanc suau per no cremar els ulls)
   p: (props: ParagraphProps) => (
     <p {...props} className="text-xl leading-8 text-slate-900 dark:text-slate-500 mb-8 font-sans" />
   ),
-  
+
   // ELEMENTS INLINE
   strong: (props: ComponentPropsWithoutRef<'strong'>) => <strong {...props} className="font-bold text-foreground" />,
   a: (props: ComponentPropsWithoutRef<'a'>) => <a {...props} className="text-primary underline underline-offset-4 hover:text-primary/80 font-medium transition-colors" />,
@@ -6409,15 +7116,38 @@ const components = {
   // CITES (Blockquote)
   blockquote: (props: ComponentPropsWithoutRef<'blockquote'>) => (
     <blockquote {...props} className="border-l-4 border-primary pl-6 py-4 my-10 italic text-2xl text-slate-800 dark:text-slate-100 bg-muted/30 rounded-r-lg" />
+
+
   ),
-  
+  // ✨ ESTILS DE TAULA (NOU)
+  table: (props: TableProps) => (
+    <div className="my-12 w-full overflow-x-auto rounded-xl border border-border shadow-sm">
+      <table {...props} className="w-full text-left text-sm" />
+    </div>
+  ),
+  thead: (props: ComponentPropsWithoutRef<'thead'>) => (
+    <thead {...props} className="bg-muted/50 text-foreground border-b border-border" />
+  ),
+  tbody: (props: ComponentPropsWithoutRef<'tbody'>) => (
+    <tbody {...props} className="divide-y divide-border bg-card" />
+  ),
+  tr: (props: ComponentPropsWithoutRef<'tr'>) => (
+    <tr {...props} className="transition-colors hover:bg-muted/20" />
+  ),
+  th: (props: ThProps) => (
+    <th {...props} className="px-6 py-4 font-bold text-foreground uppercase tracking-wider text-xs align-middle" />
+  ),
+  td: (props: TdProps) => (
+    <td {...props} className="px-6 py-4 text-slate-600 dark:text-slate-300 align-middle leading-relaxed" />
+  ),
+
   // COMPONENTS PERSONALITZATS (Botons i Callouts)
   Button: (props: React.ComponentProps<typeof Button>) => (
     <div className="my-12 flex justify-center">
       <Button size="lg" className="px-8 py-6 text-lg shadow-lg hover:scale-105 transition-transform" {...props} />
     </div>
   ),
-  
+
   Callout: ({ children }: CalloutProps) => (
     <div className="flex gap-4 bg-primary/5 border border-primary/20 text-foreground p-6 my-10 rounded-xl shadow-sm">
       <div className="shrink-0 mt-1">
@@ -6436,9 +7166,17 @@ export function MDXContent({ source }: { source: string }) {
   if (!source) return null;
 
   return (
-    // Sense 'prose' per tenir control total dels colors
     <article className="max-w-none w-full">
-      <MDXRemote source={source} components={components} />
+      <MDXRemote 
+        source={source} 
+        components={components} 
+        // 👇 2. AFEGEIX AQUESTA CONFIGURACIÓ
+        options={{
+          mdxOptions: {
+            remarkPlugins: [remarkGfm],
+          },
+        }}
+      />
     </article>
   );
 }
@@ -6595,6 +7333,256 @@ export const AuditReadyEmail = ({
 
 export default AuditReadyEmail;
 
+// =================== FILE: src/features/projects/data/projects-data.ts ===================
+
+import { StaticImageData } from 'next/image';
+// Importa les teves imatges reals aquí
+import ribotFlowImg from '@/assets/images/pantalla-ribotflow.jpg'; 
+import salutFlowImg from '@/assets/images/pantalla-salutflow.jpg';
+
+export interface Project {
+  id: string;
+  title: string;
+  tagline: string;
+  description: string;
+  stats: string[];
+  tags: string[];
+  color: string;
+  image: StaticImageData | null;
+  link: string;
+}
+
+export const PROJECTS: Project[] = [
+  {
+    id: 'ribotflow',
+    title: 'RibotFlow',
+    tagline: 'El Sistema Operatiu Integral',
+    description: 'Plataforma de gestió "Tot en Un" que unifica CRM, facturació i xarxes socials. Elimina el caos de tenir la informació dispersa i utilitza IA per redactar correus i gestionar oportunitats.',
+    stats: ['CRM + Facturació', 'Automatització IA', 'Control Financer'],
+    tags: ['ERP', 'Business', 'IA', 'Supabase'],
+    color: 'from-purple-500 to-pink-500',
+    image: ribotFlowImg, 
+    link: 'https://ribotflow.com'
+  },
+  {
+    id: 'salutflow',
+    title: 'SalutFlow',
+    tagline: 'El teu Centre Esportiu, Digitalitzat',
+    description: 'Crea la teva pròpia App Web (PWA) en minuts sense programar. Gestiona reserves, pagaments recurrents (Stripe) i aforaments automàticament. Ideal per gimnasos i estudis.',
+    stats: ['App PWA', 'Pagaments Stripe', 'Llistes d\'Espera'],
+    tags: ['SaaS', 'Sport', 'PWA', 'Stripe'],
+    color: 'from-cyan-400 to-blue-600',
+    image: salutFlowImg,
+    link: 'https://getsalutflow.com'
+  }
+];
+
+// =================== FILE: src/features/projects/index.ts ===================
+
+// Exportem només el que volem que la resta de l'app pugui utilitzar
+export * from './ui/ProjectsHero';
+export * from './ui/ProjectList';
+export * from './ui/ProjectsCTA';
+export * from './data/projects-data'; // Opcional, si necessites els tipus a fora
+
+// =================== FILE: src/features/projects/ui/ProjectCard.tsx ===================
+
+'use client';
+
+import Image from 'next/image';
+import { motion } from 'framer-motion';
+import { Button } from '@/components/ui/button';
+import { ExternalLink, Layers } from 'lucide-react';
+import type { Project } from '../data/projects-data';
+
+interface Props {
+    project: Project;
+    index: number;
+}
+
+export function ProjectCard({ project, index }: Props) {
+    const isReversed = index % 2 !== 0;
+
+    return (
+        <div className={`flex flex-col lg:flex-row gap-8 md:gap-16 items-center ${isReversed ? 'lg:flex-row-reverse' : ''}`}>
+
+            {/* --- COLUMNA VISUAL (Mockup) --- */}
+            <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8 }}
+                className="w-full lg:flex-1 relative group"
+            >
+                {/* Glow */}
+                <div className={`absolute inset-0 bg-linear-to-r ${project.color} opacity-20 blur-[60px] group-hover:opacity-30 transition-opacity duration-500 pointer-events-none`}></div>
+
+                {/* Marc Navegador */}
+                <div className="relative rounded-xl border border-border bg-card shadow-2xl overflow-hidden transform transition-transform duration-500 group-hover:scale-[1.02] md:group-hover:-translate-y-2">
+                    <div className="h-6 md:h-8 border-b border-border bg-muted/30 flex items-center px-3 gap-1.5 md:gap-2">
+                        <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-red-500/50"></div>
+                        <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-yellow-500/50"></div>
+                        <div className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-green-500/50"></div>
+                        <div className="ml-2 md:ml-4 px-2 py-0.5 rounded bg-background/50 text-[8px] md:text-[10px] text-muted-foreground font-mono border border-border w-full max-w-[150px] md:max-w-[200px] opacity-50 truncate">
+                            https://{project.id}.com
+                        </div>
+                    </div>
+
+                    {/* Imatge */}
+                    <div className="aspect-4/3 md:aspect-video relative bg-muted/20 overflow-hidden group-hover:shadow-inner transition-all">
+                        {project.image ? (
+                            <Image
+                                src={project.image}
+                                alt={project.title}
+                                fill
+                                // Canviem a 'object-top' per defecte (per webs), però si són apps, potser millor 'object-center'
+                                className="object-cover object-top transition-transform duration-700 group-hover:scale-105"
+                                sizes="(max-width: 768px) 100vw, 50vw"
+                                placeholder="blur"
+                            />
+                        ) : (
+                            <div className="absolute inset-0 flex flex-col items-center justify-center text-muted-foreground/30">
+                                <Layers className="w-12 h-12 md:w-16 md:h-16 mb-4" />
+                                <span className="text-xs md:text-sm font-bold uppercase tracking-widest">Captura de {project.title}</span>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </motion.div>
+
+            {/* --- COLUMNA TEXT --- */}
+            <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className="w-full lg:flex-1 space-y-6 md:space-y-8"
+            >
+                <div>
+                    <div className={`inline-block px-3 py-1 rounded-lg bg-linear-to-r ${project.color} bg-opacity-10 text-[10px] md:text-xs font-bold text-white mb-4 shadow-sm`}>
+                        {project.tags[0]}
+                    </div>
+                    <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-2">{project.title}</h2>
+                    <p className={`text-lg md:text-xl font-medium bg-linear-to-r ${project.color} bg-clip-text text-transparent`}>
+                        {project.tagline}
+                    </p>
+                </div>
+
+                <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
+                    {project.description}
+                </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
+                    {project.stats.map((stat, i) => (
+                        <div key={i} className="flex items-center gap-3 text-sm text-foreground font-medium">
+                            <div className={`w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-linear-to-r ${project.color}`}></div>
+                            {stat}
+                        </div>
+                    ))}
+                </div>
+
+                <div className="flex flex-wrap gap-2 pt-2">
+                    {project.tags.map((tag) => (
+                        <span key={tag} className="px-2.5 py-0.5 md:px-3 md:py-1 rounded-full border border-border bg-muted/20 text-[10px] md:text-xs font-medium text-muted-foreground">
+                            {tag}
+                        </span>
+                    ))}
+                </div>
+
+                <div className="flex gap-4 pt-4">
+                    <a href={project.link} target="_blank" rel="noreferrer" className="w-full sm:w-auto">
+                        <Button className="w-full sm:w-auto gradient-bg text-white border-0 shadow-lg hover:opacity-90 transition-transform hover:-translate-y-1">
+                            Veure Web <ExternalLink className="ml-2 w-4 h-4" />
+                        </Button>
+                    </a>
+                </div>
+            </motion.div>
+
+        </div>
+    );
+}
+
+// =================== FILE: src/features/projects/ui/ProjectList.tsx ===================
+
+import { PROJECTS } from '../data/projects-data';
+import { ProjectCard } from './ProjectCard';
+
+export function ProjectsList() {
+  return (
+    <section className="py-10 pb-20 md:pb-32">
+      <div className="container mx-auto px-4 space-y-20 md:space-y-32">
+         {PROJECTS.map((project, index) => (
+            <ProjectCard key={project.id} project={project} index={index} />
+         ))}
+      </div>
+    </section>
+  );
+}
+
+// =================== FILE: src/features/projects/ui/ProjectsCTA.tsx ===================
+
+'use client';
+
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { ArrowRight } from 'lucide-react';
+
+export function ProjectsCTA() {
+  return (
+    <section className="py-16 md:py-24 border-t border-border bg-muted/10">
+       <div className="container mx-auto px-4 text-center">
+          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4 md:mb-6">
+             Tens una idea per al pròxim <span className="gradient-text">Gran Producte</span>?
+          </h2>
+          <p className="text-sm md:text-base text-muted-foreground mb-8 md:mb-10 max-w-xl mx-auto px-4">
+             Hem convertit les nostres idees en negocis rendibles. Ara deixa que t'ajudem a fer el mateix amb la teva.
+          </p>
+          <Link href="/#contacte">
+             <Button size="lg" className="h-12 md:h-14 px-6 md:px-8 text-base md:text-lg rounded-full gradient-bg text-white hover:opacity-90 shadow-xl w-full sm:w-auto transition-transform hover:scale-105">
+                Parlem del teu Projecte <ArrowRight className="ml-2 w-5 h-5" />
+             </Button>
+          </Link>
+       </div>
+    </section>
+  );
+}
+
+// =================== FILE: src/features/projects/ui/ProjectsHero.tsx ===================
+
+'use client';
+
+import { motion } from 'framer-motion';
+import { Sparkles } from 'lucide-react';
+
+export function ProjectsHero() {
+  return (
+    <section className="pt-32 pb-16 md:pt-48 md:pb-24 relative overflow-hidden">
+      {/* Fons decoratiu */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] md:w-[1000px] h-[300px] md:h-[500px] bg-primary/10 blur-[80px] md:blur-[120px] rounded-full pointer-events-none opacity-50" />
+      
+      <div className="container mx-auto px-4 text-center relative z-10">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+        >
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/20 bg-primary/5 text-primary text-[10px] md:text-xs font-bold mb-6 uppercase tracking-widest">
+            <Sparkles className="w-3 h-3" />
+            DigitAI Innovation Lab
+          </div>
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 text-foreground leading-tight">
+            No només venem codi. <br className="hidden md:block" />
+            <span className="gradient-text">Construïm Empreses.</span>
+          </h1>
+          <p className="text-base md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed px-4">
+            Aquests són els nostres productes propis. Utilitzem la mateixa tecnologia i metodologia per als teus projectes que la que fem servir per escalar els nostres negocis.
+          </p>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
 // =================== FILE: src/i18n/request.ts ===================
 
 import { getRequestConfig } from 'next-intl/server';
@@ -6728,6 +7716,10 @@ export async function requireAdmin() {
 // =================== FILE: src/lib/data.ts ===================
 
 // src/lib/data.ts
+import { StaticImageData } from 'next/image'; // 👈 Necessari pel tipatge
+
+import bioshopImg from '@/assets/images/testimoni-garatgeestacio.jpg';
+import salutFlow from '@/assets/images/salutflow.png';
 
 export type Testimonial = {
   id: number | string;
@@ -6737,55 +7729,55 @@ export type Testimonial = {
   rating: number;
   projectType: 'web' | 'app' | 'automation';
   projectUrl?: string;
-  image?: string; // 👈 AQUI POSAREM LA RUTA DE LA CAPTURA (Ex: /images/projects/web-gestoria.jpg)
+  image?: string | StaticImageData;
 };
 
 export const TESTIMONIALS: Testimonial[] = [
-  { 
-    id: 1, 
-    name: "Marc Vila", 
-    company: "Gestoria Vila", 
-    text: "Hem estalviat 20h setmanals gràcies al bot de WhatsApp.", 
+  {
+    id: 1,
+    name: "Marc Vila",
+    company: "Gestoria Vila",
+    text: "Hem estalviat 20h setmanals gràcies al bot de WhatsApp.",
     rating: 5,
-    projectType: 'automation' 
-    // No posem imatge, sortirà el flux de nodes abstracte (molt professional per backend)
+    projectType: 'automation'
   },
-  { 
-    id: 2, 
-    name: "Anna Soler", 
-    company: "BioShop", 
-    text: "La web carrega instantàniament. Les vendes han pujat un 40%.", 
+  {
+    id: 2,
+    name: "Anna Soler",
+    company: "Garatge Estació", // He vist el nom al fitxer jpg
+    text: "La web carrega instantàniament. Les vendes han pujat un 40%.",
     rating: 5,
     projectType: 'web',
-    projectUrl: 'https://bioshop-exemple.com',
-    image: '@/assets/images/testimoni-garatgeestacio.jpg' // 📸 Captura de la web real
+    projectUrl: 'https://garatgeestacio.com',
+    // ✅ 3. USEM LA VARIABLE IMPORTADA
+    image: bioshopImg
   },
-  { 
-    id: 3, 
-    name: "Jordi P.", 
-    company: "Tech Solutions", 
-    text: "Han entès la nostra idea d'App a la primera.", 
+  {
+    id: 3,
+    name: "Jordi P.",
+    company: "Tech Solutions",
+    text: "Han entès la nostra idea d'App a la primera.",
     rating: 5,
     projectType: 'app',
-    image: '@/assets/images/salutflow.png' // 📱 Captura de l'app real
+    image: salutFlow
   },
 
   // Nous exemples per al carrousel
-  { 
-    id: 4, 
-    name: "Laura M.", 
-    company: "Clínica Dental", 
-    text: "El sistema de cites prèvies ha eliminat les trucades perdudes.", 
-    rating: 5, 
-    projectType: 'web' 
+  {
+    id: 4,
+    name: "Laura M.",
+    company: "Clínica Dental",
+    text: "El sistema de cites prèvies ha eliminat les trucades perdudes.",
+    rating: 5,
+    projectType: 'web'
   },
-  { 
-    id: 5, 
-    name: "Pere Roig", 
-    company: "Logística Ràpida", 
-    text: "L'App per als repartidors funciona fins i tot sense cobertura.", 
-    rating: 5, 
-    projectType: 'app' 
+  {
+    id: 5,
+    name: "Pere Roig",
+    company: "Logística Ràpida",
+    text: "L'App per als repartidors funciona fins i tot sense cobertura.",
+    rating: 5,
+    projectType: 'app'
   }
 ];
 
@@ -6922,24 +7914,26 @@ export function cn(...inputs: ClassValue[]) {
 
 // =================== FILE: src/proxy.ts ===================
 
+// =================== FILE: src/proxy.ts ===================
+
 import createMiddleware from 'next-intl/middleware';
-import { routing } from '@/routing'; // 👈 IMPORTEM CONFIG
+import { routing } from '@/routing';
 import { updateSession } from '@/lib/supabase/middleware';
 import { NextRequest } from 'next/server';
 
-const intlMiddleware = createMiddleware(routing); // 👈 LI PASSEM LA CONFIG
+const intlMiddleware = createMiddleware(routing);
 
 export async function proxy(request: NextRequest) {
-  // 1. Next-intl fa la feina de routing (idiomes)
   const response = intlMiddleware(request);
-
-  // 2. Supabase fa la feina de sessió
   return await updateSession(request, response);
 }
 
 export const config = {
   matcher: [
-    '/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|mp4|webm|xml|txt)$).*)',],
+    // 👇 HE AFEGIT 'webmanifest' i 'mp4' A L'EXCEPCIÓ DEL REGEX
+    // Això diu: "Executa el middleware a tot ARREU EXCEPTE api, next, imatges, manifest i videos"
+    '/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|webmanifest|mp4)$).*)',
+  ],
 };
 
 // =================== FILE: src/repositories/interfaces/IAnalyticsRepository.ts ===================
@@ -7174,7 +8168,7 @@ export class SupabaseAnalyticsRepository implements IAnalyticsRepository {
     const topPages: PageStat[] = Array.from(pagesMap.entries())
       .map(([path, views]) => ({ path, views }))
       .sort((a, b) => b.views - a.views)
-      .slice(0, 5);
+      .slice(0, 15);
 
     const deviceColors = ['#8884d8', '#00C49F', '#FFBB28'];
     const devices: DeviceStat[] = Array.from(devicesMap.entries())
@@ -7375,7 +8369,9 @@ export class SupabasePostRepository implements IPostRepository {
       description: row.description,
       content: row.content_mdx, // Aquí fem el canvi de nom
       tags: row.tags ? (row.tags as string[]) : [], // Assegurem que és array
-      coverImage: row.cover_image
+      coverImage: row.cover_image,
+      published: row.status === 'published',
+      
     };
   }
 
@@ -7387,6 +8383,7 @@ export class SupabasePostRepository implements IPostRepository {
       .select('*')
       .eq('slug', slug)
       .eq('status', 'published')
+      .eq('published', true) // 👈 Seguretat extra: si endevinen l'URL d'un esborrany, no es veurà
       .single();
 
     if (error || !data) return null;
@@ -7401,6 +8398,7 @@ export class SupabasePostRepository implements IPostRepository {
       .from('posts')
       .select('*') // Seleccionem tot per simplificar el tipatge, o especifica columnes
       .eq('status', 'published')
+      .eq('published', true) // 👈 Seguretat extra: si endevinen l'URL d'un esborrany, no es veurà
       .order('published_at', { ascending: false });
 
     if (!data) return [];
@@ -8131,6 +9129,7 @@ export type BlogPostDTO = {
   content: string | null;  // Mapejat des de content_mdx
   tags: string[];
   coverImage: string | null; // Mapejat des de cover_image
+  published: boolean;
 };
 
 export type AnalyticsEventDTO = {

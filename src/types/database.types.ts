@@ -12,6 +12,31 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "13.0.5"
   }
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
   public: {
     Tables: {
       analytics_events: {
@@ -159,6 +184,7 @@ export type Database = {
           created_at: string | null
           description: string | null
           id: string
+          published: boolean | null
           published_at: string | null
           slug: string
           status: Database["public"]["Enums"]["post_status"] | null
@@ -172,6 +198,7 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           id?: string
+          published?: boolean | null
           published_at?: string | null
           slug: string
           status?: Database["public"]["Enums"]["post_status"] | null
@@ -185,6 +212,7 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           id?: string
+          published?: boolean | null
           published_at?: string | null
           slug?: string
           status?: Database["public"]["Enums"]["post_status"] | null
@@ -323,7 +351,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      is_admin: { Args: never; Returns: boolean }
     }
     Enums: {
       audit_status: "processing" | "completed" | "failed"
@@ -456,6 +484,9 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {
       audit_status: ["processing", "completed", "failed"],

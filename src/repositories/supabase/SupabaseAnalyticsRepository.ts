@@ -1,11 +1,11 @@
-import { createClient } from '@/lib/supabase/server';
+import { createClient, createAdminClient } from '@/lib/supabase/server'; // 👈 Afegim createAdminClient
 import { AnalyticsEventDTO } from '@/types/models';
 import { Database } from '@/types/database.types';
-import { 
-  IAnalyticsRepository, 
-  DailyStats, 
-  PageStat, 
-  DeviceStat, 
+import {
+  IAnalyticsRepository,
+  DailyStats,
+  PageStat,
+  DeviceStat,
 
   StatItem // 👈 Assegura't d'importar aquest tipus nou que vam crear
 } from '../interfaces/IAnalyticsRepository';
@@ -14,13 +14,18 @@ type AnalyticsInsert = Database['public']['Tables']['analytics_events']['Insert'
 
 export class SupabaseAnalyticsRepository implements IAnalyticsRepository {
 
+  // 1. MÈTODE D'ESCRIPTURA (TRACKING)
+  // Aquest ha de ser "blindat" perquè l'executa tothom (fins i tot usuaris sense login).
   async trackEvent(event: AnalyticsEventDTO): Promise<void> {
-    const supabase = await createClient();
+    // ⚠️ CANVI IMPORTANT: Usem el client ADMIN per escriure,
+    // ja que hem tancat la porta pública RLS al Pas 1.
+    const supabaseAdmin = createAdminClient();
 
-    const { error } = await supabase.from('analytics_events').insert({
+    const { error } = await supabaseAdmin.from('analytics_events').insert({
       event_name: event.event_name,
       path: event.path,
       session_id: event.session_id,
+      // Assegurem que el tipus encaixa
       meta: event.meta as AnalyticsInsert['meta'],
       country: event.geo?.country,
       city: event.geo?.city,
@@ -31,7 +36,11 @@ export class SupabaseAnalyticsRepository implements IAnalyticsRepository {
       duration_seconds: event.duration || 0
     });
 
-    if (error) console.error("Error tracking:", error);
+    if (error) {
+      console.error("Error al Repositori (trackEvent):", error.message);
+      // Opcional: llançar error si vols que la Action ho sàpiga
+      // throw new Error(error.message);
+    }
   }
 
   async getLast7DaysStats(): Promise<DailyStats[]> {
@@ -100,7 +109,7 @@ export class SupabaseAnalyticsRepository implements IAnalyticsRepository {
       .gte('created_at', thirtyDaysAgo.toISOString());
 
     if (error || !data) {
-        return { topPages: [], devices: [], countries: [], referrers: [], browsers: [], os: [] };
+      return { topPages: [], devices: [], countries: [], referrers: [], browsers: [], os: [] };
     }
 
     // 2. Inicialitzem els Maps
@@ -157,10 +166,10 @@ export class SupabaseAnalyticsRepository implements IAnalyticsRepository {
     const os = toStatArray(osMap, ['#ec4899', '#f472b6', '#fbcfe8', '#fce7f3', '#fdf2f8']);
 
     const countries: StatItem[] = Array.from(countryMap.entries())
-      .map(([name, set]) => ({ 
-          name: name === 'Unknown' ? '🌍 Desconegut' : name, 
-          value: set.size, 
-          color: '#10b981' 
+      .map(([name, set]) => ({
+        name: name === 'Unknown' ? '🌍 Desconegut' : name,
+        value: set.size,
+        color: '#10b981'
       }))
       .sort((a, b) => b.value - a.value)
       .slice(0, 5);
@@ -179,13 +188,13 @@ export class SupabaseAnalyticsRepository implements IAnalyticsRepository {
       }));
 
     // ✅ CORRECCIÓ FINAL: Retornem TOTS els camps que la interfície espera
-    return { 
-        topPages, 
-        devices, 
-        countries, 
-        referrers, 
-        browsers, 
-        os 
+    return {
+      topPages,
+      devices,
+      countries,
+      referrers,
+      browsers,
+      os
     };
   }
 }
