@@ -199,5 +199,18 @@
     "title_highlight": "Creem Productes.",
     "description": "Descobreix <strong>SalutFlow</strong> i <strong>RibotFlow</strong>, les nostres plataformes SaaS pròpies.<br><br>Utilitzem la mateixa tecnologia punta per als teus projectes.",
     "cta": "Explorar Productes"
+  },
+  "Footer": {
+    "description": "Transformem negocis tradicionals en líders digitals mitjançant desenvolupament a mida i intel·ligència artificial.",
+    "services_title": "Serveis",
+    "company_title": "Empresa",
+    "legal_title": "Legal",
+    "about": "Sobre Nosaltres",
+    "contact": "Contacte",
+    "legal_notice": "Avís Legal",
+    "privacy": "Política de Privacitat",
+    "cookies": "Política de Cookies",
+    "rights_reserved": "Tots els drets reservats.",
+    "made_with_love": "Fet amb ❤️ a Catalunya"
   }
 }

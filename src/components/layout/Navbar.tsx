@@ -9,7 +9,6 @@ import {
   LayoutDashboard,
   Home,
   Zap,
-
   FolderGit2,
   BookOpen,
   User
@@ -19,22 +18,15 @@ import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import type { User as SupabaseUser } from '@supabase/supabase-js';
-import { LanguageSwitcher } from './LanguageSwitcher'; // 👈 Import nou
-
-
-// Definim els enllaços amb icones per al mòbil
-const NAV_LINKS = [
-  { name: 'Inici', href: '/', icon: Home },
-  { name: 'Solucions', href: '/#serveis', icon: Zap },
-  { name: 'Projectes', href: '/projectes', icon: FolderGit2 },
-  { name: 'Blog', href: '/blog', icon: BookOpen },
-];
+import { LanguageSwitcher } from './LanguageSwitcher'; 
+import { useTranslations } from 'next-intl';
 
 type Props = {
   user: SupabaseUser | null;
 };
 
 export function Navbar({ user }: Props) {
+  const t = useTranslations('Navbar'); // Hook de traducció
   const [isScrolled, setIsScrolled] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
@@ -51,11 +43,17 @@ export function Navbar({ user }: Props) {
     router.refresh();
   };
 
+  // Definim els enllaços DINS del component per poder usar 't'
+  const NAV_LINKS = [
+    { name: t('home'), href: '/', icon: Home },
+    { name: t('solutions'), href: '/#serveis', icon: Zap },
+    { name: t('projects'), href: '/projectes', icon: FolderGit2 },
+    { name: t('blog'), href: '/blog', icon: BookOpen },
+  ];
+
   return (
     <>
-      {/* ==================================================================
-          1. TOP NAVBAR (Desktop: Completa | Mòbil: Només Logo)
-      ================================================================== */}
+      {/* 1. TOP NAVBAR */}
       <header
         className={cn(
           "fixed top-0 w-full z-50 transition-all duration-300 border-b border-transparent",
@@ -66,7 +64,7 @@ export function Navbar({ user }: Props) {
       >
         <div className="container mx-auto px-4 flex items-center justify-between">
 
-          {/* LOGO (Visible sempre) */}
+          {/* LOGO */}
           <Link href="/" className="text-xl md:text-2xl font-bold tracking-tight z-50 flex items-center gap-2">
             <span className="bg-primary/10 p-1.5 rounded-lg md:hidden">
               <Zap className="w-5 h-5 text-primary" />
@@ -74,7 +72,7 @@ export function Navbar({ user }: Props) {
             <span>DigitAI <span className="gradient-text">Studios</span></span>
           </Link>
 
-          {/* DESKTOP NAV (Ocult en mòbil) */}
+          {/* DESKTOP NAV */}
           <nav className="hidden md:flex items-center gap-8">
             {NAV_LINKS.map((link) => (
               <Link
@@ -92,36 +90,36 @@ export function Navbar({ user }: Props) {
             <div className="h-6 w-px bg-border mx-2"></div>
             <ThemeToggle />
             <LanguageSwitcher />
-            {/* AUTH BUTTONS DESKTOP */}
+            
+            {/* AUTH BUTTONS */}
             {user ? (
               <div className="flex items-center gap-4">
                 <Link href="/dashboard">
                   <Button className="gradient-bg text-white border-0 shadow-lg shadow-primary/20">
-                    <LayoutDashboard className="w-4 h-4 mr-2" /> Dashboard
+                    <LayoutDashboard className="w-4 h-4 mr-2" /> {t('dashboard')}
                   </Button>
                 </Link>
-                <Button variant="ghost" size="icon" onClick={handleSignOut} title="Tancar Sessió">
+                <Button variant="ghost" size="icon" onClick={handleSignOut} title={t('logout')}>
                   <LogOut className="w-5 h-5 text-muted-foreground hover:text-red-500 transition-colors" />
                 </Button>
               </div>
             ) : (
               <div className="flex items-center gap-4">
                 <Link href="/auth/login" className="text-sm font-medium hover:text-primary transition-colors">
-                  Inicia Sessió
+                  {t('login')}
                 </Link>
                 <Link href="/auth/register">
                   <Button className="gradient-bg text-white border-0 shadow-lg shadow-primary/20">
-                    Registra't
+                    {t('register')}
                   </Button>
                 </Link>
               </div>
             )}
           </nav>
 
-          {/* MOBILE TOGGLES (Només Theme) */}
+          {/* MOBILE TOGGLES */}
           <div className="flex items-center gap-2 md:hidden">
             <ThemeToggle />
-            {/* Si l'usuari està loguejat, posem un accés ràpid al dashboard dalt també */}
             {user && (
               <Link href="/dashboard">
                 <Button size="icon" variant="ghost" className="rounded-full">
@@ -137,13 +135,10 @@ export function Navbar({ user }: Props) {
         </div>
       </header>
 
-      {/* ==================================================================
-          2. BOTTOM TAB BAR (Només Mòbil) 📱
-      ================================================================== */}
+      {/* 2. BOTTOM TAB BAR (Mòbil) */}
       <div className="md:hidden fixed bottom-0 left-0 w-full z-50 bg-background/90 backdrop-blur-xl border-t border-border pb-safe">
         <div className="flex justify-around items-center h-16 px-2">
 
-          {/* 2.1 Enllaços Principals */}
           {NAV_LINKS.slice(0, 4).map((link) => {
             const Icon = link.icon;
             const isActive = pathname === link.href;
@@ -163,7 +158,6 @@ export function Navbar({ user }: Props) {
             )
           })}
 
-          {/* 2.2 Botó 'Perfil' o 'Login' (El 5è element) */}
           {user ? (
             <Link
               href="/dashboard"

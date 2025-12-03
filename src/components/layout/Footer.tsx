@@ -2,45 +2,48 @@
 
 import Link from 'next/link';
 import { Facebook, Instagram, Linkedin, Mail, MapPin} from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 const SOCIALS = [
   { icon: Linkedin, href: "https://www.linkedin.com/in/digitai-studios-105a0136a/" , label: 'LinkedIn' },
   { icon: Instagram, href: "https://www.instagram.com/digitaistudios/", label: 'Instagram' },
   { icon: Facebook, href: "https://www.facebook.com/profile.php?id=61576974390567" , label: 'Facebook' },
-  // Pots afegir Twitter/X si vols
-];
-
-const FOOTER_LINKS = [
-  {
-    title: 'Serveis',
-    links: [
-      { label: 'AppWebs & SaaS', href: '#serveis' },
-      { label: 'Apps Mòbils', href: '#serveis' },
-      { label: 'Automatització IA', href: '#serveis' },
-      { label: 'Formació In-Company', href: '#serveis' },
-    ],
-  },
-  {
-    title: 'Empresa',
-    links: [
-      { label: 'Sobre Nosaltres', href: '#hero' },
-      { label: 'Projectes', href: '/projectes' },
-      { label: 'Blog', href: '/blog' },
-      { label: 'Contacte', href: '#contacte' },
-    ],
-  },
-  {
-    title: 'Legal',
-    links: [
-      { label: 'Avís Legal', href: '/legal/avis-legal' },
-      { label: 'Política de Privacitat', href: '/legal/privacitat' },
-      { label: 'Política de Cookies', href: '/legal/cookies' },
-    ],
-  },
 ];
 
 export function Footer() {
+  const t = useTranslations('Footer'); // Namespace 'Footer'
+  const tNav = useTranslations('Navbar'); // Reutilitzem traduccions de Navbar
   const currentYear = new Date().getFullYear();
+
+  // Definim links DINS del component
+  const FOOTER_LINKS = [
+    {
+      title: t('services_title'),
+      links: [
+        { label: 'AppWebs & SaaS', href: '#serveis' },
+        { label: 'Apps Mòbils', href: '#serveis' },
+        { label: 'Automatització IA', href: '#serveis' },
+        { label: 'Formació In-Company', href: '#serveis' },
+      ],
+    },
+    {
+      title: t('company_title'),
+      links: [
+        { label: t('about'), href: '#hero' },
+        { label: tNav('projects'), href: '/projectes' },
+        { label: tNav('blog'), href: '/blog' },
+        { label: t('contact'), href: '#contacte' },
+      ],
+    },
+    {
+      title: t('legal_title'),
+      links: [
+        { label: t('legal_notice'), href: '/legal/avis-legal' },
+        { label: t('privacy'), href: '/legal/privacitat' },
+        { label: t('cookies'), href: '/legal/cookies' },
+      ],
+    },
+  ];
 
   return (
     <footer className="bg-background border-t border-border pt-16 pb-8 transition-colors duration-300">
@@ -48,7 +51,7 @@ export function Footer() {
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-16">
           
-          {/* COLUMNA 1: MARCA & INFO (Ocupa 2 columnes en grans pantalles) */}
+          {/* COLUMNA 1: MARCA & INFO */}
           <div className="lg:col-span-2 space-y-6">
             <Link href="/" className="inline-block">
               <span className="text-2xl font-bold tracking-tight text-foreground">
@@ -56,7 +59,7 @@ export function Footer() {
               </span>
             </Link>
             <p className="text-muted-foreground leading-relaxed max-w-sm">
-              Transformem negocis tradicionals en líders digitals mitjançant desenvolupament a mida i intel·ligència artificial.
+              {t('description')}
             </p>
             
             <div className="flex gap-4">
@@ -111,9 +114,9 @@ export function Footer() {
 
         {/* COPYRIGHT */}
         <div className="border-t border-border pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
-          <p>© {currentYear} DigitAI Studios. Tots els drets reservats.</p>
+          <p>© {currentYear} DigitAI Studios. {t('rights_reserved')}</p>
           <div className="flex items-center gap-6">
-             <span>Fet amb ❤️ a Catalunya</span>
+             <span>{t('made_with_love')}</span>
           </div>
         </div>
 
