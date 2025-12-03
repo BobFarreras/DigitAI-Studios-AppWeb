@@ -1,14 +1,23 @@
+// FITXER: src/components/dashboard/Sidebar.tsx
+
 'use client';
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, FileText, FolderKanban, Settings, LogOut, Sparkles } from 'lucide-react';
+// 👇 Importem ShieldAlert per a la icona d'Admin
+import { LayoutDashboard, FileText, FolderKanban, Settings, LogOut, Sparkles, ShieldAlert } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter } from '@/routing';
 import { useTranslations } from 'next-intl';
-export function Sidebar() {
-  const t = useTranslations('Sidebar'); // Namespace Sidebar
+
+// 👇 Definim la interfície de les Props
+interface SidebarProps {
+  userRole: 'admin' | 'client' | 'lead';
+}
+
+export function Sidebar({ userRole }: SidebarProps) {
+  const t = useTranslations('Sidebar');
   const pathname = usePathname();
   const router = useRouter();
   const supabase = createClient();
@@ -28,13 +37,22 @@ export function Sidebar() {
 
   const cleanPath = pathname.replace(/^\/[a-z]{2}/, '') || '/';
 
-  // DEFINIM ELS ÍTEMS A DINS PER TRADUIR-LOS
+  // 👇 LÒGICA DEL MENÚ DINÀMIC
   const MENU_ITEMS = [
     { icon: LayoutDashboard, label: t('summary'), href: '/dashboard' },
     { icon: FileText, label: t('audits'), href: '/dashboard/audits' },
     { icon: FolderKanban, label: t('projects'), href: '#projectes' },
     { icon: Settings, label: t('settings'), href: '#config' },
   ];
+
+  // Si és admin, afegim l'opció al principi o on vulguis
+  if (userRole === 'admin') {
+    MENU_ITEMS.unshift({ // 'unshift' ho posa al principi, 'push' al final
+      icon: ShieldAlert,
+      label: 'Admin Panel', // Pots afegir una clau de traducció si vols
+      href: '/admin'
+    });
+  }
 
   return (
     <aside className="w-64 h-screen bg-card border-r border-border flex flex-col sticky top-0 transition-colors duration-300">
@@ -54,9 +72,10 @@ export function Sidebar() {
         
         {MENU_ITEMS.map((item) => {
           let isActive = false;
+          // Lògica per marcar actiu /admin i subrutes
           if (!item.href.startsWith('#')) {
              if (item.href === '/dashboard') {
-                isActive = cleanPath === '/dashboard';
+                 isActive = cleanPath === '/dashboard';
              } else {
                 isActive = cleanPath.startsWith(item.href);
              }
@@ -66,34 +85,37 @@ export function Sidebar() {
             <Link 
               key={item.label} 
               href={item.href}
-              onClick={(e) => handleClick(e, item.href, item.label)}
+              // Afegim onClick només si és un link '#'
+              onClick={(e) => item.href.startsWith('#') && handleClick(e, item.href, item.label)}
               className={cn(
                 "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200",
                 isActive 
                   ? "bg-primary/10 text-primary border border-primary/20 shadow-sm" 
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted",
+                // Estil especial per a l'ítem d'Admin
+                item.href === '/admin' && !isActive && "text-purple-500 hover:text-purple-600 hover:bg-purple-500/10"
               )}
             >
-              <item.icon className={cn("w-5 h-5", isActive ? "text-primary" : "text-muted-foreground")} />
+              <item.icon className={cn("w-5 h-5", isActive ? "text-primary" : "text-currentColor")} />
               {item.label}
             </Link>
           );
         })}
 
-     
-
-        {/* CAIXA PROMO */}
-        <div className="mt-8 p-4 rounded-xl bg-linear-to-br from-primary/10 to-blue-500/10 border border-primary/20 relative overflow-hidden">
-           <div className="absolute top-0 right-0 w-20 h-20 bg-primary/20 blur-2xl rounded-full pointer-events-none"></div>
-           <div className="flex items-center gap-2 text-foreground font-bold text-sm mb-2">
-              <Sparkles className="w-4 h-4 text-primary" />
-              {t('pro_badge')}
-           </div>
-           <p className="text-xs text-muted-foreground mb-3">{t('pro_text')}</p>
-           <button className="w-full py-1.5 text-xs font-bold bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity">
-              {t('pro_button')}
-           </button>
-        </div>
+        {/* CAIXA PROMO (Només visible per a no-admins, opcional) */}
+        {userRole !== 'admin' && (
+            <div className="mt-8 p-4 rounded-xl bg-linear-to-br from-primary/10 to-blue-500/10 border border-primary/20 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-20 h-20 bg-primary/20 blur-2xl rounded-full pointer-events-none"></div>
+            <div className="flex items-center gap-2 text-foreground font-bold text-sm mb-2">
+                <Sparkles className="w-4 h-4 text-primary" />
+                {t('pro_badge')}
+            </div>
+            <p className="text-xs text-muted-foreground mb-3">{t('pro_text')}</p>
+            <button className="w-full py-1.5 text-xs font-bold bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity">
+                {t('pro_button')}
+            </button>
+            </div>
+        )}
       </nav>
 
       {/* FOOTER / LOGOUT */}
