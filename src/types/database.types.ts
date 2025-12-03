@@ -12,31 +12,6 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "13.0.5"
   }
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          extensions?: Json
-          operationName?: string
-          query?: string
-          variables?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
-  }
   public: {
     Tables: {
       analytics_events: {
@@ -114,6 +89,60 @@ export type Database = {
         }
         Relationships: []
       }
+      bookings: {
+        Row: {
+          created_at: string | null
+          customer_email: string
+          customer_name: string
+          end_time: string
+          id: string
+          organization_id: string
+          service_id: string
+          start_time: string
+          status: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          customer_email: string
+          customer_name: string
+          end_time: string
+          id?: string
+          organization_id: string
+          service_id: string
+          start_time: string
+          status?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          customer_email?: string
+          customer_name?: string
+          end_time?: string
+          id?: string
+          organization_id?: string
+          service_id?: string
+          start_time?: string
+          status?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookings_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contact_leads: {
         Row: {
           created_at: string
@@ -150,6 +179,7 @@ export type Database = {
           generated_mdx: string | null
           id: string
           image_prompt: string | null
+          organization_id: string
           prompt_context: string | null
           status: Database["public"]["Enums"]["content_status"] | null
           target_keywords: string[] | null
@@ -160,6 +190,7 @@ export type Database = {
           generated_mdx?: string | null
           id?: string
           image_prompt?: string | null
+          organization_id: string
           prompt_context?: string | null
           status?: Database["public"]["Enums"]["content_status"] | null
           target_keywords?: string[] | null
@@ -170,10 +201,49 @@ export type Database = {
           generated_mdx?: string | null
           id?: string
           image_prompt?: string | null
+          organization_id?: string
           prompt_context?: string | null
           status?: Database["public"]["Enums"]["content_status"] | null
           target_keywords?: string[] | null
           topic?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "content_queue_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organizations: {
+        Row: {
+          branding_config: Json | null
+          created_at: string | null
+          domain: string | null
+          id: string
+          name: string
+          plan: string | null
+          slug: string
+        }
+        Insert: {
+          branding_config?: Json | null
+          created_at?: string | null
+          domain?: string | null
+          id?: string
+          name: string
+          plan?: string | null
+          slug: string
+        }
+        Update: {
+          branding_config?: Json | null
+          created_at?: string | null
+          domain?: string | null
+          id?: string
+          name?: string
+          plan?: string | null
+          slug?: string
         }
         Relationships: []
       }
@@ -184,6 +254,7 @@ export type Database = {
           created_at: string | null
           description: string | null
           id: string
+          organization_id: string
           published: boolean | null
           published_at: string | null
           slug: string
@@ -198,6 +269,7 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           id?: string
+          organization_id: string
           published?: boolean | null
           published_at?: string | null
           slug: string
@@ -212,6 +284,7 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           id?: string
+          organization_id?: string
           published?: boolean | null
           published_at?: string | null
           slug?: string
@@ -220,7 +293,15 @@ export type Database = {
           title?: string
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "posts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -229,6 +310,7 @@ export type Database = {
           email: string
           full_name: string | null
           id: string
+          organization_id: string
           role: Database["public"]["Enums"]["user_role"] | null
           stripe_customer_id: string | null
           updated_at: string | null
@@ -239,6 +321,7 @@ export type Database = {
           email: string
           full_name?: string | null
           id: string
+          organization_id: string
           role?: Database["public"]["Enums"]["user_role"] | null
           stripe_customer_id?: string | null
           updated_at?: string | null
@@ -249,52 +332,114 @@ export type Database = {
           email?: string
           full_name?: string | null
           id?: string
+          organization_id?: string
           role?: Database["public"]["Enums"]["user_role"] | null
           stripe_customer_id?: string | null
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       projects: {
         Row: {
+          branding_config: Json | null
           client_id: string
           created_at: string | null
           domain: string | null
+          features_config: Json | null
           features_enabled: Json | null
+          github_repo_url: string | null
           hosting_url: string | null
           id: string
           name: string
+          organization_id: string | null
           repository_url: string | null
           status: Database["public"]["Enums"]["project_status"] | null
         }
         Insert: {
+          branding_config?: Json | null
           client_id: string
           created_at?: string | null
           domain?: string | null
+          features_config?: Json | null
           features_enabled?: Json | null
+          github_repo_url?: string | null
           hosting_url?: string | null
           id?: string
           name: string
+          organization_id?: string | null
           repository_url?: string | null
           status?: Database["public"]["Enums"]["project_status"] | null
         }
         Update: {
+          branding_config?: Json | null
           client_id?: string
           created_at?: string | null
           domain?: string | null
+          features_config?: Json | null
           features_enabled?: Json | null
+          github_repo_url?: string | null
           hosting_url?: string | null
           id?: string
           name?: string
+          organization_id?: string | null
           repository_url?: string | null
           status?: Database["public"]["Enums"]["project_status"] | null
         }
         Relationships: [
           {
-            foreignKeyName: "projects_client_id_fkey"
-            columns: ["client_id"]
+            foreignKeyName: "projects_organization_id_fkey"
+            columns: ["organization_id"]
             isOneToOne: false
-            referencedRelation: "profiles"
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      services: {
+        Row: {
+          active: boolean | null
+          created_at: string | null
+          description: string | null
+          duration_minutes: number | null
+          id: string
+          organization_id: string
+          price: number | null
+          title: string
+        }
+        Insert: {
+          active?: boolean | null
+          created_at?: string | null
+          description?: string | null
+          duration_minutes?: number | null
+          id?: string
+          organization_id: string
+          price?: number | null
+          title: string
+        }
+        Update: {
+          active?: boolean | null
+          created_at?: string | null
+          description?: string | null
+          duration_minutes?: number | null
+          id?: string
+          organization_id?: string
+          price?: number | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "services_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
         ]
@@ -304,6 +449,7 @@ export type Database = {
           created_at: string | null
           email: string | null
           id: string
+          organization_id: string | null
           performance_score: number | null
           report_data: Json | null
           seo_score: number | null
@@ -316,6 +462,7 @@ export type Database = {
           created_at?: string | null
           email?: string | null
           id?: string
+          organization_id?: string | null
           performance_score?: number | null
           report_data?: Json | null
           seo_score?: number | null
@@ -328,6 +475,7 @@ export type Database = {
           created_at?: string | null
           email?: string | null
           id?: string
+          organization_id?: string | null
           performance_score?: number | null
           report_data?: Json | null
           seo_score?: number | null
@@ -338,10 +486,10 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "web_audits_user_id_fkey"
-            columns: ["user_id"]
+            foreignKeyName: "web_audits_organization_id_fkey"
+            columns: ["organization_id"]
             isOneToOne: false
-            referencedRelation: "profiles"
+            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
         ]
@@ -351,6 +499,8 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_my_org_id: { Args: never; Returns: string }
+      get_my_org_ids: { Args: never; Returns: string[] }
       is_admin: { Args: never; Returns: boolean }
     }
     Enums: {
@@ -484,9 +634,6 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
     Enums: {
       audit_status: ["processing", "completed", "failed"],

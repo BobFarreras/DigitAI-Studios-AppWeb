@@ -4,8 +4,8 @@ export class AIService {
   private genAI: GoogleGenerativeAI;
 
   constructor() {
-    const apiKey = process.env.GOOGLE_AI_API_KEY;
-    if (!apiKey) throw new Error("❌ Manca GOOGLE_AI_API_KEY a .env.local");
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) throw new Error("❌ Manca GEMINI_API_KEY a .env.local");
     this.genAI = new GoogleGenerativeAI(apiKey);
   }
 
