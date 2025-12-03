@@ -119,6 +119,7 @@ export function Navbar({ user }: Props) {
 
           {/* MOBILE TOGGLES */}
           <div className="flex items-center gap-2 md:hidden">
+            <LanguageSwitcher />
             <ThemeToggle />
             {user && (
               <Link href="/dashboard">
