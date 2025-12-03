@@ -2,14 +2,12 @@ import { notFound } from 'next/navigation';
 import { auditRepository } from '@/services/container';
 import { AuditHeader } from '@/features/audit/ui/components/AuditHeader';
 import { ScoreGrid } from '@/features/audit/ui/components/ScoreGrid';
-// Importem CoreVitalsGrid i el seu tipus
 import { CoreVitalsGrid, AuditMetric } from '@/features/audit/ui/components/CoreVitalsGrid';
 import { IssuesList } from '@/features/audit/ui/components/IssuesList';
 import { MobilePreview } from '@/features/audit/ui/components/MobilePreviw';
-// Tipus d'errors (Adaptats)
 import { AuditIssue } from '@/adapters/IWebScanner';
+import { getTranslations } from 'next-intl/server'; // Importem el hook de servidor
 
-// Tipus per llegir el JSON de Google
 type LighthouseAudit = {
   id: string;
   title: string;
@@ -33,19 +31,20 @@ type Props = {
 
 export default async function AuditDetailsPage({ params }: Props) {
   const { id } = await params;
+  const t = await getTranslations('AuditDetails'); // Namespace AuditDetails
   const audit = await auditRepository.getAuditById(id);
 
   if (!audit) notFound();
 
   if (audit.status === 'processing') {
-    return <div className="p-12 text-center text-foreground">Carregant resultats...</div>;
+    return <div className="p-12 text-center text-foreground">{t('processing_message')}</div>;
   }
 
   // 1. Recuperar dades
   const rawData = audit.reportData as unknown as GoogleRawData;
   const googleAudits = rawData?.lighthouseResult?.audits || rawData?.audits || {};
 
-  // 2. Helper per extreure mètriques segures
+  // 2. Helper
   const extract = (key: string): AuditMetric => {
     const a = googleAudits[key];
     if (!a) return { score: null, value: 'N/A', description: '' };
@@ -56,7 +55,7 @@ export default async function AuditDetailsPage({ params }: Props) {
     };
   };
 
-  // 3. Construir l'objecte de mètriques pel Grid
+  // 3. Mètriques
   const metrics = {
     fcp: extract('first-contentful-paint'),
     lcp: extract('largest-contentful-paint'),
@@ -65,27 +64,26 @@ export default async function AuditDetailsPage({ params }: Props) {
     si: extract('speed-index')
   };
 
-  // 4. Processar Issues (Errors)
+  // 4. Issues
   let displayIssues: AuditIssue[] = rawData?.issues || [];
 
   if (displayIssues.length === 0 && Object.keys(googleAudits).length > 0) {
-    displayIssues = Object.values(googleAudits)
-      .filter((a: LighthouseAudit) => {
+    displayIssues = Object.entries(googleAudits)
+      .filter(([, a]) => {
         const score = a.score ?? 1;
-        // Filtrem score < 0.9 i que no sigui només informatiu (score null)
         return score < 0.9 && a.score !== null;
       })
-      .map((a: LighthouseAudit) => ({
+      .map(([key, a]) => ({
+        id: key, // IMPORTANT: Passem l'ID per traduir
         title: a.title || 'Problema detectat',
         description: a.description || '',
         score: a.score ?? 0,
         displayValue: a.displayValue,
-        // Assignem valors per defecte si falten a la interfície
-        impact: (a.score === 0 ? 'high' : 'medium') as 'high' | 'medium' | 'low',
-        type: (a.score === 0 ? 'error' : 'warning') as 'error' | 'warning'
+        impact: (a.score === 0 ? 'high' : 'medium'),
+        type: (a.score === 0 ? "error" : "warning") as "error" | "warning"
       }))
       .sort((a, b) => (a.score || 0) - (b.score || 0))
-      .slice(0, 8); // Top 8 errors
+      .slice(0, 8);
   }
 
   // 5. Captura
@@ -117,7 +115,6 @@ export default async function AuditDetailsPage({ params }: Props) {
 
       <div className="grid lg:grid-cols-3 gap-8 lg:gap-12">
          <div className="lg:col-span-2 space-y-10">
-            {/* Passem l'objecte metrics net */}
             <CoreVitalsGrid metrics={metrics} />
             <IssuesList issues={displayIssues} />
          </div>

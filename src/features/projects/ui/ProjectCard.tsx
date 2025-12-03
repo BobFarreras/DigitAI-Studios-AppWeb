@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { ExternalLink, Layers } from 'lucide-react';
 import type { Project } from '../data/projects-data';
+import { useTranslations } from 'next-intl';
 
 interface Props {
     project: Project;
@@ -13,6 +14,7 @@ interface Props {
 
 export function ProjectCard({ project, index }: Props) {
     const isReversed = index % 2 !== 0;
+    const t = useTranslations('ProjectCard'); // Namespace base
 
     return (
         <div className={`flex flex-col lg:flex-row gap-8 md:gap-16 items-center ${isReversed ? 'lg:flex-row-reverse' : ''}`}>
@@ -46,7 +48,6 @@ export function ProjectCard({ project, index }: Props) {
                                 src={project.image}
                                 alt={project.imageAlt}
                                 fill
-                                // Canviem a 'object-top' per defecte (per webs), però si són apps, potser millor 'object-center'
                                 className="object-cover object-top transition-transform duration-700 group-hover:scale-105"
                                 sizes="(max-width: 768px) 100vw, 50vw"
                                 placeholder="blur"
@@ -75,19 +76,23 @@ export function ProjectCard({ project, index }: Props) {
                     </div>
                     <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-2">{project.title}</h2>
                     <p className={`text-lg md:text-xl font-medium bg-linear-to-r ${project.color} bg-clip-text text-transparent`}>
-                        {project.tagline}
+                        {/* TRADUCCIÓ TAGLINE: 'ProjectCard.ribotflow.tagline' */}
+                        {t(`${project.id}.tagline`)}
                     </p>
                 </div>
 
                 <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
-                    {project.description}
+                    {/* TRADUCCIÓ DESCRIPCIÓ: 'ProjectCard.ribotflow.description' */}
+                    {t(`${project.id}.description`)}
                 </p>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
-                    {project.stats.map((stat, i) => (
+                    {/* Per les stats, com que són una llista, les traduïm per índex */}
+                    {[0, 1, 2].map((i) => (
                         <div key={i} className="flex items-center gap-3 text-sm text-foreground font-medium">
                             <div className={`w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-linear-to-r ${project.color}`}></div>
-                            {stat}
+                            {/* TRADUCCIÓ STAT: 'ProjectCard.ribotflow.stats.0' */}
+                            {t(`${project.id}.stats.${i}`)}
                         </div>
                     ))}
                 </div>
@@ -103,7 +108,7 @@ export function ProjectCard({ project, index }: Props) {
                 <div className="flex gap-4 pt-4">
                     <a href={project.link} target="_blank" rel="noreferrer" className="w-full sm:w-auto">
                         <Button className="w-full sm:w-auto gradient-bg text-white border-0 shadow-lg hover:opacity-90 transition-transform hover:-translate-y-1">
-                            Veure Web <ExternalLink className="ml-2 w-4 h-4" />
+                            {t('view_web')} <ExternalLink className="ml-2 w-4 h-4" />
                         </Button>
                     </a>
                 </div>

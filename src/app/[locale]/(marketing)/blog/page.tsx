@@ -1,24 +1,25 @@
 import { Link } from '@/routing';
-// 👇 Importem el servei des del container
 import { postService } from '@/services/container';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { getTranslations, getLocale } from 'next-intl/server'; // 👈 Imports clau
 
-// ISR: Refresca el llistat cada hora per si hi ha posts nous
+// ISR: Refresca el llistat cada hora
 export const revalidate = 3600;
 
 export default async function BlogIndexPage() {
-  // Opcional: Si vols traduir els títols "Blog & Recursos" pots fer servir 't'
-  // const t = await getTranslations('BlogIndex'); 
+  const t = await getTranslations('BlogIndex'); // Namespace
+  const locale = await getLocale(); // Idioma actual ('ca', 'es', 'en')
 
-  // 1. Obtenim TOTS els posts publicats
+  // 1. Obtenim els posts
+  // Nota: En el futur, passarem 'locale' al servei: getLatestPosts(locale)
   const posts = await postService.getLatestPosts();
 
   return (
     <div className="container mx-auto py-12 px-4">
       <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold tracking-tight mb-4">Blog & Recursos</h1>
+        <h1 className="text-4xl font-bold tracking-tight mb-4">{t('title')}</h1>
         <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-          Aprèn a optimitzar la teva presència digital amb les nostres guies.
+          {t('subtitle')}
         </p>
       </div>
 
@@ -32,25 +33,28 @@ export default async function BlogIndexPage() {
                 className="h-48 w-full bg-slate-100 flex items-center justify-center text-slate-300 bg-cover bg-center"
                 style={post.coverImage ? { backgroundImage: `url(${post.coverImage})` } : undefined}
               >
-                {!post.coverImage && <span>Sense Imatge</span>}
+                {!post.coverImage && <span>{t('fallback_image')}</span>}
               </div>
 
               <CardHeader>
                 <div className="text-xs font-bold text-indigo-600 mb-2 tracking-wide uppercase">
                   {post.tags[0] ?? 'TECH'}
                 </div>
-                <CardTitle className="text-xl leading-snug font-bold text-slate-900">
+                <CardTitle className="text-xl leading-snug font-bold text-slate-900 line-clamp-2">
                   {post.title}
                 </CardTitle>
               </CardHeader>
               
               <CardContent className="flex-1 flex flex-col justify-between">
-                <p className="text-muted-foreground text-sx line-clamp-3 mb-4">
+                <p className="text-muted-foreground text-xs line-clamp-3 mb-4">
                   {post.description}
                 </p>
                 
                 <div className="text-xs text-slate-400 font-medium pt-4 border-t border-slate-100 mt-auto">
-                  {post.date ? new Date(post.date).toLocaleDateString() : 'Recentment'}
+                  {post.date 
+                    ? new Intl.DateTimeFormat(locale, { dateStyle: 'long' }).format(new Date(post.date))
+                    : t('published_recently')
+                  }
                 </div>
               </CardContent>
             </Card>
@@ -59,7 +63,7 @@ export default async function BlogIndexPage() {
 
         {posts.length === 0 && (
           <div className="col-span-full py-20 text-center bg-slate-50 rounded-lg border border-dashed">
-            <p className="text-slate-500">Encara no hi ha articles publicats.</p>
+            <p className="text-slate-500">{t('no_posts')}</p>
           </div>
         )}
       </div>

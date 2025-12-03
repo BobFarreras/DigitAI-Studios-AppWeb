@@ -4,19 +4,20 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { LayoutDashboard, FileText, FolderKanban, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
-
-const MENU_ITEMS = [
-  { icon: LayoutDashboard, label: 'Resum', href: '/dashboard' },
-  { icon: FileText, label: 'Audits', href: '/dashboard/audits' },
-  { icon: FolderKanban, label: 'Proves', href: '#proves' }, 
-  { icon: Settings, label: 'Ajustos', href: '#ajustos' },
-];
+import { useTranslations } from 'next-intl';
 
 export function MobileBottomBar() {
+  const t = useTranslations('Sidebar'); // Reutilitzem traduccions de la Sidebar
   const pathname = usePathname();
   
-  // Netegem l'idioma (ex: /es/dashboard/audits/123 -> /dashboard/audits/123)
   const cleanPath = pathname.replace(/^\/[a-z]{2}/, '') || '/';
+
+  const MENU_ITEMS = [
+    { icon: LayoutDashboard, label: t('summary'), href: '/dashboard' },
+    { icon: FileText, label: t('audits'), href: '/dashboard/audits' },
+    { icon: FolderKanban, label: 'Tests', href: '#proves' }, // 'Tests' pot ser curt per mòbil
+    { icon: Settings, label: t('settings'), href: '#ajustos' },
+  ];
 
   const handleClick = (e: React.MouseEvent, href: string, label: string) => {
     if (href.startsWith('#')) {
@@ -30,8 +31,6 @@ export function MobileBottomBar() {
         <div className="flex justify-around items-center h-16 px-2">
             {MENU_ITEMS.map((item) => {
                 const Icon = item.icon;
-
-                // LÒGICA D'ACTIU (Igual que sidebar)
                 let isActive = false;
                 if (!item.href.startsWith('#')) {
                    if (item.href === '/dashboard') {

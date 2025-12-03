@@ -126,7 +126,6 @@
       }
     }
   },
-  
   "ProblemSolution": {
     "badge": "Més que una pàgina web",
     "title_prefix": "La teva web ha de",
@@ -158,7 +157,6 @@
       }
     }
   },
-  
   "ContactSection": {
     "title_prefix": "Comença la teva",
     "title_highlight": "transformació",
@@ -212,5 +210,140 @@
     "cookies": "Política de Cookies",
     "rights_reserved": "Tots els drets reservats.",
     "made_with_love": "Fet amb ❤️ a Catalunya"
+  },
+  "Sidebar": {
+    "platform": "Plataforma",
+    "summary": "Resum",
+    "audits": "Auditories",
+    "projects": "Projectes",
+    "settings": "Configuració",
+    "logout": "Tancar Sessió",
+    "pro_badge": "Pla Pro",
+    "pro_text": "Desbloqueja auditories il·limitades.",
+    "pro_button": "Millorar"
+  },
+  "DashboardHeader": {
+    "search_placeholder": "Cercar...",
+    "account": "Compte"
+  },
+  "DashboardHome": {
+    "welcome": "Hola, {name} 👋",
+    "subtitle": "Aquí tens el resum del teu ecosistema digital.",
+    "new_audit": "Nova Auditoria",
+    "kpi_audits": "Auditories Realitzades",
+    "kpi_seo": "SEO Mitjà",
+    "kpi_system": "Estat del Sistema",
+    "system_status": "Operatiu",
+    "recent_projects": "Projectes Recents",
+    "view_all": "Veure tot",
+    "empty_title": "Encara no tens projectes",
+    "empty_desc": "Analitza la teva primera web per descobrir errors de SEO i rendiment.",
+    "empty_button": "Començar Auditoria"
+  },
+  "AuditList": {
+    "title": "Les meves Auditories",
+    "subtitle": "Històric complet i anàlisi de rendiment.",
+    "new_audit_button": "Nova Auditoria",
+    "performance": "Rendiment",
+    "status": {
+      "completed": "COMPLETAT",
+      "failed": "ERROR",
+      "processing": "PROCESSANT"
+    },
+    "empty_title": "No tens cap auditoria registrada",
+    "empty_description": "Comença analitzant la teva primera pàgina web per obtenir mètriques de SEO i rendiment.",
+    "create_first_audit": "Crear primera auditoria"
+  },
+  "AuditDetails": {
+    "processing_message": "Carregant resultats..."
+  },
+  "NewAudit": {
+    "back_to_list": "Tornar al llistat",
+    "title": "Nova Auditoria Web",
+    "description": "Introdueix la URL del lloc web que vols analitzar. La nostra IA escanejarà el SEO, el rendiment i l'accessibilitat en temps real."
+  },
+  "LegalLayout": {
+    "sidebar_title": "Centre Legal",
+    "sidebar_desc": "Documentació oficial i normatives.",
+    "links": {
+      "notice": "Avís Legal",
+      "privacy": "Política de Privacitat",
+      "cookies": "Política de Cookies"
+    }
+  },
+  "ProjectsHero": {
+    "badge": "DigitAI Innovation Lab",
+    "title_prefix": "No només venem codi.",
+    "title_highlight": "Construïm Empreses.",
+    "description": "Aquests són els nostres productes propis. Utilitzem la mateixa tecnologia i metodologia per als teus projectes que la que fem servir per escalar els nostres negocis."
+  },
+  "ProjectsCTA": {
+    "title_prefix": "Tens una idea per al pròxim",
+    "title_highlight": "Gran Producte",
+    "title_suffix": "?",
+    "description": "Hem convertit les nostres idees en negocis rendibles. Ara deixa que t'ajudem a fer el mateix amb la teva.",
+    "button": "Parlem del teu Projecte"
+  },
+  "ProjectCard": {
+    "view_web": "Veure Web",
+    "ribotflow": {
+      "tagline": "El Sistema Operatiu Integral",
+      "description": "Plataforma de gestió \"Tot en Un\" que unifica CRM, facturació i xarxes socials. Elimina el caos de tenir la informació dispersa i utilitza IA per redactar correus i gestionar oportunitats.",
+      "stats": {
+        "0": "CRM + Facturació",
+        "1": "Automatització IA",
+        "2": "Control Financer"
+      }
+    },
+    "salutflow": {
+      "tagline": "El teu Centre Esportiu, Digitalitzat",
+      "description": "Crea la teva pròpia App Web (PWA) en minuts sense programar. Gestiona reserves, pagaments recurrents (Stripe) i aforaments automàticament. Ideal per gimnasos i estudis.",
+      "stats": {
+        "0": "App PWA",
+        "1": "Pagaments Stripe",
+        "2": "Llistes d'Espera"
+      }
+    }
+  },
+  "BlogIndex": {
+    "title": "Blog & Recursos",
+    "subtitle": "Aprèn a optimitzar la teva presència digital amb les nostres guies.",
+    "no_posts": "Encara no hi ha articles publicats.",
+    "read_more": "Llegir més",
+    "published_recently": "Recentment",
+    "fallback_image": "Sense Imatge"
+  },
+  "BlogPost": {
+    "back_button": "Altres Articles",
+    "cta_audit": "Auditar la meva web",
+    "share_title": "T'ha resultat útil?",
+    "share_subtitle": "Comparteix aquest article o descobreix com podem ajudar-te.",
+    "by_author": "DigitAI Team",
+    "published_prefix": "Publicat el"
+  },
+  "AuthPages": {
+    "login": {
+      "marketing_title": "Gestiona el teu ecosistema digital des d'un sol lloc.",
+      "marketing_subtitle": "Accedeix a les teves auditories, gestiona els teus projectes web i controla les teves automatitzacions.",
+      "footer": "© DigitAI Studios. Tots els drets reservats.",
+      "back_home": "Tornar a l'inici"
+    },
+    "register": {
+      "marketing_badge": "UNEIX-TE A LA REVOLUCIÓ",
+      "marketing_title": "Comença a construir el futur del teu negoci avui mateix.",
+      "feature_1": "Auditories web gratuïtes i il·limitades.",
+      "feature_2": "Accés al panell de control de projectes.",
+      "feature_3": "Suport prioritari per a digitalització.",
+      "back_home": "Inici"
+    },
+    "forgot_password": {
+      "title": "Recuperar compte",
+      "subtitle": "Introdueix el teu email i t'enviarem les instruccions.",
+      "back_login": "Tornar al login"
+    },
+    "reset_password": {
+      "title": "Nova Contrasenya",
+      "subtitle": "Escriu la teva nova contrasenya segura."
+    }
   }
 }

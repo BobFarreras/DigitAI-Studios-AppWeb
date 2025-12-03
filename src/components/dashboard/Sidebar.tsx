@@ -6,15 +6,9 @@ import { LayoutDashboard, FileText, FolderKanban, Settings, LogOut, Sparkles } f
 import { cn } from '@/lib/utils';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter } from '@/routing';
-
-const MENU_ITEMS = [
-  { icon: LayoutDashboard, label: 'Resum', href: '/dashboard' },
-  { icon: FileText, label: 'Auditories', href: '/dashboard/audits' },
-  { icon: FolderKanban, label: 'Projectes', href: '#projectes' },
-  { icon: Settings, label: 'Configuració', href: '#config' },
-];
-
+import { useTranslations } from 'next-intl';
 export function Sidebar() {
+  const t = useTranslations('Sidebar'); // Namespace Sidebar
   const pathname = usePathname();
   const router = useRouter();
   const supabase = createClient();
@@ -32,8 +26,15 @@ export function Sidebar() {
     }
   };
 
-  // Funció per netejar l'idioma del path (ex: /es/dashboard -> /dashboard)
   const cleanPath = pathname.replace(/^\/[a-z]{2}/, '') || '/';
+
+  // DEFINIM ELS ÍTEMS A DINS PER TRADUIR-LOS
+  const MENU_ITEMS = [
+    { icon: LayoutDashboard, label: t('summary'), href: '/dashboard' },
+    { icon: FileText, label: t('audits'), href: '/dashboard/audits' },
+    { icon: FolderKanban, label: t('projects'), href: '#projectes' },
+    { icon: Settings, label: t('settings'), href: '#config' },
+  ];
 
   return (
     <aside className="w-64 h-screen bg-card border-r border-border flex flex-col sticky top-0 transition-colors duration-300">
@@ -48,15 +49,10 @@ export function Sidebar() {
       {/* NAVIGATION */}
       <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
         <div className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-4 px-2">
-           Plataforma
+           {t('platform')}
         </div>
         
         {MENU_ITEMS.map((item) => {
-          // LÒGICA MILLORADA D'ACTIU:
-          // 1. Si és un placeholder (#), mai és actiu.
-          // 2. Si és el Dashboard principal, ha de ser EXACTE ('/dashboard').
-          // 3. Si és qualsevol altre (ex: /dashboard/audits), ha de COMENÇAR per la ruta.
-          
           let isActive = false;
           if (!item.href.startsWith('#')) {
              if (item.href === '/dashboard') {
@@ -84,16 +80,18 @@ export function Sidebar() {
           );
         })}
 
+     
+
         {/* CAIXA PROMO */}
-        <div className="mt-8 p-4 rounded-xl bg-gradient-to-br from-primary/10 to-blue-500/10 border border-primary/20 relative overflow-hidden">
+        <div className="mt-8 p-4 rounded-xl bg-linear-to-br from-primary/10 to-blue-500/10 border border-primary/20 relative overflow-hidden">
            <div className="absolute top-0 right-0 w-20 h-20 bg-primary/20 blur-2xl rounded-full pointer-events-none"></div>
            <div className="flex items-center gap-2 text-foreground font-bold text-sm mb-2">
               <Sparkles className="w-4 h-4 text-primary" />
-              Pla Pro
+              {t('pro_badge')}
            </div>
-           <p className="text-xs text-muted-foreground mb-3">Desbloqueja auditories il·limitades.</p>
+           <p className="text-xs text-muted-foreground mb-3">{t('pro_text')}</p>
            <button className="w-full py-1.5 text-xs font-bold bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity">
-              Millorar
+              {t('pro_button')}
            </button>
         </div>
       </nav>
@@ -105,7 +103,7 @@ export function Sidebar() {
           className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-red-500 hover:bg-red-500/10 transition-colors"
         >
           <LogOut className="w-5 h-5" />
-          Tancar Sessió
+          {t('logout')}
         </button>
       </div>
     </aside>
