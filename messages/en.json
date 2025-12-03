@@ -1,4 +1,45 @@
 {
+  "Navbar": {
+    "home": "Inici",
+    "solutions": "Solucions",
+    "projects": "Projectes",
+    "blog": "Blog",
+    "login": "Entrar",
+    "register": "Registra't",
+    "dashboard": "Dashboard",
+    "logout": "Tancar Sessió"
+  },
+  "Hero": {
+    "title_start": "Creem la teva",
+    "title_highlight_1": "AppWeb",
+    "title_middle": "Automatitzem el",
+    "title_highlight_2": "dia a dia",
+    "subtitle": "Deixa de perdre temps en tasques manuals. Desenvolupem plataformes a mida i t'ensenyem a utilitzar la IA per escalar el teu negoci.",
+    "cta_primary": "Parlem del teu Projecte",
+    "cta_secondary": "Auditoria Gratuïta"
+  },
+  "TechStack": {
+    "subtitle": "Potenciat per l'stack tecnològic del futur"
+  },
+  "AuditSection": {
+    "title_prefix": "La teva web és un",
+    "title_cost": "cost",
+    "title_connector": "o una",
+    "title_investment": "Inversió",
+    "description_stat": "El 40% dels usuaris abandonen una web si triga més de 3 segons.",
+    "description_cta": "Deixa que la nostra IA analitzi el teu site i et digui exactament què està fallant."
+  },
+  "AuditForm": {
+    "title": "Analitza la teva web en segons",
+    "placeholder_url": "https://la-teva-web.com",
+    "placeholder_email": "el-teu@email.com",
+    "cta_button": "Obtenir Informe Gratuït",
+    "cta_loading": "Analitzant...",
+    "privacy_note": "No compartim les teves dades. Informe 100% gratuït.",
+    "error_url": "La URL ha de ser vàlida",
+    "error_email": "L'email no és correcte",
+    "success_message": "Revisa les dades del formulari."
+  },
   "HomePage": {
     "title": "Automatitza la teva presència web",
     "cta": "Auditoria Gratuïta",
@@ -16,6 +57,48 @@
   "Dashboard": {
     "welcome": "Benvingut, {name}",
     "my_audits": "Les meves Auditories"
+  },
+  "AuditIssues": {
+    "is-on-https": {
+      "title": "El lloc web no utilitza HTTPS segur",
+      "description": "La teva web no és segura. Això espanta els clients i Google et penalitza greument."
+    },
+    "meta-description": {
+      "title": "Manca la Meta Descripció",
+      "description": "Google no sap de què tracta la teva web. Necessites un resum atractiu per aparèixer als resultats."
+    },
+    "document-title": {
+      "title": "La pàgina no té títol",
+      "description": "El títol és l'element més important per al SEO. Sense ell, ets invisible."
+    },
+    "server-response-time": {
+      "title": "El servidor és massa lent",
+      "description": "El temps de resposta inicial és alt. Considera canviar de hosting o optimitzar el backend."
+    },
+    "render-blocking-resources": {
+      "title": "Recursos que bloquegen la visualització",
+      "description": "Hi ha CSS o JS que impedeixen que la web es mostri ràpidament."
+    },
+    "uses-optimized-images": {
+      "title": "Imatges no optimitzades",
+      "description": "Les imatges pesen massa. Usa formats moderns com WebP."
+    },
+    "largest-contentful-paint": {
+      "title": "Càrrega lenta (LCP)",
+      "description": "L'element més gran triga massa a aparèixer. Això frustra els usuaris."
+    },
+    "cumulative-layout-shift": {
+      "title": "Moviments inesperats (CLS)",
+      "description": "La web es 'mou' mentre carrega, causant clics erronis."
+    }
+  },
+  "Common": {
+    "loading": "Carregant...",
+    "error": "Hi ha hagut un error",
+    "languages": {
+      "ca": "Català",
+      "es": "Español",
+      "en": "English"
+    }
   }
-  
 }

@@ -8,8 +8,10 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Link } from '@/routing';
 import { Loader2, Send, Bot, Code2, Rocket, Shield, Users } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 
 export function ContactSection() {
+  const t = useTranslations('ContactSection');
   const [state, action, isPending] = useActionState(submitContactForm, { success: false });
   const [serviceType, setServiceType] = useState('ia'); // 'ia' o 'web'
   
@@ -33,18 +35,18 @@ export function ContactSection() {
         >
            <div>
              <h2 className="text-4xl lg:text-5xl font-bold mb-6 text-foreground leading-tight">
-               Comença la teva <span className="gradient-text">transformació</span>
+               {t('title_prefix')} <span className="gradient-text">{t('title_highlight')}</span>
              </h2>
              <p className="text-muted-foreground text-lg leading-relaxed max-w-lg">
-               Tota gran empresa comença amb una decisió. Contacta amb nosaltres i descobreix com l'automatització pot revolucionar el teu negoci.
+               {t('description')}
              </p>
            </div>
 
            <div className="space-y-8">
               {[
-                { icon: Rocket, title: "Implementació Àgil", desc: "Sense mesos d'espera. Llancem en setmanes." },
-                { icon: Shield, title: "Tecnologia Sòlida", desc: "Next.js, React Native i Supabase. Res de Wordpress vell." },
-                { icon: Users, title: "Partners, no Proveïdors", desc: "T'acompanyem en l'estratègia, no només en el codi." }
+                { icon: Rocket, title: t('features.agile.title'), desc: t('features.agile.desc') },
+                { icon: Shield, title: t('features.tech.title'), desc: t('features.tech.desc') },
+                { icon: Users, title: t('features.partners.title'), desc: t('features.partners.desc') }
               ].map((item, i) => (
                 <div key={i} className="flex gap-5 items-start group">
                   <div className="mt-1 w-12 h-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
@@ -83,7 +85,7 @@ export function ContactSection() {
                   }`}
                >
                   <Bot className="w-7 h-7" />
-                  <span className="font-bold text-sm">IA & Automatització</span>
+                  <span className="font-bold text-sm">{t('options.ia')}</span>
                </button>
                <button
                   type="button"
@@ -95,7 +97,7 @@ export function ContactSection() {
                   }`}
                >
                   <Code2 className="w-7 h-7" />
-                  <span className="font-bold text-sm">Webs & Apps</span>
+                  <span className="font-bold text-sm">{t('options.web')}</span>
                </button>
                <input type="hidden" name="service" value={serviceType === 'ia' ? 'Automatització i IA' : 'Creació Web'} />
             </div>
@@ -103,32 +105,32 @@ export function ContactSection() {
             {/* INPUTS */}
             <div className="space-y-5">
               <div className="space-y-2">
-                <label className="text-sm font-bold text-foreground ml-1">Nom complet</label>
+                <label className="text-sm font-bold text-foreground ml-1">{t('form.name_label')}</label>
                 <Input 
                   name="fullName" 
-                  placeholder="Joan Garcia" 
+                  placeholder={t('form.name_placeholder')} 
                   required 
                   className="bg-background border-input focus:border-primary h-12 text-foreground placeholder:text-muted-foreground/50" 
                 />
               </div>
               
               <div className="space-y-2">
-                 <label className="text-sm font-bold text-foreground ml-1">Email corporatiu</label>
+                 <label className="text-sm font-bold text-foreground ml-1">{t('form.email_label')}</label>
                  <Input 
                    name="email" 
                    type="email" 
-                   placeholder="joan@empresa.com" 
+                   placeholder={t('form.email_placeholder')} 
                    required 
                    className="bg-background border-input focus:border-primary h-12 text-foreground placeholder:text-muted-foreground/50" 
                  />
               </div>
 
               <div className="space-y-2">
-                 <label className="text-sm font-bold text-foreground ml-1">Explica'ns el teu projecte...</label>
+                 <label className="text-sm font-bold text-foreground ml-1">{t('form.message_label')}</label>
                  <textarea 
                    name="message" 
                    rows={4} 
-                   placeholder="Vull automatitzar les reserves o crear una app per a..."
+                   placeholder={t('form.message_placeholder')}
                    className="w-full rounded-lg border border-input bg-background px-4 py-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all resize-none placeholder:text-muted-foreground/50"
                  />
               </div>
@@ -146,7 +148,9 @@ export function ContactSection() {
                 className="mt-1 border-muted-foreground/30 data-[state=checked]:bg-primary data-[state=checked]:border-primary" 
               />
               <label htmlFor="privacy-contact" className="text-sm text-muted-foreground leading-snug cursor-pointer select-none">
-                He llegit i accepto la <Link href="/legal/privacitat" target="_blank" className="underline hover:text-primary transition-colors">política de privacitat</Link> i el tractament de les meves dades.
+                {t.rich('privacy_text', {
+                  link: (chunks) => <Link href="/legal/privacitat" target="_blank" className="underline hover:text-primary transition-colors">{chunks}</Link>
+                })}
               </label>
             </div>
 
@@ -163,13 +167,13 @@ export function ContactSection() {
                   }`}
                 >
                   {isPending ? <Loader2 className="animate-spin mr-2" /> : <Send className="mr-2 w-5 h-5" />}
-                  Enviar Missatge
+                  {t('form.submit_button')}
                 </Button>
                 
                 {/* Tooltip flotant si intenten passar per sobre sense acceptar */}
                 {!termsAccepted && (
                     <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-foreground text-background text-xs px-3 py-1.5 rounded-md shadow-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap font-medium z-20">
-                        Marca la casella per continuar
+                        {t('tooltip_privacy')}
                         <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-foreground rotate-45"></div>
                     </div>
                 )}

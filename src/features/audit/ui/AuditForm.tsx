@@ -5,26 +5,26 @@ import { processWebAudit } from '../actions';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Search, Loader2, AlertCircle } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 export function AuditForm() {
   const [state, action, isPending] = useActionState(processWebAudit, { message: '', errors: {} });
+  const t = useTranslations('AuditForm');
 
   return (
     <div className="w-full">
-      {/* CONTENIDOR: Vidre fosc en Dark, Blanc amb ombra en Light */}
       <div className="border border-border rounded-2xl p-8 bg-white/50 dark:bg-white/2 backdrop-blur-xl shadow-xl dark:shadow-2xl transition-all duration-300">
         
         <h3 className="text-xl font-bold text-center text-foreground mb-6 flex items-center justify-center gap-2">
           <Search className="w-5 h-5 text-primary" />
-          Analitza la teva web en segons
+          {t('title')}
         </h3>
         
         <form action={action} className="space-y-4">
           <div className="space-y-1">
             <Input 
               name="url" 
-              placeholder="https://la-teva-web.com" 
-              // INPUTS: Adaptats a Light (bg-white) i Dark (bg-white/5)
+              placeholder={t('placeholder_url')} 
               className="bg-white dark:bg-white/5 border-slate-200 dark:border-white/10 text-foreground h-12 focus:border-primary/50 placeholder:text-muted-foreground transition-all"
             />
             {state.errors?.url && (
@@ -37,7 +37,7 @@ export function AuditForm() {
           <div className="space-y-1">
             <Input 
               name="email" 
-              placeholder="el-teu@email.com" 
+              placeholder={t('placeholder_email')} 
               className="bg-white dark:bg-white/5 border-slate-200 dark:border-white/10 text-foreground h-12 focus:border-primary/50 placeholder:text-muted-foreground transition-all"
             />
             {state.errors?.email && (
@@ -53,9 +53,9 @@ export function AuditForm() {
             className="w-full h-12 mt-2 text-base font-semibold rounded-lg gradient-bg text-white border-0 hover:opacity-90 shadow-lg shadow-primary/20 transition-all"
           >
             {isPending ? (
-              <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Analitzant...</>
+              <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> {t('cta_loading')}</>
             ) : (
-              'Obtenir Informe Gratuït'
+              t('cta_button')
             )}
           </Button>
           
@@ -67,9 +67,8 @@ export function AuditForm() {
         </form>
       </div>
       
-      {/* Text de privacitat petit */}
       <p className="text-center text-xs text-muted-foreground mt-4 opacity-60">
-        No compartim les teves dades. Informe 100% gratuït.
+        {t('privacy_note')}
       </p>
     </div>
   );

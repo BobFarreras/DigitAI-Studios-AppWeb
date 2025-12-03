@@ -1,4 +1,45 @@
 {
+  "Navbar": {
+    "home": "Inici",
+    "solutions": "Solucions",
+    "projects": "Projectes",
+    "blog": "Blog",
+    "login": "Entrar",
+    "register": "Registra't",
+    "dashboard": "Dashboard",
+    "logout": "Tancar Sessió"
+  },
+  "Hero": {
+    "title_start": "Creem la teva",
+    "title_highlight_1": "AppWeb",
+    "title_middle": "Automatitzem el",
+    "title_highlight_2": "dia a dia",
+    "subtitle": "Deixa de perdre temps en tasques manuals. Desenvolupem plataformes a mida i t'ensenyem a utilitzar la IA per escalar el teu negoci.",
+    "cta_primary": "Parlem del teu Projecte",
+    "cta_secondary": "Auditoria Gratuïta"
+  },
+  "TechStack": {
+    "subtitle": "Potenciat per l'stack tecnològic del futur"
+  },
+  "AuditSection": {
+    "title_prefix": "La teva web és un",
+    "title_cost": "cost",
+    "title_connector": "o una",
+    "title_investment": "Inversió",
+    "description_stat": "El 40% dels usuaris abandonen una web si triga més de 3 segons.",
+    "description_cta": "Deixa que la nostra IA analitzi el teu site i et digui exactament què està fallant."
+  },
+  "AuditForm": {
+    "title": "Analitza la teva web en segons",
+    "placeholder_url": "https://la-teva-web.com",
+    "placeholder_email": "el-teu@email.com",
+    "cta_button": "Obtenir Informe Gratuït",
+    "cta_loading": "Analitzant...",
+    "privacy_note": "No compartim les teves dades. Informe 100% gratuït.",
+    "error_url": "La URL ha de ser vàlida",
+    "error_email": "L'email no és correcte",
+    "success_message": "Revisa les dades del formulari."
+  },
   "HomePage": {
     "title": "Automatitza la teva presència web",
     "cta": "Auditoria Gratuïta",
@@ -50,5 +91,113 @@
       "title": "Moviments inesperats (CLS)",
       "description": "La web es 'mou' mentre carrega, causant clics erronis."
     }
+  },
+  "Common": {
+    "loading": "Carregant...",
+    "error": "Hi ha hagut un error",
+    "languages": {
+      "ca": "Català",
+      "es": "Español",
+      "en": "English"
+    }
+  },
+  "Services": {
+    "badge": "SOLUCIONS 360°",
+    "title_prefix": "Tot per",
+    "title_highlight": "Dominar el Digital",
+    "subtitle": "Desenvolupament, Producte i Automatització.",
+    "cards": {
+      "appwebs": {
+        "title": "AppWebs & SAAS",
+        "description": "Portals de clients i CRMs a mida. El nucli operatiu del teu negoci."
+      },
+      "apps": {
+        "title": "Apps Natives",
+        "description": "iOS i Android amb React Native."
+      },
+      "automation": {
+        "title": "Automatització",
+        "description": "Connectem CRM, Email i IA."
+      },
+      "training": {
+        "title": "Formació & Consultoria",
+        "description": "Formació in-company per al teu equip sobre IA, n8n i eines No-Code.",
+        "cta": "Veure temari"
+      }
+    }
+  },
+  
+  "ProblemSolution": {
+    "badge": "Més que una pàgina web",
+    "title_prefix": "La teva web ha de",
+    "title_highlight": "Facturar",
+    "title_suffix": "no només 'ser-hi'.",
+    "description_problem": "La majoria de negocis tenen una 'Targeta de Visita' digital: bonica, però inútil. No permet reservar, no ven i no fidelitza.",
+    "description_solution": "Nosaltres transformem la teva web en una <strong>AppWeb (PWA)</strong>: una eina potent on els teus clients poden comprar, reservar hora i interactuar amb tu des del seu mòbil, sense descarregar res.",
+    "benefits": {
+      "appointments": "Cites prèvies i reserves automàtiques.",
+      "ecommerce": "Botiga online i pagaments integrats.",
+      "pwa": "Instal·lable al mòbil (PWA) com una App nativa."
+    },
+    "visual": {
+      "problem_card": {
+        "title": "Web 'Aparador'",
+        "item1": "Reserves Online",
+        "item2": "Panell de Vendes",
+        "item3": "App Mòbil"
+      },
+      "solution_card": {
+        "title": "Ecosistema DigitAI",
+        "subtitle": "Tot connectat, tot automàtic.",
+        "widget1_title": "Agenda Plena",
+        "widget1_desc": "Reserves 24/7 automàtiques",
+        "widget2_title": "+150% Conversió",
+        "widget2_desc": "Analítica en temps real",
+        "widget3_title": "App Instal·lable",
+        "widget3_desc": "Accés directe al mòbil (PWA)"
+      }
+    }
+  },
+  
+  "ContactSection": {
+    "title_prefix": "Comença la teva",
+    "title_highlight": "transformació",
+    "description": "Tota gran empresa comença amb una decisió. Contacta amb nosaltres i descobreix com l'automatització pot revolucionar el teu negoci.",
+    "features": {
+      "agile": {
+        "title": "Implementació Àgil",
+        "desc": "Sense mesos d'espera. Llancem en setmanes."
+      },
+      "tech": {
+        "title": "Tecnologia Sòlida",
+        "desc": "Next.js, React Native i Supabase. Res de Wordpress vell."
+      },
+      "partners": {
+        "title": "Partners, no Proveïdors",
+        "desc": "T'acompanyem en l'estratègia, no només en el codi."
+      }
+    },
+    "options": {
+      "ia": "IA & Automatització",
+      "web": "Webs & Apps"
+    },
+    "form": {
+      "name_label": "Nom complet",
+      "name_placeholder": "Joan Garcia",
+      "email_label": "Email corporatiu",
+      "email_placeholder": "joan@empresa.com",
+      "message_label": "Explica'ns el teu projecte...",
+      "message_placeholder": "Vull automatitzar les reserves o crear una app per a...",
+      "submit_button": "Enviar Missatge"
+    },
+    "privacy_text": "He llegit i accepto la <link>política de privacitat</link> i el tractament de les meves dades.",
+    "tooltip_privacy": "Marca la casella per continuar"
+  },
+  "ProductTeaser": {
+    "badge": "INNOVATION LAB",
+    "title_prefix": "No només venem software.",
+    "title_highlight": "Creem Productes.",
+    "description": "Descobreix <strong>SalutFlow</strong> i <strong>RibotFlow</strong>, les nostres plataformes SaaS pròpies.<br><br>Utilitzem la mateixa tecnologia punta per als teus projectes.",
+    "cta": "Explorar Productes"
   }
 }

@@ -32,14 +32,16 @@
 
 .dark {
   /* ✨ EL COLOR QUE BUSCAVES: Negre Apagat amb toc Lila */
-  /* HSL: Hue 260 (Lila), Sat 14% (Apagat), Light 4% (Fosc casi negre) */
-  --background: 260 8% %; 
+  /* HSL: Hue 260 (Lila), Sat 8% (Apagat), Light 4% (Fosc casi negre) */
+  /* CORREGIT: Afegit el '4%' que faltava */
+  --background: 260 8% 4%; 
   --foreground: 260 10% 98%;
 
-  /* Les targetes un pèl més clares que el fons per fer capa */
+  /* Les targetes un pèl més clares que el fons (Light 7%) per crear profunditat */
   --card: 260 14% 7%;
   --card-foreground: 260 10% 98%;
 
+  /* Popovers encara més foscos o igual que les cards */
   --popover: 260 14% 4%;
   --popover-foreground: 260 10% 98%;
 
@@ -51,9 +53,9 @@
   --secondary: 260 15% 12%;
   --secondary-foreground: 0 0% 98%;
 
-  /* Gris "Muted" (Slate lilos) */
+  /* Gris "Muted" */
   --muted: 260 15% 12%;
-  --muted-foreground: 260 10% 65%; /* Gris suau */
+  --muted-foreground: 260 10% 65%;
 
   --accent: 260 15% 12%;
   --accent-foreground: 0 0% 98%;
@@ -66,6 +68,7 @@
   --input: 260 15% 12%;
   --ring: 263 70% 50%;
 
+  /* P: Color addicional per gràfics o textos específics */
   --p: 216 12% 84%; /* slate-300 */
 }
 

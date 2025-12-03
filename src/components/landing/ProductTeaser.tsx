@@ -4,17 +4,19 @@ import { ArrowRight, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 
-// ✅ IMPORTACIÓ ESTÀTICA (Build-time check)
-// Assegura't que les rutes coincideixen exactament amb el nom del fitxer
+// ✅ IMPORTACIÓ ESTÀTICA
 import ribotFlowImg from '@/assets/images/ribotflow.png'; 
 import salutFlowImg from '@/assets/images/salutflow.png';
 
 export function ProductTeaser() {
+  const t = useTranslations('ProductTeaser');
+
   return (
     <section className="py-24 container mx-auto px-4">
       
-      <div className="rounded-3xl bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-primary/10 dark:via-background dark:to-background border border-slate-200 dark:border-primary/20 p-8 md:p-12 overflow-hidden relative transition-colors duration-300 shadow-2xl shadow-slate-200/50 dark:shadow-none">
+      <div className="rounded-3xl bg-linear-to-br from-slate-50 via-white to-blue-50 dark:from-primary/10 dark:via-background dark:to-background border border-slate-200 dark:border-primary/20 p-8 md:p-12 overflow-hidden relative transition-colors duration-300 shadow-2xl shadow-slate-200/50 dark:shadow-none">
         
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-400/20 dark:bg-primary/20 blur-[100px] rounded-full opacity-40 pointer-events-none"></div>
 
@@ -23,27 +25,28 @@ export function ProductTeaser() {
            {/* TEXT CONTENT */}
            <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100 dark:bg-primary/10 border border-blue-200 dark:border-primary/20 text-blue-700 dark:text-primary text-xs font-bold mb-6">
-                 🚀 INNOVATION LAB
+                 🚀 {t('badge')}
               </div>
               
               <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-6 leading-tight">
-                 No només venem software. <br/>
-                 <span className="gradient-text">Creem Productes.</span>
+                 {t('title_prefix')} <br/>
+                 <span className="gradient-text">{t('title_highlight')}</span>
               </h2>
               
               <p className="text-slate-600 dark:text-slate-400 text-lg mb-8 leading-relaxed">
-                 Descobreix <strong>SalutFlow</strong> i <strong>RibotFlow</strong>, les nostres plataformes SaaS pròpies.
-                 <br/><br/>
-                 Utilitzem la mateixa tecnologia punta per als teus projectes.
+                 {t.rich('description', {
+                    strong: (chunks) => <strong>{chunks}</strong>,
+                    br: () => <br />
+                 })}
               </p>
               
               <Link href="/projectes" className="inline-flex items-center font-bold text-foreground hover:text-primary transition-colors group">
-                 Explorar Productes 
+                 {t('cta')}
                  <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
            </div>
            
-           {/* MOCKUP VISUAL */}
+           {/* MOCKUP VISUAL - (No canvia, només estètica) */}
            <div className="relative h-[400px] w-full flex items-center justify-center perspective-1000">
               
               {/* CARD 1: RIBOTFLOW */}
@@ -55,13 +58,12 @@ export function ProductTeaser() {
               >
                  <div className="h-12 border-b border-slate-100 dark:border-white/5 flex items-center justify-between px-4 bg-slate-50/50 dark:bg-white/5">
                     <div className="relative h-6 w-24"> 
-                        {/* ✅ ÚS DE LA IMPORTACIÓ ESTÀTICA */}
                         <Image 
                            src={ribotFlowImg} 
                            alt="RibotFlow Logo" 
                            fill 
                            className="object-contain object-left" 
-                           placeholder="blur" // Extra: Afegeix efecte de càrrega borrós automàtic
+                           placeholder="blur"
                         /> 
                     </div>
                     <div className="flex gap-1.5">
@@ -89,7 +91,6 @@ export function ProductTeaser() {
               >
                  <div className="h-12 border-b border-slate-100 dark:border-white/5 flex items-center justify-between px-4 bg-slate-50/50 dark:bg-white/5">
                     <div className="relative h-8 w-28"> 
-                        {/* ✅ ÚS DE LA IMPORTACIÓ ESTÀTICA */}
                         <Image 
                            src={salutFlowImg} 
                            alt="SalutFlow Logo" 
@@ -100,7 +101,6 @@ export function ProductTeaser() {
                     </div>
                     <ExternalLink className="w-4 h-4 text-slate-400" />
                  </div>
-                 {/* Body Skeleton */}
                  <div className="p-4 space-y-3">
                     <div className="flex justify-between items-center mb-2">
                        <div className="h-4 w-1/3 bg-blue-100 dark:bg-primary/20 rounded"></div>

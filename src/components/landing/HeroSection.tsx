@@ -6,8 +6,12 @@ import { Button } from '@/components/ui/button';
 import { PlayCircle, Volume2, VolumeX, Pause, Play } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+// 👇 1. IMPORTAR HOOK DE TRADUCCIÓ
+import { useTranslations } from 'next-intl';
 
 export function HeroSection() {
+  // 👇 2. INICIALITZAR HOOK (Namespace 'Hero' del json)
+  const t = useTranslations('Hero');
   const [showVideo, setShowVideo] = useState(true);
   const [isMuted, setIsMuted] = useState(true);
   const [isPlaying, setIsPlaying] = useState(true);
@@ -56,25 +60,24 @@ export function HeroSection() {
         >
 
 
+          {/* 👇 3. SUBSTITUIR TEXT PLA PER CLAUS t('...') */}
           <h1 className="text-5xl lg:text-7xl font-bold mb-6 leading-tight">
-            Creem la teva <span className="gradient-text">AppWeb</span>.<br />
-            Automatitzem el <span className="text-foreground">dia a dia</span>.
+            {t('title_start')} <span className="gradient-text">{t('title_highlight_1')}</span>.<br />
+            {t('title_middle')} <span className="text-foreground">{t('title_highlight_2')}</span>.
           </h1>
 
           <p className="text-xl text-muted-foreground mb-8 leading-relaxed max-w-lg">
-            Deixa de perdre temps en tasques manuals.
-            Desenvolupem plataformes a mida i t'ensenyem a utilitzar la IA per escalar el teu negoci.
+            {t('subtitle')}
           </p>
-
           <div className="flex flex-col sm:flex-row gap-4">
             <Link href="#contacte">
-              <Button size="lg" className="text-lg px-8 py-6 rounded-full gradient-bg hover:opacity-90 shadow-lg shadow-primary/20 transition-all w-full sm:w-auto text-white border-0">
-                Parlem del teu Projecte
+              <Button size="lg" className="...">
+                {t('cta_primary')}
               </Button>
             </Link>
             <Link href="#audit">
-              <Button variant="outline" size="lg" className="text-lg px-8 py-6 rounded-full border-input bg-background hover:bg-muted text-foreground w-full sm:w-auto">
-                Auditoria Gratuïta
+              <Button variant="outline" size="lg" className="...">
+                {t('cta_secondary')}
               </Button>
             </Link>
           </div>
