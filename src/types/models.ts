@@ -30,6 +30,7 @@ export interface IAuditRepository {
 
 // 1. DTO (Data Transfer Object): Com la teva UI vol veure les dades (camelCase, net)
 export type BlogPostDTO = {
+  id: string; // 👈 AFEGEIX AQUESTA LÍNIA
   slug: string;
   title: string;
   date: string | null;     // Mapejat des de published_at

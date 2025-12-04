@@ -42,7 +42,7 @@ const components = {
   // Light: text-slate-900 (Negre intens per llegibilitat)
   // Dark: text-slate-200 (Blanc suau per no cremar els ulls)
   p: (props: ParagraphProps) => (
-    <p {...props} className="text-xl leading-8 text-slate-900 dark:text-slate-500 mb-8 font-sans" />
+    <p {...props} className="text-xl leading-8 text-slate-900 dark:text-slate-400 mb-8 font-sans" />
   ),
 
   // ELEMENTS INLINE

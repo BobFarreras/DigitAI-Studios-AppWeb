@@ -1,27 +1,32 @@
 'use client';
 
 import { Link, usePathname } from '@/routing';
-import { LayoutDashboard, BarChart3, Users, Home } from 'lucide-react';
+import { LayoutDashboard, BarChart3, Users, Home , BookOpenCheck} from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export function AdminBottomNav() {
   const pathname = usePathname();
 
   const navLinks = [
-    { 
-      href: '/admin', 
-      label: 'Inici', 
-      icon: LayoutDashboard 
+    {
+      href: '/admin',
+      label: 'Inici',
+      icon: LayoutDashboard
     },
-    { 
-      href: '/admin/analytics', 
-      label: 'Mètriques', 
-      icon: BarChart3 
+    {
+      href: '/admin/analytics',
+      label: 'Mètriques',
+      icon: BarChart3
     },
-    { 
-      href: '/admin/users', 
-      label: 'Usuaris', 
-      icon: Users 
+    {
+      href: '/admin/users',
+      label: 'Usuaris',
+      icon: Users
+    },
+    {
+      href: '/admin/blog',
+      label: 'Blog',
+      icon: BookOpenCheck
     },
   ];
 
@@ -39,8 +44,8 @@ export function AdminBottomNav() {
               href={link.href}
               className={cn(
                 "flex flex-col items-center justify-center w-full h-full space-y-1 transition-colors duration-200",
-                isActive 
-                  ? "text-blue-400" 
+                isActive
+                  ? "text-blue-400"
                   : "text-slate-500 hover:text-slate-300"
               )}
             >

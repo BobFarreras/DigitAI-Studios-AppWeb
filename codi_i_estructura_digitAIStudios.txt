@@ -2798,19 +2798,31 @@ export default async function DashboardLayout({ children, params }: Props) {
     redirect({ href: '/auth/login', locale });
   }
 
+  // 👇 CORRECCIÓ: NO usem .single() perquè pot tenir múltiples perfils
+  const { data: profiles } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user!.id);
+
+  // Busquem si en ALGUN dels seus perfils és admin
+  // També pots afegir el "Super Admin Override" per email per seguretat extra
+  const isAdmin = profiles?.some(p => p.role === 'admin') || user!.email === process.env.ADMIN_EMAIL;
+  
+  const userRole = isAdmin ? 'admin' : 'client';
+
+  // (Opcional) Deixem un log net per confirmar que ara funciona
+  console.log(`✅ Rol calculat per ${user!.email}: ${userRole} (Perfils trobats: ${profiles?.length})`);
+
   return (
-    // CANVI: bg-muted/10 o bg-background (colors semàntics)
-    // text-foreground assegura que el text sigui negre en light i blanc en dark
     <div className="min-h-screen bg-muted/10 flex font-sans text-foreground">
       
       {/* SIDEBAR */}
       <div className="hidden md:block w-64 shrink-0 z-40">
-         <Sidebar />
+         <Sidebar userRole={userRole} />
       </div>
 
       {/* AREA PRINCIPAL */}
       <div className="flex-1 flex flex-col min-h-screen relative overflow-hidden">
-         {/* Gradient subtil de fons (visible en light i dark) */}
          <div className="absolute top-0 left-0 w-full h-[500px] bg-primary/5 blur-[150px] pointer-events-none"></div>
 
          <DashboardHeader userEmail={user?.email ?? ''} />
@@ -2820,7 +2832,7 @@ export default async function DashboardLayout({ children, params }: Props) {
          </main>
 
          <div className="md:hidden">
-            <MobileBottomBar />
+            <MobileBottomBar userRole={userRole} />
          </div>
       </div>
     </div>
@@ -2833,22 +2845,39 @@ export default async function DashboardLayout({ children, params }: Props) {
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, FileText, FolderKanban, Settings } from 'lucide-react';
+import { LayoutDashboard, FileText, FolderKanban, Settings, ShieldAlert } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
 
-export function MobileBottomBar() {
-  const t = useTranslations('Sidebar'); // Reutilitzem traduccions de la Sidebar
+// 1. DEFINIM LA INTERFÍCIE
+interface MobileBottomBarProps {
+  userRole: 'admin' | 'client' | 'lead';
+}
+
+// 2. ACCEPTEM LA PROP
+export function MobileBottomBar({ userRole }: MobileBottomBarProps) {
+  console.log("🔍 [CLIENT MOBILE] Prop rebuda userRole:", userRole);
+  const t = useTranslations('Sidebar');
   const pathname = usePathname();
-  
+
   const cleanPath = pathname.replace(/^\/[a-z]{2}/, '') || '/';
 
+  // 3. DEFINIM ELS ÍTEMS BÀSICS
   const MENU_ITEMS = [
     { icon: LayoutDashboard, label: t('summary'), href: '/dashboard' },
     { icon: FileText, label: t('audits'), href: '/dashboard/audits' },
-    { icon: FolderKanban, label: 'Tests', href: '#proves' }, // 'Tests' pot ser curt per mòbil
+    { icon: FolderKanban, label: 'Tests', href: '#proves' },
     { icon: Settings, label: t('settings'), href: '#ajustos' },
   ];
+
+  // 4. AFEGIM L'ADMIN NOMÉS SI TOCA
+  if (userRole === 'admin') {
+    MENU_ITEMS.push({ // 'push' ho posa al final (dreta)
+      icon: ShieldAlert, 
+      label: 'Admin', // O t('admin') si tens la traducció
+      href: '/admin' 
+    });
+  }
 
   const handleClick = (e: React.MouseEvent, href: string, label: string) => {
     if (href.startsWith('#')) {
@@ -2863,6 +2892,8 @@ export function MobileBottomBar() {
             {MENU_ITEMS.map((item) => {
                 const Icon = item.icon;
                 let isActive = false;
+                
+                // Lògica activa
                 if (!item.href.startsWith('#')) {
                    if (item.href === '/dashboard') {
                       isActive = cleanPath === '/dashboard';
@@ -2871,6 +2902,9 @@ export function MobileBottomBar() {
                    }
                 }
 
+                // Detectem si és admin per donar-li color especial (opcional)
+                const isAdminItem = item.href === '/admin';
+
                 return (
                     <Link 
                         key={item.label} 
@@ -2878,7 +2912,11 @@ export function MobileBottomBar() {
                         onClick={(e) => handleClick(e, item.href, item.label)}
                         className={cn(
                             "flex flex-col items-center justify-center w-full h-full gap-1 active:scale-95 transition-transform",
-                            isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                            isActive 
+                                ? "text-primary" 
+                                : "text-muted-foreground hover:text-foreground",
+                            // Color vermellós per a l'admin si vols que destaqui
+                            (isAdminItem && !isActive) && "text-red-400 hover:text-red-500"
                         )}
                     >
                         <Icon 
@@ -3424,17 +3462,27 @@ export function DashboardHeader({ userEmail }: { userEmail?: string }) {
 
 // =================== FILE: src/components/dashboard/Sidebar.tsx ===================
 
+// FITXER: src/components/dashboard/Sidebar.tsx
+
 'use client';
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, FileText, FolderKanban, Settings, LogOut, Sparkles } from 'lucide-react';
+// 👇 Importem ShieldAlert per a la icona d'Admin
+import { LayoutDashboard, FileText, FolderKanban, Settings, LogOut, Sparkles, ShieldAlert } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter } from '@/routing';
 import { useTranslations } from 'next-intl';
-export function Sidebar() {
-  const t = useTranslations('Sidebar'); // Namespace Sidebar
+
+// 👇 Definim la interfície de les Props
+interface SidebarProps {
+  userRole: 'admin' | 'client' | 'lead';
+}
+
+export function Sidebar({ userRole }: SidebarProps) {
+  console.log("🔍 [CLIENT SIDEBAR] Prop rebuda userRole:", userRole);
+  const t = useTranslations('Sidebar');
   const pathname = usePathname();
   const router = useRouter();
   const supabase = createClient();
@@ -3454,7 +3502,7 @@ export function Sidebar() {
 
   const cleanPath = pathname.replace(/^\/[a-z]{2}/, '') || '/';
 
-  // DEFINIM ELS ÍTEMS A DINS PER TRADUIR-LOS
+  // 👇 LÒGICA DEL MENÚ DINÀMIC
   const MENU_ITEMS = [
     { icon: LayoutDashboard, label: t('summary'), href: '/dashboard' },
     { icon: FileText, label: t('audits'), href: '/dashboard/audits' },
@@ -3462,69 +3510,83 @@ export function Sidebar() {
     { icon: Settings, label: t('settings'), href: '#config' },
   ];
 
+  // Si és admin, afegim l'opció al principi o on vulguis
+  if (userRole === 'admin') {
+    MENU_ITEMS.unshift({ // 'unshift' ho posa al principi, 'push' al final
+      icon: ShieldAlert,
+      label: 'Admin Panel', // Pots afegir una clau de traducció si vols
+      href: '/admin'
+    });
+  }
+
   return (
     <aside className="w-64 h-screen bg-card border-r border-border flex flex-col sticky top-0 transition-colors duration-300">
-      
+
       {/* LOGO AREA */}
       <div className="p-6 border-b border-border">
         <Link href="/" className="flex items-center gap-2 text-xl font-bold text-foreground">
-           DigitAI <span className="text-primary">Hub</span>
+          DigitAI <span className="text-primary">Hub</span>
         </Link>
       </div>
 
       {/* NAVIGATION */}
       <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
         <div className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-4 px-2">
-           {t('platform')}
+          {t('platform')}
         </div>
-        
+
         {MENU_ITEMS.map((item) => {
           let isActive = false;
+          // Lògica per marcar actiu /admin i subrutes
           if (!item.href.startsWith('#')) {
-             if (item.href === '/dashboard') {
-                isActive = cleanPath === '/dashboard';
-             } else {
-                isActive = cleanPath.startsWith(item.href);
-             }
+            if (item.href === '/dashboard') {
+              isActive = cleanPath === '/dashboard';
+            } else {
+              isActive = cleanPath.startsWith(item.href);
+            }
           }
-          
+          // Detectem si és el botó d'admin per donar-li estil especial encara que no estigui actiu
+          const isAdminItem = item.href === '/admin';
           return (
-            <Link 
-              key={item.label} 
+            <Link
+              key={item.label}
               href={item.href}
-              onClick={(e) => handleClick(e, item.href, item.label)}
+              onClick={(e) => item.href.startsWith('#') && handleClick(e, item.href, item.label)}
               className={cn(
                 "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200",
-                isActive 
-                  ? "bg-primary/10 text-primary border border-primary/20 shadow-sm" 
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                isActive
+                  ? "bg-primary/10 text-primary border border-primary/20 shadow-sm"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted",
+                // Estil específic per l'ítem Admin quan NO està actiu (perquè destaqui una mica)
+                (isAdminItem && !isActive) && "text-red-500 hover:text-red-600 hover:bg-red-500/10"
               )}
             >
-              <item.icon className={cn("w-5 h-5", isActive ? "text-primary" : "text-muted-foreground")} />
+              {/* 👇 Corregit "text-currentColor" a "text-current" o simplement hereta del pare */}
+              <item.icon className={cn("w-5 h-5", isActive ? "text-primary" : "text-current")} />
               {item.label}
             </Link>
           );
         })}
 
-     
-
-        {/* CAIXA PROMO */}
-        <div className="mt-8 p-4 rounded-xl bg-linear-to-br from-primary/10 to-blue-500/10 border border-primary/20 relative overflow-hidden">
-           <div className="absolute top-0 right-0 w-20 h-20 bg-primary/20 blur-2xl rounded-full pointer-events-none"></div>
-           <div className="flex items-center gap-2 text-foreground font-bold text-sm mb-2">
+        {/* CAIXA PROMO (Només visible per a no-admins, opcional) */}
+        {userRole !== 'admin' && (
+          <div className="mt-8 p-4 rounded-xl bg-linear-to-br from-primary/10 to-blue-500/10 border border-primary/20 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-20 h-20 bg-primary/20 blur-2xl rounded-full pointer-events-none"></div>
+            <div className="flex items-center gap-2 text-foreground font-bold text-sm mb-2">
               <Sparkles className="w-4 h-4 text-primary" />
               {t('pro_badge')}
-           </div>
-           <p className="text-xs text-muted-foreground mb-3">{t('pro_text')}</p>
-           <button className="w-full py-1.5 text-xs font-bold bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity">
+            </div>
+            <p className="text-xs text-muted-foreground mb-3">{t('pro_text')}</p>
+            <button className="w-full py-1.5 text-xs font-bold bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity">
               {t('pro_button')}
-           </button>
-        </div>
+            </button>
+          </div>
+        )}
       </nav>
 
       {/* FOOTER / LOGOUT */}
       <div className="p-4 border-t border-border">
-        <button 
+        <button
           onClick={handleSignOut}
           className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-red-500 hover:bg-red-500/10 transition-colors"
         >
@@ -5339,14 +5401,15 @@ import {
   Zap,
   FolderGit2,
   BookOpen,
-  User
+  User,
+  ShieldAlert
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import type { User as SupabaseUser } from '@supabase/supabase-js';
-import { LanguageSwitcher } from './LanguageSwitcher'; 
+import { LanguageSwitcher } from './LanguageSwitcher';
 import { useTranslations } from 'next-intl';
 
 type Props = {
@@ -5378,7 +5441,9 @@ export function Navbar({ user }: Props) {
     { name: t('projects'), href: '/projectes', icon: FolderGit2 },
     { name: t('blog'), href: '/blog', icon: BookOpen },
   ];
-
+  // 2. DEFINIM SI ÉS ADMIN (Pots usar una variable d'entorn pública o hardcodejar el teu email aquí per UI)
+  // Nota: La seguretat real està a /admin/layout.tsx, això és només visual.
+  const isAdmin = user?.email === 'digitaistudios.developer@gmail.com';
   return (
     <>
       {/* 1. TOP NAVBAR */}
@@ -5418,7 +5483,19 @@ export function Navbar({ user }: Props) {
             <div className="h-6 w-px bg-border mx-2"></div>
             <ThemeToggle />
             <LanguageSwitcher />
-            
+            {/* 3. BOTÓ ADMIN (EXCLUSIU PER A TU) */}
+            {isAdmin && (
+              <Link
+                href="/admin"
+                className={cn(
+                  "flex flex-col items-center justify-center w-full h-full gap-1 active:scale-95 transition-transform",
+                  pathname.startsWith('/admin') ? "text-red-500" : "text-muted-foreground hover:text-red-500"
+                )}
+              >
+                <ShieldAlert className="w-6 h-6" strokeWidth={2} />
+                <span className="text-[10px] font-bold">Admin</span>
+              </Link>
+            )}
             {/* AUTH BUTTONS */}
             {user ? (
               <div className="flex items-center gap-4">

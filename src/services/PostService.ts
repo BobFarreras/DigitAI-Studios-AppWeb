@@ -15,4 +15,22 @@ export class PostService {
   async getLatestPosts(): Promise<BlogPostDTO[]> {
     return this.postRepo.getAllPublishedPosts();
   }
+
+  // 👇 Mètodes Admin
+  async getAllPostsForAdmin(): Promise<BlogPostDTO[]> {
+    return this.postRepo.getAllPosts();
+  }
+
+  async updatePost(slug: string, data: Partial<BlogPostDTO>): Promise<void> {
+    return this.postRepo.updatePost(slug, data);
+  }
+
+  async deletePost(slug: string): Promise<void> {
+    return this.postRepo.deletePost(slug);
+  }
+
+  async getAdminPost(slug: string): Promise<BlogPostDTO | null> {
+    // Sense cache, volem dades fresques a l'admin
+    return this.postRepo.getAdminPostBySlug(slug);
+  }
 }
