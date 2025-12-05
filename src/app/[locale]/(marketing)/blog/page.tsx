@@ -1,60 +1,87 @@
 import { Link } from '@/routing';
 import { postService } from '@/services/container';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { getTranslations, getLocale } from 'next-intl/server'; // 👈 Imports clau
+import { getTranslations, getLocale } from 'next-intl/server';
+import { Calendar, Tag, ImageIcon } from 'lucide-react';
+import Image from 'next/image'; // 👈 IMPORT IMPORTANT
 
 // ISR: Refresca el llistat cada hora
 export const revalidate = 3600;
 
 export default async function BlogIndexPage() {
-  const t = await getTranslations('BlogIndex'); // Namespace
-  const locale = await getLocale(); // Idioma actual ('ca', 'es', 'en')
+  const t = await getTranslations('BlogIndex');
+  const locale = await getLocale();
 
-  // 1. Obtenim els posts
-  // Nota: En el futur, passarem 'locale' al servei: getLatestPosts(locale)
   const posts = await postService.getLatestPosts();
 
   return (
-    <div className="container mx-auto py-12 px-4">
-      <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold tracking-tight mb-4">{t('title')}</h1>
-        <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+    <div className="container mx-auto py-16 px-4">
+      {/* CAPÇALERA */}
+      <div className="text-center mb-16 space-y-4">
+        <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-foreground">
+          {t('title')}
+        </h1>
+        <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
           {t('subtitle')}
         </p>
       </div>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* GRID DE POSTS */}
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
         {posts.map((post) => (
-          <Link key={post.slug} href={`/blog/${post.slug}`} className="block transition-transform hover:scale-[1.02]">
-            <Card className="h-full flex flex-col overflow-hidden border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+          <Link key={post.slug} href={`/blog/${post.slug}`} className="block group h-full">
+            <Card className="h-full flex flex-col overflow-hidden border border-border bg-card dark:bg-[#0f111a] hover:border-primary/50 transition-all duration-300 shadow-sm hover:shadow-2xl hover:-translate-y-1">
               
-              {/* Imatge de Cover */}
-              <div 
-                className="h-48 w-full bg-slate-100 flex items-center justify-center text-slate-300 bg-cover bg-center"
-                style={post.coverImage ? { backgroundImage: `url(${post.coverImage})` } : undefined}
-              >
-                {!post.coverImage && <span>{t('fallback_image')}</span>}
+              {/* ZONA IMATGE (CORREGIT AMB NEXT/IMAGE) */}
+              <div className="relative h-56 w-full bg-muted dark:bg-slate-800 overflow-hidden">
+                {post.coverImage ? (
+                  <Image
+                    src={post.coverImage}
+                    alt={post.title}
+                    fill // Ocupa tot el contenidor pare (h-56)
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  />
+                ) : (
+                  // Fallback si no hi ha imatge
+                  <div className="flex flex-col items-center justify-center h-full text-muted-foreground/50">
+                    <ImageIcon className="w-10 h-10 mb-2 opacity-50" />
+                    <span className="text-xs font-medium uppercase tracking-widest">{t('fallback_image')}</span>
+                  </div>
+                )}
+                
+                {/* Overlay fosc suau al fer hover per destacar el text */}
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300 pointer-events-none" />
               </div>
 
-              <CardHeader>
-                <div className="text-xs font-bold text-indigo-600 mb-2 tracking-wide uppercase">
-                  {post.tags[0] ?? 'TECH'}
+              <CardHeader className="pb-2 pt-6">
+                {/* TAG & DATA */}
+                <div className="flex justify-between items-center mb-3">
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wider">
+                        <Tag className="w-3 h-3" />
+                        {post.tags[0] ?? 'TECH'}
+                    </div>
+                    {post.date && (
+                        <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-medium">
+                            <Calendar className="w-3 h-3" />
+                            {new Intl.DateTimeFormat(locale, { dateStyle: 'medium' }).format(new Date(post.date))}
+                        </div>
+                    )}
                 </div>
-                <CardTitle className="text-xl leading-snug font-bold text-slate-900 line-clamp-2">
+
+                <CardTitle className="text-xl font-bold text-foreground group-hover:text-primary transition-colors line-clamp-2 leading-tight">
                   {post.title}
                 </CardTitle>
               </CardHeader>
               
               <CardContent className="flex-1 flex flex-col justify-between">
-                <p className="text-muted-foreground text-xs line-clamp-3 mb-4">
+                <p className="text-muted-foreground text-sm leading-relaxed line-clamp-3 mb-6">
                   {post.description}
                 </p>
                 
-                <div className="text-xs text-slate-400 font-medium pt-4 border-t border-slate-100 mt-auto">
-                  {post.date 
-                    ? new Intl.DateTimeFormat(locale, { dateStyle: 'long' }).format(new Date(post.date))
-                    : t('published_recently')
-                  }
+                {/* Link "Llegir més" animat */}
+                <div className="text-sm font-bold text-primary flex items-center gap-2 opacity-80 group-hover:opacity-100 transition-all group-hover:gap-3">
+                    Llegir article <span className="text-lg leading-none">&rarr;</span>
                 </div>
               </CardContent>
             </Card>
@@ -62,8 +89,12 @@ export default async function BlogIndexPage() {
         ))}
 
         {posts.length === 0 && (
-          <div className="col-span-full py-20 text-center bg-slate-50 rounded-lg border border-dashed">
-            <p className="text-slate-500">{t('no_posts')}</p>
+          <div className="col-span-full py-24 text-center bg-muted/20 rounded-3xl border border-dashed border-border flex flex-col items-center justify-center">
+            <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
+                <Tag className="w-8 h-8 text-muted-foreground" />
+            </div>
+            <h3 className="text-lg font-bold text-foreground mb-1">{t('no_posts')}</h3>
+            <p className="text-muted-foreground text-sm">Torna més tard per veure novetats.</p>
           </div>
         )}
       </div>

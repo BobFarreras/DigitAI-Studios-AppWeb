@@ -1,6 +1,17 @@
 import { createClient } from '@/lib/supabase/server';
+import { Database } from '@/types/database.types';
 import { CampaignContext, TestCampaignDTO, TestTaskDTO, TestResultDTO, TesterProfile } from '@/types/models';
+// Tipus base de les taules
+type TestCampaignRow = Database['public']['Tables']['test_campaigns']['Row'];
 
+// 1. Definim l'estructura EXACTA que retorna la query de Supabase
+type CampaignQueryResponse = TestCampaignRow & {
+  projects: { name: string; domain: string | null } | null;
+  test_tasks: {
+    id: string;
+    test_results: { count: number }[];
+  }[];
+};
 export class SupabaseTestRepository {
 
   async getCampaignWithContext(campaignId: string, userId: string): Promise<CampaignContext> {
@@ -127,5 +138,59 @@ export class SupabaseTestRepository {
     return supabase.from('test_assignments').delete()
       .eq('campaign_id', campaignId)
       .eq('user_id', userId);
+  }
+
+  // A. Obtenir totes les campanyes (amb estadístiques calculades)
+  // A. Obtenir totes les campanyes (amb estadístiques calculades)
+  async getAllCampaignsForAdmin() {
+    const supabase = await createClient();
+
+    const { data, error } = await supabase
+      .from('test_campaigns')
+      .select(`
+        *,
+        projects(name, domain),
+        test_tasks (
+          id,
+          test_results (count)
+        )
+      `)
+      .order('created_at', { ascending: false });
+
+    if (error) throw new Error(error.message);
+
+    // 2. Fem el cast segur a la nostra interfície
+    // Això elimina la necessitat d'usar 'any' més endavant
+    const typedData = data as unknown as CampaignQueryResponse[];
+
+    // 3. Processem les dades amb tipatge fort
+    return typedData.map((camp) => {
+      // Ara TypeScript sap que 'camp.test_tasks' existeix i és un array
+      const totalResults = camp.test_tasks?.reduce((acc, task) => {
+        // I sap que 'task.test_results' és un array d'objectes amb 'count'
+        const count = task.test_results?.[0]?.count || 0;
+        return acc + count;
+      }, 0) || 0;
+
+      return {
+        ...camp,
+        stats: {
+          total_tasks: camp.test_tasks?.length || 0,
+          total_results: totalResults
+        }
+      };
+    });
+  }
+
+  // B. Crear nova campanya
+  async createCampaign(data: { projectId: string; title: string; description: string; instructions: string }) {
+    const supabase = await createClient();
+    return supabase.from('test_campaigns').insert({
+      project_id: data.projectId,
+      title: data.title,
+      description: data.description,
+      instructions: data.instructions,
+      status: 'active'
+    }).select().single();
   }
 }

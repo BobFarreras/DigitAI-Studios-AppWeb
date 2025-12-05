@@ -166,51 +166,125 @@ export type InviteState = {
     message: string | null;
 };
 
-// 2. Tipem l'argument prevState correctament
+
+
+
 export async function inviteClientAction(
-    prevState: InviteState, // 👈 Abans era 'any' o 'unknown', ara és estricte
+    prevState: InviteState,
     formData: FormData
-): Promise<InviteState> { // 👈 Assegurem que sempre retornem això
+): Promise<InviteState> {
 
     const supabaseAdmin = createAdminClient();
-
     const email = formData.get('email') as string;
     const projectId = formData.get('projectId') as string;
     const orgId = formData.get('orgId') as string;
 
-    // Validació inicial
+    console.log("🔍 [INVITE] Iniciant per:", email);
+
     if (!email || !orgId) {
         return { success: false, error: "Falten dades obligatòries.", message: null };
     }
 
     try {
-        // ESTRATÈGIA: Utilitzem `inviteUserByEmail` de Supabase Auth.
-        const { error: inviteError } = await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
-            data: {
-                org_id: orgId,
-                role: 'client',
-                full_name: 'Propietari del Projecte'
-            },
-            redirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}/auth/update-password`
-        });
+        let userIdToLink = '';
 
-        if (inviteError) {
-            console.error("Error enviant invitació:", inviteError);
-            return { success: false, error: "No s'ha pogut enviar la invitació.", message: null };
+        // 1. Busquem a la taula PROFILES
+        // Usem maybeSingle() per evitar errors si no en troba cap
+        const { data: existingProfile } = await supabaseAdmin
+            .from('profiles')
+            .select('id')
+            .eq('email', email)
+            .maybeSingle();
+
+        if (existingProfile) {
+            console.log("✅ [INVITE] Usuari trobat a Profiles. ID:", existingProfile.id);
+            userIdToLink = existingProfile.id;
+
+            // Assegurem que tingui accés a aquesta organització
+            // Usem UPSERT aquí també per si de cas
+            await supabaseAdmin
+                .from('profiles')
+                .upsert({ 
+                    id: userIdToLink,
+                    email: email,
+                    organization_id: orgId, 
+                    role: 'client' 
+                });
+
+        } else {
+            console.log("⚠️ [INVITE] No trobat a profiles. Provant invitació Auth...");
+            
+            const { data: inviteData, error: inviteError } = await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
+                data: { org_id: orgId, role: 'client', full_name: 'Client' },
+                redirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}/auth/update-password`
+            });
+
+            if (inviteError) {
+                // CAS: L'email existeix a Auth (però ha fallat el pas 1 per algun motiu)
+                if (inviteError.code === 'email_exists' || inviteError.message.includes('already been registered')) {
+                    console.log("🧟 [INVITE] Usuari existent a Auth. Recuperant ID...");
+                    
+                    const { data: authUsers } = await supabaseAdmin.auth.admin.listUsers();
+                    const zombieUser = authUsers.users.find(u => u.email === email);
+
+                    if (zombieUser) {
+                        userIdToLink = zombieUser.id;
+                        console.log("✅ [INVITE] ID recuperat:", userIdToLink);
+
+                        // 🔥 CORRECCIÓ CLAU: Usem UPSERT en lloc d'INSERT
+                        // Això arregla tant si falta el perfil com si ja existeix
+                        const { error: upsertError } = await supabaseAdmin
+                            .from('profiles')
+                            .upsert({
+                                id: userIdToLink,
+                                email: email,
+                                organization_id: orgId,
+                                role: 'client',
+                                full_name: zombieUser.user_metadata?.full_name || 'Client Recuperat'
+                            }, { onConflict: 'id, organization_id' }); // Especifiquem la clau de conflicte
+
+                        if (upsertError) {
+                            console.error("❌ [INVITE] Error al Upsert:", upsertError);
+                            return { success: false, error: "Error de base de dades: " + upsertError.message, message: null };
+                        }
+                        console.log("✅ [INVITE] Perfil sincronitzat correctament.");
+
+                    } else {
+                        return { success: false, error: "Error crític: L'email consta com a registrat però no es troba.", message: null };
+                    }
+                } else {
+                    return { success: false, error: "Error invitació: " + inviteError.message, message: null };
+                }
+            } else {
+                console.log("✨ [INVITE] Nova invitació enviada.");
+                userIdToLink = inviteData.user.id;
+            }
         }
 
-        // Actualitzem estat del projecte
-        await supabaseAdmin
+        // 2. VINCULACIÓ FINAL DEL PROJECTE
+        console.log(`🔗 [INVITE] Vinculant projecte a ${userIdToLink}...`);
+        
+        const { error: updateError } = await supabaseAdmin
             .from('projects')
-            .update({ status: 'active' })
+            .update({ 
+                status: 'active',
+                client_id: userIdToLink 
+            })
             .eq('id', projectId);
 
-        // ✅ Retornem èxit amb l'estructura completa
-        return { success: true, message: "Invitació enviada correctament!", error: null };
+        if (updateError) {
+            console.error("❌ [INVITE] Error update project:", updateError);
+            return { success: false, error: "Error vinculant el projecte.", message: null };
+        }
+
+        return { 
+            success: true, 
+            message: "Client vinculat i activat correctament!", 
+            error: null 
+        };
 
     } catch (error: unknown) {
-        // Gestió d'errors tipada
-        const errMsg = error instanceof Error ? error.message : String(error);
-        return { success: false, error: errMsg, message: null };
+        console.error("💥 [INVITE] Excepció:", error);
+        return { success: false, error: "Error inesperat al servidor", message: null };
     }
 }

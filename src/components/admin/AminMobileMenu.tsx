@@ -1,7 +1,7 @@
 'use client';
 
 import { Link, usePathname } from '@/routing';
-import { LayoutDashboard, BarChart3, Users, Home , BookOpenCheck} from 'lucide-react';
+import { LayoutDashboard, BarChart3, Users, Home , BookOpenCheck, FlaskConical} from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export function AdminBottomNav() {
@@ -27,6 +27,11 @@ export function AdminBottomNav() {
       href: '/admin/blog',
       label: 'Blog',
       icon: BookOpenCheck
+    },
+    {
+      href: '/admin/tests',
+      label: 'Tests',
+      icon: FlaskConical // Icona de laboratori
     },
   ];
 
