@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Star, Quote, ChevronLeft, ChevronRight, Globe, Smartphone, Zap, Users, Code, ExternalLink } from 'lucide-react';
-import Image, { StaticImageData } from 'next/image'; // 👈 Importem el tipus
+import Image, { StaticImageData } from 'next/image';
 import Link from 'next/link';
 import type { Testimonial } from '@/lib/data';
 
@@ -13,7 +13,24 @@ type Props = {
 
 export function TestimonialsSection({ testimonials }: Props) {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const itemsToShow = 3; 
+  const [itemsToShow, setItemsToShow] = useState(3); // Per defecte 3 (escriptori)
+
+  // Detectem la mida de la pantalla per ajustar itemsToShow
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        setItemsToShow(1); // Mòbil: 1 ítem
+      } else {
+        setItemsToShow(3); // Escriptori: 3 ítems
+      }
+    };
+
+    // Executem al principi
+    handleResize();
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const nextSlide = () => {
     setCurrentIndex((prev) => (prev + 1) % testimonials.length);
@@ -36,7 +53,7 @@ export function TestimonialsSection({ testimonials }: Props) {
       <div className="container mx-auto px-4 relative z-10">
         
         {/* CAPÇALERA */}
-        <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+        <div className="flex flex-col md:flex-row justify-between items-end  md:mb-16 gap-6">
            <div className="max-w-2xl">
               <h2 className="text-3xl lg:text-5xl font-bold text-foreground leading-tight">
                 No ens creguis a nosaltres. <br/>
@@ -56,15 +73,16 @@ export function TestimonialsSection({ testimonials }: Props) {
         </div>
 
         {/* GRID */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 py-6">
+        {/* Canviem grid-cols per adaptar-se al itemsToShow dinàmicament */}
+        <div className={`grid gap-8 py-6 ${itemsToShow === 1 ? 'grid-cols-1' : 'grid-cols-3'}`}>
           <AnimatePresence mode='popLayout'>
             {getVisibleItems().map((item, i) => (
               <motion.div
-                key={`${item.id}-${i}`} 
+                key={`${item.id}-${currentIndex + i}`} // Clau única composta per forçar re-render correcte
                 initial={{ opacity: 0, x: 50 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -50 }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
+                transition={{ duration: 0.4, ease: "easeInOut" }}
                 className="h-[450px] perspective-1000"
               >
                  <TestimonialCard item={item} />
@@ -85,7 +103,7 @@ function TestimonialCard({ item }: { item: Testimonial }) {
       <div className="relative w-full h-full group">
          
          {/* CAPA 1: EL PROJECTE (FITXER) */}
-         <div className="absolute inset-x-4 top-4 bottom-20  transition-all duration-500 cubic-bezier(0.25, 0.8, 0.25, 1) group-hover:-translate-y-20 ">
+         <div className="absolute inset-x-4 top-4 bottom-20 transition-all duration-500 cubic-bezier(0.25, 0.8, 0.25, 1) group-hover:-translate-y-20 ">
             <div className="w-full h-full rounded-t-xl overflow-hidden border border-primary/20 bg-slate-900 dark:bg-black shadow-2xl group-hover:shadow-primary/20">
                {item.projectType === 'web' && <MockupWeb url={item.projectUrl} image={item.image} title={item.company} />}
                {item.projectType === 'app' && <MockupApp image={item.image} title={item.company} />}
@@ -99,11 +117,11 @@ function TestimonialCard({ item }: { item: Testimonial }) {
             <Quote className="absolute top-6 right-6 text-primary/10 w-12 h-12 rotate-180" />
 
             <div className="flex items-center gap-3 mb-4">
-               <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary/20 to-blue-500/20 border border-primary/30 flex items-center justify-center text-lg font-bold text-primary">
+               <div className="w-12 h-12 rounded-full bg-linear-to-br from-primary/20 to-blue-500/20 border border-primary/30 flex items-center justify-center text-lg font-bold text-primary shrink-0">
                   {item.name.charAt(0)}
                </div>
                <div>
-                  <div className="font-bold text-foreground">{item.name}</div>
+                  <div className="font-bold text-foreground text-sm md:text-base">{item.name}</div>
                   <div className="text-xs text-muted-foreground">{item.company}</div>
                </div>
             </div>
@@ -114,7 +132,7 @@ function TestimonialCard({ item }: { item: Testimonial }) {
                ))}
             </div>
 
-            <p className="text-base text-muted-foreground leading-relaxed overflow-hidden text-ellipsis">
+            <p className="text-sm md:text-base text-muted-foreground leading-relaxed overflow-hidden text-ellipsis line-clamp-4">
                "{item.text}"
             </p>
             
@@ -129,11 +147,9 @@ function TestimonialCard({ item }: { item: Testimonial }) {
 
 // --- MOCKUPS VISUALS ---
 
-// ✅ CORRECCIÓ: Acceptem 'string | StaticImageData'
 function MockupWeb({ url, image, title }: { url?: string, image?: string | StaticImageData, title: string }) {
    const Wrapper = url ? Link : 'div';
    return (
-      
       <Wrapper href={url || '#'} target={url ? "_blank" : undefined} className="block w-full h-full cursor-pointer group/mockup">
          <div className="w-full h-full bg-slate-50 dark:bg-[#0f111a] flex flex-col relative">
             
@@ -145,7 +161,6 @@ function MockupWeb({ url, image, title }: { url?: string, image?: string | Stati
                </div>
             )}
 
-            {/* Barra navegador */}
             <div className="h-6 bg-slate-200 dark:bg-white/10 flex items-center px-3 gap-1.5 z-10">
                <div className="w-2 h-2 rounded-full bg-red-400/80"></div>
                <div className="w-2 h-2 rounded-full bg-yellow-400/80"></div>
@@ -167,7 +182,6 @@ function MockupWeb({ url, image, title }: { url?: string, image?: string | Stati
    )
 }
 
-// ✅ CORRECCIÓ: Acceptem 'string | StaticImageData'
 function MockupApp({ image, title }: { image?: string | StaticImageData, title: string }) {
    return (
       <div className="w-full h-full bg-slate-800 dark:bg-black flex items-end justify-center p-4 pb-0 group/mockup relative">
@@ -182,7 +196,7 @@ function MockupApp({ image, title }: { image?: string | StaticImageData, title: 
             {image ? (
                 <Image src={image} alt={title} fill className="object-cover" />
             ) : (
-                <div className="w-full h-full bg-slate-900 flex flex-col items-center justify-center">
+               <div className="w-full h-full bg-slate-900 flex flex-col items-center justify-center">
                    <Smartphone className="w-6 h-6 text-primary" />
                    <span className="text-[10px] text-slate-400 mt-2">{title} App</span>
                 </div>
@@ -192,7 +206,6 @@ function MockupApp({ image, title }: { image?: string | StaticImageData, title: 
    )
 }
 
-// L'ANIMACIÓ D'AUTOMATITZACIÓ (Sense imatges, no cal tocar tipus)
 function MockupAutomation() {
    return (
       <div className="w-full h-full bg-[#1a1d2d] relative overflow-hidden group/mockup">
@@ -202,7 +215,7 @@ function MockupAutomation() {
              </span>
          </div>
 
-         <div className="absolute inset-0 bg-[radial-gradient(#ffffff10_1px,transparent_1px)] [background-size:12px_12px]"></div>
+         <div className="absolute inset-0 bg-[radial-gradient(#ffffff10_1px,transparent_1px)] bg-size-[12px_12px]"></div>
          
          <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none">
             <defs>

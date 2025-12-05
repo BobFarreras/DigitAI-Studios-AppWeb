@@ -41,6 +41,10 @@ ESTRUCTURA DEL PROJECTE (./src)
 │       ├── admin
 │       │   ├── analytics
 │       │   │   └── page.tsx
+│       │   ├── blog
+│       │   │   ├── page.tsx
+│       │   │   └── [slug]
+│       │   │       └── page.tsx
 │       │   ├── debug
 │       │   │   └── page.tsx
 │       │   ├── layout.tsx
@@ -116,6 +120,7 @@ ESTRUCTURA DEL PROJECTE (./src)
 │       ├── checkbox.tsx
 │       ├── dropdown-menu.tsx
 │       ├── input.tsx
+│       ├── tabs.tsx
 │       └── theme-toggle.tsx
 ├── features
 │   ├── analytics
@@ -151,9 +156,15 @@ ESTRUCTURA DEL PROJECTE (./src)
 │   │       ├── RegisterForm.tsx
 │   │       └── ResetPasswordForm.tsx
 │   ├── blog
+│   │   ├── actions
+│   │   │   └── admin-actions.ts
+│   │   ├── actions.ts
 │   │   ├── types.ts
 │   │   └── ui
-│   │       └── MDXContent.tsx
+│   │       ├── AdminPostList.tsx
+│   │       ├── EditPostForm.tsx
+│   │       ├── MDXContent.tsx
+│   │       └── PostStatusToggle.tsx
 │   ├── email
 │   │   └── templates
 │   │       └── AuditReadyEmail.tsx
@@ -1689,6 +1700,231 @@ export default async function AdminAnalyticsPage() {
   );
 }
 
+// =================== FILE: src/app/[locale]/admin/blog/page.tsx ===================
+
+import { requireAdmin } from '@/lib/auth/admin-guard';
+import { postRepository } from '@/services/container';
+import { Link } from '@/routing';
+import { Button } from '@/components/ui/button';
+import { Plus, FileText, Eye, Pencil } from 'lucide-react';
+
+export default async function AdminBlogPage() {
+  await requireAdmin();
+  const posts = await postRepository.getAllPosts();
+
+  return (
+    // 1. SAFEGUARD: overflow-x-hidden al contenidor principal per evitar scroll horitzontal global
+    <div className="w-full max-w-[100vw] overflow-x-hidden p-3 sm:p-6 md:p-8">
+      
+      <div className="max-w-6xl mx-auto w-full">
+        {/* CAPÇALERA */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+          <div className="w-full sm:w-auto">
+            <h1 className="text-2xl md:text-3xl font-bold text-white break-words">Gestió del Blog</h1>
+            <p className="text-slate-400 text-sm">
+              Total: <span className="text-white font-medium">{posts.length}</span> articles.
+            </p>
+          </div>
+          
+          <Link href="/admin/blog/new" className="w-full sm:w-auto">
+              <Button className="gradient-bg text-white border-0 w-full">
+                  <Plus className="w-4 h-4 mr-2" /> Nou Article
+              </Button>
+          </Link>
+        </div>
+
+        {/* LLISTAT */}
+        <div className="flex flex-col gap-3">
+          {posts.map((post) => (
+            // 2. TARGETA: w-full i max-w-full són crítics aquí
+            <div 
+              key={post.slug} 
+              className="w-full max-w-full flex flex-col md:flex-row md:items-center justify-between p-4 bg-slate-900/50 border border-slate-800 rounded-xl gap-4"
+            >
+              
+              {/* ZONA INFO: min-w-0 és la màgia que evita el desbordament en Flexbox */}
+              <div className="flex items-start gap-3 min-w-0 w-full">
+                  {/* Icona */}
+                  <div className="shrink-0 p-2 bg-slate-800 rounded-lg text-blue-400">
+                      <FileText className="w-5 h-5" />
+                  </div>
+
+                  {/* Text: overflow-hidden necessari pel truncate */}
+                  <div className="flex-1 min-w-0 overflow-hidden">
+                      {/* Títol: truncate talla el text amb punts suspensius (...) */}
+                      <h3 className="font-semibold text-slate-200 text-base truncate block w-full">
+                          {post.title}
+                      </h3>
+                      
+                      {/* Metadades */}
+                      <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500 mt-1">
+                          <span className={`px-2 py-0.5 rounded-full font-bold shrink-0 ${
+                              post.published 
+                                  ? 'bg-green-500/10 text-green-400' 
+                                  : 'bg-yellow-500/10 text-yellow-400'
+                          }`}>
+                              {post.published ? 'PUB' : 'DRAFT'}
+                          </span>
+                          <span className="truncate">
+                            {new Date(post.date || new Date()).toLocaleDateString()}
+                          </span>
+                      </div>
+                  </div>
+              </div>
+              
+              {/* ZONA ACCIONS: Grid en mòbil per assegurar que els botons ocupen l'ample correcte */}
+              <div className="grid grid-cols-[1fr,auto] gap-2 w-full md:w-auto md:flex border-t border-slate-800 pt-3 md:border-0 md:pt-0">
+                  <Link href={`/admin/blog/${post.slug}`} className="w-full md:w-auto">
+                      <Button variant="secondary" size="sm" className="w-full bg-slate-800 text-slate-300 hover:text-white">
+                          <Pencil className="w-3.5 h-3.5 mr-2" /> Editar
+                      </Button>
+                  </Link>
+                  
+                  {post.published && (
+                      <Link href={`/blog/${post.slug}`} target="_blank">
+                          <Button variant="ghost" size="icon" className="text-slate-500 hover:text-blue-400">
+                              <Eye className="w-4 h-4" />
+                          </Button>
+                      </Link>
+                  )}
+              </div>
+
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// =================== FILE: src/app/[locale]/admin/blog/[slug]/page.tsx ===================
+
+import { requireAdmin } from '@/lib/auth/admin-guard';
+import { postRepository } from '@/services/container';
+import { notFound } from 'next/navigation';
+import { MDXContent } from '@/features/blog/ui/MDXContent';
+import { Link } from '@/routing';
+import { ArrowLeft, Save, Trash2,ExternalLink  } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import Image from 'next/image';
+import { PostStatusToggle } from '@/features/blog/ui/PostStatusToggle';
+
+
+type Props = {
+    params: Promise<{ slug: string }>;
+};
+
+export default async function AdminPostDetailPage({ params }: Props) {
+    await requireAdmin();
+    const { slug } = await params;
+
+    // ⚠️ USEM EL NOU MÈTODE QUE INCLOU ESBORRANYS
+    const post = await postRepository.getAdminPostBySlug(slug);
+
+    if (!post) {
+        return notFound();
+    }
+
+    return (
+        <div className="p-4 md:p-8 max-w-5xl mx-auto text-slate-200">
+
+            {/* CORRECCIÓ HEADER: Eliminat 'sticky top-0' i afegit padding/marges nets */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 border-b border-slate-800 pb-6">
+                <div className="flex items-center gap-4">
+                    <Link href="/admin/blog" className="text-slate-500 hover:text-white transition-colors p-2 hover:bg-slate-800 rounded-lg">
+                        <ArrowLeft className="w-6 h-6" />
+                    </Link>
+                    <div className="min-w-0"> {/* min-w-0 ajuda a truncar text en flex */}
+                        <h1 className="text-xl md:text-2xl font-bold truncate">{post.title}</h1>
+                        <div className="flex items-center gap-2 mt-1">
+                            <span className={`text-xs font-mono px-2 py-0.5 rounded ${post.published ? 'bg-green-900 text-green-300' : 'bg-yellow-900 text-yellow-300'}`}>
+                                {post.published ? 'PUBLICAT' : 'ESBORRANY'}
+                            </span>
+                            <span className="text-xs text-slate-500 hidden md:inline-block">/ {post.slug}</span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Dins del HEADER, a la secció de botons a la dreta */}
+                <div className="flex flex-wrap gap-2 w-full md:w-auto mt-4 md:mt-0">
+                    {/* Botó Esborrar (existent) */}
+                    <Button variant="destructive" size="sm">
+                        <Trash2 className="w-4 h-4 md:mr-2" /> <span className="hidden md:inline">Eliminar</span>
+                    </Button>
+
+                    {/* Enllaç veure (existent) */}
+                    <Link href={`/blog/${post.slug}`} target="_blank">
+                        <Button variant="outline" size="sm" className="border-slate-700">
+                            <ExternalLink className="w-4 h-4 md:mr-2" /> <span className="hidden md:inline">Veure Web</span>
+                        </Button>
+                    </Link>
+
+                    {/* 👇 NOU BOTÓ PUBLICAR/DESPUBLICAR */}
+                    {/* Nota: el postRepository ha de retornar l'ID del post, assegura't que el DTO el té. 
+                Si no el tens al DTO, afegeix-lo al SupabasePostRepository.ts mapToDTO */}
+                    <PostStatusToggle postId={post.id || ''} isPublished={post.published} />
+
+                    <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+                        <Save className="w-4 h-4 md:mr-2" /> <span className="hidden md:inline">Guardar</span>
+                    </Button>
+                </div>
+            </div>
+
+            {/* CONTINGUT PREVIEW */}
+            <div className="grid lg:grid-cols-3 gap-8">
+
+                {/* COLUMNA PRINCIPAL (PREVIEW MDX) */}
+                <div className="lg:col-span-2 space-y-6">
+                    <div className="aspect-video relative rounded-xl overflow-hidden bg-slate-800 border border-slate-700">
+                        {post.coverImage ? (
+                            <Image
+                                src={post.coverImage}
+                                alt="Cover"
+                                fill
+                                sizes="100vw"
+                                className="object-cover"
+                            />
+                        ) : (
+                            <div className="flex items-center justify-center h-full text-slate-600">Sense Imatge</div>
+                        )}
+                    </div>
+
+                    <div className="prose prose-invert max-w-none p-6 bg-slate-900 rounded-xl border border-slate-800">
+                        <MDXContent source={post.content || ''} />
+                    </div>
+                </div>
+
+                {/* SIDEBAR METADADES */}
+                <div className="space-y-6">
+                    <div className="bg-slate-900 p-6 rounded-xl border border-slate-800 space-y-4">
+                        <h3 className="font-bold text-slate-400 uppercase text-xs tracking-wider">Detalls SEO</h3>
+
+                        <div>
+                            <label className="text-xs text-slate-500 block mb-1">Slug</label>
+                            <code className="text-sm bg-black p-2 rounded block w-full text-blue-300 overflow-hidden">{post.slug}</code>
+                        </div>
+
+                        <div>
+                            <label className="text-xs text-slate-500 block mb-1">Descripció</label>
+                            <p className="text-sm text-slate-300 leading-relaxed">{post.description}</p>
+                        </div>
+
+                        <div>
+                            <label className="text-xs text-slate-500 block mb-1">Tags</label>
+                            <div className="flex flex-wrap gap-2">
+                                {post.tags.map(tag => (
+                                    <span key={tag} className="text-xs bg-slate-800 px-2 py-1 rounded border border-slate-700">{tag}</span>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    );
+}
+
 // =================== FILE: src/app/[locale]/admin/debug/page.tsx ===================
 
 'use client';
@@ -1804,7 +2040,7 @@ export default function DebugAnalyticsPage() {
 
 import { requireAdmin } from '@/lib/auth/admin-guard';
 import { Link } from '@/routing'; // 👈 Assegura't que ve d'aquí
-import { ShieldAlert, LayoutDashboard, BarChart3, Users, Home } from 'lucide-react';
+import { ShieldAlert, LayoutDashboard, BarChart3, Users, Home, BookOpenCheck } from 'lucide-react';
 import { AdminBottomNav } from '@/components/admin/AminMobileMenu';
 
 export default async function AdminLayout({
@@ -1841,6 +2077,10 @@ export default async function AdminLayout({
           <Link href="/admin/projects" className="flex items-center gap-3 px-4 py-2 rounded hover:bg-slate-900 transition-colors text-blue-400 font-medium">
             <Users className="w-5 h-5" />
             <span>Projectes</span>
+          </Link>
+          <Link href="/admin/blog" className="flex items-center gap-3 px-4 py-2 rounded hover:bg-slate-900 transition-colors text-blue-400 font-medium">
+            <BookOpenCheck  className="w-5 h-5" />
+            <span>Blog</span>
           </Link>
 
           <div className="mt-auto pt-4 border-t border-slate-800">
@@ -3229,27 +3469,32 @@ export default async function LocaleLayout({
 'use client';
 
 import { Link, usePathname } from '@/routing';
-import { LayoutDashboard, BarChart3, Users, Home } from 'lucide-react';
+import { LayoutDashboard, BarChart3, Users, Home , BookOpenCheck} from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export function AdminBottomNav() {
   const pathname = usePathname();
 
   const navLinks = [
-    { 
-      href: '/admin', 
-      label: 'Inici', 
-      icon: LayoutDashboard 
+    {
+      href: '/admin',
+      label: 'Inici',
+      icon: LayoutDashboard
     },
-    { 
-      href: '/admin/analytics', 
-      label: 'Mètriques', 
-      icon: BarChart3 
+    {
+      href: '/admin/analytics',
+      label: 'Mètriques',
+      icon: BarChart3
     },
-    { 
-      href: '/admin/users', 
-      label: 'Usuaris', 
-      icon: Users 
+    {
+      href: '/admin/users',
+      label: 'Usuaris',
+      icon: Users
+    },
+    {
+      href: '/admin/blog',
+      label: 'Blog',
+      icon: BookOpenCheck
     },
   ];
 
@@ -3267,8 +3512,8 @@ export function AdminBottomNav() {
               href={link.href}
               className={cn(
                 "flex flex-col items-center justify-center w-full h-full space-y-1 transition-colors duration-200",
-                isActive 
-                  ? "text-blue-400" 
+                isActive
+                  ? "text-blue-400"
                   : "text-slate-500 hover:text-slate-300"
               )}
             >
@@ -5881,6 +6126,76 @@ Input.displayName = "Input"
 
 export { Input }
 
+// =================== FILE: src/components/ui/tabs.tsx ===================
+
+"use client"
+
+import * as React from "react"
+import * as TabsPrimitive from "@radix-ui/react-tabs"
+
+import { cn } from "@/lib/utils"
+
+function Tabs({
+  className,
+  ...props
+}: React.ComponentProps<typeof TabsPrimitive.Root>) {
+  return (
+    <TabsPrimitive.Root
+      data-slot="tabs"
+      className={cn("flex flex-col gap-2", className)}
+      {...props}
+    />
+  )
+}
+
+function TabsList({
+  className,
+  ...props
+}: React.ComponentProps<typeof TabsPrimitive.List>) {
+  return (
+    <TabsPrimitive.List
+      data-slot="tabs-list"
+      className={cn(
+        "bg-muted text-muted-foreground inline-flex h-9 w-fit items-center justify-center rounded-lg p-[3px]",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function TabsTrigger({
+  className,
+  ...props
+}: React.ComponentProps<typeof TabsPrimitive.Trigger>) {
+  return (
+    <TabsPrimitive.Trigger
+      data-slot="tabs-trigger"
+      className={cn(
+        "data-[state=active]:bg-background dark:data-[state=active]:text-foreground focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:outline-ring dark:data-[state=active]:border-input dark:data-[state=active]:bg-input/30 text-foreground dark:text-muted-foreground inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center gap-1.5 rounded-md border border-transparent px-2 py-1 text-sm font-medium whitespace-nowrap transition-[color,box-shadow] focus-visible:ring-[3px] focus-visible:outline-1 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:shadow-sm [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function TabsContent({
+  className,
+  ...props
+}: React.ComponentProps<typeof TabsPrimitive.Content>) {
+  return (
+    <TabsPrimitive.Content
+      data-slot="tabs-content"
+      className={cn("flex-1 outline-none", className)}
+      {...props}
+    />
+  )
+}
+
+export { Tabs, TabsList, TabsTrigger, TabsContent }
+
+
 // =================== FILE: src/components/ui/theme-toggle.tsx ===================
 
 "use client"
@@ -7681,6 +7996,122 @@ export function ResetPasswordForm() {
   );
 }
 
+// =================== FILE: src/features/blog/actions/admin-actions.ts ===================
+
+'use server';
+
+import { postService } from '@/services/container';
+import { requireAdmin } from '@/lib/auth/admin-guard';
+import { revalidatePath } from 'next/cache';
+import { redirect } from '@/routing';
+import { getLocale } from 'next-intl/server';
+
+// 👇 1. Definim el tipus de retorn
+export type ActionState = {
+  success: boolean;
+  message: string;
+};
+
+export async function togglePostStatusAction(slug: string, currentStatus: boolean): Promise<ActionState> {
+  await requireAdmin(); // 🛡️ Seguretat
+  
+  try {
+    await postService.updatePost(slug, {
+      published: !currentStatus
+    });
+    revalidatePath('/admin/blog');
+    return { success: true, message: 'Estat actualitzat correctament.' };
+  } catch (e) {
+    return { success: false, message: 'Error actualitzant l\'estat.' };
+  }
+}
+
+export async function deletePostAction(slug: string): Promise<ActionState> {
+  await requireAdmin();
+  
+  try {
+    await postService.deletePost(slug);
+    revalidatePath('/admin/blog');
+    return { success: true, message: 'Post eliminat.' };
+  } catch (e) {
+    console.error(e);
+    return { success: false, message: 'Error eliminant el post.' };
+  }
+}
+
+// 👇 2. Tipem el prevState correctament en lloc de 'any'
+export async function updatePostDetailsAction(prevState: ActionState, formData: FormData): Promise<ActionState> {
+  await requireAdmin();
+  const locale = await getLocale();
+
+  const slug = formData.get('slug') as string;
+  const title = formData.get('title') as string;
+  const description = formData.get('description') as string;
+  const date = formData.get('date') as string;
+  
+  try {
+    await postService.updatePost(slug, {
+      title,
+      description,
+      date: date ? new Date(date).toISOString() : undefined,
+    });
+    
+    revalidatePath('/admin/blog');
+    redirect({ href: '/admin/blog', locale });
+    // El redirect llença un error intern de Next.js, així que aquesta línia tècnicament no s'executa si redirigeix,
+    // però TS la necessita pel tipatge.
+    return { success: true, message: 'Post guardat.' };
+  } catch (e) {
+    // Si l'error és un redirect, l'hem de deixar passar
+    if ((e as Error).message === 'NEXT_REDIRECT') {
+        throw e;
+    }
+    console.error(e);
+    return { success: false, message: 'Error guardant els canvis.' };
+  }
+}
+
+// =================== FILE: src/features/blog/actions.ts ===================
+
+'use server';
+
+import { createClient } from '@/lib/supabase/server';
+import { revalidatePath } from 'next/cache';
+
+export async function togglePostStatus(id: string, currentStatus: boolean) {
+  const supabase = await createClient();
+  
+  // 1. Verificar sessió (per seguretat)
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("No autoritzat");
+
+  // 2. Actualitzar estat
+  // Si estava true -> false. Si estava false -> true.
+  // També actualitzem 'status' (l'enum) per coherència.
+  const newStatus = !currentStatus;
+  const newStatusEnum = newStatus ? 'published' : 'published';
+
+  const { error } = await supabase
+    .from('posts')
+    .update({ 
+        published: newStatus,
+        status: newStatusEnum,
+        published_at: newStatus ? new Date().toISOString() : null // Guardem data si publiquem
+    })
+    .eq('id', id);
+
+  if (error) {
+    console.error("Error toggling post:", error);
+    return { success: false, message: error.message };
+  }
+
+  // 3. Refrescar la pàgina perquè el botó canviï de color sol
+  revalidatePath('/admin/blog');
+  revalidatePath(`/admin/blog/[slug]`, 'page'); // Refresca totes les subrutes dinàmiques si cal
+  
+  return { success: true };
+}
+
 // =================== FILE: src/features/blog/types.ts ===================
 
 export type BlogPost = {
@@ -7691,6 +8122,285 @@ export type BlogPost = {
   content: string; // El cos en Markdown
   tags: string[];
 };
+
+// =================== FILE: src/features/blog/ui/AdminPostList.tsx ===================
+
+'use client';
+
+import { BlogPostDTO } from '@/types/models';
+// ❌ Eliminat import { Badge }...
+import { Button } from '@/components/ui/button';
+import { Edit, Trash2, Eye, EyeOff, Calendar } from 'lucide-react';
+import { togglePostStatusAction, deletePostAction } from '../actions/admin-actions';
+import { useTransition } from 'react';
+import { Link } from '@/routing';
+
+export function AdminPostList({ posts }: { posts: BlogPostDTO[] }) {
+  const [isPending, startTransition] = useTransition();
+
+  const handleToggle = (slug: string, currentStatus: boolean) => {
+    if (confirm(`Vols canviar l'estat a ${!currentStatus ? 'PUBLICAT' : 'ESBORRANY'}?`)) {
+      // 👇 CORRECCIÓ CLAU: Afegim 'async' i claus '{}' per no retornar el valor
+      // startTransition espera void, no un objecte {success, message}
+      startTransition(async () => {
+         const result = await togglePostStatusAction(slug, currentStatus);
+         if (!result.success) alert(result.message); // Opcional: mostrar error
+      });
+    }
+  };
+
+  const handleDelete = (slug: string) => {
+    if (confirm('Estàs segur? Aquesta acció és irreversible.')) {
+      // 👇 CORRECCIÓ CLAU
+      startTransition(async () => {
+         const result = await deletePostAction(slug);
+         if (!result.success) alert(result.message);
+      });
+    }
+  };
+
+  return (
+    <table className="w-full text-sm text-left">
+      <thead className="bg-slate-50 dark:bg-slate-800 text-slate-500 font-medium border-b border-slate-200 dark:border-slate-700">
+        <tr>
+          <th className="px-6 py-4">Títol</th>
+          <th className="px-6 py-4">Estat</th>
+          <th className="px-6 py-4">Data Publicació</th>
+          <th className="px-6 py-4 text-right">Accions</th>
+        </tr>
+      </thead>
+      <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+        {posts.map((post) => (
+          <tr key={post.slug} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+            <td className="px-6 py-4">
+              <div className="font-bold text-slate-900 dark:text-white line-clamp-1">{post.title}</div>
+              <div className="text-xs text-slate-500 font-mono">{post.slug}</div>
+            </td>
+            <td className="px-6 py-4">
+              <span 
+                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold capitalize
+                  ${post.published 
+                    ? 'bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400' 
+                    : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-500/20 dark:text-yellow-400'
+                  }`}
+              >
+                {post.published ? 'Publicat' : 'Esborrany'}
+              </span>
+            </td>
+            <td className="px-6 py-4 text-slate-500">
+              <div className="flex items-center gap-2">
+                <Calendar className="w-3 h-3" />
+                {post.date ? new Date(post.date).toLocaleDateString() : '-'}
+              </div>
+            </td>
+            <td className="px-6 py-4 text-right">
+              <div className="flex items-center justify-end gap-2">
+                
+                {/* Toggle Status */}
+                <Button 
+                  size="icon" 
+                  variant="ghost" 
+                  onClick={() => handleToggle(post.slug, post.published)}
+                  disabled={isPending}
+                  title={post.published ? "Passar a esborrany" : "Publicar"}
+                >
+                  {post.published 
+                    ? <Eye className="w-4 h-4 text-green-600" /> 
+                    : <EyeOff className="w-4 h-4 text-slate-400" />
+                  }
+                </Button>
+
+                {/* Edit Link */}
+                <Link href={`/admin/blog/${post.slug}`}>
+                    <Button size="icon" variant="ghost" title="Editar detalls">
+                    <Edit className="w-4 h-4 text-blue-500" />
+                    </Button>
+                </Link>
+
+                {/* Delete */}
+                <Button 
+                  size="icon" 
+                  variant="ghost" 
+                  onClick={() => handleDelete(post.slug)}
+                  disabled={isPending}
+                  className="hover:bg-red-50 hover:text-red-600"
+                  title="Eliminar permanentment"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </Button>
+              </div>
+            </td>
+          </tr>
+        ))}
+        {posts.length === 0 && (
+            <tr>
+                <td colSpan={4} className="text-center py-8 text-slate-500">No hi ha posts.</td>
+            </tr>
+        )}
+      </tbody>
+    </table>
+  );
+}
+
+// =================== FILE: src/features/blog/ui/EditPostForm.tsx ===================
+
+'use client';
+
+import { useActionState, useState } from 'react';
+import { BlogPostDTO } from '@/types/models';
+import { updatePostDetailsAction, ActionState } from '@/features/blog/actions/admin-actions';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Save, Eye, PenTool } from 'lucide-react';
+import { Link } from '@/routing';
+// Importem components de pestanyes (si els tens a UI, sinó fem un switch simple)
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'; // Assumint que tens shadcn/ui
+// Importem el renderitzador MDX (El mateix que usa la web pública)
+import { MDXContent } from '@/features/blog/ui/MDXContent';
+
+const initialState: ActionState = {
+    success: false,
+    message: '',
+};
+
+export function EditPostForm({ post }: { post: BlogPostDTO }) {
+    const [state, formAction, isPending] = useActionState(updatePostDetailsAction, initialState);
+    const [activeTab, setActiveTab] = useState<'edit' | 'preview'>('edit');
+    // Estats locals per a la vista prèvia en temps real
+    const [content, setContent] = useState(post.content || '');
+    const [title, setTitle] = useState(post.title);
+
+    return (
+        <form action={formAction} className="space-y-6">
+            <input type="hidden" name="slug" value={post.slug} />
+
+            <Tabs defaultValue="edit" className="w-full">
+                <div className="flex justify-between items-center mb-4">
+                    {/* Selector de Tabs manual */}
+                    <div className="flex border-b border-border mb-6">
+                        <button
+                            type="button"
+                            onClick={() => setActiveTab('edit')}
+                            className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${activeTab === 'edit' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground'}`}
+                        >
+                            ✏️ Edició
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => setActiveTab('preview')}
+                            className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${activeTab === 'preview' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground'}`}
+                        >
+                            👁️ Vista Prèvia
+                        </button>
+                    </div>
+
+                    {/* Botó per veure la versió pública real (si està publicada) */}
+                    {post.published && (
+                        <Link href={`/blog/${post.slug}`} target="_blank">
+                            <Button variant="ghost" size="sm" type="button">
+                                Veure Web Pública ↗
+                            </Button>
+                        </Link>
+                    )}
+                </div>
+
+                {/* --- PESTANYA EDICIÓ --- */}
+                <TabsContent value="edit" className="space-y-6">
+                    <div className="grid md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium">Títol</label>
+                            <Input
+                                name="title"
+                                value={title}
+                                onChange={(e) => setTitle(e.target.value)}
+                                required
+                                className="dark:bg-slate-800"
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium">Data</label>
+                            <Input
+                                type="datetime-local"
+                                name="date"
+                                defaultValue={post.date ? new Date(post.date).toISOString().slice(0, 16) : ''}
+                                className="dark:bg-slate-800"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium">Descripció (SEO)</label>
+                        <textarea
+                            name="description"
+                            defaultValue={post.description || ''}
+                            rows={2}
+                            className="w-full p-3 rounded-md border border-input bg-background text-sm dark:bg-slate-800"
+                        />
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium">Contingut (Markdown / MDX)</label>
+                        <textarea
+                            name="content"
+                            value={content}
+                            onChange={(e) => setContent(e.target.value)}
+                            rows={15}
+                            className="w-full p-4 rounded-md border border-input bg-background font-mono text-sm leading-relaxed dark:bg-slate-900"
+                            placeholder="# Escriu aquí el teu article..."
+                        />
+                        <p className="text-xs text-muted-foreground">Pots utilitzar Markdown i components React.</p>
+                    </div>
+                </TabsContent>
+
+                {/* --- PESTANYA VISTA PRÈVIA --- */}
+                <TabsContent value="preview">
+                    <div className="border rounded-xl p-8 bg-white dark:bg-slate-950 shadow-sm min-h-[500px]">
+                        {/* Simulem la capçalera del blog */}
+                        <div className="mb-8 text-center">
+                            <h1 className="text-4xl font-extrabold mb-4">{title}</h1>
+                            <div className="text-sm text-muted-foreground">Vista prèvia d'administrador</div>
+                        </div>
+
+                        {/* Renderitzem el contingut */}
+                        <div className="prose prose-lg dark:prose-invert max-w-none">
+                            {/* Nota: MDXRemote necessita executar-se al servidor normalment. 
+                        Per a una preview client-side ràpida, pots usar 'react-markdown' 
+                        o simplement mostrar el text si no vols complicar-ho. 
+                        
+                        Si MDXContent és un Server Component (que ho és al teu projecte), 
+                        no el pots renderitzar aquí directament amb l'estat 'content' dinàmic 
+                        sense fer un roundtrip al servidor.
+                        
+                        SOLUCIÓ RÀPIDA: Un iframe o un text simple. 
+                        SOLUCIÓ PRO: Un Server Action que renderitzi la preview.
+                    */}
+                            <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-200 rounded mb-4 text-sm">
+                                ⚠️ Nota: La previsualització exacta de components MDX requereix guardar. Aquí veus el text cru o podries usar una llibreria com `react-markdown`.
+                            </div>
+                            <pre className="whitespace-pre-wrap font-sans text-base">{content}</pre>
+                        </div>
+                    </div>
+                </TabsContent>
+            </Tabs>
+
+            {/* Footer Accions */}
+            <div className="pt-6 border-t flex justify-between items-center bg-background sticky bottom-0 z-10 p-4">
+                {!state.success && state.message && (
+                    <div className="text-red-500 text-sm font-medium">{state.message}</div>
+                )}
+                <div className="flex gap-3 ml-auto">
+                    <Link href="/admin/blog">
+                        <Button variant="outline" type="button">Cancel·lar</Button>
+                    </Link>
+                    <Button type="submit" className="gap-2" disabled={isPending}>
+                        <Save className="w-4 h-4" />
+                        {isPending ? 'Guardant...' : 'Guardar Canvis'}
+                    </Button>
+                </div>
+            </div>
+        </form>
+    );
+}
 
 // =================== FILE: src/features/blog/ui/MDXContent.tsx ===================
 
@@ -7738,7 +8448,7 @@ const components = {
   // Light: text-slate-900 (Negre intens per llegibilitat)
   // Dark: text-slate-200 (Blanc suau per no cremar els ulls)
   p: (props: ParagraphProps) => (
-    <p {...props} className="text-xl leading-8 text-slate-900 dark:text-slate-500 mb-8 font-sans" />
+    <p {...props} className="text-xl leading-8 text-slate-900 dark:text-slate-400 mb-8 font-sans" />
   ),
 
   // ELEMENTS INLINE
@@ -7816,6 +8526,67 @@ export function MDXContent({ source }: { source: string }) {
         }}
       />
     </article>
+  );
+}
+
+// =================== FILE: src/features/blog/ui/PostStatusToggle.tsx ===================
+
+'use client';
+
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Loader2, Globe, EyeOff } from 'lucide-react';
+import { togglePostStatus } from '../actions';
+import { useRouter } from 'next/navigation';
+
+type Props = {
+  postId: string;
+  isPublished: boolean;
+};
+
+export function PostStatusToggle({ postId, isPublished }: Props) {
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+
+  const handleToggle = async () => {
+    setIsLoading(true);
+    try {
+      await togglePostStatus(postId, isPublished);
+      // Opcional: forçar refresh del router client
+      router.refresh();
+    } catch (error) {
+      console.error(error);
+      alert("Error canviant l'estat");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (isPublished) {
+    return (
+      <Button 
+        variant="outline" 
+        size="sm" 
+        onClick={handleToggle} 
+        disabled={isLoading}
+        className="border-yellow-600/50 text-yellow-500 hover:bg-yellow-900/20 hover:text-yellow-400"
+      >
+        {isLoading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <EyeOff className="w-4 h-4 mr-2" />}
+        Passar a Esborrany
+      </Button>
+    );
+  }
+
+  return (
+    <Button 
+      size="sm" 
+      onClick={handleToggle} 
+      disabled={isLoading}
+      className="bg-green-600 hover:bg-green-700 text-white border-0"
+    >
+      {isLoading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Globe className="w-4 h-4 mr-2" />}
+      Publicar Ara
+    </Button>
   );
 }
 
@@ -9182,6 +9953,12 @@ import { BlogPostDTO } from '@/types/models';
 export interface IPostRepository {
   getPostBySlug(slug: string): Promise<BlogPostDTO | null>;
   getAllPublishedPosts(): Promise<BlogPostDTO[]>;
+  
+  // 👇 NOUS MÈTODES D'ADMINISTRACIÓ
+  getAllPosts(): Promise<BlogPostDTO[]>; // Inclou esborranys i arxivats
+  updatePost(slug: string, data: Partial<BlogPostDTO>): Promise<void>;
+  deletePost(slug: string): Promise<void>;
+  getAdminPostBySlug(slug: string): Promise<BlogPostDTO | null>;
 }
 
 // =================== FILE: src/repositories/supabase/SupabaseAnalyticsRepository.ts ===================
@@ -9555,26 +10332,24 @@ import { Database } from '@/types/database.types';
 type PostRow = Database['public']['Tables']['posts']['Row'];
 
 export class SupabasePostRepository implements IPostRepository {
-  
+
   // 🔄 Mapper: La peça clau per traduir DB -> App
   private mapToDTO(row: PostRow): BlogPostDTO {
     return {
+      id: row.id,
       slug: row.slug,
       title: row.title,
-      // Preferim published_at, si no created_at
-      date: row.published_at ?? row.created_at, 
+      date: row.published_at ?? row.created_at,
       description: row.description,
-      content: row.content_mdx, // Aquí fem el canvi de nom
-      tags: row.tags ? (row.tags as string[]) : [], // Assegurem que és array
+      content: row.content_mdx,
+      tags: row.tags ? (row.tags as string[]) : [],
       coverImage: row.cover_image,
-      published: row.status === 'published',
-      
+      published: row.published ?? false, // Assegurem boolean
     };
   }
-
   async getPostBySlug(slug: string): Promise<BlogPostDTO | null> {
     const supabase = createClient();
-    
+
     const { data, error } = await supabase
       .from('posts')
       .select('*')
@@ -9603,6 +10378,82 @@ export class SupabasePostRepository implements IPostRepository {
     // Mapegem cada fila
     return data.map(this.mapToDTO);
   }
+
+
+  // Mètodes existents (getPostBySlug, getAllPublishedPosts)...
+
+  // 👇 IMPLEMENTACIÓ NOUS MÈTODES
+  async getAllPosts(): Promise<BlogPostDTO[]> {
+    // Usem createAdminClient per saltar-nos restriccions si cal, 
+    // tot i que un admin loguejat ja hauria de poder veure-ho per RLS.
+    // Per seguretat i simplicitat en admin panels, el client normal amb RLS d'admin és millor.
+    const supabase = await createClient();
+
+    const { data, error } = await supabase
+      .from('posts')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) throw new Error(error.message);
+    return data.map(row => this.mapToDTO(row));
+  }
+
+  async updatePost(slug: string, data: Partial<BlogPostDTO>): Promise<void> {
+    const supabase = await createClient();
+
+    // Mapegem DTO -> DB Columns
+    const updateData: Partial<PostRow> = {};
+    if (data.title !== undefined) updateData.title = data.title;
+    if (data.description !== undefined) updateData.description = data.description;
+    if (data.content !== undefined) updateData.content_mdx = data.content;
+    if (data.tags !== undefined) updateData.tags = data.tags;
+
+    // Sincronitzem 'published' (bool) amb 'status' (enum)
+    if (data.published !== undefined) {
+      updateData.published = data.published;
+      updateData.status = data.published ? 'published' : 'draft';
+      // Si es publica ara i no tenia data, posem-la
+      if (data.published) {
+        updateData.published_at = new Date().toISOString();
+      }
+    }
+
+    if (data.date !== undefined && data.date) {
+      updateData.published_at = data.date; // Si l'admin canvia la data manualment
+    }
+
+    const { error } = await supabase
+      .from('posts')
+      .update(updateData)
+      .eq('slug', slug);
+
+    if (error) throw new Error(error.message);
+  }
+
+  async deletePost(slug: string): Promise<void> {
+    const supabase = await createClient();
+    const { error } = await supabase
+      .from('posts')
+      .delete()
+      .eq('slug', slug);
+
+    if (error) throw new Error(error.message);
+  }
+  // 👇 1. Mètode per veure un post específic (encara que sigui draft)
+  async getAdminPostBySlug(slug: string): Promise<BlogPostDTO | null> {
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from('posts')
+      .select('*')
+      .eq('slug', slug)
+      .single();
+
+    if (error || !data) return null;
+    return this.mapToDTO(data);
+  }
+
+
+
 }
 
 // =================== FILE: src/routing.ts ===================
@@ -10007,6 +10858,24 @@ export class PostService {
 
   async getLatestPosts(): Promise<BlogPostDTO[]> {
     return this.postRepo.getAllPublishedPosts();
+  }
+
+  // 👇 Mètodes Admin
+  async getAllPostsForAdmin(): Promise<BlogPostDTO[]> {
+    return this.postRepo.getAllPosts();
+  }
+
+  async updatePost(slug: string, data: Partial<BlogPostDTO>): Promise<void> {
+    return this.postRepo.updatePost(slug, data);
+  }
+
+  async deletePost(slug: string): Promise<void> {
+    return this.postRepo.deletePost(slug);
+  }
+
+  async getAdminPost(slug: string): Promise<BlogPostDTO | null> {
+    // Sense cache, volem dades fresques a l'admin
+    return this.postRepo.getAdminPostBySlug(slug);
   }
 }
 
@@ -10779,6 +11648,7 @@ export interface IAuditRepository {
 
 // 1. DTO (Data Transfer Object): Com la teva UI vol veure les dades (camelCase, net)
 export type BlogPostDTO = {
+  id: string; // 👈 AFEGEIX AQUESTA LÍNIA
   slug: string;
   title: string;
   date: string | null;     // Mapejat des de published_at

@@ -1,18 +1,19 @@
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
-import { routing, type Locale } from '@/routing'; 
+import { routing, type Locale } from '@/routing';
 import { Inter } from 'next/font/google';
 import { ThemeProvider } from "@/components/theme-provider";
-import "@/app/globals.css"; 
+import "@/app/globals.css";
 import type { Metadata, Viewport } from 'next';
+import { Toaster } from 'sonner';
 
 // 👇 1. IMPORTACIONS NOVES
-import { Suspense } from 'react'; 
+import { Suspense } from 'react';
 import { AnalyticsTracker } from '@/features/analytics/ui/AnalyticsTracker';
 
-const inter = Inter({ 
-  subsets: ['latin'], 
+const inter = Inter({
+  subsets: ['latin'],
   variable: '--font-inter',
   display: 'swap',
 });
@@ -91,11 +92,12 @@ export default async function LocaleLayout({
             enableSystem
             disableTransitionOnChange
           >
-            {/* 👇 2. AQUÍ ESTÀ LA MÀGIA: SUSPENSE + TRACKER */}
-            {/* Suspense evita que el layout es bloquegi esperant paràmetres de URL */}
             <Suspense fallback={null}>
               <AnalyticsTracker />
             </Suspense>
+
+            {/* 🔔 SONNER GLOBAL */}
+            <Toaster richColors closeButton />
 
             {children}
           </ThemeProvider>

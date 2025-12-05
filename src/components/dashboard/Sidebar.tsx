@@ -1,23 +1,20 @@
-// FITXER: src/components/dashboard/Sidebar.tsx
-
 'use client';
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-// 👇 Importem ShieldAlert per a la icona d'Admin
+// 👇 CANVI: Substituïm 'FlaskConical' per 'Beaker' (o 'TestTube2')
 import { LayoutDashboard, FileText, FolderKanban, Settings, LogOut, Sparkles, ShieldAlert } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { createClient } from '@/lib/supabase/client';
 import { useRouter } from '@/routing';
 import { useTranslations } from 'next-intl';
 
-// 👇 Definim la interfície de les Props
 interface SidebarProps {
   userRole: 'admin' | 'client' | 'lead';
 }
 
 export function Sidebar({ userRole }: SidebarProps) {
-  console.log("🔍 [CLIENT SIDEBAR] Prop rebuda userRole:", userRole);
+  // ... (resta del codi igual: hooks, handleSignOut, handleClick...)
   const t = useTranslations('Sidebar');
   const pathname = usePathname();
   const router = useRouter();
@@ -38,26 +35,28 @@ export function Sidebar({ userRole }: SidebarProps) {
 
   const cleanPath = pathname.replace(/^\/[a-z]{2}/, '') || '/';
 
-  // 👇 LÒGICA DEL MENÚ DINÀMIC
   const MENU_ITEMS = [
     { icon: LayoutDashboard, label: t('summary'), href: '/dashboard' },
+    // 👇 Canviem 'Projectes' perquè apunti al llistat
+    { icon: FolderKanban, label: t('projects'), href: '/dashboard/projects' },
     { icon: FileText, label: t('audits'), href: '/dashboard/audits' },
-    { icon: FolderKanban, label: t('projects'), href: '#projectes' },
+    // 👇 Canviem la icona aquí també
+   
     { icon: Settings, label: t('settings'), href: '#config' },
   ];
 
-  // Si és admin, afegim l'opció al principi o on vulguis
   if (userRole === 'admin') {
-    MENU_ITEMS.unshift({ // 'unshift' ho posa al principi, 'push' al final
+    MENU_ITEMS.unshift({ 
       icon: ShieldAlert,
-      label: 'Admin Panel', // Pots afegir una clau de traducció si vols
+      label: 'Admin Panel',
       href: '/admin'
     });
   }
 
   return (
     <aside className="w-64 h-screen bg-card border-r border-border flex flex-col sticky top-0 transition-colors duration-300">
-
+      {/* ... (resta del renderitzat igual) ... */}
+      
       {/* LOGO AREA */}
       <div className="p-6 border-b border-border">
         <Link href="/" className="flex items-center gap-2 text-xl font-bold text-foreground">
@@ -73,16 +72,19 @@ export function Sidebar({ userRole }: SidebarProps) {
 
         {MENU_ITEMS.map((item) => {
           let isActive = false;
-          // Lògica per marcar actiu /admin i subrutes
+          
           if (!item.href.startsWith('#')) {
+            // Lògica simple: si estem a /dashboard/projects (o fills), marquem actiu Projectes O QA
+            // Això és un petit truc visual
             if (item.href === '/dashboard') {
-              isActive = cleanPath === '/dashboard';
+               isActive = cleanPath === '/dashboard';
             } else {
-              isActive = cleanPath.startsWith(item.href);
+               isActive = cleanPath.startsWith(item.href);
             }
           }
-          // Detectem si és el botó d'admin per donar-li estil especial encara que no estigui actiu
+          
           const isAdminItem = item.href === '/admin';
+          
           return (
             <Link
               key={item.label}
@@ -93,18 +95,15 @@ export function Sidebar({ userRole }: SidebarProps) {
                 isActive
                   ? "bg-primary/10 text-primary border border-primary/20 shadow-sm"
                   : "text-muted-foreground hover:text-foreground hover:bg-muted",
-                // Estil específic per l'ítem Admin quan NO està actiu (perquè destaqui una mica)
                 (isAdminItem && !isActive) && "text-red-500 hover:text-red-600 hover:bg-red-500/10"
               )}
             >
-              {/* 👇 Corregit "text-currentColor" a "text-current" o simplement hereta del pare */}
               <item.icon className={cn("w-5 h-5", isActive ? "text-primary" : "text-current")} />
               {item.label}
             </Link>
           );
         })}
 
-        {/* CAIXA PROMO (Només visible per a no-admins, opcional) */}
         {userRole !== 'admin' && (
           <div className="mt-8 p-4 rounded-xl bg-linear-to-br from-primary/10 to-blue-500/10 border border-primary/20 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-20 h-20 bg-primary/20 blur-2xl rounded-full pointer-events-none"></div>
@@ -120,12 +119,9 @@ export function Sidebar({ userRole }: SidebarProps) {
         )}
       </nav>
 
-      {/* FOOTER / LOGOUT */}
+      {/* FOOTER */}
       <div className="p-4 border-t border-border">
-        <button
-          onClick={handleSignOut}
-          className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-red-500 hover:bg-red-500/10 transition-colors"
-        >
+        <button onClick={handleSignOut} className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-red-500 hover:bg-red-500/10 transition-colors">
           <LogOut className="w-5 h-5" />
           {t('logout')}
         </button>

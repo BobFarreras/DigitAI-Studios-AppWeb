@@ -16,7 +16,7 @@ export function ProductTeaser() {
     return (
         <section className="py-24 container mx-auto px-4">
 
-            <div className="rounded-3xl bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-primary/10 dark:via-background dark:to-background border border-slate-200 dark:border-primary/20 p-8 md:p-12 overflow-hidden relative transition-colors duration-300 shadow-2xl shadow-slate-200/50 dark:shadow-none">
+            <div className="rounded-3xl bg-linear-to-br from-slate-50 via-white to-blue-50 dark:from-primary/10 dark:via-background dark:to-background border border-slate-200 dark:border-primary/20 p-8 md:p-12 overflow-hidden relative transition-colors duration-300 shadow-2xl shadow-slate-200/50 dark:shadow-none">
 
                 <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-400/20 dark:bg-primary/20 blur-[100px] rounded-full opacity-40 pointer-events-none"></div>
 
@@ -59,7 +59,7 @@ export function ProductTeaser() {
                             className="absolute left-4 top-10 w-3/4 h-64 bg-white dark:bg-[#0f111a] rounded-xl border border-slate-200 dark:border-white/10 shadow-xl z-10 overflow-hidden"
                         >
                             <div className="h-12 border-b border-slate-100 dark:border-white/5 flex items-center justify-between px-4 bg-slate-50/50 dark:bg-white/5">
-                                <div className="relative h-6 w-24">
+                                <div className="relative h-12 w-34">
                                     <Image
                                         src={ribotFlowImg}
                                         alt="RibotFlow Logo"
@@ -91,7 +91,7 @@ export function ProductTeaser() {
                             className="absolute right-4 top-24 w-3/4 h-64 bg-white dark:bg-[#0f111a] rounded-xl border border-slate-200 dark:border-white/10 shadow-2xl z-20 overflow-hidden backdrop-blur-sm"
                         >
                             <div className="h-12 border-b border-slate-100 dark:border-white/5 flex items-center justify-between px-4 bg-slate-50/50 dark:bg-white/5">
-                                <div className="relative h-8 w-28">
+                                <div className="relative h-22 w-48">
                                     <Image
                                         src={salutFlowImg}
                                         alt="SalutFlow Logo"

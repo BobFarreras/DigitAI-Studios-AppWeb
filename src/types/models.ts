@@ -105,3 +105,44 @@ export interface MasterConfig {
   modules: SiteModules;
   i18n: I18nConfig;
 }
+
+export type TestCampaignDTO = {
+  id: string;
+  projectId: string;
+  title: string;
+  description: string | null;
+  instructions: string | null;
+  status: string;
+  createdAt: Date;
+};
+
+export type TestTaskDTO = {
+  id: string;
+  campaignId: string;
+  title: string;
+  description: string | null;
+  orderIndex: number;
+};
+
+export type TestResultDTO = {
+  id: string;
+  taskId: string;
+  userId: string;
+  status: 'pass' | 'fail' | 'blocked';
+  comment: string | null;
+  updatedAt: Date;
+};
+
+// Tipus per al retorn combinat del repositori
+export type CampaignContext = {
+  campaign: TestCampaignDTO | null;
+  tasks: TestTaskDTO[];
+  results: TestResultDTO[];
+};
+
+export type TesterProfile = {
+  id: string;
+  email: string;
+  full_name: string | null;
+  avatar_url: string | null;
+};

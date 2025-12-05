@@ -8,7 +8,7 @@ export function ProblemSolutionSection() {
   const t = useTranslations('ProblemSolution');
 
   return (
-    <section className="py-24 container mx-auto px-4 relative overflow-hidden transition-colors duration-300">
+    <section className="py-10 container mx-auto px-4 relative overflow-hidden transition-colors duration-300">
       
       <div className="grid lg:grid-cols-2 gap-16 items-center">
         
@@ -48,15 +48,20 @@ export function ProblemSolutionSection() {
           </ul>
         </motion.div>
         
-        {/* 2. COMPARATIVA VISUAL (Adaptada Light/Dark) - Només canvis visuals, textos hardcoded a la UI visual es mantenen per simplicitat o es poden traduir igual */}
-        <div className="relative h-[500px] flex items-center justify-center perspective-1000">
+        {/* 2. COMPARATIVA VISUAL */}
+        <div className="relative h-[450px] lg:h-[500px] flex items-center justify-center perspective-1000">
           
           {/* --- CARD 1: EL PROBLEMA ("Web Aparador") --- */}
           <motion.div 
-            initial={{ opacity: 0, rotate: -6, x: -35 }}
+            // Animació suau d'entrada
+            initial={{ opacity: 0, rotate: -6, x: -20 }}
             whileInView={{ opacity: 1, rotate: -6, x: -35 }}
             viewport={{ once: true }}
-            className="absolute left-0 w-[280px] p-6 rounded-2xl border border-slate-200 dark:border-white/5 bg-slate-100/80 dark:bg-[#0f111a]/80 backdrop-blur-sm z-0 grayscale opacity-70"
+            transition={{ duration: 0.8 }}
+            // MIDES: 
+            // - Mòbil: w-[260px] (lleugerament més petit)
+            // - Escriptori (md+): w-[280px] (Mida ORIGINAL)
+            className="absolute left-4 md:left-0 w-[260px] md:w-[280px] p-6 rounded-2xl border border-slate-200 dark:border-white/5 bg-slate-100/80 dark:bg-[#0f111a]/80 backdrop-blur-sm z-0 grayscale opacity-70"
           >
              <div className="flex items-center gap-2 mb-4 text-slate-500">
                 <Store className="w-5 h-5" />
@@ -80,11 +85,16 @@ export function ProblemSolutionSection() {
 
           {/* --- CARD 2: LA SOLUCIÓ (Ecosistema DigitAI) --- */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, x: 20 }}
-            whileInView={{ opacity: 1, scale: 1, x: 20 }}
+            // ANIMACIÓ: Surt de darrere de l'altra targeta
+            initial={{ opacity: 0, scale: 0.9, x: -40, rotate: -3 }}
+            whileInView={{ opacity: 1, scale: 1, x: 20, rotate: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="relative z-20 w-[340px] bg-[#1a1d2d] border border-white/10 rounded-2xl shadow-2xl overflow-hidden"
+            transition={{ duration: 0.8, delay: 0.2, type: "spring", bounce: 0.4 }}
+            
+            // MIDES:
+            // - Mòbil: w-[300px] (Ajustat per pantalles petites)
+            // - Escriptori (md+): w-[340px] (Mida ORIGINAL)
+            className="relative z-20 w-[300px] md:w-[340px] bg-[#1a1d2d] border border-white/10 rounded-2xl shadow-2xl overflow-hidden"
           >
             <div className="h-2 w-full bg-linear-to-r from-[#06b6d4] via-[#3b82f6] to-[#a855f7]"></div>
 

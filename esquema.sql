@@ -1,5 +1,5 @@
 
-\restrict cBhYUfZepMzkonuEwlSpCCaRE6mGqq721FiXkhUwhu23cOSP0Ik9Jx5Ge6ZozV5
+\restrict IsVoGS2obDeJJYu80qPQsHEIBebxbxLbRW5k49r9zG7MbJny9hu1lXQ5R4LiLPO
 
 
 SET statement_timeout = 0;
@@ -69,11 +69,27 @@ ALTER TYPE "public"."project_status" OWNER TO "postgres";
 CREATE TYPE "public"."user_role" AS ENUM (
     'admin',
     'client',
-    'lead'
+    'lead',
+    'staff'
 );
 
 
 ALTER TYPE "public"."user_role" OWNER TO "postgres";
+
+
+CREATE OR REPLACE FUNCTION "public"."decrement_stock"("p_product_id" "uuid", "p_quantity" integer) RETURNS "void"
+    LANGUAGE "plpgsql" SECURITY DEFINER
+    AS $$
+begin
+  update public.products
+  set stock = stock - p_quantity
+  where id = p_product_id
+  and stock >= p_quantity; -- Evita estoc negatiu
+end;
+$$;
+
+
+ALTER FUNCTION "public"."decrement_stock"("p_product_id" "uuid", "p_quantity" integer) OWNER TO "postgres";
 
 
 CREATE OR REPLACE FUNCTION "public"."get_my_org_id"() RETURNS "uuid"
@@ -209,6 +225,18 @@ CREATE TABLE IF NOT EXISTS "public"."analytics_visitors" (
 ALTER TABLE "public"."analytics_visitors" OWNER TO "postgres";
 
 
+CREATE TABLE IF NOT EXISTS "public"."blocked_dates" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "organization_id" "uuid" NOT NULL,
+    "date" "date" NOT NULL,
+    "reason" "text",
+    "created_at" timestamp with time zone DEFAULT "now"()
+);
+
+
+ALTER TABLE "public"."blocked_dates" OWNER TO "postgres";
+
+
 CREATE TABLE IF NOT EXISTS "public"."bookings" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "organization_id" "uuid" NOT NULL,
@@ -219,7 +247,8 @@ CREATE TABLE IF NOT EXISTS "public"."bookings" (
     "start_time" timestamp with time zone NOT NULL,
     "end_time" timestamp with time zone NOT NULL,
     "status" "text" DEFAULT 'confirmed'::"text",
-    "created_at" timestamp with time zone DEFAULT "now"()
+    "created_at" timestamp with time zone DEFAULT "now"(),
+    "form_data" "jsonb" DEFAULT '{}'::"jsonb"
 );
 
 
@@ -256,6 +285,36 @@ CREATE TABLE IF NOT EXISTS "public"."content_queue" (
 ALTER TABLE "public"."content_queue" OWNER TO "postgres";
 
 
+CREATE TABLE IF NOT EXISTS "public"."order_items" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "order_id" "uuid" NOT NULL,
+    "product_id" "uuid",
+    "product_name" "text" NOT NULL,
+    "quantity" integer NOT NULL,
+    "unit_price" numeric(10,2) NOT NULL
+);
+
+
+ALTER TABLE "public"."order_items" OWNER TO "postgres";
+
+
+CREATE TABLE IF NOT EXISTS "public"."orders" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "organization_id" "uuid" NOT NULL,
+    "user_id" "uuid",
+    "customer_email" "text" NOT NULL,
+    "customer_details" "jsonb",
+    "total_amount" numeric(10,2) NOT NULL,
+    "status" "text" DEFAULT 'pending'::"text",
+    "payment_method" "text",
+    "payment_id" "text",
+    "created_at" timestamp with time zone DEFAULT "now"()
+);
+
+
+ALTER TABLE "public"."orders" OWNER TO "postgres";
+
+
 CREATE TABLE IF NOT EXISTS "public"."organizations" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "name" "text" NOT NULL,
@@ -288,6 +347,25 @@ CREATE TABLE IF NOT EXISTS "public"."posts" (
 
 
 ALTER TABLE "public"."posts" OWNER TO "postgres";
+
+
+CREATE TABLE IF NOT EXISTS "public"."products" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "organization_id" "uuid" NOT NULL,
+    "slug" "text" NOT NULL,
+    "name" "text" NOT NULL,
+    "description" "text",
+    "price" numeric(10,2) DEFAULT 0 NOT NULL,
+    "currency" "text" DEFAULT 'EUR'::"text",
+    "stock" integer DEFAULT 0,
+    "images" "text"[],
+    "metadata" "jsonb" DEFAULT '{}'::"jsonb",
+    "active" boolean DEFAULT true,
+    "created_at" timestamp with time zone DEFAULT "now"()
+);
+
+
+ALTER TABLE "public"."products" OWNER TO "postgres";
 
 
 CREATE TABLE IF NOT EXISTS "public"."profiles" (
@@ -326,6 +404,20 @@ CREATE TABLE IF NOT EXISTS "public"."projects" (
 ALTER TABLE "public"."projects" OWNER TO "postgres";
 
 
+CREATE TABLE IF NOT EXISTS "public"."schedules" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "organization_id" "uuid" NOT NULL,
+    "day_of_week" integer NOT NULL,
+    "start_time" time without time zone NOT NULL,
+    "end_time" time without time zone NOT NULL,
+    "is_active" boolean DEFAULT true,
+    "created_at" timestamp with time zone DEFAULT "now"()
+);
+
+
+ALTER TABLE "public"."schedules" OWNER TO "postgres";
+
+
 CREATE TABLE IF NOT EXISTS "public"."services" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "organization_id" "uuid" NOT NULL,
@@ -334,7 +426,8 @@ CREATE TABLE IF NOT EXISTS "public"."services" (
     "duration_minutes" integer DEFAULT 60,
     "price" numeric(10,2) DEFAULT 0,
     "active" boolean DEFAULT true,
-    "created_at" timestamp with time zone DEFAULT "now"()
+    "created_at" timestamp with time zone DEFAULT "now"(),
+    "form_schema" "jsonb" DEFAULT '[]'::"jsonb"
 );
 
 
@@ -369,6 +462,11 @@ ALTER TABLE ONLY "public"."analytics_visitors"
 
 
 
+ALTER TABLE ONLY "public"."blocked_dates"
+    ADD CONSTRAINT "blocked_dates_pkey" PRIMARY KEY ("id");
+
+
+
 ALTER TABLE ONLY "public"."bookings"
     ADD CONSTRAINT "bookings_pkey" PRIMARY KEY ("id");
 
@@ -381,6 +479,16 @@ ALTER TABLE ONLY "public"."contact_leads"
 
 ALTER TABLE ONLY "public"."content_queue"
     ADD CONSTRAINT "content_queue_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."order_items"
+    ADD CONSTRAINT "order_items_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."orders"
+    ADD CONSTRAINT "orders_pkey" PRIMARY KEY ("id");
 
 
 
@@ -409,6 +517,16 @@ ALTER TABLE ONLY "public"."posts"
 
 
 
+ALTER TABLE ONLY "public"."products"
+    ADD CONSTRAINT "products_organization_id_slug_key" UNIQUE ("organization_id", "slug");
+
+
+
+ALTER TABLE ONLY "public"."products"
+    ADD CONSTRAINT "products_pkey" PRIMARY KEY ("id");
+
+
+
 ALTER TABLE ONLY "public"."profiles"
     ADD CONSTRAINT "profiles_pkey" PRIMARY KEY ("id", "organization_id");
 
@@ -416,6 +534,11 @@ ALTER TABLE ONLY "public"."profiles"
 
 ALTER TABLE ONLY "public"."projects"
     ADD CONSTRAINT "projects_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."schedules"
+    ADD CONSTRAINT "schedules_pkey" PRIMARY KEY ("id");
 
 
 
@@ -477,6 +600,11 @@ CREATE INDEX "idx_web_audits_user_id" ON "public"."web_audits" USING "btree" ("u
 
 
 
+ALTER TABLE ONLY "public"."blocked_dates"
+    ADD CONSTRAINT "blocked_dates_organization_id_fkey" FOREIGN KEY ("organization_id") REFERENCES "public"."organizations"("id");
+
+
+
 ALTER TABLE ONLY "public"."bookings"
     ADD CONSTRAINT "bookings_organization_id_fkey" FOREIGN KEY ("organization_id") REFERENCES "public"."organizations"("id");
 
@@ -497,8 +625,33 @@ ALTER TABLE ONLY "public"."content_queue"
 
 
 
+ALTER TABLE ONLY "public"."order_items"
+    ADD CONSTRAINT "order_items_order_id_fkey" FOREIGN KEY ("order_id") REFERENCES "public"."orders"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."order_items"
+    ADD CONSTRAINT "order_items_product_id_fkey" FOREIGN KEY ("product_id") REFERENCES "public"."products"("id");
+
+
+
+ALTER TABLE ONLY "public"."orders"
+    ADD CONSTRAINT "orders_organization_id_fkey" FOREIGN KEY ("organization_id") REFERENCES "public"."organizations"("id");
+
+
+
+ALTER TABLE ONLY "public"."orders"
+    ADD CONSTRAINT "orders_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "auth"."users"("id");
+
+
+
 ALTER TABLE ONLY "public"."posts"
     ADD CONSTRAINT "posts_organization_id_fkey" FOREIGN KEY ("organization_id") REFERENCES "public"."organizations"("id");
+
+
+
+ALTER TABLE ONLY "public"."products"
+    ADD CONSTRAINT "products_organization_id_fkey" FOREIGN KEY ("organization_id") REFERENCES "public"."organizations"("id");
 
 
 
@@ -522,6 +675,11 @@ ALTER TABLE ONLY "public"."projects"
 
 
 
+ALTER TABLE ONLY "public"."schedules"
+    ADD CONSTRAINT "schedules_organization_id_fkey" FOREIGN KEY ("organization_id") REFERENCES "public"."organizations"("id");
+
+
+
 ALTER TABLE ONLY "public"."services"
     ADD CONSTRAINT "services_organization_id_fkey" FOREIGN KEY ("organization_id") REFERENCES "public"."organizations"("id");
 
@@ -541,7 +699,25 @@ CREATE POLICY "Admin Select Only" ON "public"."analytics_events" FOR SELECT TO "
 
 
 
+CREATE POLICY "Admins can delete products" ON "public"."products" FOR DELETE USING ((EXISTS ( SELECT 1
+   FROM "public"."profiles"
+  WHERE (("profiles"."id" = "auth"."uid"()) AND ("profiles"."role" = 'admin'::"public"."user_role") AND ("profiles"."organization_id" = "products"."organization_id")))));
+
+
+
+CREATE POLICY "Admins can insert products" ON "public"."products" FOR INSERT WITH CHECK ((EXISTS ( SELECT 1
+   FROM "public"."profiles"
+  WHERE (("profiles"."id" = "auth"."uid"()) AND ("profiles"."role" = 'admin'::"public"."user_role") AND ("profiles"."organization_id" = "products"."organization_id")))));
+
+
+
 CREATE POLICY "Admins can manage all projects" ON "public"."projects" USING (("public"."is_admin"() = true));
+
+
+
+CREATE POLICY "Admins can update products" ON "public"."products" FOR UPDATE USING ((EXISTS ( SELECT 1
+   FROM "public"."profiles"
+  WHERE (("profiles"."id" = "auth"."uid"()) AND ("profiles"."role" = 'admin'::"public"."user_role") AND ("profiles"."organization_id" = "products"."organization_id")))));
 
 
 
@@ -593,6 +769,18 @@ CREATE POLICY "Public create booking" ON "public"."bookings" FOR INSERT WITH CHE
 
 
 
+CREATE POLICY "Public create items" ON "public"."order_items" FOR INSERT WITH CHECK (true);
+
+
+
+CREATE POLICY "Public create orders" ON "public"."orders" FOR INSERT WITH CHECK (true);
+
+
+
+CREATE POLICY "Public read products" ON "public"."products" FOR SELECT USING (("active" = true));
+
+
+
 CREATE POLICY "Public read published posts" ON "public"."posts" FOR SELECT USING (("status" = 'published'::"public"."post_status"));
 
 
@@ -614,6 +802,12 @@ CREATE POLICY "Users can update own profile" ON "public"."profiles" FOR UPDATE U
 
 
 CREATE POLICY "Users can update their own audits" ON "public"."web_audits" FOR UPDATE USING (("auth"."uid"() = "user_id"));
+
+
+
+CREATE POLICY "Users can view own orders" ON "public"."orders" FOR SELECT USING ((("auth"."uid"() = "user_id") OR (EXISTS ( SELECT 1
+   FROM "public"."profiles"
+  WHERE (("profiles"."id" = "auth"."uid"()) AND ("profiles"."role" = 'admin'::"public"."user_role"))))));
 
 
 
@@ -639,10 +833,19 @@ ALTER TABLE "public"."analytics_events" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "public"."analytics_visitors" ENABLE ROW LEVEL SECURITY;
 
 
+ALTER TABLE "public"."blocked_dates" ENABLE ROW LEVEL SECURITY;
+
+
 ALTER TABLE "public"."bookings" ENABLE ROW LEVEL SECURITY;
 
 
 ALTER TABLE "public"."contact_leads" ENABLE ROW LEVEL SECURITY;
+
+
+ALTER TABLE "public"."order_items" ENABLE ROW LEVEL SECURITY;
+
+
+ALTER TABLE "public"."orders" ENABLE ROW LEVEL SECURITY;
 
 
 ALTER TABLE "public"."organizations" ENABLE ROW LEVEL SECURITY;
@@ -651,10 +854,16 @@ ALTER TABLE "public"."organizations" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "public"."posts" ENABLE ROW LEVEL SECURITY;
 
 
+ALTER TABLE "public"."products" ENABLE ROW LEVEL SECURITY;
+
+
 ALTER TABLE "public"."profiles" ENABLE ROW LEVEL SECURITY;
 
 
 ALTER TABLE "public"."projects" ENABLE ROW LEVEL SECURITY;
+
+
+ALTER TABLE "public"."schedules" ENABLE ROW LEVEL SECURITY;
 
 
 ALTER TABLE "public"."services" ENABLE ROW LEVEL SECURITY;
@@ -667,6 +876,12 @@ GRANT USAGE ON SCHEMA "public" TO "postgres";
 GRANT USAGE ON SCHEMA "public" TO "anon";
 GRANT USAGE ON SCHEMA "public" TO "authenticated";
 GRANT USAGE ON SCHEMA "public" TO "service_role";
+
+
+
+GRANT ALL ON FUNCTION "public"."decrement_stock"("p_product_id" "uuid", "p_quantity" integer) TO "anon";
+GRANT ALL ON FUNCTION "public"."decrement_stock"("p_product_id" "uuid", "p_quantity" integer) TO "authenticated";
+GRANT ALL ON FUNCTION "public"."decrement_stock"("p_product_id" "uuid", "p_quantity" integer) TO "service_role";
 
 
 
@@ -712,6 +927,12 @@ GRANT ALL ON TABLE "public"."analytics_visitors" TO "service_role";
 
 
 
+GRANT ALL ON TABLE "public"."blocked_dates" TO "anon";
+GRANT ALL ON TABLE "public"."blocked_dates" TO "authenticated";
+GRANT ALL ON TABLE "public"."blocked_dates" TO "service_role";
+
+
+
 GRANT ALL ON TABLE "public"."bookings" TO "anon";
 GRANT ALL ON TABLE "public"."bookings" TO "authenticated";
 GRANT ALL ON TABLE "public"."bookings" TO "service_role";
@@ -730,6 +951,18 @@ GRANT ALL ON TABLE "public"."content_queue" TO "service_role";
 
 
 
+GRANT ALL ON TABLE "public"."order_items" TO "anon";
+GRANT ALL ON TABLE "public"."order_items" TO "authenticated";
+GRANT ALL ON TABLE "public"."order_items" TO "service_role";
+
+
+
+GRANT ALL ON TABLE "public"."orders" TO "anon";
+GRANT ALL ON TABLE "public"."orders" TO "authenticated";
+GRANT ALL ON TABLE "public"."orders" TO "service_role";
+
+
+
 GRANT ALL ON TABLE "public"."organizations" TO "anon";
 GRANT ALL ON TABLE "public"."organizations" TO "authenticated";
 GRANT ALL ON TABLE "public"."organizations" TO "service_role";
@@ -742,6 +975,12 @@ GRANT ALL ON TABLE "public"."posts" TO "service_role";
 
 
 
+GRANT ALL ON TABLE "public"."products" TO "anon";
+GRANT ALL ON TABLE "public"."products" TO "authenticated";
+GRANT ALL ON TABLE "public"."products" TO "service_role";
+
+
+
 GRANT ALL ON TABLE "public"."profiles" TO "anon";
 GRANT ALL ON TABLE "public"."profiles" TO "authenticated";
 GRANT ALL ON TABLE "public"."profiles" TO "service_role";
@@ -751,6 +990,12 @@ GRANT ALL ON TABLE "public"."profiles" TO "service_role";
 GRANT ALL ON TABLE "public"."projects" TO "anon";
 GRANT ALL ON TABLE "public"."projects" TO "authenticated";
 GRANT ALL ON TABLE "public"."projects" TO "service_role";
+
+
+
+GRANT ALL ON TABLE "public"."schedules" TO "anon";
+GRANT ALL ON TABLE "public"."schedules" TO "authenticated";
+GRANT ALL ON TABLE "public"."schedules" TO "service_role";
 
 
 
@@ -796,6 +1041,6 @@ ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public" GRANT ALL ON TAB
 
 
 
-\unrestrict cBhYUfZepMzkonuEwlSpCCaRE6mGqq721FiXkhUwhu23cOSP0Ik9Jx5Ge6ZozV5
+\unrestrict IsVoGS2obDeJJYu80qPQsHEIBebxbxLbRW5k49r9zG7MbJny9hu1lXQ5R4LiLPO
 
 RESET ALL;

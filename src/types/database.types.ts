@@ -12,6 +12,31 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "13.0.5"
   }
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
   public: {
     Tables: {
       analytics_events: {
@@ -89,12 +114,45 @@ export type Database = {
         }
         Relationships: []
       }
+      blocked_dates: {
+        Row: {
+          created_at: string | null
+          date: string
+          id: string
+          organization_id: string
+          reason: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          date: string
+          id?: string
+          organization_id: string
+          reason?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          date?: string
+          id?: string
+          organization_id?: string
+          reason?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blocked_dates_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bookings: {
         Row: {
           created_at: string | null
           customer_email: string
           customer_name: string
           end_time: string
+          form_data: Json | null
           id: string
           organization_id: string
           service_id: string
@@ -107,6 +165,7 @@ export type Database = {
           customer_email: string
           customer_name: string
           end_time: string
+          form_data?: Json | null
           id?: string
           organization_id: string
           service_id: string
@@ -119,6 +178,7 @@ export type Database = {
           customer_email?: string
           customer_name?: string
           end_time?: string
+          form_data?: Json | null
           id?: string
           organization_id?: string
           service_id?: string
@@ -217,6 +277,95 @@ export type Database = {
           },
         ]
       }
+      order_items: {
+        Row: {
+          id: string
+          order_id: string
+          product_id: string | null
+          product_name: string
+          quantity: number
+          unit_price: number
+        }
+        Insert: {
+          id?: string
+          order_id: string
+          product_id?: string | null
+          product_name: string
+          quantity: number
+          unit_price: number
+        }
+        Update: {
+          id?: string
+          order_id?: string
+          product_id?: string | null
+          product_name?: string
+          quantity?: number
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          created_at: string | null
+          customer_details: Json | null
+          customer_email: string
+          id: string
+          organization_id: string
+          payment_id: string | null
+          payment_method: string | null
+          status: string | null
+          total_amount: number
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          customer_details?: Json | null
+          customer_email: string
+          id?: string
+          organization_id: string
+          payment_id?: string | null
+          payment_method?: string | null
+          status?: string | null
+          total_amount: number
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          customer_details?: Json | null
+          customer_email?: string
+          id?: string
+          organization_id?: string
+          payment_id?: string | null
+          payment_method?: string | null
+          status?: string | null
+          total_amount?: number
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       organizations: {
         Row: {
           branding_config: Json | null
@@ -296,6 +445,59 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "posts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      products: {
+        Row: {
+          active: boolean | null
+          created_at: string | null
+          currency: string | null
+          description: string | null
+          id: string
+          images: string[] | null
+          metadata: Json | null
+          name: string
+          organization_id: string
+          price: number
+          slug: string
+          stock: number | null
+        }
+        Insert: {
+          active?: boolean | null
+          created_at?: string | null
+          currency?: string | null
+          description?: string | null
+          id?: string
+          images?: string[] | null
+          metadata?: Json | null
+          name: string
+          organization_id: string
+          price?: number
+          slug: string
+          stock?: number | null
+        }
+        Update: {
+          active?: boolean | null
+          created_at?: string | null
+          currency?: string | null
+          description?: string | null
+          id?: string
+          images?: string[] | null
+          metadata?: Json | null
+          name?: string
+          organization_id?: string
+          price?: number
+          slug?: string
+          stock?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
@@ -403,12 +605,51 @@ export type Database = {
           },
         ]
       }
+      schedules: {
+        Row: {
+          created_at: string | null
+          day_of_week: number
+          end_time: string
+          id: string
+          is_active: boolean | null
+          organization_id: string
+          start_time: string
+        }
+        Insert: {
+          created_at?: string | null
+          day_of_week: number
+          end_time: string
+          id?: string
+          is_active?: boolean | null
+          organization_id: string
+          start_time: string
+        }
+        Update: {
+          created_at?: string | null
+          day_of_week?: number
+          end_time?: string
+          id?: string
+          is_active?: boolean | null
+          organization_id?: string
+          start_time?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "schedules_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       services: {
         Row: {
           active: boolean | null
           created_at: string | null
           description: string | null
           duration_minutes: number | null
+          form_schema: Json | null
           id: string
           organization_id: string
           price: number | null
@@ -419,6 +660,7 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           duration_minutes?: number | null
+          form_schema?: Json | null
           id?: string
           organization_id: string
           price?: number | null
@@ -429,6 +671,7 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           duration_minutes?: number | null
+          form_schema?: Json | null
           id?: string
           organization_id?: string
           price?: number | null
@@ -440,6 +683,149 @@ export type Database = {
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      test_assignments: {
+        Row: {
+          assigned_at: string | null
+          campaign_id: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          assigned_at?: string | null
+          campaign_id: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          assigned_at?: string | null
+          campaign_id?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "test_assignments_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "test_campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      test_campaigns: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          instructions: string | null
+          project_id: string
+          status: string | null
+          title: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          instructions?: string | null
+          project_id: string
+          status?: string | null
+          title: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          instructions?: string | null
+          project_id?: string
+          status?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "test_campaigns_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      test_results: {
+        Row: {
+          comment: string | null
+          created_at: string | null
+          device_info: string | null
+          id: string
+          status: string
+          task_id: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string | null
+          device_info?: string | null
+          id?: string
+          status: string
+          task_id: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string | null
+          device_info?: string | null
+          id?: string
+          status?: string
+          task_id?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "test_results_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "test_tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      test_tasks: {
+        Row: {
+          campaign_id: string
+          description: string | null
+          expected_result: string | null
+          id: string
+          order_index: number | null
+          title: string
+        }
+        Insert: {
+          campaign_id: string
+          description?: string | null
+          expected_result?: string | null
+          id?: string
+          order_index?: number | null
+          title: string
+        }
+        Update: {
+          campaign_id?: string
+          description?: string | null
+          expected_result?: string | null
+          id?: string
+          order_index?: number | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "test_tasks_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "test_campaigns"
             referencedColumns: ["id"]
           },
         ]
@@ -499,6 +885,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      decrement_stock: {
+        Args: { p_product_id: string; p_quantity: number }
+        Returns: undefined
+      }
       get_my_org_id: { Args: never; Returns: string }
       get_my_org_ids: { Args: never; Returns: string[] }
       is_admin: { Args: never; Returns: boolean }
@@ -508,7 +898,7 @@ export type Database = {
       content_status: "queued" | "generating" | "review" | "published"
       post_status: "draft" | "published" | "archived"
       project_status: "pending" | "active" | "maintenance" | "archived"
-      user_role: "admin" | "client" | "lead"
+      user_role: "admin" | "client" | "lead" | "staff"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -634,13 +1024,16 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {
       audit_status: ["processing", "completed", "failed"],
       content_status: ["queued", "generating", "review", "published"],
       post_status: ["draft", "published", "archived"],
       project_status: ["pending", "active", "maintenance", "archived"],
-      user_role: ["admin", "client", "lead"],
+      user_role: ["admin", "client", "lead", "staff"],
     },
   },
 } as const
