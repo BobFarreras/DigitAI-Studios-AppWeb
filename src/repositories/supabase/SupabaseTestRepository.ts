@@ -1,10 +1,9 @@
 import { createClient, createAdminClient } from '@/lib/supabase/server';
 import { Database } from '@/types/database.types';
 import { CampaignContext, TestCampaignDTO, TestTaskDTO, TestResultDTO, TesterProfile } from '@/types/models';
-// Tipus base de les taules
+
 type TestCampaignRow = Database['public']['Tables']['test_campaigns']['Row'];
 
-// 1. Definim l'estructura EXACTA que retorna la query de Supabase
 type CampaignQueryResponse = TestCampaignRow & {
   projects: { name: string; domain: string | null } | null;
   test_tasks: {
@@ -12,10 +11,12 @@ type CampaignQueryResponse = TestCampaignRow & {
     test_results: { count: number }[];
   }[];
 };
+
 export class SupabaseTestRepository {
 
+  // A. Context del Test (Admin o User)
   async getCampaignWithContext(campaignId: string, userId: string): Promise<CampaignContext> {
-    const supabase = await createClient();
+    const supabase = createAdminClient();
 
     // 1. Campanya
     const { data: campaignData } = await supabase
@@ -41,7 +42,7 @@ export class SupabaseTestRepository {
       .in('task_id', taskIds)
       .eq('user_id', userId);
 
-    // Mapeig manual per assegurar tipus (evitar errors de nulls)
+    // Mapeig
     const campaign: TestCampaignDTO = {
       id: campaignData.id,
       projectId: campaignData.project_id,
@@ -72,8 +73,10 @@ export class SupabaseTestRepository {
     return { campaign, tasks, results };
   }
 
+  // --- MÈTODES D'ESCRIPTURA ---
+
   async saveResult(userId: string, taskId: string, status: string, comment: string) {
-    const supabase = await createClient();
+    const supabase = await createClient(); // Usuari normal
     return supabase.from('test_results').upsert({
       user_id: userId,
       task_id: taskId,
@@ -82,10 +85,9 @@ export class SupabaseTestRepository {
       updated_at: new Date().toISOString()
     }, { onConflict: 'task_id, user_id' });
   }
-  
-  // E. Crear una Tasca (Admin)
+
   async createTask(data: { campaignId: string; title: string; description?: string; orderIndex: number }) {
-    const supabase = createAdminClient(); // <--- CANVIAT (Abans createClient)
+    const supabase = createAdminClient();
     return supabase.from('test_tasks').insert({
       campaign_id: data.campaignId,
       title: data.title,
@@ -94,64 +96,68 @@ export class SupabaseTestRepository {
     }).select().single();
   }
 
-  // F. Esborrar Tasca (Admin)
   async deleteTask(taskId: string) {
-    const supabase = createAdminClient(); // <--- CANVIAT
+    const supabase = createAdminClient();
     return supabase.from('test_tasks').delete().eq('id', taskId);
   }
 
-  // G. Reordenar Tasques
   async reorderTasks(tasks: { id: string; order_index: number }[]) {
-    const supabase = createAdminClient(); // <--- CANVIAT
+    const supabase = createAdminClient();
     for (const t of tasks) {
       await supabase.from('test_tasks').update({ order_index: t.order_index }).eq('id', t.id);
     }
   }
-  // C. Assignar Usuari
+
   async assignTester(campaignId: string, userId: string) {
-    const supabase = await createClient();
+    const supabase = createAdminClient();
     return supabase.from('test_assignments').insert({
       campaign_id: campaignId,
       user_id: userId
     });
   }
 
-  // D. Eliminar Usuari
   async removeTester(campaignId: string, userId: string) {
-    const supabase = await createClient();
+    const supabase = createAdminClient();
     return supabase.from('test_assignments').delete()
       .eq('campaign_id', campaignId)
       .eq('user_id', userId);
   }
 
-  // A. Obtenir totes les campanyes (amb estadístiques calculades)
-  // A. Obtenir totes les campanyes (amb estadístiques calculades)
-  async getAllCampaignsForAdmin() {
-    const supabase = await createClient();
+  async createCampaign(data: { projectId: string; title: string; description: string; instructions: string }) {
+    const supabase = createAdminClient();
+    return supabase.from('test_campaigns').insert({
+      project_id: data.projectId,
+      title: data.title,
+      description: data.description,
+      instructions: data.instructions,
+      status: 'active'
+    }).select().single();
+  }
 
+  async updateCampaign(id: string, data: { title?: string; description?: string; instructions?: string; status?: string }) {
+    const supabase = createAdminClient();
+    return supabase.from('test_campaigns').update(data).eq('id', id);
+  }
+
+  // --- MÈTODES DE LECTURA (Corregits amb Manual Join) ---
+
+  async getAllCampaignsForAdmin() {
+    const supabase = createAdminClient();
     const { data, error } = await supabase
       .from('test_campaigns')
       .select(`
         *,
         projects(name, domain),
-        test_tasks (
-          id,
-          test_results (count)
-        )
+        test_tasks ( id, test_results (count) )
       `)
       .order('created_at', { ascending: false });
 
     if (error) throw new Error(error.message);
 
-    // 2. Fem el cast segur a la nostra interfície
-    // Això elimina la necessitat d'usar 'any' més endavant
     const typedData = data as unknown as CampaignQueryResponse[];
 
-    // 3. Processem les dades amb tipatge fort
     return typedData.map((camp) => {
-      // Ara TypeScript sap que 'camp.test_tasks' existeix i és un array
       const totalResults = camp.test_tasks?.reduce((acc, task) => {
-        // I sap que 'task.test_results' és un array d'objectes amb 'count'
         const count = task.test_results?.[0]?.count || 0;
         return acc + count;
       }, 0) || 0;
@@ -166,28 +172,8 @@ export class SupabaseTestRepository {
     });
   }
 
-  // B. Crear nova campanya
-  async createCampaign(data: { projectId: string; title: string; description: string; instructions: string }) {
-    const supabase = await createClient();
-    return supabase.from('test_campaigns').insert({
-      project_id: data.projectId,
-      title: data.title,
-      description: data.description,
-      instructions: data.instructions,
-      status: 'active'
-    }).select().single();
-  }
-
-  // G. Actualitzar Campanya (Admin)
-  async updateCampaign(id: string, data: { title?: string; description?: string; instructions?: string; status?: string }) {
-    const supabase = createAdminClient(); // Usem AdminClient per assegurar permisos d'escriptura
-    return supabase.from('test_campaigns').update(data).eq('id', id);
-  }
-
-  // H. Obtenir Campanyes per Projecte (Vista Admin)
   async getCampaignsByProject(projectId: string) {
-    const supabase = await createClient();
-
+    const supabase = createAdminClient();
     const { data, error } = await supabase
       .from('test_campaigns')
       .select(`
@@ -200,7 +186,6 @@ export class SupabaseTestRepository {
 
     if (error) return [];
 
-    // Mapegem per tenir dades netes
     return data.map(camp => ({
       id: camp.id,
       title: camp.title,
@@ -211,39 +196,82 @@ export class SupabaseTestRepository {
     }));
   }
 
-  // A. Llistar tots els usuaris disponibles
+  // A. Llistar tots els usuaris (Legacy - potser ja no s'usa)
   async getAvailableTesters(): Promise<TesterProfile[]> {
-    // 🔥 CANVI CLAU: AdminClient
     const supabase = createAdminClient();
-
     const { data } = await supabase
       .from('profiles')
       .select('id, email, full_name, avatar_url')
-      .neq('role', 'admin') // Opcional: filtrar admins
+      .neq('role', 'admin')
       .order('email');
     return data || [];
   }
 
-  // B. Llistar testers assignats
+  // src/repositories/supabase/SupabaseTestRepository.ts
+
+  // ...
+
+  // B. Llistar testers assignats (i filtrar duplicats per OrgID implícitament agafant el primer)
   async getAssignedTesters(campaignId: string): Promise<TesterProfile[]> {
-    // 🔥 CANVI CLAU: AdminClient
     const supabase = createAdminClient();
 
-    const { data } = await supabase
+    const { data: assignments } = await supabase
       .from('test_assignments')
-      .select(`
-        user_id,
-        profiles:user_id (
-          id, email, full_name, avatar_url
-        )
-      `)
+      .select('user_id')
       .eq('campaign_id', campaignId);
 
-    // ... (resta del codi de mapeig igual) ...
-    // Recorda mantenir la lògica de tipus que vam arreglar abans
-    type AssignmentRow = { user_id: string; profiles: TesterProfile | null; };
-    const rows = data as unknown as AssignmentRow[] | null;
-    return rows?.map((item) => item.profiles).filter((p): p is TesterProfile => p !== null) || [];
+    if (!assignments || assignments.length === 0) return [];
+
+    const userIds = assignments.map(a => a.user_id);
+    const { data: profiles } = await supabase
+      .from('profiles')
+      .select('id, email, full_name, avatar_url')
+      .in('id', userIds);
+
+    // Netejar duplicats en JS (el mètode ràpid)
+    const uniqueMap = new Map();
+    profiles?.forEach(p => {
+      if (!uniqueMap.has(p.id)) uniqueMap.set(p.id, p);
+    });
+
+    return Array.from(uniqueMap.values());
+  }
+
+  // D. Obtenir candidats vàlids per a un test
+  async getProjectMembersForTest(campaignId: string, projectId: string, organizationId: string): Promise<TesterProfile[]> {
+    const supabase = createAdminClient();
+
+    // 1. Membres del Projecte (IDs)
+    const { data: projectMembers } = await supabase
+      .from('project_members')
+      .select('user_id')
+      .eq('project_id', projectId);
+
+    if (!projectMembers || projectMembers.length === 0) return [];
+
+    // 2. Membres del Test (per excloure)
+    const { data: testMembers } = await supabase
+      .from('test_assignments')
+      .select('user_id')
+      .eq('campaign_id', campaignId);
+
+    const assignedIds = new Set(testMembers?.map(t => t.user_id));
+
+    // 3. Filtrar IDs
+    const candidateIds = projectMembers
+      .map(pm => pm.user_id)
+      .filter(uid => !assignedIds.has(uid));
+
+    if (candidateIds.length === 0) return [];
+
+    // 4. Obtenir perfils (FILTRANT PER ORGANITZACIÓ)
+    const { data: profiles } = await supabase
+      .from('profiles')
+      .select('id, email, full_name, avatar_url')
+      .in('id', candidateIds)
+      .eq('organization_id', organizationId); // 👈 Filtre clau
+
+    return profiles || [];
   }
 
 

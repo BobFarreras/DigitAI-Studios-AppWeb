@@ -2,23 +2,36 @@ import { SupabaseTestRepository } from '@/repositories/supabase/SupabaseTestRepo
 import { requireAdmin } from '@/lib/auth/admin-guard';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { TesterManager } from '@/features/tests/ui/TesterManager'; // Ja el tens
+import { TesterManager } from '@/features/tests/ui/TesterManager';
 import { VisualFlowBuilder } from '@/features/tests/ui/VisualFlowBuilder';
 import { CampaignDetailsForm } from '@/features/tests/ui/CampaignDetailsForm';
+import { createClient } from '@/lib/supabase/server';
 
 export default async function AdminTestDetailPage({ params }: { params: Promise<{ id: string }> }) {
   await requireAdmin();
   const { id } = await params;
   const repo = new SupabaseTestRepository();
+  // 🔥 CORRECCIÓ: Afegit 'await'
+  const supabase = await createClient(); 
 
-  // Obtenim totes les dades necessàries en paral·lel
-  const [assigned, available, ctx] = await Promise.all([
-    repo.getAssignedTesters(id),
-    repo.getAvailableTesters(),
-    repo.getCampaignWithContext(id, 'admin') // 'admin' és un ID fictici aquí només per carregar l'estructura
-  ]);
-
+  // 1. Context de la Campanya
+  const ctx = await repo.getCampaignWithContext(id, 'admin');
   if (!ctx.campaign) return <div>Campanya no trobada</div>;
+
+  // 2. Busquem el Projecte per saber l'Organització
+  const { data: project } = await supabase
+    .from('projects')
+    .select('organization_id')
+    .eq('id', ctx.campaign.projectId)
+    .single();
+
+  if (!project || !project.organization_id) return <div>Error d'integritat: Projecte sense organització</div>;
+
+  // 3. Carreguem les llistes amb el filtre d'organització
+  const [assigned, available] = await Promise.all([
+    repo.getAssignedTesters(id),
+    repo.getProjectMembersForTest(id, ctx.campaign.projectId, project.organization_id)
+  ]);
 
   return (
     <div className="p-6 max-w-6xl mx-auto space-y-6">
@@ -41,18 +54,14 @@ export default async function AdminTestDetailPage({ params }: { params: Promise<
           <TabsTrigger value="team">👥 Equip de Testers</TabsTrigger>
         </TabsList>
 
-        {/* 1. DOCUMENTACIÓ */}
         <TabsContent value="details" className="mt-6">
           <CampaignDetailsForm campaign={ctx.campaign} />
         </TabsContent>
 
-        {/* 2. TASQUES (FORMULARI VISUAL) */}
         <TabsContent value="tasks" className="mt-6">
-          {/* Substituïm TaskManager per VisualFlowBuilder */}
           <VisualFlowBuilder campaignId={id} tasks={ctx.tasks} />
         </TabsContent>
 
-        {/* 3. EQUIP */}
         <TabsContent value="team" className="mt-6">
           <Card className="bg-slate-900 border-slate-800">
             <CardHeader><CardTitle>Assignar Usuaris</CardTitle></CardHeader>

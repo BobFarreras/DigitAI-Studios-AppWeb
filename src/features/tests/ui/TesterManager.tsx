@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useMemo } from 'react'; // 👈 Importa useMemo
+import { useState, useMemo } from 'react';
 import { TesterProfile } from '@/types/models';
-import { addTesterAction, removeTesterAction } from '@/features/tests/actions/admin-actions'; // 👈 Assegura el path
+import { addTesterAction, removeTesterAction } from '@/features/tests/actions/admin-actions';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Trash2, UserPlus, Search, Check } from 'lucide-react';
@@ -18,22 +18,15 @@ export function TesterManager({ campaignId, assignedTesters, availableTesters }:
   const [searchTerm, setSearchTerm] = useState('');
   const [isPending, setIsPending] = useState(false);
 
-  // 🛡️ CORRECCIÓ: Usem useMemo per calcular la llista de candidats de forma segura
   const filteredCandidates = useMemo(() => {
-    // 1. Creem un Set amb els IDs ja assignats per cerca ràpida O(1)
     const assignedIds = new Set(assignedTesters.map(t => t.id));
-
-    // 2. Filtrem:
-    // - Que no estigui ja assignat
-    // - Que coincideixi amb el terme de cerca (si n'hi ha)
-    // - 🛡️ EXTRA: Ens assegurem que no hi hagi duplicats a la llista 'available' d'origen
-    const uniqueCandidates = new Map(); // Use Map to dedup by ID
+    const uniqueCandidates = new Map();
 
     availableTesters.forEach(u => {
-        if (assignedIds.has(u.id)) return; // Ja assignat
+        if (assignedIds.has(u.id)) return;
+        if (searchTerm && !u.email.toLowerCase().includes(searchTerm.toLowerCase())) return;
         
-        if (searchTerm && !u.email.toLowerCase().includes(searchTerm.toLowerCase())) return; // No coincideix cerca
-
+        // Evitem duplicats a la llista de candidats també
         if (!uniqueCandidates.has(u.id)) {
             uniqueCandidates.set(u.id, u);
         }
@@ -52,7 +45,6 @@ export function TesterManager({ campaignId, assignedTesters, availableTesters }:
 
   const handleRemove = async (userId: string) => {
     if(!confirm("Segur que vols treure l'accés a aquest usuari?")) return;
-    
     setIsPending(true);
     const res = await removeTesterAction(campaignId, userId);
     if (res.success) toast.success(res.message);
@@ -74,9 +66,9 @@ export function TesterManager({ campaignId, assignedTesters, availableTesters }:
                     <p className="text-sm text-slate-500 italic">No hi ha ningú assignat encara.</p>
                 )}
                 
-                {assignedTesters.map(tester => (
-                    // 🛡️ Assegura't que tester.id és únic aquí també
-                    <div key={`assigned-${tester.id}`} className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-100 dark:border-slate-700">
+                {assignedTesters.map((tester, index) => (
+                    // ✅ CORRECCIÓ: Afegim l'index a la clau per fer-la única segur
+                    <div key={`assigned-${tester.id}-${index}`} className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-100 dark:border-slate-700">
                         <div className="flex items-center gap-3">
                             <Avatar className="h-8 w-8">
                                 <AvatarImage src={tester.avatar_url || ''} />
@@ -107,7 +99,6 @@ export function TesterManager({ campaignId, assignedTesters, availableTesters }:
                 <UserPlus className="w-5 h-5" /> Afegir Testers
             </h3>
 
-            {/* Cercador */}
             <div className="relative mb-4">
                 <Search className="absolute left-3 top-2.5 w-4 h-4 text-slate-400" />
                 <input 
@@ -125,8 +116,9 @@ export function TesterManager({ campaignId, assignedTesters, availableTesters }:
                         {searchTerm ? 'Cap resultat trobat.' : 'No hi ha candidats disponibles.'}
                     </p>
                 ) : (
-                    filteredCandidates.map(user => (
-                        <div key={`candidate-${user.id}`} className="flex items-center justify-between p-2 hover:bg-white dark:hover:bg-slate-800 rounded-lg transition-colors group cursor-pointer border border-transparent hover:border-slate-200 dark:hover:border-slate-700" onClick={() => handleAdd(user.id)}>
+                    filteredCandidates.map((user, index) => (
+                        // ✅ CORRECCIÓ: Afegim l'index a la clau aquí també
+                        <div key={`candidate-${user.id}-${index}`} className="flex items-center justify-between p-2 hover:bg-white dark:hover:bg-slate-800 rounded-lg transition-colors group cursor-pointer border border-transparent hover:border-slate-200 dark:hover:border-slate-700" onClick={() => handleAdd(user.id)}>
                             <div className="flex items-center gap-3">
                                 <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 flex items-center justify-center text-xs font-bold">
                                     {user.email?.[0]?.toUpperCase() || 'U'}

@@ -2,28 +2,28 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-// 👇 CANVI: Substituïm 'FlaskConical' per 'Beaker' (o 'TestTube2')
 import { LayoutDashboard, FileText, FolderKanban, Settings, LogOut, Sparkles, ShieldAlert } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { createClient } from '@/lib/supabase/client';
-import { useRouter } from '@/routing';
+// import { createClient } from '@/lib/supabase/client'; // ❌ Eliminem això
+// import { useRouter } from '@/routing'; // ❌ Eliminem això
 import { useTranslations } from 'next-intl';
+
+// 👇 1. Importem l'acció de servidor
+import { signOutAction } from '@/features/auth/actions/auth';
 
 interface SidebarProps {
   userRole: 'admin' | 'client' | 'lead';
 }
 
 export function Sidebar({ userRole }: SidebarProps) {
-  // ... (resta del codi igual: hooks, handleSignOut, handleClick...)
   const t = useTranslations('Sidebar');
   const pathname = usePathname();
-  const router = useRouter();
-  const supabase = createClient();
+  // const router = useRouter(); // ❌ Eliminat
+  // const supabase = createClient(); // ❌ Eliminat
 
+  // ✅ 2. Nova funció de Logout (molt més simple)
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    router.refresh();
-    router.push('/auth/login');
+    await signOutAction();
   };
 
   const handleClick = (e: React.MouseEvent, href: string, label: string) => {
@@ -37,11 +37,8 @@ export function Sidebar({ userRole }: SidebarProps) {
 
   const MENU_ITEMS = [
     { icon: LayoutDashboard, label: t('summary'), href: '/dashboard' },
-    // 👇 Canviem 'Projectes' perquè apunti al llistat
     { icon: FolderKanban, label: t('projects'), href: '/dashboard/projects' },
     { icon: FileText, label: t('audits'), href: '/dashboard/audits' },
-    // 👇 Canviem la icona aquí també
-   
     { icon: Settings, label: t('settings'), href: '#config' },
   ];
 
@@ -55,7 +52,6 @@ export function Sidebar({ userRole }: SidebarProps) {
 
   return (
     <aside className="w-64 h-screen bg-card border-r border-border flex flex-col sticky top-0 transition-colors duration-300">
-      {/* ... (resta del renderitzat igual) ... */}
       
       {/* LOGO AREA */}
       <div className="p-6 border-b border-border">
@@ -74,8 +70,6 @@ export function Sidebar({ userRole }: SidebarProps) {
           let isActive = false;
           
           if (!item.href.startsWith('#')) {
-            // Lògica simple: si estem a /dashboard/projects (o fills), marquem actiu Projectes O QA
-            // Això és un petit truc visual
             if (item.href === '/dashboard') {
                isActive = cleanPath === '/dashboard';
             } else {
@@ -121,6 +115,7 @@ export function Sidebar({ userRole }: SidebarProps) {
 
       {/* FOOTER */}
       <div className="p-4 border-t border-border">
+        {/* Utilitzem la nova funció handleSignOut */}
         <button onClick={handleSignOut} className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-red-500 hover:bg-red-500/10 transition-colors">
           <LogOut className="w-5 h-5" />
           {t('logout')}

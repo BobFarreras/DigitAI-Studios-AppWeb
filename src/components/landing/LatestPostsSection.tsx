@@ -14,7 +14,7 @@ export async function LatestPostsSection() {
 
   return (
     // FONS NEUTRE ADAPTABLE (bg-background)
-    <section className="py-24 bg-background relative overflow-hidden transition-colors duration-300">
+    <section id="LatestPostsSection" className="py-24 bg-background relative overflow-hidden transition-colors duration-300">
       
       {/* DECORACIÓ DE FONS */}
       <div className="absolute top-1/2 left-0 -translate-y-1/2 w-[500px] h-[500px] bg-primary/10 blur-[100px] rounded-full pointer-events-none opacity-50" />
