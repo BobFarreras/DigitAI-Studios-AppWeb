@@ -273,6 +273,14 @@ export class SupabaseTestRepository {
 
     return profiles || [];
   }
+  // I. Eliminar Campanya (Admin)
+  async deleteCampaign(campaignId: string) {
+    const supabase = createAdminClient(); // Admin per saltar restriccions
+    return supabase
+      .from('test_campaigns')
+      .delete()
+      .eq('id', campaignId);
+  }
 
 
 }

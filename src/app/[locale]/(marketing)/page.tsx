@@ -7,7 +7,7 @@ import { AuditSection } from '@/components/landing/AuditSection';
 import { TestimonialsSection } from '@/components/landing/TestimonialsSection';
 import { ContactSection } from '@/components/landing/ContactSection';
 import { LatestPostsSection } from '@/components/landing/LatestPostsSection';
-
+import { SolutionsShowcase } from '@/components/landing/SolutionsShowcase';
 // Importem les dades des del fitxer net
 import { TESTIMONIALS } from '@/lib/data';
 
@@ -20,6 +20,8 @@ export default function MarketingPage() {
       <HeroSection />
       <TechStackSection />
       <ProblemSolutionSection />
+      {/* 👇 NOVA SECCIÓ DE POTENCIAL */}
+      <SolutionsShowcase />
       <ServicesGrid />
       <ProductTeaser />
       <AuditSection />

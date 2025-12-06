@@ -8,12 +8,12 @@ import { CampaignDetailsForm } from '@/features/tests/ui/CampaignDetailsForm';
 import { createClient } from '@/lib/supabase/server';
 // 👇 1. Importem el nou component
 import { BackButton } from '@/components/ui/back-button';
-
+import { DeleteCampaignButton } from '@/features/tests/ui/DeleteCampaignButton';
 export default async function AdminTestDetailPage({ params }: { params: Promise<{ id: string }> }) {
   await requireAdmin();
   const { id } = await params;
   const repo = new SupabaseTestRepository();
-  const supabase = await createClient(); 
+  const supabase = await createClient();
 
   // 1. Context de la Campanya
   const ctx = await repo.getCampaignWithContext(id, 'admin');
@@ -41,19 +41,24 @@ export default async function AdminTestDetailPage({ params }: { params: Promise<
       <div className="flex flex-col gap-4">
         {/* 👇 2. Col·loquem el botó a dalt de tot. Passem el projectId per si cal. */}
         <div>
-            <BackButton projectId={ctx.campaign.projectId} />
+          <BackButton projectId={ctx.campaign.projectId} />
+          {/* 👇 BOTÓ D'ELIMINAR A LA DRETA */}
+          <DeleteCampaignButton
+            campaignId={ctx.campaign.id}
+            projectId={ctx.campaign.projectId}
+          />
         </div>
 
         <div className="flex justify-between items-center">
-            <div>
+          <div>
             <h1 className="text-3xl font-bold text-white flex items-center gap-3">
-                {ctx.campaign.title}
+              {ctx.campaign.title}
             </h1>
             <p className="text-slate-400 mt-1">Gestió integral de la prova</p>
-            </div>
-            <div className="bg-purple-900/50 text-purple-300 px-3 py-1 rounded text-xs font-mono border border-purple-500/30">
+          </div>
+          <div className="bg-purple-900/50 text-purple-300 px-3 py-1 rounded text-xs font-mono border border-purple-500/30">
             ID: {ctx.campaign.id.slice(0, 8)}
-            </div>
+          </div>
         </div>
       </div>
 

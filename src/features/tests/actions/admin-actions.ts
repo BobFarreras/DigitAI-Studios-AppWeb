@@ -145,3 +145,20 @@ export async function updateCampaignAction(
   revalidatePath(`/admin/tests/${id}`);
   return { success: true, message: 'Guardat correctament!' };
 }
+
+export async function deleteCampaignAction(campaignId: string, projectId: string) {
+  await requireAdmin();
+
+  const { error } = await repo.deleteCampaign(campaignId);
+
+  if (error) {
+    // Si falla, no podem fer gaire cosa més que llençar error o retornar-lo
+    throw new Error(error.message);
+  }
+
+  // Refresquem la pàgina del projecte perquè desaparegui de la llista
+  revalidatePath(`/admin/projects/${projectId}`);
+  
+  // Redirigim a la fitxa del projecte
+  redirect(`/admin/projects/${projectId}`);
+}

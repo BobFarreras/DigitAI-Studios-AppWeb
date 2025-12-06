@@ -5,12 +5,13 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { useTranslations } from 'next-intl';
-import { LanguageSwitcher } from '../layout/LanguageSwitcher';
+import { LanguageSwitcher } from '../layout/LanguageSwitcher'; // ⚠️ OJO AQUÍ
+
 export function DashboardHeader({ userEmail }: { userEmail?: string }) {
    const t = useTranslations('DashboardHeader');
 
    return (
-      <header className="h-16 border-b border-border bg-background/80 backdrop-blur-xl sticky top-0 z-30 px-4 md:px-6 flex items-center justify-between transition-colors duration-300">
+      <header className="h-16 border-b border-border bg-background/80 backdrop-blur-xl sticky top-0 z-30 px-4 md:px-6 flex items-center justify-center md:justify-between transition-colors duration-300">
 
          <div className="flex items-center w-full max-w-xs md:max-w-md mr-4">
             <div className="relative w-full">
@@ -26,7 +27,7 @@ export function DashboardHeader({ userEmail }: { userEmail?: string }) {
             <LanguageSwitcher />
             <ThemeToggle />
 
-            <Button variant="ghost" size="icon" className="relative rounded-full text-muted-foreground hover:text-foreground">
+            <Button variant="ghost" size="icon" className="relative rounded-full text-muted-foreground hover:text-foreground hidden sm:flex">
                <Bell className="w-5 h-5" />
                <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-background"></span>
             </Button>
