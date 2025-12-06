@@ -39,6 +39,7 @@ export type BlogPostDTO = {
   tags: string[];
   coverImage: string | null; // Mapejat des de cover_image
   published: boolean;
+  reviewed: boolean; // 👈 NOU CAMP
 };
 
 export type AnalyticsEventDTO = {

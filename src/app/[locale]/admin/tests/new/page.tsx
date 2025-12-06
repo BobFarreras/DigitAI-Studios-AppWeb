@@ -1,15 +1,16 @@
+// src/app/[locale]/admin/tests/new/page.tsx
 import { requireAdmin } from '@/lib/auth/admin-guard';
 import { createClient } from '@/lib/supabase/server';
 import { Link } from '@/routing';
 import { ArrowLeft } from 'lucide-react';
-// 👇 Importem el component client que acabem de crear
+
+// 👇 IMPORT CRÍTIC: Ha de ser entre claus { }
 import { CreateCampaignForm } from '@/features/tests/ui/CreateCampaignForm';
 
 export default async function NewCampaignPage() {
   await requireAdmin();
   const supabase = await createClient();
-  
-  // Obtenim els projectes al servidor
+
   const { data: projects } = await supabase
     .from('projects')
     .select('id, name')
@@ -23,7 +24,6 @@ export default async function NewCampaignPage() {
 
         <h1 className="text-3xl font-bold text-white mb-8">Nova Campanya de Test</h1>
 
-        {/* Passem les dades al component client */}
         <CreateCampaignForm projects={projects || []} />
     </div>
   );

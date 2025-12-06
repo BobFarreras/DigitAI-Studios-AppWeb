@@ -20,6 +20,7 @@ export class SupabasePostRepository implements IPostRepository {
       tags: row.tags ? (row.tags as string[]) : [],
       coverImage: row.cover_image,
       published: row.published ?? false, // Assegurem boolean
+      reviewed: row.reviewed ?? false
     };
   }
   async getPostBySlug(slug: string): Promise<BlogPostDTO | null> {
@@ -78,23 +79,29 @@ export class SupabasePostRepository implements IPostRepository {
 
     // Mapegem DTO -> DB Columns
     const updateData: Partial<PostRow> = {};
+
     if (data.title !== undefined) updateData.title = data.title;
     if (data.description !== undefined) updateData.description = data.description;
+
+    // ✅ AQUÍ ESTAVA EL PROBLEMA: Assegurem que content va a content_mdx
     if (data.content !== undefined) updateData.content_mdx = data.content;
+
     if (data.tags !== undefined) updateData.tags = data.tags;
 
-    // Sincronitzem 'published' (bool) amb 'status' (enum)
+    // Gestió d'estats
     if (data.published !== undefined) {
       updateData.published = data.published;
       updateData.status = data.published ? 'published' : 'draft';
-      // Si es publica ara i no tenia data, posem-la
-      if (data.published) {
-        updateData.published_at = new Date().toISOString();
-      }
+      if (data.published) updateData.published_at = new Date().toISOString();
+    }
+
+    // 👈 Guardem el camp REVIEWED
+    if (data.reviewed !== undefined) {
+      updateData.reviewed = data.reviewed;
     }
 
     if (data.date !== undefined && data.date) {
-      updateData.published_at = data.date; // Si l'admin canvia la data manualment
+      updateData.published_at = data.date;
     }
 
     const { error } = await supabase

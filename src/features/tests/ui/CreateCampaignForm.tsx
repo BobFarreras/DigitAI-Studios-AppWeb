@@ -1,54 +1,58 @@
+// src/features/tests/ui/CreateCampaignForm.tsx
 'use client';
 
-import { TestCampaignDTO } from '@/types/models';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import { useActionState } from 'react';
+// IMPORT CRÍTIC: Assegura't que la ruta és correcta
+import { createCampaignAction, ActionState } from '@/features/tests/actions/admin-actions';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-// Pots reutilitzar la lògica d'actualització de campanya si la tens,
-// o crear un 'updateCampaignAction'. Per ara deixem l'estructura visual.
+import { Input } from '@/components/ui/input';
+import { Save, Loader2, AlertCircle } from 'lucide-react';
 
-export function CampaignDetailsForm({ campaign }: { campaign: TestCampaignDTO }) {
-    return (
-        <div className="grid lg:grid-cols-2 gap-8">
-            <Card className="bg-slate-900 border-slate-800">
-                <CardContent className="p-6 space-y-4">
-                    <h3 className="text-lg font-bold text-white">Configuració General</h3>
-                    
-                    <div className="space-y-2">
-                        <label className="text-sm text-slate-400">Títol de la Campanya</label>
-                        <Input defaultValue={campaign.title} className="bg-black border-slate-700 text-white" />
-                    </div>
-                    
-                    <div className="space-y-2">
-                        <label className="text-sm text-slate-400">Estat</label>
-                        <select className="w-full bg-black border border-slate-700 text-white rounded-md p-2 text-sm" defaultValue={campaign.status}>
-                            <option value="active">Activa (Visible pels testers)</option>
-                            <option value="draft">Esborrany (Oculta)</option>
-                            <option value="completed">Tancada</option>
-                        </select>
-                    </div>
+const initialState: ActionState = {
+  success: false,
+  message: '',
+};
 
-                    <Button className="w-full mt-4">Guardar Canvis Generals</Button>
-                </CardContent>
-            </Card>
+type ProjectSummary = {
+    id: string;
+    name: string;
+};
 
-            <Card className="bg-slate-900 border-slate-800">
-                <CardContent className="p-6 space-y-4 h-full flex flex-col">
-                    <h3 className="text-lg font-bold text-white">Documentació per al Tester</h3>
-                    <p className="text-xs text-slate-500">
-                        Escriu aquí les guies, credencials de prova o passos previs. Suporta Markdown.
-                    </p>
-                    
-                    <Textarea 
-                        className="bg-black border-slate-700 text-white font-mono text-sm flex-1 min-h-[200px]" 
-                        defaultValue={campaign.instructions || ''}
-                        placeholder="# Guia de proves\n\n1. Entra a..."
-                    />
-                    
-                    <Button variant="secondary" className="w-full">Guardar Documentació</Button>
-                </CardContent>
-            </Card>
+// 👇 ASSEGURA'T QUE POSA 'export function', NO 'export default function'
+export function CreateCampaignForm({ projects }: { projects: ProjectSummary[] }) {
+  const [state, action, isPending] = useActionState(createCampaignAction, initialState);
+
+  return (
+    <form action={action} className="space-y-6">
+        {/* ... (el teu codi del formulari) ... */}
+        {/* Si no tens el codi a mà, copia'l del pas anterior, però la clau és la línia de l'export */}
+        <div className="space-y-2">
+            <label className="text-sm font-medium text-slate-300">Projecte</label>
+            <select name="projectId" required className="w-full p-3 rounded-lg bg-slate-900 border border-slate-700 text-white">
+                <option value="">Selecciona...</option>
+                {projects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+            </select>
         </div>
-    )
+        <div className="space-y-2">
+            <label className="text-sm font-medium text-slate-300">Títol</label>
+            <Input name="title" required className="bg-slate-900 border-slate-700 text-white" />
+        </div>
+        <div className="space-y-2">
+            <label className="text-sm font-medium text-slate-300">Descripció</label>
+            <Input name="description" className="bg-slate-900 border-slate-700 text-white" />
+        </div>
+        <div className="space-y-2">
+            <label className="text-sm font-medium text-slate-300">Instruccions Inicials</label>
+            <textarea name="instructions" rows={4} className="w-full p-3 rounded-lg bg-slate-900 border-slate-700 text-white" />
+        </div>
+        
+        {state.message && !state.success && (
+            <div className="text-red-400 text-sm flex gap-2"><AlertCircle className="w-4 h-4"/> {state.message}</div>
+        )}
+
+        <Button type="submit" disabled={isPending} className="w-full">
+            {isPending ? <Loader2 className="animate-spin" /> : <><Save className="w-4 h-4 mr-2" /> Crear</>}
+        </Button>
+    </form>
+  );
 }

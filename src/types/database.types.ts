@@ -406,6 +406,7 @@ export type Database = {
           organization_id: string
           published: boolean | null
           published_at: string | null
+          reviewed: boolean | null
           slug: string
           status: Database["public"]["Enums"]["post_status"] | null
           tags: string[] | null
@@ -421,6 +422,7 @@ export type Database = {
           organization_id: string
           published?: boolean | null
           published_at?: string | null
+          reviewed?: boolean | null
           slug: string
           status?: Database["public"]["Enums"]["post_status"] | null
           tags?: string[] | null
@@ -436,6 +438,7 @@ export type Database = {
           organization_id?: string
           published?: boolean | null
           published_at?: string | null
+          reviewed?: boolean | null
           slug?: string
           status?: Database["public"]["Enums"]["post_status"] | null
           tags?: string[] | null

@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server';
+import { createClient, createAdminClient } from '@/lib/supabase/server';
 import { Database } from '@/types/database.types';
 import { CampaignContext, TestCampaignDTO, TestTaskDTO, TestResultDTO, TesterProfile } from '@/types/models';
 // Tipus base de les taules
@@ -122,7 +122,30 @@ export class SupabaseTestRepository {
       ?.map((item) => item.profiles)
       .filter((p): p is TesterProfile => p !== null) || [];
   }
+  // E. Crear una Tasca (Admin)
+  async createTask(data: { campaignId: string; title: string; description?: string; orderIndex: number }) {
+    const supabase = createAdminClient(); // <--- CANVIAT (Abans createClient)
+    return supabase.from('test_tasks').insert({
+      campaign_id: data.campaignId,
+      title: data.title,
+      description: data.description,
+      order_index: data.orderIndex
+    }).select().single();
+  }
 
+  // F. Esborrar Tasca (Admin)
+  async deleteTask(taskId: string) {
+    const supabase = createAdminClient(); // <--- CANVIAT
+    return supabase.from('test_tasks').delete().eq('id', taskId);
+  }
+
+  // G. Reordenar Tasques
+  async reorderTasks(tasks: { id: string; order_index: number }[]) {
+    const supabase = createAdminClient(); // <--- CANVIAT
+    for (const t of tasks) {
+      await supabase.from('test_tasks').update({ order_index: t.order_index }).eq('id', t.id);
+    }
+  }
   // C. Assignar Usuari
   async assignTester(campaignId: string, userId: string) {
     const supabase = await createClient();
@@ -194,38 +217,11 @@ export class SupabaseTestRepository {
     }).select().single();
   }
 
-  // E. Crear una Tasca (Admin)
-  async createTask(data: { campaignId: string; title: string; description?: string; orderIndex: number }) {
-    const supabase = await createClient();
-    return supabase.from('test_tasks').insert({
-      campaign_id: data.campaignId,
-      title: data.title,
-      description: data.description,
-      order_index: data.orderIndex
-    }).select().single();
+  // G. Actualitzar Campanya (Admin)
+  async updateCampaign(id: string, data: { title?: string; description?: string; instructions?: string; status?: string }) {
+    const supabase = createAdminClient(); // Usem AdminClient per assegurar permisos d'escriptura
+    return supabase.from('test_campaigns').update(data).eq('id', id);
   }
 
-  // F. Esborrar Tasca (Admin)
-  async deleteTask(taskId: string) {
-    const supabase = await createClient();
-    return supabase.from('test_tasks').delete().eq('id', taskId);
-  }
 
-// G. Reordenar Tasques
-  async reorderTasks(tasks: { id: string; orderIndex: number }[]) {
-    const supabase = await createClient();
-    
-    // Mapegem de CamelCase (Frontend) a SnakeCase (Base de Dades)
-    const updates = tasks.map(t => ({
-      id: t.id,
-      order_index: t.orderIndex 
-    }));
-
-    for (const t of updates) {
-      // CORRECCIÓ: Aquí 't' ja té la propietat 'order_index', no 'orderIndex'
-      await supabase.from('test_tasks')
-        .update({ order_index: t.order_index }) // <--- Canviat aquí
-        .eq('id', t.id);
-    }
-  }
 }
