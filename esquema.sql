@@ -1,5 +1,5 @@
 
-\restrict IsVoGS2obDeJJYu80qPQsHEIBebxbxLbRW5k49r9zG7MbJny9hu1lXQ5R4LiLPO
+\restrict d26StOomtBWE0YhwjoUJclg5Fwgsc71j4Jccnqr94OU5JfMiHErLhQqS8q0XB7K
 
 
 SET statement_timeout = 0;
@@ -434,6 +434,59 @@ CREATE TABLE IF NOT EXISTS "public"."services" (
 ALTER TABLE "public"."services" OWNER TO "postgres";
 
 
+CREATE TABLE IF NOT EXISTS "public"."test_assignments" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "campaign_id" "uuid" NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "assigned_at" timestamp with time zone DEFAULT "now"()
+);
+
+
+ALTER TABLE "public"."test_assignments" OWNER TO "postgres";
+
+
+CREATE TABLE IF NOT EXISTS "public"."test_campaigns" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "project_id" "uuid" NOT NULL,
+    "title" "text" NOT NULL,
+    "description" "text",
+    "instructions" "text",
+    "status" "text" DEFAULT 'active'::"text",
+    "created_at" timestamp with time zone DEFAULT "now"()
+);
+
+
+ALTER TABLE "public"."test_campaigns" OWNER TO "postgres";
+
+
+CREATE TABLE IF NOT EXISTS "public"."test_results" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "task_id" "uuid" NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "status" "text" NOT NULL,
+    "comment" "text",
+    "device_info" "text",
+    "created_at" timestamp with time zone DEFAULT "now"(),
+    "updated_at" timestamp with time zone DEFAULT "now"()
+);
+
+
+ALTER TABLE "public"."test_results" OWNER TO "postgres";
+
+
+CREATE TABLE IF NOT EXISTS "public"."test_tasks" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "campaign_id" "uuid" NOT NULL,
+    "title" "text" NOT NULL,
+    "description" "text",
+    "expected_result" "text",
+    "order_index" integer DEFAULT 0
+);
+
+
+ALTER TABLE "public"."test_tasks" OWNER TO "postgres";
+
+
 CREATE TABLE IF NOT EXISTS "public"."web_audits" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "url" "text" NOT NULL,
@@ -544,6 +597,36 @@ ALTER TABLE ONLY "public"."schedules"
 
 ALTER TABLE ONLY "public"."services"
     ADD CONSTRAINT "services_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."test_assignments"
+    ADD CONSTRAINT "test_assignments_campaign_id_user_id_key" UNIQUE ("campaign_id", "user_id");
+
+
+
+ALTER TABLE ONLY "public"."test_assignments"
+    ADD CONSTRAINT "test_assignments_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."test_campaigns"
+    ADD CONSTRAINT "test_campaigns_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."test_results"
+    ADD CONSTRAINT "test_results_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."test_results"
+    ADD CONSTRAINT "test_results_task_id_user_id_key" UNIQUE ("task_id", "user_id");
+
+
+
+ALTER TABLE ONLY "public"."test_tasks"
+    ADD CONSTRAINT "test_tasks_pkey" PRIMARY KEY ("id");
 
 
 
@@ -685,6 +768,36 @@ ALTER TABLE ONLY "public"."services"
 
 
 
+ALTER TABLE ONLY "public"."test_assignments"
+    ADD CONSTRAINT "test_assignments_campaign_id_fkey" FOREIGN KEY ("campaign_id") REFERENCES "public"."test_campaigns"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."test_assignments"
+    ADD CONSTRAINT "test_assignments_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "auth"."users"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."test_campaigns"
+    ADD CONSTRAINT "test_campaigns_project_id_fkey" FOREIGN KEY ("project_id") REFERENCES "public"."projects"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."test_results"
+    ADD CONSTRAINT "test_results_task_id_fkey" FOREIGN KEY ("task_id") REFERENCES "public"."test_tasks"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."test_results"
+    ADD CONSTRAINT "test_results_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "auth"."users"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."test_tasks"
+    ADD CONSTRAINT "test_tasks_campaign_id_fkey" FOREIGN KEY ("campaign_id") REFERENCES "public"."test_campaigns"("id") ON DELETE CASCADE;
+
+
+
 ALTER TABLE ONLY "public"."web_audits"
     ADD CONSTRAINT "web_audits_organization_id_fkey" FOREIGN KEY ("organization_id") REFERENCES "public"."organizations"("id");
 
@@ -729,6 +842,14 @@ CREATE POLICY "Admins can view all profiles" ON "public"."profiles" FOR SELECT U
 
 
 
+CREATE POLICY "Admins manage all" ON "public"."test_campaigns" USING ("public"."is_admin"());
+
+
+
+CREATE POLICY "Admins manage assignments" ON "public"."test_assignments" USING ("public"."is_admin"());
+
+
+
 CREATE POLICY "Clients view own projects" ON "public"."projects" FOR SELECT USING (("organization_id" IN ( SELECT "public"."get_my_org_ids"() AS "get_my_org_ids")));
 
 
@@ -746,6 +867,10 @@ CREATE POLICY "Enable read for everyone" ON "public"."analytics_visitors" FOR SE
 
 
 CREATE POLICY "Enable select for admins only" ON "public"."analytics_events" FOR SELECT TO "authenticated" USING ((("auth"."jwt"() ->> 'email'::"text") = 'digitaistudios.developer@gmail.com'::"text"));
+
+
+
+CREATE POLICY "Manage own results" ON "public"."test_results" USING (("auth"."uid"() = "user_id"));
 
 
 
@@ -789,6 +914,10 @@ CREATE POLICY "Public read services" ON "public"."services" FOR SELECT USING (tr
 
 
 
+CREATE POLICY "Read tasks" ON "public"."test_tasks" FOR SELECT USING (true);
+
+
+
 CREATE POLICY "Users can insert their own audits" ON "public"."web_audits" FOR INSERT WITH CHECK (("auth"."uid"() = "user_id"));
 
 
@@ -824,6 +953,16 @@ CREATE POLICY "Users can view their own audits" ON "public"."web_audits" FOR SEL
 
 
 CREATE POLICY "Users manage own org posts" ON "public"."posts" USING (("organization_id" IN ( SELECT "public"."get_my_org_ids"() AS "get_my_org_ids"))) WITH CHECK (("organization_id" IN ( SELECT "public"."get_my_org_ids"() AS "get_my_org_ids")));
+
+
+
+CREATE POLICY "Users read own assignments" ON "public"."test_assignments" FOR SELECT USING (("auth"."uid"() = "user_id"));
+
+
+
+CREATE POLICY "Visible to assigned testers" ON "public"."test_campaigns" FOR SELECT USING (("public"."is_admin"() OR (EXISTS ( SELECT 1
+   FROM "public"."test_assignments"
+  WHERE (("test_assignments"."campaign_id" = "test_campaigns"."id") AND ("test_assignments"."user_id" = "auth"."uid"()))))));
 
 
 
@@ -867,6 +1006,18 @@ ALTER TABLE "public"."schedules" ENABLE ROW LEVEL SECURITY;
 
 
 ALTER TABLE "public"."services" ENABLE ROW LEVEL SECURITY;
+
+
+ALTER TABLE "public"."test_assignments" ENABLE ROW LEVEL SECURITY;
+
+
+ALTER TABLE "public"."test_campaigns" ENABLE ROW LEVEL SECURITY;
+
+
+ALTER TABLE "public"."test_results" ENABLE ROW LEVEL SECURITY;
+
+
+ALTER TABLE "public"."test_tasks" ENABLE ROW LEVEL SECURITY;
 
 
 ALTER TABLE "public"."web_audits" ENABLE ROW LEVEL SECURITY;
@@ -1005,6 +1156,30 @@ GRANT ALL ON TABLE "public"."services" TO "service_role";
 
 
 
+GRANT ALL ON TABLE "public"."test_assignments" TO "anon";
+GRANT ALL ON TABLE "public"."test_assignments" TO "authenticated";
+GRANT ALL ON TABLE "public"."test_assignments" TO "service_role";
+
+
+
+GRANT ALL ON TABLE "public"."test_campaigns" TO "anon";
+GRANT ALL ON TABLE "public"."test_campaigns" TO "authenticated";
+GRANT ALL ON TABLE "public"."test_campaigns" TO "service_role";
+
+
+
+GRANT ALL ON TABLE "public"."test_results" TO "anon";
+GRANT ALL ON TABLE "public"."test_results" TO "authenticated";
+GRANT ALL ON TABLE "public"."test_results" TO "service_role";
+
+
+
+GRANT ALL ON TABLE "public"."test_tasks" TO "anon";
+GRANT ALL ON TABLE "public"."test_tasks" TO "authenticated";
+GRANT ALL ON TABLE "public"."test_tasks" TO "service_role";
+
+
+
 GRANT ALL ON TABLE "public"."web_audits" TO "anon";
 GRANT ALL ON TABLE "public"."web_audits" TO "authenticated";
 GRANT ALL ON TABLE "public"."web_audits" TO "service_role";
@@ -1041,6 +1216,6 @@ ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public" GRANT ALL ON TAB
 
 
 
-\unrestrict IsVoGS2obDeJJYu80qPQsHEIBebxbxLbRW5k49r9zG7MbJny9hu1lXQ5R4LiLPO
+\unrestrict d26StOomtBWE0YhwjoUJclg5Fwgsc71j4Jccnqr94OU5JfMiHErLhQqS8q0XB7K
 
 RESET ALL;

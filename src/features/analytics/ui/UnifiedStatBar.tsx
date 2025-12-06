@@ -16,51 +16,50 @@ interface StatItemProps {
 
 export function UnifiedStatBar({ views, visitors, events, avgTime }: UnifiedStatBarProps) {
   return (
-    <Card className="bg-slate-900 border-slate-800 text-slate-200 p-4 shadow-lg">
+    // CANVI: bg-card i border-border (s'adapten automàticament)
+    <Card className="bg-card border-border text-card-foreground p-4 shadow-sm">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         
-            {/* Títol: Al mòbil a dalt, a l'escriptori a l'esquerra amb vora */}
-            <div className="flex items-center gap-3 lg:pr-8 lg:border-r lg:border-slate-800 pb-4 lg:pb-0 border-b border-slate-800 lg:border-b-0">
+            {/* Títol */}
+            <div className="flex items-center gap-3 lg:pr-8 lg:border-r border-border pb-4 lg:pb-0 border-b lg:border-b-0">
                 <div className="p-2 bg-primary/10 rounded-lg">
                     <TrendingUp className="text-primary h-6 w-6" />
                 </div>
                 <div>
-                    <h1 className="text-lg font-bold text-white leading-tight">Dashboard</h1>
-                    <p className="text-xs text-slate-500">Temps real</p>
+                    <h1 className="text-lg font-bold leading-tight">Dashboard</h1>
+                    <p className="text-xs text-muted-foreground">Temps real</p>
                 </div>
             </div>
 
-            {/* Mètriques: Grid 2x2 al mòbil, Flex row a l'escriptori */}
+            {/* Mètriques */}
             <div className="flex-1 grid grid-cols-2 gap-y-6 lg:flex lg:justify-around lg:items-center">
-                <StatItem label="Vistes (7d)" value={views} icon={<Eye className="h-4 w-4 text-blue-400" />} />
+                <StatItem label="Vistes (7d)" value={views} icon={<Eye className="h-4 w-4 text-blue-500" />} />
                 
-                {/* Separador només en escriptori */}
-                <div className="hidden lg:block h-8 w-px bg-slate-800" />
+                <div className="hidden lg:block h-8 w-px bg-border" />
                 
-                <StatItem label="Usuaris" value={visitors} icon={<Users className="h-4 w-4 text-green-400" />} />
+                <StatItem label="Usuaris" value={visitors} icon={<Users className="h-4 w-4 text-green-500" />} />
                 
-                <div className="hidden lg:block h-8 w-px bg-slate-800" />
+                <div className="hidden lg:block h-8 w-px bg-border" />
                 
-                <StatItem label="Events" value={events} icon={<MousePointerClick className="h-4 w-4 text-purple-400" />} />
+                <StatItem label="Events" value={events} icon={<MousePointerClick className="h-4 w-4 text-purple-500" />} />
                 
-                <div className="hidden lg:block h-8 w-px bg-slate-800" />
+                <div className="hidden lg:block h-8 w-px bg-border" />
                 
-                <StatItem label="Temps Mitjà" value={avgTime} icon={<Clock className="h-4 w-4 text-orange-400" />} />
+                <StatItem label="Temps Mitjà" value={avgTime} icon={<Clock className="h-4 w-4 text-orange-500" />} />
             </div>
         </div>
     </Card>
   );
 }
 
-// StatItem es queda igual
 function StatItem({ label, value, icon }: StatItemProps) {
     return (
         <div className="flex flex-col items-center gap-1 min-w-[100px]">
-            <span className="text-[10px] uppercase tracking-wider text-slate-500 font-bold flex items-center gap-2">
+            <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-bold flex items-center gap-2">
                 {icon} {label}
             </span>
-            <span className="text-2xl font-bold text-white leading-none">
-                {value}
+            <span className="text-2xl font-bold leading-none">
+                 {value}
             </span>
         </div>
     )

@@ -193,4 +193,39 @@ export class SupabaseTestRepository {
       status: 'active'
     }).select().single();
   }
+
+  // E. Crear una Tasca (Admin)
+  async createTask(data: { campaignId: string; title: string; description?: string; orderIndex: number }) {
+    const supabase = await createClient();
+    return supabase.from('test_tasks').insert({
+      campaign_id: data.campaignId,
+      title: data.title,
+      description: data.description,
+      order_index: data.orderIndex
+    }).select().single();
+  }
+
+  // F. Esborrar Tasca (Admin)
+  async deleteTask(taskId: string) {
+    const supabase = await createClient();
+    return supabase.from('test_tasks').delete().eq('id', taskId);
+  }
+
+// G. Reordenar Tasques
+  async reorderTasks(tasks: { id: string; orderIndex: number }[]) {
+    const supabase = await createClient();
+    
+    // Mapegem de CamelCase (Frontend) a SnakeCase (Base de Dades)
+    const updates = tasks.map(t => ({
+      id: t.id,
+      order_index: t.orderIndex 
+    }));
+
+    for (const t of updates) {
+      // CORRECCIÓ: Aquí 't' ja té la propietat 'order_index', no 'orderIndex'
+      await supabase.from('test_tasks')
+        .update({ order_index: t.order_index }) // <--- Canviat aquí
+        .eq('id', t.id);
+    }
+  }
 }

@@ -10,7 +10,7 @@ type Props = {
 
 export function BarListChart({ title, data }: Props) {
   return (
-    <Card className="bg-slate-900 border-slate-800 text-slate-200 h-full flex flex-col min-h-0">      
+    <Card className="bg-card border-border text-card-foreground col-span-2 h-full flex flex-col min-h-0">      
     <CardHeader className="pb-2 pt-4 px-4 shrink-0">
       <CardTitle className="text-sm font-medium text-slate-400">{title}</CardTitle>
     </CardHeader>
