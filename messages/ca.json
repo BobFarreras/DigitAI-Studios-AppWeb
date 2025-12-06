@@ -423,5 +423,11 @@
       "section3_title": "3. Com desactivar-les?",
       "section3_p1": "Pots permetre, bloquejar o eliminar les cookies instal·lades al teu equip mitjançant la configuració de les opcions del navegador:"
     }
+  },
+  "LatestPosts": {
+    "badge": "Acadèmia Digital",
+    "title_prefix": "Darrers",
+    "title_highlight": "Coneixements",
+    "view_all": "Explorar tot el blog"
   }
 }

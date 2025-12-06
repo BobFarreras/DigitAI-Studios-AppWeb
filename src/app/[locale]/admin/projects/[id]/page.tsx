@@ -1,155 +1,158 @@
 import { requireAdmin } from '@/lib/auth/admin-guard';
 import { createClient } from '@/lib/supabase/server';
+import { SupabaseTestRepository } from '@/repositories/supabase/SupabaseTestRepository';
 import { notFound } from 'next/navigation';
-import { InviteClientForm } from '@/features/projects/ui/InviteClientForm';
-import { AlertCircle, Github, Globe, Server, User } from 'lucide-react';
-import Link from 'next/link';
+import { Link } from '@/routing';
+import { Github, Globe, Server, LayoutDashboard, FlaskConical, ArrowLeft } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ProjectCampaignsList } from '@/features/projects/ui/ProjectCampaignsList';
+import { ProjectTeamManager } from '@/features/projects/ui/ProjectTeamManeger';
+// 👇 1. IMPORTEM EL TIPUS DEL REPOSITORI
+import { SupabaseProjectRepository, ProjectMember } from '@/repositories/supabase/SupabaseProjectRepository';
+
+// 👇 2. DEFINIM EL TIPUS PER ALS CANDIDATS (Còpia de l'estructura de 'profiles')
+type Candidate = {
+  id: string;
+  email: string;
+  full_name: string | null;
+  avatar_url: string | null;
+};
 
 type Props = {
-  params: Promise<{ id: string; locale: string }>;
+  params: Promise<{ id: string }>;
 };
 
 export default async function ProjectDetailPage({ params }: Props) {
   await requireAdmin();
   const { id } = await params;
   const supabase = await createClient();
+  
+  // Instanciem repositoris
+  const testRepo = new SupabaseTestRepository();
+  const projectRepo = new SupabaseProjectRepository();
 
-  const { data: project } = await supabase
-    .from('projects')
-    .select('*, organizations(*)')
-    .eq('id', id)
-    .single();
+  // 1. Dades del Projecte + Campanyes en paral·lel
+  const [projectRes, campaigns] = await Promise.all([
+    supabase.from('projects').select('*, organizations(*)').eq('id', id).single(),
+    testRepo.getCampaignsByProject(id)
+  ]);
 
+  const project = projectRes.data;
   if (!project) notFound();
 
-  // 🛡️ Integritat de dades
-  if (!project.organization_id) {
-    return <div className="p-8 text-destructive">Error d'integritat: Aquest projecte no té organització vinculada.</div>;
+  // 2. 🔥 CÀRREGA DE DADES D'EQUIP (CORREGIT SENSE 'any')
+  // Inicialitzem amb arrays buits però TIPATS
+  let members: ProjectMember[] = [];
+  let candidates: Candidate[] = [];
+  
+  if (project.organization_id) {
+      // Fem la crida
+      const [fetchedMembers, fetchedCandidates] = await Promise.all([
+          projectRepo.getMembers(id),
+          projectRepo.getAvailableCandidates(id, project.organization_id)
+      ]);
+
+      // Assignem els resultats
+      members = fetchedMembers;
+      // Fem un cast segur perquè sabem que la DB retorna aquesta estructura
+      candidates = fetchedCandidates as Candidate[];
   }
 
-  const { data: team } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('organization_id', project.organization_id);
-
-  const owner = team?.find(u => u.role === 'client');
-  const createdAt = project.created_at
-    ? new Date(project.created_at)
-    : new Date(); // <-- equivalente a Date.now(), pero usado fuera del render JSX
   return (
-    <div className="min-h-screen bg-background p-8">
-      <div className="max-w-5xl mx-auto">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 md:p-10">
+      <div className="max-w-6xl mx-auto">
+        
+        {/* Header de Navegació */}
+        <Link href="/admin/projects" className="text-sm text-slate-500 hover:text-white mb-6 flex items-center gap-2 transition-colors">
+            <ArrowLeft className="w-4 h-4" /> Tornar al llistat
+        </Link>
 
-        {/* Header */}
-        <div className="mb-8">
-          <Link href="/admin/projects" className="text-sm text-muted-foreground hover:text-foreground mb-4 block transition-colors">
-            ← Tornar al llistat
-          </Link>
-          <div className="flex flex-col md:flex-row justify-between items-start gap-4">
-            <h1 className="text-3xl md:text-4xl font-bold text-foreground flex items-center gap-3">
-              {project.name}
-              <span className="text-sm px-3 py-1 rounded-full bg-primary/10 text-primary font-mono border border-primary/20">
-                {project.organizations?.slug}
-              </span>
-            </h1>
-
-            <div className="flex gap-3">
-              {/* 🛡️ Botó Github */}
-              <a
-                href={project.repository_url || '#'}
-                target="_blank"
-                className="flex items-center gap-2 px-4 py-2 border border-border rounded-lg text-sm font-bold hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
-              >
-                <Github className="w-4 h-4" /> GitHub
-              </a>
-
-              {/* 🛡️ Botó Web */}
-              {project.hosting_url && (
-                <a
-                  href={`https://${project.hosting_url}`}
-                  target="_blank"
-                  className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-bold hover:opacity-90 transition-colors shadow-sm"
-                >
-                  <Globe className="w-4 h-4" /> Veure Web
-                </a>
-              )}
+        {/* Header Principal */}
+        <div className="flex flex-col md:flex-row justify-between items-start mb-8 gap-4">
+            <div>
+                <h1 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
+                    {project.name}
+                    <span className="text-sm px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 font-mono border border-blue-200 dark:border-blue-800">
+                        {project.status}
+                    </span>
+                </h1>
+                <p className="text-slate-500 mt-2 font-mono text-sm">{project.domain || 'Sense domini assignat'}</p>
             </div>
-          </div>
+            
+            <div className="flex gap-2">
+               <a 
+                 href={project.repository_url || '#'} 
+                 target="_blank" 
+                 className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-bold hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+               >
+                 <Github className="w-4 h-4" /> Repo
+               </a>
+               {project.hosting_url && (
+                  <a 
+                   href={`https://${project.hosting_url}`} 
+                   target="_blank" 
+                   className="flex items-center gap-2 px-4 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-lg text-sm font-bold hover:opacity-90 transition-colors"
+                 >
+                   <Globe className="w-4 h-4" /> Web
+                 </a>
+               )}
+            </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* ESTRUCTURA DE PESTANYES */}
+        <Tabs defaultValue="overview" className="w-full">
+            <TabsList className="bg-slate-200 dark:bg-slate-900 border border-slate-300 dark:border-slate-800 mb-8 w-full justify-start h-auto p-1">
+                <TabsTrigger value="overview" className="px-6 py-2.5 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800">
+                    <LayoutDashboard className="w-4 h-4 mr-2" /> Equip & Configuració
+                </TabsTrigger>
+                <TabsTrigger value="qa" className="px-6 py-2.5 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-800">
+                    <FlaskConical className="w-4 h-4 mr-2" /> QA & Tests
+                    <span className="ml-2 bg-slate-200 dark:bg-slate-700 px-1.5 py-0.5 rounded-full text-xs">{campaigns.length}</span>
+                </TabsTrigger>
+            </TabsList>
 
-          <div className="lg:col-span-2 space-y-6">
+            {/* TAB 1: VISIÓ GENERAL */}
+            <TabsContent value="overview">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    
+                    {/* ✅ Component de Gestió d'Equip (TIPAT CORRECTAMENT) */}
+                    <div className="h-full min-h-[400px]">
+                        <ProjectTeamManager 
+                            projectId={id} 
+                            members={members} 
+                            candidates={candidates} 
+                        />
+                    </div>
 
-            {/* TARGETA INFRAESTRUCTURA */}
-            <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
-              <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-foreground">
-                <Server className="w-5 h-5 text-blue-500" /> Infraestructura
-              </h3>
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div className="p-3 bg-muted rounded-lg border border-border">
-                  <span className="text-muted-foreground block text-xs uppercase font-bold mb-1">Domini</span>
-                  <span className="font-mono text-foreground">{project.domain}</span>
+                    {/* Targeta Tècnica */}
+                    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-6 shadow-sm h-fit">
+                        <h3 className="text-lg font-bold mb-6 flex items-center gap-2 text-slate-900 dark:text-white">
+                            <Server className="w-5 h-5 text-blue-500" /> Infraestructura
+                        </h3>
+                        <div className="space-y-4">
+                            <div className="flex justify-between py-3 border-b border-slate-100 dark:border-slate-800">
+                                <span className="text-slate-500">Base de Dades ID</span>
+                                <span className="font-mono text-sm">{project.organization_id}</span>
+                            </div>
+                            <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-lg mt-4">
+                                <h4 className="font-bold text-xs uppercase text-slate-500 mb-2">Configuració Visual</h4>
+                                <pre className="text-xs text-slate-700 dark:text-slate-300 overflow-x-auto">
+                                    {JSON.stringify(project.branding_config, null, 2)}
+                                </pre>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div className="p-3 bg-muted rounded-lg border border-border">
-                  <span className="text-muted-foreground block text-xs uppercase font-bold mb-1">Base de Dades</span>
-                  <span className="font-mono text-xs text-foreground truncate block" title={project.organization_id}>
-                    {project.organization_id}
-                  </span>
-                </div>
-                <div className="p-3 bg-muted rounded-lg border border-border">
-                  <span className="text-muted-foreground block text-xs uppercase font-bold mb-1">Estat</span>
-                  <span className="font-bold text-foreground capitalize">{project.status}</span>
-                </div>
-                <div className="p-3 bg-muted rounded-lg border border-border">
-                  <span className="text-muted-foreground block text-xs uppercase font-bold mb-1">Creat</span>
-                  <span className="text-foreground">    {createdAt.toLocaleDateString()}</span>
-                </div>
-              </div>
-            </div>
+            </TabsContent>
 
-            {/* TARGETA EQUIP */}
-            <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
-              <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-foreground">
-                <User className="w-5 h-5 text-green-500" /> Equip & Propietat
-              </h3>
-
-              {owner ? (
-                <div className="flex items-center gap-4 p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
-                  <div className="w-10 h-10 bg-green-500/20 rounded-full flex items-center justify-center text-green-600 dark:text-green-400 font-bold">
-                    {owner.email.charAt(0).toUpperCase()}
-                  </div>
-                  <div>
-                    <p className="font-bold text-green-900 dark:text-green-100">{owner.full_name || 'Client'}</p>
-                    <p className="text-sm text-green-700 dark:text-green-300">{owner.email}</p>
-                  </div>
-                  <span className="ml-auto px-2 py-1 bg-background text-xs font-bold rounded text-green-600 border border-green-500/20">
-                    PROPIETARI
-                  </span>
+            {/* TAB 2: QA & TESTS */}
+            <TabsContent value="qa">
+                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-6 shadow-sm min-h-[400px]">
+                    <ProjectCampaignsList campaigns={campaigns} projectId={id} />
                 </div>
-              ) : (
-                <div className="space-y-4">
-                  <div className="p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg text-yellow-700 dark:text-yellow-400 text-sm flex items-center gap-2">
-                    <AlertCircle className="w-4 h-4" />
-                    Aquest projecte encara no té cap client assignat.
-                  </div>
-                  {/* Component Client (Ja té el seu estil, revisa que usi classes genèriques si cal) */}
-                  <InviteClientForm projectId={project.id} orgId={project.organization_id} />
-                </div>
-              )}
-            </div>
-          </div>
+            </TabsContent>
 
-          <div className="space-y-6">
-            <div className="bg-muted/30 p-6 rounded-xl border border-border">
-              <h4 className="font-bold text-foreground mb-2 text-sm uppercase">Configuració Visual</h4>
-              <pre className="text-xs bg-background p-3 rounded border border-border overflow-auto max-h-60 text-muted-foreground font-mono">
-                {JSON.stringify(project.organizations?.branding_config, null, 2)}
-              </pre>
-            </div>
-          </div>
-
-        </div>
+        </Tabs>
       </div>
     </div>
   );

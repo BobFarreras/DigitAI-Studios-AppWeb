@@ -6,6 +6,7 @@ import { ProductTeaser } from '@/components/landing/ProductTeaser';
 import { AuditSection } from '@/components/landing/AuditSection';
 import { TestimonialsSection } from '@/components/landing/TestimonialsSection';
 import { ContactSection } from '@/components/landing/ContactSection';
+import { LatestPostsSection } from '@/components/landing/LatestPostsSection';
 
 // Importem les dades des del fitxer net
 import { TESTIMONIALS } from '@/lib/data';
@@ -22,7 +23,7 @@ export default function MarketingPage() {
       <ServicesGrid />
       <ProductTeaser />
       <AuditSection />
-      
+      <LatestPostsSection />
       {/* Passem les dades netes */}
       <TestimonialsSection testimonials={TESTIMONIALS} />
       

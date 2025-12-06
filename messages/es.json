@@ -423,5 +423,12 @@
       "section3_title": "3. ¿Cómo desactivarlas?",
       "section3_p1": "Puedes permitir, bloquear o eliminar las cookies instaladas en tu equipo mediante la configuración del navegador:"
     }
-  }
+  },
+  "LatestPosts": {
+  "badge": "Academia Digital",
+  "title_prefix": "Últimos",
+  "title_highlight": "Conocimientos",
+  "view_all": "Explorar todo el blog"
+}
+
 }

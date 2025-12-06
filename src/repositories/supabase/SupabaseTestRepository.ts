@@ -82,46 +82,7 @@ export class SupabaseTestRepository {
       updated_at: new Date().toISOString()
     }, { onConflict: 'task_id, user_id' });
   }
-  // A. Llistar tots els usuaris disponibles per ser testers (excepte admins)
-  async getAvailableTesters(): Promise<TesterProfile[]> {
-    const supabase = await createClient();
-    // Filtrem per rol 'client' o 'staff', o tots els que no siguin admin pur
-    const { data } = await supabase
-      .from('profiles')
-      .select('id, email, full_name, avatar_url')
-      .neq('role', 'admin')
-      .order('email');
-
-    return data || [];
-  }
-
-  // B. Llistar testers ja assignats a una campanya
-  async getAssignedTesters(campaignId: string): Promise<TesterProfile[]> {
-    const supabase = await createClient();
-    const { data } = await supabase
-      .from('test_assignments')
-      .select(`
-        user_id,
-        profiles:user_id (
-          id, email, full_name, avatar_url
-        )
-      `)
-      .eq('campaign_id', campaignId);
-
-    // 1. Definim el que esperem rebre d'aquesta query específica
-    type AssignmentRow = {
-      user_id: string;
-      profiles: TesterProfile | null; // Pot ser null si la relació falla (encara que no hauria)
-    };
-
-    // 2. Fem el cast segur utilitzant 'unknown' primer per "netejar" el tipus inferit
-    const rows = data as unknown as AssignmentRow[] | null;
-
-    // 3. Mapegem i filtrem els nulls amb un "Type Predicate" (p is TesterProfile)
-    return rows
-      ?.map((item) => item.profiles)
-      .filter((p): p is TesterProfile => p !== null) || [];
-  }
+  
   // E. Crear una Tasca (Admin)
   async createTask(data: { campaignId: string; title: string; description?: string; orderIndex: number }) {
     const supabase = createAdminClient(); // <--- CANVIAT (Abans createClient)
@@ -221,6 +182,68 @@ export class SupabaseTestRepository {
   async updateCampaign(id: string, data: { title?: string; description?: string; instructions?: string; status?: string }) {
     const supabase = createAdminClient(); // Usem AdminClient per assegurar permisos d'escriptura
     return supabase.from('test_campaigns').update(data).eq('id', id);
+  }
+
+  // H. Obtenir Campanyes per Projecte (Vista Admin)
+  async getCampaignsByProject(projectId: string) {
+    const supabase = await createClient();
+
+    const { data, error } = await supabase
+      .from('test_campaigns')
+      .select(`
+        *,
+        test_assignments (count),
+        test_tasks (count)
+      `)
+      .eq('project_id', projectId)
+      .order('created_at', { ascending: false });
+
+    if (error) return [];
+
+    // Mapegem per tenir dades netes
+    return data.map(camp => ({
+      id: camp.id,
+      title: camp.title,
+      status: camp.status,
+      testerCount: camp.test_assignments?.[0]?.count || 0,
+      taskCount: camp.test_tasks?.[0]?.count || 0,
+      createdAt: camp.created_at
+    }));
+  }
+
+  // A. Llistar tots els usuaris disponibles
+  async getAvailableTesters(): Promise<TesterProfile[]> {
+    // 🔥 CANVI CLAU: AdminClient
+    const supabase = createAdminClient();
+
+    const { data } = await supabase
+      .from('profiles')
+      .select('id, email, full_name, avatar_url')
+      .neq('role', 'admin') // Opcional: filtrar admins
+      .order('email');
+    return data || [];
+  }
+
+  // B. Llistar testers assignats
+  async getAssignedTesters(campaignId: string): Promise<TesterProfile[]> {
+    // 🔥 CANVI CLAU: AdminClient
+    const supabase = createAdminClient();
+
+    const { data } = await supabase
+      .from('test_assignments')
+      .select(`
+        user_id,
+        profiles:user_id (
+          id, email, full_name, avatar_url
+        )
+      `)
+      .eq('campaign_id', campaignId);
+
+    // ... (resta del codi de mapeig igual) ...
+    // Recorda mantenir la lògica de tipus que vam arreglar abans
+    type AssignmentRow = { user_id: string; profiles: TesterProfile | null; };
+    const rows = data as unknown as AssignmentRow[] | null;
+    return rows?.map((item) => item.profiles).filter((p): p is TesterProfile => p !== null) || [];
   }
 
 

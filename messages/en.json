@@ -424,5 +424,12 @@
       "section3_title": "3. How to disable them?",
       "section3_p1": "You can allow, block, or delete cookies through your browser settings:"
     }
-  }
+  },
+  "LatestPosts": {
+  "badge": "Digital Academy",
+  "title_prefix": "Latest",
+  "title_highlight": "Insights",
+  "view_all": "Browse all blog posts"
+}
+
 }
