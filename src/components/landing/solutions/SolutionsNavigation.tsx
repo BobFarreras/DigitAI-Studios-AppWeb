@@ -13,7 +13,8 @@ interface Props {
 
 export function SolutionsNavigation({ solutions, activeTab, setActiveTab }: Props) {
   return (
-    <div className="lg:col-span-4 flex flex-col gap-4">
+    // ⚠️ CANVI IMPORTANT: 'hidden lg:flex'. En mòbil desapareix.
+    <div className="hidden lg:flex col-span-4 flex-col gap-4">
       {solutions.map((item) => {
         const isActive = activeTab === item.id;
         
