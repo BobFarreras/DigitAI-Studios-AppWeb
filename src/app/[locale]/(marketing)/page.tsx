@@ -7,10 +7,10 @@ import { AuditSection } from '@/components/landing/AuditSection';
 import { TestimonialsSection } from '@/components/landing/TestimonialsSection';
 import { ContactSection } from '@/components/landing/ContactSection';
 import { LatestPostsSection } from '@/components/landing/LatestPostsSection';
-import { SolutionsShowcase } from '@/components/landing/SolutionsShowcase';
+
 // Importem les dades des del fitxer net
 import { TESTIMONIALS } from '@/lib/data';
-
+import { SolutionsShowcase } from '@/components/landing/solutions/SolutionsShowcase';
 // Configuració de Vercel (si la necessites)
 export const maxDuration = 60; 
 
