@@ -3,26 +3,26 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { createClient } from '@/lib/supabase/client';
-import { Loader2, LogIn, Github } from 'lucide-react';
-import { useRouter } from '@/routing'; 
+import { createClient } from '@/lib/supabase/client'; // ✅ Client de navegador
+import { Loader2, LogIn } from 'lucide-react';
+import { useRouter } from '@/routing';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
+import { GoogleIcon } from '@/components/icons/GoogleIcon'; // 👈 Importem la icona
+import { toast } from 'sonner';
 
 export function LoginForm() {
-  const t = useTranslations('Auth'); // Namespace Auth
+  const t = useTranslations('Auth');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  // Nota: L'error de Supabase es mostra directament al component, no el traduïm.
-  const [error, setError] = useState<string | null>(null); 
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false); // Estat separat per Google
   const router = useRouter();
   const supabase = createClient();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError(null);
 
     const { error } = await supabase.auth.signInWithPassword({
       email,
@@ -30,7 +30,7 @@ export function LoginForm() {
     });
 
     if (error) {
-      setError(error.message);
+      toast.error(error.message); // Usem toast que queda millor
       setIsLoading(false);
     } else {
       router.refresh();
@@ -38,10 +38,26 @@ export function LoginForm() {
     }
   };
 
-  const handleOAuth = async (provider: 'github' | 'google') => {
-    // Simplement mostrem el missatge traduït
-    setError(t('social_maintenance_error'));
-    return;
+  // ✅ LÒGICA GOOGLE REAL
+  const handleGoogleLogin = async () => {
+    setIsGoogleLoading(true);
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        // Redirigim al callback amb un paràmetre 'next' si calgués
+        redirectTo: `${window.location.origin}/auth/callback`,
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent',
+        },
+      },
+    });
+
+    if (error) {
+        toast.error(error.message);
+        setIsGoogleLoading(false);
+    }
+    // Si no hi ha error, Supabase redirigeix automàticament a Google
   };
 
   return (
@@ -55,10 +71,16 @@ export function LoginForm() {
       <div className="grid grid-cols-1 gap-4">
         <Button 
           variant="outline" 
-          onClick={() => handleOAuth('github')} 
-          className="w-full h-12 border-border bg-card hover:bg-muted text-foreground gap-2"
+          onClick={handleGoogleLogin} 
+          disabled={isGoogleLoading || isLoading}
+          className="w-full h-12 border-border bg-card hover:bg-muted text-foreground gap-3 font-medium transition-transform active:scale-[0.98]"
         >
-          <Github className="w-5 h-5" /> {t('social_github')}
+          {isGoogleLoading ? (
+             <Loader2 className="w-5 h-5 animate-spin" />
+          ) : (
+             <GoogleIcon className="w-5 h-5" />
+          )}
+          {t('social_google', { defaultMessage: 'Continuar amb Google' })}
         </Button>
       </div>
 
@@ -100,13 +122,7 @@ export function LoginForm() {
           />
         </div>
 
-        {error && (
-          <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 text-sm text-center">
-            {error}
-          </div>
-        )}
-
-        <Button type="submit" disabled={isLoading} className="w-full h-12 gradient-bg text-white font-bold rounded-lg hover:opacity-90 transition-all shadow-lg shadow-primary/20">
+        <Button type="submit" disabled={isLoading || isGoogleLoading} className="w-full h-12 gradient-bg text-white font-bold rounded-lg hover:opacity-90 transition-all shadow-lg shadow-primary/20">
           {isLoading 
             ? <Loader2 className="animate-spin" /> 
             : <><LogIn className="w-4 h-4 mr-2" /> {t('cta_login')}</>

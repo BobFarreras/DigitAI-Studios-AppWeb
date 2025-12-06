@@ -7,25 +7,25 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { createClient } from '@/lib/supabase/client';
-import { Loader2, UserPlus, Github, Info } from 'lucide-react';
+import { Loader2, UserPlus, Info } from 'lucide-react';
+import { GoogleIcon } from '@/components/icons/GoogleIcon'; // 👈 Importem la icona
+import { toast } from 'sonner';
 
 export function RegisterForm({ prefilledEmail }: { prefilledEmail: string }) {
   const t = useTranslations('Auth');
   const router = useRouter();
+  const supabase = createClient();
 
   const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [email, setEmail] = useState(prefilledEmail);
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
-
-  // Estat del Checkbox
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Validació Checkbox
     if (!termsAccepted) {
       setError("Has d'acceptar la política de privacitat per crear el compte.");
       return;
@@ -34,9 +34,6 @@ export function RegisterForm({ prefilledEmail }: { prefilledEmail: string }) {
     setIsLoading(true);
     setError(null);
 
-    const supabase = createClient();
-
-    // 1. Registre a Supabase Auth
     const { error: authError } = await supabase.auth.signUp({
       email,
       password,
@@ -53,20 +50,35 @@ export function RegisterForm({ prefilledEmail }: { prefilledEmail: string }) {
       return;
     }
 
-    // Redirecció si tot va bé
     router.refresh();
     router.push('/dashboard');
   };
 
-  const handleOAuth = async (provider: 'github') => {
-    // Opció A: Si vols que sigui un error vermell
-    setError("🚧 El registre amb GitHub està en construcció. Si us plau, utilitza l'email.");
+  // ✅ LÒGICA GOOGLE (Register funciona igual que Login amb OAuth)
+  const handleGoogleRegister = async () => {
+    // Si vols, pots obligar a acceptar els termes abans de Google, 
+    // tot i que normalment en OAuth s'accepten implícitament.
+    if (!termsAccepted) {
+        setError("Si us plau, accepta la política de privacitat abans de continuar.");
+        return;
+    }
 
-    // Opció B (Millor): Si tens 'useToast', pots fer un toast informatiu
-    // toast({ title: "En construcció", description: "Aviat podràs entrar amb GitHub!" });
+    setIsGoogleLoading(true);
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent',
+        },
+      },
+    });
 
-    // No fem res més (no cridem a Supabase)
-    return;
+    if (error) {
+        toast.error(error.message);
+        setIsGoogleLoading(false);
+    }
   };
 
   return (
@@ -80,10 +92,12 @@ export function RegisterForm({ prefilledEmail }: { prefilledEmail: string }) {
       <div className="grid grid-cols-1 gap-4">
         <Button
           variant="outline"
-          onClick={() => handleOAuth('github')}
-          className="w-full h-12 border-border bg-card hover:bg-muted text-foreground gap-2"
+          onClick={handleGoogleRegister}
+          disabled={isLoading || isGoogleLoading}
+          className="w-full h-12 border-border bg-card hover:bg-muted text-foreground gap-3 font-medium transition-transform active:scale-[0.98]"
         >
-          <Github className="w-5 h-5" /> Registre amb GitHub
+          {isGoogleLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <GoogleIcon className="w-5 h-5" />}
+          {t('social_google_register', { defaultMessage: "Registrar-se amb Google" })}
         </Button>
       </div>
 
@@ -97,6 +111,7 @@ export function RegisterForm({ prefilledEmail }: { prefilledEmail: string }) {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
+        {/* ... INPUTS IGUALS (Full Name, Email, Password) ... */}
         <div className="space-y-2">
           <label className="text-sm font-medium text-foreground ml-1">Nom Complet</label>
           <Input
@@ -144,7 +159,7 @@ export function RegisterForm({ prefilledEmail }: { prefilledEmail: string }) {
             checked={termsAccepted}
             onCheckedChange={(checked) => {
               setTermsAccepted(checked as boolean);
-              if (checked) setError(null); // Netegem l'error visual si l'usuari marca la casella
+              if (checked) setError(null);
             }}
             className="mt-1 border-muted-foreground/30 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
           />
@@ -167,7 +182,7 @@ export function RegisterForm({ prefilledEmail }: { prefilledEmail: string }) {
 
         <Button
           type="submit"
-          disabled={isLoading}
+          disabled={isLoading || isGoogleLoading}
           className={`w-full h-12 font-bold rounded-lg transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2 ${termsAccepted
               ? 'gradient-bg text-white hover:opacity-90'
               : 'bg-muted text-muted-foreground cursor-not-allowed opacity-70'

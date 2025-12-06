@@ -61,7 +61,9 @@
     "register_title": "Crea el teu compte",
     "register_subtitle": "Per veure el teu informe complet d'auditoria",
     "already_have_account": "Ja tens compte?",
-    "login_link": "Entrar"
+    "login_link": "Entrar",
+    "social_google": "Continuar amb Google",
+    "social_facebook": "Continuar amb Facebook"
   },
   "Dashboard": {
     "welcome": "Benvingut, {name}",

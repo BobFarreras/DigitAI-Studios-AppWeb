@@ -41,7 +41,7 @@ export function ProjectCampaignsList({ campaigns, projectId }: { campaigns: Camp
             ) : (
                 <div className="grid gap-4 md:grid-cols-2">
                     {campaigns.map((camp) => (
-                        <Link key={camp.id} href={`/admin/tests/${camp.id}`} className="block group">
+                        <Link key={camp.id} href={`/admin/tests/${camp.id}?source=project`} className="block group">
                             <Card className="bg-slate-900 border-slate-800 group-hover:border-purple-500/50 transition-all h-full">
                                 <CardHeader className="pb-2">
                                     <div className="flex justify-between items-start">
