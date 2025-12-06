@@ -281,6 +281,67 @@ export class SupabaseTestRepository {
       .delete()
       .eq('id', campaignId);
   }
+  // J. Obtenir les meves missions (Tester Dashboard)
+  async getMyAssignments(userId: string) {
+    const supabase = await createClient(); // Client normal (RLS aplicat)
+
+    const { data, error } = await supabase
+      .from('test_assignments')
+      .select(`
+        id, 
+        assigned_at,
+        campaign:test_campaigns (
+            id, title, description, status, project_id,
+            project:projects ( name, domain ),
+            test_tasks ( count )
+        )
+      `) // 👆 He afegit 'id' al principi perquè el necessites abaix
+      .eq('user_id', userId)
+      .order('assigned_at', { ascending: false });
+
+    if (error || !data) return [];
+
+    // 1. Definim el tipus del resultat del Join per treure l'any
+    type AssignmentRow = {
+        id: string;
+        assigned_at: string | null;
+        campaign: {
+            id: string;
+            title: string;
+            description: string | null;
+            status: string | null;
+            project: { name: string; domain: string | null } | null;
+            test_tasks: { count: number }[];
+        } | null;
+    };
+
+    // 2. Fem el cast segur
+    const rows = data as unknown as AssignmentRow[];
+
+    // 3. Mapegem
+    return rows.map((row) => {
+      const campaign = row.campaign;
+      
+      // Si per algun motiu la campanya s'ha esborrat però l'assignació no, evitem error
+      if (!campaign) return null;
+
+      return {
+        assignmentId: row.id,
+        campaignId: campaign.id,
+        title: campaign.title,
+        description: campaign.description,
+        projectName: campaign.project?.name,
+        projectDomain: campaign.project?.domain,
+        // Supabase torna el count dins d'un array d'objectes
+        totalTasks: campaign.test_tasks?.[0]?.count || 0,
+        status: campaign.status,
+        assignedAt: row.assigned_at
+      };
+    })
+    // Filtrem els nuls (campanyes esborrades) i només les actives
+    // Aquest "predicate" (item is ...) ajuda a TS a saber que ja no hi ha nulls
+    .filter((item): item is NonNullable<typeof item> => item !== null && item.status === 'active');
+  }
 
 
 }
