@@ -1,8 +1,9 @@
 // src/features/blog/ui/AdminPostList.tsx
 'use client';
+
 import { BlogPostDTO } from '@/types/models';
 import { Button } from '@/components/ui/button';
-import { Edit, Trash2, Eye, EyeOff, Calendar } from 'lucide-react';
+import { Edit, Trash2, Eye, EyeOff, Calendar, CheckCircle2 } from 'lucide-react'; // 👈 Importat CheckCircle2
 import { togglePostStatusAction, deletePostAction } from '../actions/admin-actions';
 import { useTransition } from 'react';
 import { Link } from '@/routing';
@@ -11,7 +12,6 @@ export function AdminPostList({ posts }: { posts: BlogPostDTO[] }) {
   const [isPending, startTransition] = useTransition();
 
   const handleToggle = (slug: string, currentStatus: boolean) => {
-    // ... (lògica igual)
     if (confirm(`Vols canviar l'estat a ${!currentStatus ? 'PUBLICAT' : 'ESBORRANY'}?`)) {
       startTransition(async () => {
          await togglePostStatusAction(slug, currentStatus);
@@ -20,7 +20,6 @@ export function AdminPostList({ posts }: { posts: BlogPostDTO[] }) {
   };
 
   const handleDelete = (slug: string) => {
-    // ... (lògica igual)
     if (confirm('Estàs segur?')) {
       startTransition(async () => {
          await deletePostAction(slug);
@@ -46,7 +45,16 @@ export function AdminPostList({ posts }: { posts: BlogPostDTO[] }) {
             <tr key={post.slug} className="hover:bg-muted/50 transition-colors group">
               
               <td className="px-6 py-4">
-                <div className="font-bold text-foreground line-clamp-1">{post.title}</div>
+                <div className="flex items-center gap-2">
+                    <div className="font-bold text-foreground line-clamp-1">{post.title}</div>
+                    
+                    {/* INDICADOR REVISAT A LA LLISTA */}
+                    {post.reviewed && (
+                        <div className="text-green-500" title="Revisat i aprovat">
+                            <CheckCircle2 className="w-4 h-4 fill-green-500/10" />
+                        </div>
+                    )}
+                </div>
                 <div className="text-xs text-muted-foreground font-mono">{post.slug}</div>
               </td>
               
@@ -78,6 +86,7 @@ export function AdminPostList({ posts }: { posts: BlogPostDTO[] }) {
                     onClick={() => handleToggle(post.slug, post.published)}
                     disabled={isPending}
                     className="hover:bg-background hover:text-foreground"
+                    title={post.published ? "Despublicar" : "Publicar"}
                   >
                     {post.published 
                       ? <Eye className="w-4 h-4 text-green-500" /> 
@@ -86,7 +95,7 @@ export function AdminPostList({ posts }: { posts: BlogPostDTO[] }) {
                   </Button>
 
                   <Link href={`/admin/blog/${post.slug}`}>
-                      <Button size="icon" variant="ghost" className="hover:bg-background hover:text-blue-500">
+                      <Button size="icon" variant="ghost" className="hover:bg-background hover:text-blue-500" title="Editar">
                         <Edit className="w-4 h-4" />
                       </Button>
                   </Link>
@@ -97,6 +106,7 @@ export function AdminPostList({ posts }: { posts: BlogPostDTO[] }) {
                     onClick={() => handleDelete(post.slug)}
                     disabled={isPending}
                     className="hover:bg-red-500/10 hover:text-red-500"
+                    title="Eliminar"
                   >
                     <Trash2 className="w-4 h-4" />
                   </Button>

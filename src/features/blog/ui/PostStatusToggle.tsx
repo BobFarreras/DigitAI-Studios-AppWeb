@@ -1,8 +1,10 @@
+// src/features/blog/ui/PostStatusToggle.tsx
+
 'use client';
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Loader2, Globe, EyeOff } from 'lucide-react';
+import { Loader2, Eye, EyeOff } from 'lucide-react'; // Canvi icones més clares
 import { togglePostStatus } from '../actions';
 import { useRouter } from 'next/navigation';
 
@@ -19,7 +21,6 @@ export function PostStatusToggle({ postId, isPublished }: Props) {
     setIsLoading(true);
     try {
       await togglePostStatus(postId, isPublished);
-      // Opcional: forçar refresh del router client
       router.refresh();
     } catch (error) {
       console.error(error);
@@ -33,26 +34,25 @@ export function PostStatusToggle({ postId, isPublished }: Props) {
     return (
       <Button 
         variant="outline" 
-        size="sm" 
         onClick={handleToggle} 
         disabled={isLoading}
-        className="border-yellow-600/50 text-yellow-500 hover:bg-yellow-900/20 hover:text-yellow-400"
+        className="border-yellow-500/30 text-yellow-600 dark:text-yellow-500 hover:bg-yellow-500/10 hover:border-yellow-500/50"
       >
         {isLoading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <EyeOff className="w-4 h-4 mr-2" />}
-        Passar a Esborrany
+        Despublicar
       </Button>
     );
   }
 
   return (
     <Button 
-      size="sm" 
+      variant="outline"
       onClick={handleToggle} 
       disabled={isLoading}
-      className="bg-green-600 hover:bg-green-700 text-white border-0"
+      className="border-primary/30 text-primary hover:bg-primary/5 hover:border-primary/60"
     >
-      {isLoading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Globe className="w-4 h-4 mr-2" />}
-      Publicar Ara
+      {isLoading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Eye className="w-4 h-4 mr-2" />}
+      Publicar
     </Button>
   );
 }
