@@ -10,56 +10,43 @@ export function DiaryStack({ posts }: { posts: BlogPostDTO[] }) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const removeCard = () => {
-    // Petit delay perquè l'usuari vegi l'acció abans de canviar l'estat
-    setTimeout(() => {
-      setCurrentIndex((prev) => prev + 1);
-    }, 200);
+    setCurrentIndex((prev) => prev + 1);
   };
 
   const resetStack = () => setCurrentIndex(0);
 
+  // Agafem els 4 següents per tenir buffer visual
+  const visiblePosts = posts.slice(currentIndex, currentIndex + 4); 
+
   return (
-    <div className="relative w-full h-[650px] flex items-center justify-center overflow-hidden">
+    // overflow-visible és CRÍTIC perquè les cartes puguin "volar" des de fora
+    <div className="relative w-full h-[750px] flex items-center justify-center overflow-visible my-8">
       
-      {/* TEXT DECORATIU DE FONS */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
-        <h3 className="text-[12rem] md:text-[15rem] font-black text-foreground/5 rotate-[-5deg] tracking-tighter">
-          BLOG
-        </h3>
-      </div>
+   
 
       {/* CONTENIDOR DE LA PILA */}
-      <div className="relative w-full max-w-[400px] md:max-w-md h-[550px]">
-        <AnimatePresence>
+      <div className="relative w-full max-w-lg h-[600px] z-10 perspective-1000">
+        <AnimatePresence mode="popLayout">
           
-          {/* ESTAT BUIT (Quan s'acaben les cartes) */}
-          {currentIndex >= posts.length && (
-            <DiaryEmptyState onReset={resetStack} />
+          {currentIndex >= posts.length ? (
+            <DiaryEmptyState key="empty" onReset={resetStack} />
+          ) : (
+            visiblePosts.map((post, i) => {
+              const stackIndex = i; 
+              
+              return (
+                <DiaryCard
+                  key={post.slug}
+                  post={post}
+                  index={stackIndex}
+                  isFront={stackIndex === 0}
+                  totalCards={posts.length}
+                  currentCardNumber={currentIndex + stackIndex + 1}
+                  onRemove={removeCard}
+                />
+              );
+            }).reverse() 
           )}
-
-          {/* RENDERITZAT DE LES CARTES */}
-          {[...posts].reverse().map((post, i) => {
-            const originalIndex = posts.length - 1 - i;
-            
-            // Optimització: Només renderitzem les 3 cartes superiors
-            if (originalIndex < currentIndex) return null;
-            if (originalIndex > currentIndex + 2) return null;
-
-            const isFront = originalIndex === currentIndex;
-            const stackIndex = originalIndex - currentIndex; // 0, 1, 2...
-
-            return (
-              <DiaryCard
-                key={post.slug}
-                post={post}
-                index={stackIndex}
-                isFront={isFront}
-                totalCards={posts.length}
-                originalIndex={originalIndex}
-                onRemove={removeCard}
-              />
-            );
-          })}
         </AnimatePresence>
       </div>
     </div>
