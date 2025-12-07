@@ -61,9 +61,12 @@
     "register_title": "Create your account",
     "register_subtitle": "To view your full audit report",
     "already_have_account": "Already have an account?",
-    "login_link": "Log in"
+    "login_link": "Log in",
+   
+    "social_google": "Continue with Google",
+    "social_facebook": "Continue with Facebook"
   },
-  
+   
   "Dashboard": {
     "welcome": "Welcome, {name}",
     "my_audits": "My Audits"
@@ -426,10 +429,9 @@
     }
   },
   "LatestPosts": {
-  "badge": "Digital Academy",
-  "title_prefix": "Latest",
-  "title_highlight": "Insights",
-  "view_all": "Browse all blog posts"
-}
-
+    "badge": "Digital Academy",
+    "title_prefix": "Latest",
+    "title_highlight": "Insights",
+    "view_all": "Browse all blog posts"
+  }
 }

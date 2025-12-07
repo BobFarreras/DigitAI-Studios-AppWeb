@@ -1,8 +1,12 @@
-import { redirect } from '@/routing';
+import { redirect } from 'next/navigation'; // Use native Next.js redirect
 
-export default function AdminDashboard({ params }: { params: { locale: string } }) {
-  redirect({
-    href: '/admin/analytics',
-    locale: params.locale,
-  });
+type Props = {
+  params: Promise<{ locale: string }>;
+};
+
+export default async function AdminDashboard({ params }: Props) {
+  const { locale } = await params;
+  
+  // Explicitly construct the URL with the current locale
+  redirect(`/${locale}/admin/analytics`);
 }

@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 // import { createClient } from '@/lib/supabase/client'; // ❌ Eliminem això
 // import { useRouter } from '@/routing'; // ❌ Eliminem això
 import { useTranslations } from 'next-intl';
-
+import { useRouter } from '@/routing';
 // 👇 1. Importem l'acció de servidor
 import { signOutAction } from '@/features/auth/actions/auth';
 
@@ -18,12 +18,15 @@ interface SidebarProps {
 export function Sidebar({ userRole }: SidebarProps) {
   const t = useTranslations('Sidebar');
   const pathname = usePathname();
+  const router = useRouter(); // 👈 RECUPEREM EL ROUTER
   // const router = useRouter(); // ❌ Eliminat
   // const supabase = createClient(); // ❌ Eliminat
 
-  // ✅ 2. Nova funció de Logout (molt més simple)
+  // ✅ LOGOUT HÍBRID AQUÍ TAMBÉ
   const handleSignOut = async () => {
     await signOutAction();
+    router.refresh();
+    router.push('/auth/login');
   };
 
   const handleClick = (e: React.MouseEvent, href: string, label: string) => {
@@ -43,7 +46,7 @@ export function Sidebar({ userRole }: SidebarProps) {
   ];
 
   if (userRole === 'admin') {
-    MENU_ITEMS.unshift({ 
+    MENU_ITEMS.unshift({
       icon: ShieldAlert,
       label: 'Admin Panel',
       href: '/admin'
@@ -52,7 +55,7 @@ export function Sidebar({ userRole }: SidebarProps) {
 
   return (
     <aside className="w-64 h-screen bg-card border-r border-border flex flex-col sticky top-0 transition-colors duration-300">
-      
+
       {/* LOGO AREA */}
       <div className="p-6 border-b border-border">
         <Link href="/" className="flex items-center gap-2 text-xl font-bold text-foreground">
@@ -68,17 +71,17 @@ export function Sidebar({ userRole }: SidebarProps) {
 
         {MENU_ITEMS.map((item) => {
           let isActive = false;
-          
+
           if (!item.href.startsWith('#')) {
             if (item.href === '/dashboard') {
-               isActive = cleanPath === '/dashboard';
+              isActive = cleanPath === '/dashboard';
             } else {
-               isActive = cleanPath.startsWith(item.href);
+              isActive = cleanPath.startsWith(item.href);
             }
           }
-          
+
           const isAdminItem = item.href === '/admin';
-          
+
           return (
             <Link
               key={item.label}

@@ -61,7 +61,9 @@
     "register_title": "Crea tu cuenta",
     "register_subtitle": "Para ver tu informe completo de auditoría",
     "already_have_account": "¿Ya tienes cuenta?",
-    "login_link": "Iniciar sesión"
+    "login_link": "Iniciar sesión",
+    "social_google": "Continuar con Google",
+    "social_facebook": "Continuar con Facebook"
   },
   "Dashboard": {
     "welcome": "Bienvenido, {name}",

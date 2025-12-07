@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link'; // ✅ Importem Link
 import { usePathname } from 'next/navigation';
+
 import { Button } from '@/components/ui/button';
 import {
   LogOut,
@@ -28,6 +29,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { signOutAction } from '@/features/auth/actions/auth';
 
 type Props = {
   user: SupabaseUser | null;
@@ -38,7 +40,6 @@ export function Navbar({ user }: Props) {
   const [isScrolled, setIsScrolled] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
-  const supabase = createClient();
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -46,11 +47,18 @@ export function Navbar({ user }: Props) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // ✅ LOGOUT HÍBRID (Més estable)
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    router.refresh();
-  };
+    // 1. Esperem que el servidor netegi cookies
+    await signOutAction();
 
+    // 2. Refresquem la ruta (per netejar dades en caché del client)
+    router.refresh();
+
+    // 3. Redirigim al login
+    router.push('/auth/login');
+  };
+  
   // Funció per gestionar l'scroll suau
   // Canviem el tipus d'event a un genèric o HTMLAnchorElement ja que Link renderitza un <a>
   const handleScrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {

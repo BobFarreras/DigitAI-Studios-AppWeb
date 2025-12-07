@@ -1,5 +1,5 @@
 
-\restrict d26StOomtBWE0YhwjoUJclg5Fwgsc71j4Jccnqr94OU5JfMiHErLhQqS8q0XB7K
+\restrict tVvtKMvFOf9Cz8ipKkj7AQUvciQQdo3VF5SysY9IRZI4IzVw88W80nu9ieP2lMX
 
 
 SET statement_timeout = 0;
@@ -342,7 +342,8 @@ CREATE TABLE IF NOT EXISTS "public"."posts" (
     "created_at" timestamp with time zone DEFAULT "now"(),
     "updated_at" timestamp with time zone DEFAULT "now"(),
     "published" boolean DEFAULT false,
-    "organization_id" "uuid" NOT NULL
+    "organization_id" "uuid" NOT NULL,
+    "reviewed" boolean DEFAULT false
 );
 
 
@@ -382,6 +383,17 @@ CREATE TABLE IF NOT EXISTS "public"."profiles" (
 
 
 ALTER TABLE "public"."profiles" OWNER TO "postgres";
+
+
+CREATE TABLE IF NOT EXISTS "public"."project_members" (
+    "project_id" "uuid" NOT NULL,
+    "user_id" "uuid" NOT NULL,
+    "role" "text" DEFAULT 'member'::"text",
+    "added_at" timestamp with time zone DEFAULT "now"()
+);
+
+
+ALTER TABLE "public"."project_members" OWNER TO "postgres";
 
 
 CREATE TABLE IF NOT EXISTS "public"."projects" (
@@ -487,6 +499,17 @@ CREATE TABLE IF NOT EXISTS "public"."test_tasks" (
 ALTER TABLE "public"."test_tasks" OWNER TO "postgres";
 
 
+CREATE OR REPLACE VIEW "public"."users_summary" AS
+ SELECT "id",
+    "email",
+    ("raw_user_meta_data" ->> 'full_name'::"text") AS "full_name",
+    ("raw_user_meta_data" ->> 'avatar_url'::"text") AS "avatar_url"
+   FROM "auth"."users";
+
+
+ALTER VIEW "public"."users_summary" OWNER TO "postgres";
+
+
 CREATE TABLE IF NOT EXISTS "public"."web_audits" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "url" "text" NOT NULL,
@@ -582,6 +605,11 @@ ALTER TABLE ONLY "public"."products"
 
 ALTER TABLE ONLY "public"."profiles"
     ADD CONSTRAINT "profiles_pkey" PRIMARY KEY ("id", "organization_id");
+
+
+
+ALTER TABLE ONLY "public"."project_members"
+    ADD CONSTRAINT "project_members_pkey" PRIMARY KEY ("project_id", "user_id");
 
 
 
@@ -708,6 +736,11 @@ ALTER TABLE ONLY "public"."content_queue"
 
 
 
+ALTER TABLE ONLY "public"."project_members"
+    ADD CONSTRAINT "fk_project_members_users" FOREIGN KEY ("user_id") REFERENCES "auth"."users"("id") ON DELETE CASCADE;
+
+
+
 ALTER TABLE ONLY "public"."order_items"
     ADD CONSTRAINT "order_items_order_id_fkey" FOREIGN KEY ("order_id") REFERENCES "public"."orders"("id") ON DELETE CASCADE;
 
@@ -745,6 +778,16 @@ ALTER TABLE ONLY "public"."profiles"
 
 ALTER TABLE ONLY "public"."profiles"
     ADD CONSTRAINT "profiles_organization_id_fkey" FOREIGN KEY ("organization_id") REFERENCES "public"."organizations"("id");
+
+
+
+ALTER TABLE ONLY "public"."project_members"
+    ADD CONSTRAINT "project_members_project_id_fkey" FOREIGN KEY ("project_id") REFERENCES "public"."projects"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."project_members"
+    ADD CONSTRAINT "project_members_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "auth"."users"("id") ON DELETE CASCADE;
 
 
 
@@ -850,7 +893,7 @@ CREATE POLICY "Admins manage assignments" ON "public"."test_assignments" USING (
 
 
 
-CREATE POLICY "Clients view own projects" ON "public"."projects" FOR SELECT USING (("organization_id" IN ( SELECT "public"."get_my_org_ids"() AS "get_my_org_ids")));
+CREATE POLICY "Admins manage project members" ON "public"."project_members" USING ("public"."is_admin"());
 
 
 
@@ -960,6 +1003,30 @@ CREATE POLICY "Users read own assignments" ON "public"."test_assignments" FOR SE
 
 
 
+CREATE POLICY "Users read own memberships" ON "public"."project_members" FOR SELECT USING (("auth"."uid"() = "user_id"));
+
+
+
+CREATE POLICY "Users view assigned projects" ON "public"."projects" FOR SELECT USING (("public"."is_admin"() OR ("client_id" = "auth"."uid"()) OR (EXISTS ( SELECT 1
+   FROM "public"."project_members"
+  WHERE (("project_members"."project_id" = "projects"."id") AND ("project_members"."user_id" = "auth"."uid"()))))));
+
+
+
+CREATE POLICY "Users view own project memberships" ON "public"."project_members" FOR SELECT USING (("auth"."uid"() = "user_id"));
+
+
+
+CREATE POLICY "View own projects" ON "public"."projects" FOR SELECT USING (("client_id" = "auth"."uid"()));
+
+
+
+CREATE POLICY "View projects as member" ON "public"."projects" FOR SELECT USING ((EXISTS ( SELECT 1
+   FROM "public"."project_members"
+  WHERE (("project_members"."project_id" = "projects"."id") AND ("project_members"."user_id" = "auth"."uid"())))));
+
+
+
 CREATE POLICY "Visible to assigned testers" ON "public"."test_campaigns" FOR SELECT USING (("public"."is_admin"() OR (EXISTS ( SELECT 1
    FROM "public"."test_assignments"
   WHERE (("test_assignments"."campaign_id" = "test_campaigns"."id") AND ("test_assignments"."user_id" = "auth"."uid"()))))));
@@ -997,6 +1064,9 @@ ALTER TABLE "public"."products" ENABLE ROW LEVEL SECURITY;
 
 
 ALTER TABLE "public"."profiles" ENABLE ROW LEVEL SECURITY;
+
+
+ALTER TABLE "public"."project_members" ENABLE ROW LEVEL SECURITY;
 
 
 ALTER TABLE "public"."projects" ENABLE ROW LEVEL SECURITY;
@@ -1138,6 +1208,12 @@ GRANT ALL ON TABLE "public"."profiles" TO "service_role";
 
 
 
+GRANT ALL ON TABLE "public"."project_members" TO "anon";
+GRANT ALL ON TABLE "public"."project_members" TO "authenticated";
+GRANT ALL ON TABLE "public"."project_members" TO "service_role";
+
+
+
 GRANT ALL ON TABLE "public"."projects" TO "anon";
 GRANT ALL ON TABLE "public"."projects" TO "authenticated";
 GRANT ALL ON TABLE "public"."projects" TO "service_role";
@@ -1180,6 +1256,12 @@ GRANT ALL ON TABLE "public"."test_tasks" TO "service_role";
 
 
 
+GRANT ALL ON TABLE "public"."users_summary" TO "anon";
+GRANT ALL ON TABLE "public"."users_summary" TO "authenticated";
+GRANT ALL ON TABLE "public"."users_summary" TO "service_role";
+
+
+
 GRANT ALL ON TABLE "public"."web_audits" TO "anon";
 GRANT ALL ON TABLE "public"."web_audits" TO "authenticated";
 GRANT ALL ON TABLE "public"."web_audits" TO "service_role";
@@ -1216,6 +1298,6 @@ ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public" GRANT ALL ON TAB
 
 
 
-\unrestrict d26StOomtBWE0YhwjoUJclg5Fwgsc71j4Jccnqr94OU5JfMiHErLhQqS8q0XB7K
+\unrestrict tVvtKMvFOf9Cz8ipKkj7AQUvciQQdo3VF5SysY9IRZI4IzVw88W80nu9ieP2lMX
 
 RESET ALL;
