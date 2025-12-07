@@ -445,6 +445,58 @@ export class SupabaseTestRepository {
       };
     });
   }
+  // K. Obtenir resultats detallats d'una campanya (Analytics)
+  async getCampaignResults(campaignId: string) {
+    const supabase = createAdminClient();
+
+    // 1. Obtenim totes les tasques de la campanya (per saber el total)
+    const { data: tasks } = await supabase
+      .from('test_tasks')
+      .select('id, title')
+      .eq('campaign_id', campaignId);
+
+    if (!tasks) return { results: [], totalTasks: 0 };
+
+    const taskIds = tasks.map(t => t.id);
+    const taskMap = new Map(tasks.map(t => [t.id, t.title]));
+
+    // 2. Obtenim tots els resultats d'aquestes tasques
+    const { data: results } = await supabase
+      .from('test_results')
+      .select(`
+        id, status, comment, updated_at, task_id, user_id
+      `)
+      .in('task_id', taskIds)
+      .order('updated_at', { ascending: false });
+
+    // 3. Obtenim els usuaris involucrats (per mostrar noms)
+    const userIds = Array.from(new Set(results?.map(r => r.user_id) || []));
+    const { data: profiles } = await supabase
+      .from('profiles')
+      .select('id, full_name, email, avatar_url')
+      .in('id', userIds);
+
+    const profileMap = new Map(profiles?.map(p => [p.id, p]));
+
+    // 4. Combinem les dades en un objecte fàcil de consumir per la UI
+    const enrichedResults = results?.map(r => ({
+      id: r.id,
+      // ✅ CORRECCIÓ: Fem un cast explícit a l'estat
+      status: (r.status as 'pass' | 'fail' | 'blocked') || 'blocked',
+      comment: r.comment,
+      updated_at: r.updated_at || new Date().toISOString(), // Assegurem data
+      task_id: r.task_id,
+      user_id: r.user_id,
+      taskTitle: taskMap.get(r.task_id) || 'Tasca desconeguda',
+      tester: profileMap.get(r.user_id) || { id: 'unknown', full_name: 'Desconegut', email: '...', avatar_url: null }
+    })) || [];
+
+    return {
+      results: enrichedResults,
+      totalTasks: tasks.length,
+      tasks: tasks // Retornem també l'estructura per si cal
+    };
+  }
 }
 
 

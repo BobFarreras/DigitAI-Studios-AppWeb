@@ -9,6 +9,9 @@ import { createClient } from '@/lib/supabase/server';
 // 👇 1. Importem el nou component
 import { BackButton } from '@/components/ui/back-button';
 import { DeleteCampaignButton } from '@/features/tests/ui/DeleteCampaignButton';
+import { CampaignAnalytics } from '@/features/tests/ui/CampaignAnalytics';
+
+
 export default async function AdminTestDetailPage({ params }: { params: Promise<{ id: string }> }) {
   await requireAdmin();
   const { id } = await params;
@@ -33,7 +36,7 @@ export default async function AdminTestDetailPage({ params }: { params: Promise<
     repo.getAssignedTesters(id),
     repo.getProjectMembersForTest(id, ctx.campaign.projectId, project.organization_id)
   ]);
-
+  const analyticsData = await repo.getCampaignResults(id);
   return (
     <div className="p-6 max-w-6xl mx-auto space-y-6">
 
@@ -62,13 +65,18 @@ export default async function AdminTestDetailPage({ params }: { params: Promise<
         </div>
       </div>
 
-      <Tabs defaultValue="tasks" className="w-full">
-        {/* ... (La resta de Tabs es queda igual) ... */}
-        <TabsList className="grid w-full grid-cols-3 bg-slate-900 border border-slate-800">
-          <TabsTrigger value="details">📝 Detalls i Documentació</TabsTrigger>
-          <TabsTrigger value="tasks">✅ Checklist (Tasques)</TabsTrigger>
-          <TabsTrigger value="team">👥 Equip de Testers</TabsTrigger>
+      <Tabs defaultValue="results" className="w-full"> {/* Pots canviar el default a 'results' si vols veure això primer */}
+        <TabsList className="grid w-full grid-cols-4 bg-slate-900 border border-slate-800">
+          <TabsTrigger value="results">📊 Resultats</TabsTrigger> {/* Nova pestanya */}
+          <TabsTrigger value="details">📝 Detalls</TabsTrigger>
+          <TabsTrigger value="tasks">✅ Checklist</TabsTrigger>
+          <TabsTrigger value="team">👥 Equip</TabsTrigger>
         </TabsList>
+
+        {/* 0. RESULTATS (NOU) */}
+        <TabsContent value="results" className="mt-6">
+          <CampaignAnalytics data={analyticsData} />
+        </TabsContent>
 
         <TabsContent value="details" className="mt-6">
           <CampaignDetailsForm campaign={ctx.campaign} />
