@@ -13,8 +13,8 @@ export function MockupBooking() {
     const cycle = async () => {
       setStep(0);
       setTimeout(() => setStep(1), 1000); // Pas 1: Sol·licitud (Surt el xat en PC / Card en Mòbil)
-      setTimeout(() => setStep(2), 2000); // Pas 2: Processant (IA en Mòbil / Res en PC encara)
-      setTimeout(() => setStep(3), 3000); // Pas 3: Èxit (Ticket en Mòbil / Notificació i Calendari en PC)
+      setTimeout(() => setStep(2), 3000); // Pas 2: Processant (IA en Mòbil / Res en PC encara)
+      setTimeout(() => setStep(3), 5000); // Pas 3: Èxit (Ticket en Mòbil / Notificació i Calendari en PC)
       setTimeout(() => setStep(0), 8000); // Reset
     };
     cycle();
