@@ -31,9 +31,11 @@ export default async function TesterDashboard() {
                 
                 <div className="relative z-10">
                     <div className="flex items-center gap-4 mb-2">
-                        <span className="text-4xl">{stats.rank.split(' ')[1]}</span>
+                        {/* ⚠️ CORRECCIÓ: stats.rankName en lloc de stats.rank */}
+                        <span className="text-4xl">{stats.rankName.split(' ')[1]}</span>
                         <div>
-                            <h1 className="text-2xl font-bold">{stats.rank.split(' ')[0]}</h1>
+                            {/* ⚠️ CORRECCIÓ: stats.rankName en lloc de stats.rank */}
+                            <h1 className="text-2xl font-bold">{stats.rankName.split(' ')[0]}</h1>
                             <p className="text-purple-200 text-sm">Nivell {stats.level}</p>
                         </div>
                     </div>
@@ -65,7 +67,7 @@ export default async function TesterDashboard() {
                 ) : (
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {assignments.map(mission => (
-                            <Link key={mission.assignmentId} href={`/dashboard/tests/${mission.campaignId}`} className="group block">
+                            <Link key={mission.assignmentId} href={`/dashboard/projects/${mission.campaignId}`} className="group block"> {/* ⚠️ Nota: He corregit l'enllaç per apuntar a /projects/ que és on tenim el detall */}
                                 <Card className="h-full hover:border-purple-500 transition-all hover:shadow-lg hover:-translate-y-1 bg-white dark:bg-slate-900">
                                     <CardHeader>
                                         <div className="flex justify-between items-start">
