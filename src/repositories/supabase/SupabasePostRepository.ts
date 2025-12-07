@@ -3,15 +3,16 @@ import { IPostRepository } from '@/repositories/interfaces/IPostRepository';
 import { BlogPostDTO } from '@/types/models';
 import { Database } from '@/types/database.types';
 
-// Tipus directe de la fila SQL i de l'objecte Update
+// 1. Tipus estrictes de la base de dades
 type PostRow = Database['public']['Tables']['posts']['Row'];
-type PostUpdate = Database['public']['Tables']['posts']['Update']; // 👈 NOU TIPUS
+type PostUpdate = Database['public']['Tables']['posts']['Update']; // 👈 Adéu 'any'
 
-// ⚠️ IMPORTANT: Idealment això va a process.env.NEXT_PUBLIC_MAIN_ORG_ID
+// ⚠️ CONSTANT D'ORGANITZACIÓ (Posa-ho al .env en producció)
 const MY_ORG_ID = process.env.NEXT_PUBLIC_MAIN_ORG_ID || '2f1e89dd-0b95-4f7b-ab31-14a9916d374f';
 
 export class SupabasePostRepository implements IPostRepository {
 
+  // 🔄 Mapper: DB -> App
   private mapToDTO(row: PostRow): BlogPostDTO {
     return {
       id: row.id,
@@ -27,17 +28,18 @@ export class SupabasePostRepository implements IPostRepository {
     };
   }
 
-  // ... (getPostBySlug i getAllPublishedPosts es mantenen iguals) ...
+  // --- LECTURA PÚBLICA (WEB) ---
 
   async getPostBySlug(slug: string): Promise<BlogPostDTO | null> {
     const supabase = await createClient();
+
     const { data, error } = await supabase
       .from('posts')
       .select('*')
       .eq('slug', slug)
-      .eq('status', 'published')
-      .eq('published', true)
-      .eq('organization_id', MY_ORG_ID)
+      .eq('status', 'published')      // Només publicats
+      .eq('published', true)          // Doble check
+      .eq('organization_id', MY_ORG_ID) // 🔒 SEGURETAT: Només la teva org
       .single();
 
     if (error || !data) return null;
@@ -46,41 +48,47 @@ export class SupabasePostRepository implements IPostRepository {
 
   async getAllPublishedPosts(): Promise<BlogPostDTO[]> {
     const supabase = await createClient();
+
+    // 1. Posts de la teva ORG i publicats
     const { data: posts } = await supabase
       .from('posts')
       .select('*')
       .eq('status', 'published')
       .eq('published', true)
-      .eq('organization_id', MY_ORG_ID)
+      .eq('organization_id', MY_ORG_ID) // 🔒 SEGURETAT
       .order('published_at', { ascending: false });
 
     if (!posts || posts.length === 0) return [];
 
+    // 2. Reaccions (Bulk query eficient)
     const slugs = posts.map(p => p.slug);
     const { data: reactions } = await supabase
       .from('post_reactions')
       .select('post_slug')
       .in('post_slug', slugs);
 
+    // 3. Recompte en memòria
     const reactionCounts = new Map<string, number>();
     reactions?.forEach(r => {
       reactionCounts.set(r.post_slug, (reactionCounts.get(r.post_slug) || 0) + 1);
     });
 
+    // 4. Injectar dades al DTO
     return posts.map(row => ({
       ...this.mapToDTO(row),
       totalReactions: reactionCounts.get(row.slug) || 0
     }));
   }
 
-  // --- ADMIN METHODS ---
+  // --- GESTIÓ ADMIN (DASHBOARD) ---
 
   async getAllPosts(): Promise<BlogPostDTO[]> {
-    const supabase = createAdminClient();
+    const supabase = createAdminClient(); 
+    // Fins i tot a l'admin filtrem per ORG per no barrejar dades si fos multi-tenant
     const { data, error } = await supabase
       .from('posts')
       .select('*')
-      .eq('organization_id', MY_ORG_ID)
+      .eq('organization_id', MY_ORG_ID) 
       .order('created_at', { ascending: false });
 
     if (error) throw new Error(error.message);
@@ -90,37 +98,32 @@ export class SupabasePostRepository implements IPostRepository {
   async updatePost(slug: string, data: Partial<BlogPostDTO>): Promise<void> {
     const supabase = createAdminClient();
 
-    // ✅ SOLUCIÓ: Utilitzem el tipus 'PostUpdate' en lloc de 'any'
-    const updateData: PostUpdate = {}; 
+    // ✅ ÚS DEL TIPUS 'PostUpdate' (Typescript estricte)
+    const updateData: PostUpdate = {};
 
-    // Mapeig segur (Typescript verificarà que els camps existeixen a la DB)
     if (data.title !== undefined) updateData.title = data.title;
     if (data.description !== undefined) updateData.description = data.description;
-    if (data.content !== undefined) updateData.content_mdx = data.content; // Mapeig DTO -> DB
-    if (data.coverImage !== undefined) updateData.cover_image = data.coverImage;
+    if (data.content !== undefined) updateData.content_mdx = data.content;
     if (data.tags !== undefined) updateData.tags = data.tags;
+    if (data.coverImage !== undefined) updateData.cover_image = data.coverImage;
     if (data.reviewed !== undefined) updateData.reviewed = data.reviewed;
 
-    // Lògica d'estat
     if (data.published !== undefined) {
-        updateData.published = data.published;
-        updateData.status = data.published ? 'published' : 'draft';
-        
-        // Si publiquem, actualitzem data. Si despubliquem, potser volem mantenir l'antiga o null.
-        // Aquí diem: si passa a published, posem data actual o la que vingui.
-        if (data.published) {
-            updateData.published_at = data.date || new Date().toISOString();
-        }
+      updateData.published = data.published;
+      updateData.status = data.published ? 'published' : 'draft';
+      // Si publiquem, actualitzem la data si no n'hi ha una de manual
+      if (data.published) {
+         updateData.published_at = data.date || new Date().toISOString();
+      }
     } else if (data.date) {
-        // Si només canviem la data manualment
-        updateData.published_at = data.date;
+      updateData.published_at = data.date;
     }
 
     const { error } = await supabase
       .from('posts')
       .update(updateData)
       .eq('slug', slug)
-      .eq('organization_id', MY_ORG_ID);
+      .eq('organization_id', MY_ORG_ID); // 🔒
 
     if (error) throw new Error(error.message);
   }
@@ -131,7 +134,7 @@ export class SupabasePostRepository implements IPostRepository {
       .from('posts')
       .delete()
       .eq('slug', slug)
-      .eq('organization_id', MY_ORG_ID);
+      .eq('organization_id', MY_ORG_ID); // 🔒
 
     if (error) throw new Error(error.message);
   }
@@ -142,42 +145,62 @@ export class SupabasePostRepository implements IPostRepository {
       .from('posts')
       .select('*')
       .eq('slug', slug)
-      .eq('organization_id', MY_ORG_ID)
+      .eq('organization_id', MY_ORG_ID) // 🔒
       .single();
 
     if (error || !data) return null;
     return this.mapToDTO(data);
   }
 
-  // ... (Mètodes de reaccions es mantenen igual) ...
+  // --- REACCIONS ---
+
   async getPostReactions(slug: string): Promise<Record<string, number>> {
     const supabase = await createClient();
-    const { data, error } = await supabase.from('post_reactions').select('reaction_type').eq('post_slug', slug);
-    if (error) return {};
+    const { data } = await supabase.from('post_reactions').select('reaction_type').eq('post_slug', slug);
+    
     const counts: Record<string, number> = {};
-    data.forEach((row) => { counts[row.reaction_type] = (counts[row.reaction_type] || 0) + 1; });
+    data?.forEach(r => counts[r.reaction_type] = (counts[r.reaction_type] || 0) + 1);
     return counts;
-  }
-
-  async getUserReactions(slug: string, visitorId: string): Promise<string[]> {
-    const supabase = await createClient();
-    const { data } = await supabase.from('post_reactions').select('reaction_type').eq('post_slug', slug).eq('visitor_id', visitorId);
-    return data?.map(r => r.reaction_type) || [];
   }
 
   async toggleReaction(slug: string, reaction: string, visitorId: string) {
     const supabase = createAdminClient();
-    const { data: post } = await supabase.from('posts').select('slug').eq('slug', slug).eq('organization_id', MY_ORG_ID).single();
-    if(!post) throw new Error("Post not found");
+    
+    // Validem que el post existeix a la nostra ORG
+    const { data: post } = await supabase
+        .from('posts')
+        .select('id')
+        .eq('slug', slug)
+        .eq('organization_id', MY_ORG_ID)
+        .single();
+        
+    if(!post) throw new Error("Post not found in organization");
 
-    const { data: existing } = await supabase.from('post_reactions').select('id').eq('post_slug', slug).eq('reaction_type', reaction).eq('visitor_id', visitorId).maybeSingle();
+    const { data: existing } = await supabase
+        .from('post_reactions')
+        .select('id')
+        .eq('post_slug', slug)
+        .eq('reaction_type', reaction)
+        .eq('visitor_id', visitorId)
+        .maybeSingle();
 
     if (existing) {
       await supabase.from('post_reactions').delete().eq('id', existing.id);
       return 'removed';
     } else {
-      await supabase.from('post_reactions').insert({ post_slug: slug, reaction_type: reaction, visitor_id: visitorId });
+      await supabase.from('post_reactions').insert({ 
+          post_slug: slug, 
+          reaction_type: reaction, 
+          visitor_id: visitorId 
+      });
       return 'added';
     }
+  }
+  
+  // (Mètode auxiliar no utilitzat actualment però necessari per la interfície si hi fos)
+  async getUserReactions(slug: string, visitorId: string): Promise<string[]> {
+     const supabase = await createClient();
+     const { data } = await supabase.from('post_reactions').select('reaction_type').eq('post_slug', slug).eq('visitor_id', visitorId);
+     return data?.map(r => r.reaction_type) || [];
   }
 }

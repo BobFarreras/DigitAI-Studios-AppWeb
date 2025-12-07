@@ -53,7 +53,7 @@ export default async function BlogIndexPage() {
 
                     {post.totalReactions}
                   </div>
-                )}F
+                )}
 
                 {post.coverImage ? (
                   <Image
