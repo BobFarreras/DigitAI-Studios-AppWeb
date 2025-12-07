@@ -201,6 +201,13 @@ export type Database = {
             referencedRelation: "services"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "bookings_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users_summary"
+            referencedColumns: ["id"]
+          },
         ]
       }
       contact_leads: {
@@ -364,6 +371,13 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "orders_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users_summary"
+            referencedColumns: ["id"]
+          },
         ]
       }
       organizations: {
@@ -395,6 +409,38 @@ export type Database = {
           slug?: string
         }
         Relationships: []
+      }
+      post_reactions: {
+        Row: {
+          created_at: string | null
+          id: string
+          post_slug: string
+          reaction_type: string
+          visitor_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          post_slug: string
+          reaction_type: string
+          visitor_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          post_slug?: string
+          reaction_type?: string
+          visitor_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_reactions_post_slug_fkey"
+            columns: ["post_slug"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["slug"]
+          },
+        ]
       }
       posts: {
         Row: {
@@ -544,6 +590,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "profiles_id_fkey"
+            columns: ["id"]
+            isOneToOne: false
+            referencedRelation: "users_summary"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "profiles_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
@@ -573,10 +626,24 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "fk_project_members_users"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users_summary"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "project_members_project_id_fkey"
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_members_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users_summary"
             referencedColumns: ["id"]
           },
         ]
@@ -628,6 +695,13 @@ export type Database = {
           status?: Database["public"]["Enums"]["project_status"] | null
         }
         Relationships: [
+          {
+            foreignKeyName: "projects_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "users_summary"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "projects_organization_id_fkey"
             columns: ["organization_id"]
@@ -746,6 +820,13 @@ export type Database = {
             referencedRelation: "test_campaigns"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "test_assignments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users_summary"
+            referencedColumns: ["id"]
+          },
         ]
       }
       test_campaigns: {
@@ -823,6 +904,13 @@ export type Database = {
             columns: ["task_id"]
             isOneToOne: false
             referencedRelation: "test_tasks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "test_results_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users_summary"
             referencedColumns: ["id"]
           },
         ]
@@ -910,11 +998,38 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "web_audits_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users_summary"
+            referencedColumns: ["id"]
+          },
         ]
       }
     }
     Views: {
-      [_ in never]: never
+      users_summary: {
+        Row: {
+          avatar_url: string | null
+          email: string | null
+          full_name: string | null
+          id: string | null
+        }
+        Insert: {
+          avatar_url?: never
+          email?: string | null
+          full_name?: never
+          id?: string | null
+        }
+        Update: {
+          avatar_url?: never
+          email?: string | null
+          full_name?: never
+          id?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       decrement_stock: {

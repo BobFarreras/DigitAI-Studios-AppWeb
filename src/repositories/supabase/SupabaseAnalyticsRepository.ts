@@ -1,6 +1,6 @@
 import { createClient, createAdminClient } from '@/lib/supabase/server'; // 👈 Afegim createAdminClient
 import { AnalyticsEventDTO } from '@/types/models';
-import { Database } from '@/types/database.types';
+import { Database, Json } from '@/types/database.types';
 import {
   IAnalyticsRepository,
   DailyStats,
@@ -14,56 +14,73 @@ type AnalyticsInsert = Database['public']['Tables']['analytics_events']['Insert'
 
 export class SupabaseAnalyticsRepository implements IAnalyticsRepository {
 
-  // 1. MÈTODE D'ESCRIPTURA (TRACKING)
-  // Aquest ha de ser "blindat" perquè l'executa tothom (fins i tot usuaris sense login).
-  async trackEvent(event: AnalyticsEventDTO): Promise<void> {
-    // ⚠️ CANVI IMPORTANT: Usem el client ADMIN per escriure,
-    // ja que hem tancat la porta pública RLS al Pas 1.
+  // 🟢 CORRECCIÓ: Ara prometem retornar un número (ID) o null
+  async trackEvent(event: AnalyticsEventDTO): Promise<number | null> {
     const supabaseAdmin = createAdminClient();
 
-    const { error } = await supabaseAdmin.from('analytics_events').insert({
+    const payload: AnalyticsInsert = {
       event_name: event.event_name,
       path: event.path,
       session_id: event.session_id,
-      // Assegurem que el tipus encaixa
-      meta: event.meta as AnalyticsInsert['meta'],
-      country: event.geo?.country,
-      city: event.geo?.city,
-      browser: event.device?.browser,
-      os: event.device?.os,
-      device_type: event.device?.type,
-      referrer: event.referrer,
-      duration_seconds: event.duration || 0
-    });
+      meta: (event.meta as unknown as Json) || null,
+      duration_seconds: event.duration || 0,
+      referrer: event.referrer || null,
+      country: event.geo?.country || null,
+      city: event.geo?.city || null,
+      device_type: event.device?.type || 'unknown',
+      browser: event.device?.browser || 'unknown',
+      os: event.device?.os || 'unknown'
+    };
+
+    const { data, error } = await supabaseAdmin
+      .from('analytics_events')
+      .insert(payload)
+      .select('id')
+      .single();
 
     if (error) {
-      console.error("Error al Repositori (trackEvent):", error.message);
-      // Opcional: llançar error si vols que la Action ho sàpiga
-      // throw new Error(error.message);
+      console.error("Error al Repositori:", error.message);
+      return null; // ✅ Ara això és vàlid
     }
-  }
 
+    return data.id; // ✅ Ara això és vàlid
+  }
+  // 👇 NOU MÈTODE
+  async updateDuration(eventId: number, duration: number): Promise<void> {
+    const supabaseAdmin = createAdminClient();
+
+    // Evitem actualitzacions absurdes (ex: 0 segons o negatius)
+    if (duration <= 0) return;
+
+    await supabaseAdmin
+      .from('analytics_events')
+      .update({ duration_seconds: duration })
+      .eq('id', eventId);
+  }
   async getLast7DaysStats(): Promise<DailyStats[]> {
     const supabase = await createClient();
 
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
+    // 1. AFEGIM duration_seconds A LA QUERY
     const { data, error } = await supabase
       .from('analytics_events')
-      .select('created_at, session_id')
+      .select('created_at, session_id, duration_seconds')
       .gte('created_at', sevenDaysAgo.toISOString())
       .order('created_at', { ascending: true });
 
     if (error || !data) return [];
 
-    const statsMap = new Map<string, { views: number; sessions: Set<string> }>();
+    // Map per agrupar per dia
+    const statsMap = new Map<string, { views: number; sessions: Set<string>; duration: number }>();
 
+    // Inicialitzem els últims 7 dies a 0
     for (let i = 6; i >= 0; i--) {
       const d = new Date();
       d.setDate(d.getDate() - i);
       const key = d.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' });
-      statsMap.set(key, { views: 0, sessions: new Set() });
+      statsMap.set(key, { views: 0, sessions: new Set(), duration: 0 });
     }
 
     data.forEach((row) => {
@@ -75,6 +92,8 @@ export class SupabaseAnalyticsRepository implements IAnalyticsRepository {
           const entry = statsMap.get(key)!;
           entry.views++;
           if (row.session_id) entry.sessions.add(row.session_id);
+          // 2. ACUMULEM LA DURADA
+          entry.duration += row.duration_seconds || 0;
         }
       }
     });
@@ -82,7 +101,8 @@ export class SupabaseAnalyticsRepository implements IAnalyticsRepository {
     return Array.from(statsMap.entries()).map(([date, val]) => ({
       date,
       views: val.views,
-      visitors: val.sessions.size
+      visitors: val.sessions.size,
+      totalDuration: val.duration // 👈 Retornem la suma
     }));
   }
 

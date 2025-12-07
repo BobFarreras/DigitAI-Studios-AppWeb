@@ -9,15 +9,15 @@ type Props = {
 
 export function TrafficChart({ data }: Props) {
   return (
-    // CANVI: Treiem bg-slate-900 i text-slate-200. Usem el sistema de temes.
-    <Card className="bg-card border-border text-card-foreground col-span-2 h-full flex flex-col min-h-0">      
-      <CardHeader>
-        <CardTitle>Trànsit (Últims 7 dies)</CardTitle>
-      </CardHeader>
-      <CardContent className="flex-1 min-h-0 pb-2 px-2">
-        <div className="h-full flex flex-col min-h-0">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={data}>
+    // NOTA: Eliminem el <Card> pare si ja l'hem posat al layout, 
+    // però si el deixem, li traiem la vora per no duplicar.
+    <div className="h-full w-full flex flex-col">      
+      <div className="py-3 px-4 shrink-0 border-b border-border/40">
+        <h3 className="text-sm font-bold text-foreground">Trànsit (Últims 7 dies)</h3>
+      </div>
+      <div className="flex-1 min-h-0 w-full">
+        <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={data} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
               <defs>
                 <linearGradient id="colorViews" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#8884d8" stopOpacity={0.3} />
@@ -29,29 +29,33 @@ export function TrafficChart({ data }: Props) {
                 </linearGradient>
               </defs>
               
-              {/* Grid subtil adaptable */}
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted-foreground))" strokeOpacity={0.2} />
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" opacity={0.4} />
               
-              {/* Eixos adaptables */}
-              <XAxis dataKey="date" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
-              <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
+              <XAxis 
+                dataKey="date" 
+                axisLine={false} 
+                tickLine={false} 
+                tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }} 
+                dy={10}
+                interval="preserveStartEnd"
+              />
               
-              {/* Tooltip amb colors del tema (Variables CSS) */}
               <Tooltip
                 contentStyle={{ 
                     backgroundColor: 'hsl(var(--card))', 
                     borderColor: 'hsl(var(--border))', 
                     color: 'hsl(var(--foreground))',
                     borderRadius: '8px',
+                    fontSize: '12px',
                     boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
                 }}
               />
-              <Area type="monotone" dataKey="views" stroke="#8884d8" fillOpacity={1} fill="url(#colorViews)" name="Vistes" />
-              <Area type="monotone" dataKey="visitors" stroke="#82ca9d" fillOpacity={1} fill="url(#colorVisitors)" name="Usuaris" />
+              
+              <Area type="monotone" dataKey="views" stroke="#8884d8" strokeWidth={2} fillOpacity={1} fill="url(#colorViews)" name="Vistes" />
+              <Area type="monotone" dataKey="visitors" stroke="#82ca9d" strokeWidth={2} fillOpacity={1} fill="url(#colorVisitors)" name="Usuaris" />
             </AreaChart>
-          </ResponsiveContainer>
-        </div>
-      </CardContent>
-    </Card>
+        </ResponsiveContainer>
+      </div>
+    </div>
   );
 }

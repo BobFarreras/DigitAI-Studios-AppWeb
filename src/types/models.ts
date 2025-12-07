@@ -40,20 +40,7 @@ export type BlogPostDTO = {
   coverImage: string | null; // Mapejat des de cover_image
   published: boolean;
   reviewed: boolean; // 👈 NOU CAMP
-};
-
-export type AnalyticsEventDTO = {
-  event_name: string;
-  path: string;
-  session_id: string;
-  // Dades que venen del client
-  duration?: number; 
-  referrer?: string;
-  // Dades tècniques (meta)
-  meta?: Record<string, unknown>;
-  // Dades que omplirem al servidor (Geo, Device)
-  geo?: { country: string; city: string };
-  device?: { type: string; browser: string; os: string };
+  totalReactions?: number;
 };
 
 
@@ -146,4 +133,26 @@ export type TesterProfile = {
   email: string;
   full_name: string | null;
   avatar_url: string | null;
+};
+
+export type AnalyticsEventDTO = {
+  event_name: string;
+  path: string;
+  session_id: string;
+  duration?: number;
+  referrer?: string;
+  
+  // Metadades tècniques (JSON pur)
+  meta?: Record<string, unknown>;
+  
+  // Dades processades (Columnes reals a DB)
+  geo?: {
+    country: string | null;
+    city: string | null;
+  };
+  device?: {
+    type: string;    // 'mobile', 'tablet', 'desktop'
+    browser: string; // 'Chrome', 'Safari'
+    os: string;      // 'iOS', 'Windows'
+  };
 };

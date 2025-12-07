@@ -2,7 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
-
+import { postRepository } from '@/services/container';
 export async function togglePostStatus(id: string, currentStatus: boolean) {
   const supabase = await createClient();
   
@@ -35,4 +35,20 @@ export async function togglePostStatus(id: string, currentStatus: boolean) {
   revalidatePath(`/admin/blog/[slug]`, 'page'); // Refresca totes les subrutes dinàmiques si cal
   
   return { success: true };
+}
+
+export async function toggleReactionAction(slug: string, reaction: string, visitorId: string) {
+  try {
+    if (!visitorId) return { success: false, message: "No visitor ID" };
+
+    const result = await postRepository.toggleReaction(slug, reaction, visitorId);
+    
+    // Revalidem la pàgina del blog perquè es recalculin els totals al servidor si cal
+    revalidatePath(`/blog/${slug}`);
+    
+    return { success: true, action: result };
+  } catch (error) {
+    console.error("Error reaction:", error);
+    return { success: false };
+  }
 }
