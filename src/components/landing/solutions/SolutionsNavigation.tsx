@@ -4,6 +4,8 @@ import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { SolutionItem } from './data';
+// 👇 1. Importem el hook de traducció
+import { useTranslations } from 'next-intl';
 
 interface Props {
   solutions: SolutionItem[];
@@ -12,8 +14,10 @@ interface Props {
 }
 
 export function SolutionsNavigation({ solutions, activeTab, setActiveTab }: Props) {
+  // 👇 2. Inicialitzem el hook amb el namespace 'SolutionsSection'
+  const t = useTranslations('Solutions');
+
   return (
-    // ⚠️ CANVI IMPORTANT: 'hidden lg:flex'. En mòbil desapareix.
     <div className="hidden lg:flex col-span-4 flex-col gap-4">
       {solutions.map((item) => {
         const isActive = activeTab === item.id;
@@ -47,7 +51,8 @@ export function SolutionsNavigation({ solutions, activeTab, setActiveTab }: Prop
             
             <div className="flex-1">
               <h3 className={cn("font-bold text-lg", isActive ? "text-foreground" : "text-muted-foreground group-hover:text-foreground")}>
-                {item.title}
+                {/* 👇 3. Traduïm el títol dinàmicament */}
+                {t(`${item.id}.title`)}
               </h3>
               {isActive && (
                 <motion.p 
@@ -55,7 +60,8 @@ export function SolutionsNavigation({ solutions, activeTab, setActiveTab }: Prop
                   animate={{ opacity: 1, height: 'auto' }}
                   className="text-xs text-muted-foreground mt-1"
                 >
-                  {item.tags.join(' • ')}
+                  {/* 👇 4. Traduïm i unim els tags utilitzant 'tagKeys' */}
+                  {item.tagKeys.map(key => t(`tags.${key}`)).join(' • ')}
                 </motion.p>
               )}
             </div>

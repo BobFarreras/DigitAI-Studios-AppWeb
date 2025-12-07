@@ -63,7 +63,7 @@
     "already_have_account": "Ja tens compte?",
     "login_link": "Entrar",
     "social_google": "Continuar amb Google",
-    "social_google_register":"Registra't amb Google",
+    "social_google_register": "Registra't amb Google",
     "social_facebook": "Continuar amb Facebook",
     "social_facebook_register": "Registra't amb Facebook"
   },
@@ -433,5 +433,54 @@
     "title_prefix": "Darrers",
     "title_highlight": "Coneixements",
     "view_all": "Explorar tot el blog"
+  },
+  "Solutions": {
+    "iot": {
+      "title": "IoT i Espais Intel·ligents",
+      "description": "Fusiona el món físic amb el digital. Controla accessos, il·luminació i sensors en temps real, tot des del palmell de la mà.",
+      "scanning_text": "VERIFICANT ACCÉS...",
+      "access_granted": "PORTA OBERTA"
+    },
+    "finance": {
+      "title": "Finances en Pilot Automàtic",
+      "description": "Elimina l'error humà. Automatitzem la facturació, la conciliació bancària i els cobraments recurrents perquè els diners flueixin sols.",
+      "total_balance": "Saldo Actual",
+      "card_holder": "Titular Compte"
+    },
+    "growth": {
+      "title": "Business Intelligence & Growth",
+      "description": "Deixa d'endevinar i comença a saber. Quadres de comandament (Dashboards) que transformen dades brutes en decisions rendibles.",
+      "active_users": "USUARIS ARA",
+      "conversion_rate": "CONVERSIÓ",
+      "monthly_revenue": "MRR (Ingressos)",
+      "live_sales": "VENDES EN VIU"
+    },
+    "booking": {
+      "title": "Reserves i Clients 24/7",
+      "description": "La teva recepció virtual que mai dorm. Sistema de cites, recordatoris per WhatsApp i CRM que fidelitza els teus clients automàticament.",
+      "chat_user_1": "Hola, vull reservar pista.",
+      "chat_bot_1": "Tinc lliure divendres a les 18h 🎾",
+      "chat_user_2": "Perfecte, adjudicat!",
+      "booking_confirmed": "Reserva Confirmada",
+      "new_booking": "NOVA CITA"
+    },
+    "tags": {
+      "qr": "Accés QR",
+      "domotics": "Domòtica",
+      "sensors": "Sensors IoT",
+      "remote": "Control Remot",
+      "stripe": "Passarel·la Stripe",
+      "invoicing": "Auto-Facturació",
+      "ocr": "Escàner OCR",
+      "signature": "Signatura Digital",
+      "engine": "Motor de Reserves",
+      "whatsapp": "Bots WhatsApp",
+      "wallet": "Wallet Digital",
+      "crm": "CRM Integrat",
+      "social": "Auto-Posteig",
+      "bi": "Intel·ligència de Negoci",
+      "kpis": "KPIs en Temps Real",
+      "leads": "Captació de Leads"
+    }
   }
 }

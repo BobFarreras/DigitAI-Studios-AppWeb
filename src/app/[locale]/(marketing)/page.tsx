@@ -24,7 +24,7 @@ export default async function MarketingPage() {
     <>
       <HeroSection />
       <TechStackSection />
-      <ProblemSolutionSection />
+      {/*<ProblemSolutionSection />*/}
       <SolutionsShowcase />
       <ServicesGrid />
       <ProductTeaser />
