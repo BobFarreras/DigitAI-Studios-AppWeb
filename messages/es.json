@@ -427,10 +427,58 @@
     }
   },
   "LatestPosts": {
-  "badge": "Academia Digital",
-  "title_prefix": "Últimos",
-  "title_highlight": "Conocimientos",
-  "view_all": "Explorar todo el blog"
-}
-
+    "badge": "Academia Digital",
+    "title_prefix": "Últimos",
+    "title_highlight": "Conocimientos",
+    "view_all": "Explorar todo el blog"
+  },
+  "Solutions": {
+    "iot": {
+      "title": "IoT y Espacios Inteligentes",
+      "description": "Fusiona el mundo físico con el digital. Controla accesos, iluminación y sensores en tiempo real, todo desde la palma de tu mano.",
+      "scanning_text": "VERIFICANDO ACCESO...",
+      "access_granted": "PUERTA ABIERTA"
+    },
+    "finance": {
+      "title": "Finanzas en Piloto Automático",
+      "description": "Elimina el error humano. Automatizamos la facturación, la conciliación bancaria y los cobros recurrentes para que el dinero fluya solo.",
+      "total_balance": "Saldo Actual",
+      "card_holder": "Titular de la Cuenta"
+    },
+    "growth": {
+      "title": "Business Intelligence & Growth",
+      "description": "Deja de adivinar y empieza a saber. Cuadros de mando (Dashboards) que transforman datos en bruto en decisiones rentables.",
+      "active_users": "USUARIOS AHORA",
+      "conversion_rate": "CONVERSIÓN",
+      "monthly_revenue": "MRR (Ingresos)",
+      "live_sales": "VENTAS EN VIVO"
+    },
+    "booking": {
+      "title": "Reservas y Clientes 24/7",
+      "description": "Tu recepción virtual que nunca duerme. Sistema de citas, recordatorios por WhatsApp y CRM que fideliza a tus clientes automáticamente.",
+      "chat_user_1": "Hola, quiero reservar pista.",
+      "chat_bot_1": "Tengo libre el viernes a las 18h 🎾",
+      "chat_user_2": "Perfecto, ¡reservado!",
+      "booking_confirmed": "Reserva Confirmada",
+      "new_booking": "NUEVA CITA"
+    },
+    "tags": {
+      "qr": "Acceso QR",
+      "domotics": "Domótica",
+      "sensors": "Sensores IoT",
+      "remote": "Control Remoto",
+      "stripe": "Pasarela Stripe",
+      "invoicing": "Auto-Facturación",
+      "ocr": "Escáner OCR",
+      "signature": "Firma Digital",
+      "engine": "Motor de Reservas",
+      "whatsapp": "Bots WhatsApp",
+      "wallet": "Wallet Digital",
+      "crm": "CRM Integrado",
+      "social": "Auto-Posteo",
+      "bi": "Inteligencia de Negocio",
+      "kpis": "KPIs en Tiempo Real",
+      "leads": "Captación de Leads"
+    }
+  }
 }
