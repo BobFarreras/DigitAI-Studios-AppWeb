@@ -10,7 +10,7 @@ import { MockupGrowth } from './mockups/MockupGrowth';
 export function SolutionsDisplay({ solution }: { solution: SolutionItem }) {
   return (
     <div className="w-full h-full relative flex flex-col"> {/* Afegit flex flex-col */}
-      <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-white/10 dark:from-slate-900/80 dark:to-slate-900/40 backdrop-blur-xl border border-white/20 dark:border-white/10 rounded-[32px] shadow-2xl overflow-hidden">
+      <div className="absolute inset-0 bg-linear-to-br from-white/40 to-white/10 dark:from-slate-900/80 dark:to-slate-900/40 backdrop-blur-xl border border-white/20 dark:border-white/10 rounded-4xl shadow-2xl overflow-hidden">
         
         <AnimatePresence mode="wait">
           <motion.div
@@ -24,7 +24,7 @@ export function SolutionsDisplay({ solution }: { solution: SolutionItem }) {
             {/* Header Text - Més compacte en mòbil */}
             <div className="mb-4 md:mb-8 shrink-0">
               <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-2 md:mb-4 flex items-center gap-2 md:gap-3">
-                 <solution.icon className={`w-6 h-6 md:w-8 md:h-8 text-transparent bg-clip-text bg-gradient-to-r ${solution.color}`} /> 
+                 <solution.icon className={`w-6 h-6 md:w-8 md:h-8 text-transparent bg-clip-text bg-linear-to-r ${solution.color}`} /> 
                  {solution.title}
               </h3>
               <p className="text-sm md:text-lg text-muted-foreground leading-relaxed md:max-w-2xl line-clamp-3 md:line-clamp-none">

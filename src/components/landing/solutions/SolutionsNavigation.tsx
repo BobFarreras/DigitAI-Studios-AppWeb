@@ -32,14 +32,14 @@ export function SolutionsNavigation({ solutions, activeTab, setActiveTab }: Prop
             {isActive && (
               <motion.div
                 layoutId="activeGlow"
-                className={`absolute inset-0 rounded-2xl bg-gradient-to-r ${item.color} opacity-5 dark:opacity-10`}
+                className={`absolute inset-0 rounded-2xl bg-linear-to-r ${item.color} opacity-5 dark:opacity-10`}
               />
             )}
 
             <div className={cn(
               "w-12 h-12 rounded-xl flex items-center justify-center transition-colors duration-300 shrink-0",
               isActive 
-                ? `bg-gradient-to-br ${item.color} text-white shadow-lg` 
+                ? `bg-linear-to-br ${item.color} text-white shadow-lg` 
                 : "bg-muted text-muted-foreground group-hover:text-foreground"
             )}>
               <item.icon className="w-6 h-6" />

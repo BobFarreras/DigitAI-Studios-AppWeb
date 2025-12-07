@@ -15,13 +15,13 @@ export function SolutionsShowcase() {
     <section className="py-16 md:py-24 bg-slate-50 dark:bg-black/50 relative overflow-hidden transition-colors duration-500">
       
       {/* Fons Ambient */}
-      <div className={`absolute inset-0 opacity-10 bg-gradient-to-br ${activeSolution.color} blur-[150px] transition-all duration-700`} />
+      <div className={`absolute inset-0 opacity-10 bg-linear-to-br ${activeSolution.color} blur-[150px] transition-all duration-700`} />
 
       <div className="container mx-auto px-4 relative z-10">
         
         <div className="text-center max-w-3xl mx-auto mb-8 md:mb-16">
           <h2 className="text-3xl md:text-5xl font-black text-foreground mb-4">
-            Més enllà d'una <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-400">Simple Web</span>.
+            Més enllà d'una <span className="text-transparent bg-clip-text bg-linear-to-r from-primary to-purple-400">Simple Web</span>.
           </h2>
           <p className="text-lg md:text-xl text-muted-foreground">
             Creem ecosistemes digitals que connecten programari, maquinari i intel·ligència artificial.

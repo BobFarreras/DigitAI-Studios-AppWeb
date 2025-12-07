@@ -1,7 +1,7 @@
 import { createClient, createAdminClient } from '@/lib/supabase/server';
 import { Database } from '@/types/database.types';
 import { CampaignContext, TestCampaignDTO, TestTaskDTO, TestResultDTO, TesterProfile } from '@/types/models';
-
+import type { MissionStats } from '@/services/GamificationService'; // 👈 Importamos el tipo para asegurar que cumplimos el contrato
 type TestCampaignRow = Database['public']['Tables']['test_campaigns']['Row'];
 
 type CampaignQueryResponse = TestCampaignRow & {
@@ -11,7 +11,25 @@ type CampaignQueryResponse = TestCampaignRow & {
     test_results: { count: number }[];
   }[];
 };
+// 1. Tipus per a la resposta "bruta" de Supabase (Raw Data)
+// Això ens evita usar 'any' quan fem el cast
+type CampaignResponse = {
+  id: string;
+  campaign: {
+    id: string;
+    title: string;
+    description: string | null;
+    status: string | null;
+    project_id: string;
+    test_tasks: { id: string }[]; // Array d'objectes amb id
+  } | null;
+};
 
+// 2. Tipus per al resultat d'usuari
+type UserResultRow = {
+  task_id: string;
+  status: string;
+};
 export class SupabaseTestRepository {
 
   // A. Context del Test (Admin o User)
@@ -207,9 +225,6 @@ export class SupabaseTestRepository {
     return data || [];
   }
 
-  // src/repositories/supabase/SupabaseTestRepository.ts
-
-  // ...
 
   // B. Llistar testers assignats (i filtrar duplicats per OrgID implícitament agafant el primer)
   async getAssignedTesters(campaignId: string): Promise<TesterProfile[]> {
@@ -303,16 +318,16 @@ export class SupabaseTestRepository {
 
     // 1. Definim el tipus del resultat del Join per treure l'any
     type AssignmentRow = {
+      id: string;
+      assigned_at: string | null;
+      campaign: {
         id: string;
-        assigned_at: string | null;
-        campaign: {
-            id: string;
-            title: string;
-            description: string | null;
-            status: string | null;
-            project: { name: string; domain: string | null } | null;
-            test_tasks: { count: number }[];
-        } | null;
+        title: string;
+        description: string | null;
+        status: string | null;
+        project: { name: string; domain: string | null } | null;
+        test_tasks: { count: number }[];
+      } | null;
     };
 
     // 2. Fem el cast segur
@@ -321,7 +336,7 @@ export class SupabaseTestRepository {
     // 3. Mapegem
     return rows.map((row) => {
       const campaign = row.campaign;
-      
+
       // Si per algun motiu la campanya s'ha esborrat però l'assignació no, evitem error
       if (!campaign) return null;
 
@@ -338,10 +353,98 @@ export class SupabaseTestRepository {
         assignedAt: row.assigned_at
       };
     })
-    // Filtrem els nuls (campanyes esborrades) i només les actives
-    // Aquest "predicate" (item is ...) ajuda a TS a saber que ja no hi ha nulls
-    .filter((item): item is NonNullable<typeof item> => item !== null && item.status === 'active');
+      // Filtrem els nuls (campanyes esborrades) i només les actives
+      // Aquest "predicate" (item is ...) ajuda a TS a saber que ja no hi ha nulls
+      .filter((item): item is NonNullable<typeof item> => item !== null && item.status === 'active');
   }
 
+  async getActiveMissionsForUser(userId: string, projectId: string) {
+    const supabase = await createClient();
 
+    // 1. QUERY
+    const { data: assignmentsData } = await supabase
+      .from('test_assignments')
+      .select(`
+            id,
+            campaign:test_campaigns (
+                id, title, description, status, project_id,
+                test_tasks ( id ) 
+            )
+        `)
+      .eq('user_id', userId)
+      .not('campaign', 'is', null);
+
+    const assignments = (assignmentsData || []) as unknown as CampaignResponse[];
+
+    // 2. FILTRATGE
+    const activeAssignments = assignments.filter(a =>
+      a.campaign &&
+      a.campaign.status === 'active' &&
+      a.campaign.project_id === projectId
+    );
+
+    // 3. OBTENIR RESULTATS
+    const allTaskIds = activeAssignments.flatMap(a =>
+      a.campaign ? a.campaign.test_tasks.map(t => t.id) : []
+    );
+
+    let userResults: UserResultRow[] = [];
+
+    if (allTaskIds.length > 0) {
+      const { data: res } = await supabase
+        .from('test_results')
+        .select('task_id, status')
+        .eq('user_id', userId)
+        .in('task_id', allTaskIds);
+
+      if (res) {
+        userResults = res as UserResultRow[];
+      }
+    }
+
+    // 4. MAPATGE FINAL (DTO)
+    return activeAssignments.map(assign => {
+      const campaign = assign.campaign!;
+
+      const campaignTaskIds = new Set(campaign.test_tasks.map(t => t.id));
+      const relevantResults = userResults.filter(r => campaignTaskIds.has(r.task_id));
+
+      // --- 🧮 CÀLCULS COMPLETES PER A MISSIONSTATS ---
+      const totalTasks = campaign.test_tasks.length;
+
+      // Comptem per estat
+      const passed = relevantResults.filter(r => r.status === 'pass').length;
+      const failed = relevantResults.filter(r => r.status === 'fail').length;
+      const blocked = relevantResults.filter(r => r.status === 'blocked').length;
+
+      // Pendents són els que no tenen cap resultat registrat
+      const pending = totalTasks - (passed + failed + blocked);
+
+      // Progrés basat en TASQUES PASSADES (Èxit)
+      const progress = totalTasks > 0 ? Math.round((passed / totalTasks) * 100) : 0;
+
+      // XP Reward (Lògica de negoci: 100 XP per tasca)
+      const xpReward = totalTasks * 100;
+
+      // Construïm l'objecte que compleix amb MissionStats
+      const stats: MissionStats = {
+        total: totalTasks,
+        passed,
+        failed,
+        blocked,
+        pending,
+        progress,
+        xpReward
+      };
+
+      return {
+        id: campaign.id,
+        title: campaign.title,
+        description: campaign.description,
+        stats: stats // ✅ Ara sí que té totes les propietats requerides
+      };
+    });
+  }
 }
+
+
