@@ -3,20 +3,27 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { createClient } from '@/lib/supabase/client'; // ✅ Client de navegador
+import { createClient } from '@/lib/supabase/client';
 import { Loader2, LogIn } from 'lucide-react';
 import { useRouter } from '@/routing';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import { GoogleIcon } from '@/components/icons/GoogleIcon'; // 👈 Importem la icona
+import { GoogleIcon } from '@/components/icons/GoogleIcon';
 import { toast } from 'sonner';
 
-export function LoginForm() {
+// Props tipats
+interface LoginFormProps {
+  prefilledEmail?: string;
+}
+
+export function LoginForm({ prefilledEmail }: LoginFormProps) {
   const t = useTranslations('Auth');
-  const [email, setEmail] = useState('');
+  // Inicialitzem l'estat amb la prop si existeix
+  const [email, setEmail] = useState(prefilledEmail || '');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [isGoogleLoading, setIsGoogleLoading] = useState(false); // Estat separat per Google
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  
   const router = useRouter();
   const supabase = createClient();
 
@@ -30,34 +37,29 @@ export function LoginForm() {
     });
 
     if (error) {
-      toast.error(error.message); // Usem toast que queda millor
+      toast.error(error.message);
       setIsLoading(false);
     } else {
       router.refresh();
+      // Si venim d'una auditoria, potser voldríem anar al dashboard directament
+      // (Supabase gestionarà la sessió)
       router.push('/dashboard');
     }
   };
 
-  // ✅ LÒGICA GOOGLE REAL
   const handleGoogleLogin = async () => {
     setIsGoogleLoading(true);
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        // Redirigim al callback amb un paràmetre 'next' si calgués
         redirectTo: `${window.location.origin}/auth/callback`,
-        queryParams: {
-          access_type: 'offline',
-          prompt: 'consent',
-        },
+        queryParams: { access_type: 'offline', prompt: 'consent' },
       },
     });
-
     if (error) {
         toast.error(error.message);
         setIsGoogleLoading(false);
     }
-    // Si no hi ha error, Supabase redirigeix automàticament a Google
   };
 
   return (
@@ -73,13 +75,9 @@ export function LoginForm() {
           variant="outline" 
           onClick={handleGoogleLogin} 
           disabled={isGoogleLoading || isLoading}
-          className="w-full h-12 border-border bg-card hover:bg-muted text-foreground gap-3 font-medium transition-transform active:scale-[0.98]"
+          className="w-full h-12 border-border bg-card hover:bg-muted text-foreground gap-3 font-medium"
         >
-          {isGoogleLoading ? (
-             <Loader2 className="w-5 h-5 animate-spin" />
-          ) : (
-             <GoogleIcon className="w-5 h-5" />
-          )}
+          {isGoogleLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <GoogleIcon className="w-5 h-5" />}
           {t('social_google', { defaultMessage: 'Continuar amb Google' })}
         </Button>
       </div>
@@ -98,11 +96,14 @@ export function LoginForm() {
           <label className="text-sm font-medium text-foreground ml-1">{t('label_email')}</label>
           <Input
             type="email"
+            name="email"
             placeholder="nom@empresa.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="bg-card border-border text-foreground h-12 focus:border-primary"
             required
+            // Si ja tenim email, no cal autofocus aquí
+            autoFocus={!prefilledEmail}
           />
         </div>
         <div className="space-y-2">
@@ -114,15 +115,18 @@ export function LoginForm() {
           </div>
           <Input
             type="password"
+            name="password"
             placeholder="••••••••"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="bg-card border-border text-foreground h-12 focus:border-primary"
             required
+            // Si tenim email, posem el focus directament al password per escriure ràpid
+            autoFocus={!!prefilledEmail}
           />
         </div>
 
-        <Button type="submit" disabled={isLoading || isGoogleLoading} className="w-full h-12 gradient-bg text-white font-bold rounded-lg hover:opacity-90 transition-all shadow-lg shadow-primary/20">
+        <Button type="submit" disabled={isLoading || isGoogleLoading} className="w-full h-12 gradient-bg text-white font-bold rounded-lg hover:opacity-90 shadow-lg">
           {isLoading 
             ? <Loader2 className="animate-spin" /> 
             : <><LogIn className="w-4 h-4 mr-2" /> {t('cta_login')}</>

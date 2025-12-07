@@ -63,7 +63,9 @@
     "already_have_account": "Ja tens compte?",
     "login_link": "Entrar",
     "social_google": "Continuar amb Google",
-    "social_facebook": "Continuar amb Facebook"
+    "social_google_register":"Registra't amb Google",
+    "social_facebook": "Continuar amb Facebook",
+    "social_facebook_register": "Registra't amb Facebook"
   },
   "Dashboard": {
     "welcome": "Benvingut, {name}",

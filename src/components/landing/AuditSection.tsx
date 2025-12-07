@@ -3,8 +3,17 @@
 import { motion } from 'framer-motion';
 import { AuditForm } from '@/features/audit/ui/AuditForm';
 import { useTranslations } from 'next-intl';
+import { User } from '@supabase/supabase-js';
+import { Button } from '@/components/ui/button';
+import { Link } from '@/routing'; // Usem el teu routing tipat
+import { LayoutDashboard, ArrowRight } from 'lucide-react';
 
-export function AuditSection() {
+// Acceptem l'usuari com a prop opcional
+interface Props {
+  currentUser?: User | null;
+}
+
+export function AuditSection({ currentUser }: Props) {
   const t = useTranslations('AuditSection');
 
   return (
@@ -34,7 +43,7 @@ export function AuditSection() {
           </motion.div>
         </div>
 
-        {/* FORMULARI */}
+        {/* LOGICA CONDICIONAL DE UI */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -42,7 +51,35 @@ export function AuditSection() {
           transition={{ delay: 0.2 }}
           className="max-w-xl mx-auto transform hover:scale-[1.01] transition-transform duration-500"
         >
-          <AuditForm />
+          {currentUser ? (
+            // CAS 1: USUARI LOGUEJAT -> Targeta "Go to Dashboard"
+            <div className="p-8 rounded-2xl bg-card border border-border shadow-2xl text-center space-y-6">
+                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto text-primary mb-4">
+                    <LayoutDashboard className="w-8 h-8" />
+                </div>
+                <div>
+                    <h3 className="text-xl font-bold text-foreground">
+                        Hola, {currentUser.email?.split('@')[0]}! 👋
+                    </h3>
+                    <p className="text-muted-foreground mt-2">
+                        Ja tens accés complet a les eines d'auditoria avançada. No cal que facis servir aquest formulari públic.
+                    </p>
+                </div>
+                
+                <Link href="/dashboard/new-audit">
+                    <Button className="w-full h-12 text-lg font-bold rounded-xl gradient-bg text-white hover:opacity-90 shadow-lg">
+                        Anar al Dashboard d'Auditoria <ArrowRight className="ml-2 w-5 h-5" />
+                    </Button>
+                </Link>
+                
+                <p className="text-xs text-muted-foreground">
+                    El teu pla actual permet auditories il·limitades des del panell.
+                </p>
+            </div>
+          ) : (
+            // CAS 2: USUARI ANÒNIM -> Formulari Públic
+            <AuditForm />
+          )}
         </motion.div>
 
       </div>

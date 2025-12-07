@@ -1,10 +1,23 @@
 import { LoginForm } from '@/features/auth/ui/LoginForm';
 import { Sparkles } from 'lucide-react';
 import Link from 'next/link';
-import { useTranslations } from 'next-intl';
+// 👇 CANVI IMPORTANT: Importem des de 'next-intl/server'
+import { getTranslations } from 'next-intl/server'; 
 
-export default function LoginPage() {
-  const t = useTranslations('AuthPages.login');
+type Props = {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+  params: Promise<{ locale: string }>; // Afegim params per consistència
+};
+
+export default async function LoginPage({ searchParams }: Props) {
+  // 👇 CORRECCIÓ: Usem await getTranslations() en lloc de useTranslations()
+  const t = await getTranslations('AuthPages.login');
+  
+  // Resolem la promesa dels paràmetres
+  const params = await searchParams;
+  
+  // Extraiem l'email de forma segura
+  const emailParam = typeof params.email === 'string' ? params.email : undefined;
 
   return (
     <div className="min-h-screen w-full grid lg:grid-cols-2 bg-background overflow-hidden">
@@ -17,12 +30,12 @@ export default function LoginPage() {
          
          {/* Logo */}
          <div className="relative z-10">
-            <Link href="/" className="flex items-center gap-2 text-2xl font-bold text-white">
+           <Link href="/" className="flex items-center gap-2 text-2xl font-bold text-white">
                DigitAI <span className="gradient-text">Studios</span>
             </Link>
          </div>
 
-         {/* Testimoni o Text inspirador */}
+         {/* Text inspirador */}
          <div className="relative z-10 max-w-lg">
             <div className="mb-6 inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/20 bg-primary/5 text-primary text-xs font-bold">
                <Sparkles className="w-3 h-3" />
@@ -44,12 +57,12 @@ export default function LoginPage() {
 
       {/* COLUMNA DRETA (Formulari) */}
       <div className="flex items-center justify-center p-8 relative">
-         {/* Botó tornar enrere mòbil */}
          <Link href="/" className="absolute top-8 right-8 text-sm text-muted-foreground hover:text-foreground lg:hidden">
             {t('back_home')}
          </Link>
 
-         <LoginForm />
+         {/* Passem l'email extret al component Client */}
+         <LoginForm prefilledEmail={emailParam} />
       </div>
     </div>
   );

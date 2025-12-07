@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { redirect } from 'next/navigation';
 import { getLocale } from 'next-intl/server';
 import { createClient } from '@/lib/supabase/server';
-
+import { createAdminClient } from '@/lib/supabase/server'; // Necessitem client admin per comprovar usuaris
 // --- 1. SCHEMAS DE VALIDACIÓ ---
 
 const PublicAuditSchema = z.object({
@@ -26,9 +26,16 @@ export type FormState = {
   };
 };
 
-// --- 3. ACTION PÚBLICA (Landing Page) ---
-// Aquesta és la que crida l'AuditForm de la home
-export async function processWebAudit(prevState: FormState, formData: FormData): Promise<FormState> {
+
+
+
+
+
+
+export async function processWebAudit(
+  prevState: FormState, 
+  formData: FormData
+): Promise<FormState> {
   const locale = await getLocale();
 
   const rawData = {
@@ -36,9 +43,7 @@ export async function processWebAudit(prevState: FormState, formData: FormData):
     email: formData.get('email'),
   };
 
-  // 1. Validem URL i Email
   const validation = PublicAuditSchema.safeParse(rawData);
-
   if (!validation.success) {
     return {
       success: false,
@@ -47,20 +52,52 @@ export async function processWebAudit(prevState: FormState, formData: FormData):
     };
   }
 
+  const email = validation.data.email.toLowerCase().trim();
+  const url = validation.data.url;
+
   try {
-    // 2. Cridem al servei per fer l'auditoria PÚBLICA
-    // (Aquest mètode s'encarregarà de crear l'usuari o lligar-ho per email)
-    await auditService.performPublicAudit(validation.data.url, validation.data.email, locale);
+    // 1. Executar Auditoria
+    await auditService.performPublicAudit(url, email, locale);
     
+    // 2. ✨ LÒGICA MILLORADA: DETECCIÓ PER ORG_ID ✨
+    const supabaseAdmin = createAdminClient();
+    
+    // Aquest és l'ID de la teva organització principal (DigitAI Studios)
+    // IDEALMENT: Posa això al .env com NEXT_PUBLIC_MAIN_ORG_ID
+    const MAIN_ORG_ID = '2f1e89dd-0b95-4f7b-ab31-14a9916d374f';
+
+    // Busquem si aquest email té un perfil DINS de la teva organització
+    const { data: existingProfile } = await supabaseAdmin
+      .from('profiles')
+      .select('id')
+      .ilike('email', email)
+      .eq('organization_id', MAIN_ORG_ID) // 👈 EL FILTRE CLAU
+      .maybeSingle();
+
+    const encodedEmail = encodeURIComponent(email);
+
+    if (existingProfile) {
+      console.log(`✅ Client existent detectat a l'Org (${email}). Redirigint a Login.`);
+      // Si existeix a LA TEVA org -> Login
+      redirect(`/${locale}/auth/login?email=${encodedEmail}&next=/dashboard`);
+    } else {
+      console.log(`🆕 Nou Lead per a l'Org (${email}). Redirigint a Registre.`);
+      // Si no existeix a la teva org (encara que tingui compte a altres),
+      // l'enviem al registre perquè es creï el perfil a la teva org.
+      redirect(`/${locale}/auth/register?email=${encodedEmail}`);
+    }
+
   } catch (err) {
-    console.error(err);
-    return { success: false, message: "Error durant l'anàlisi. Prova més tard." };
+    if ((err as Error).message === 'NEXT_REDIRECT') {
+        throw err;
+    }
+
+    console.error("Error processWebAudit:", err);
+    return { success: false, message: "Error tècnic durant l'anàlisi. Torna-ho a provar." };
   }
-
-  // 3. Redirecció a Registre (perquè vegi el resultat allà)
-  redirect(`/${locale}/auth/register?email=${encodeURIComponent(validation.data.email)}`);
+  
+  return { success: true }; 
 }
-
 
 // --- 4. ACTION PRIVADA (Dashboard) ---
 // Aquesta és la que crida el CreateAuditForm del panell
