@@ -115,7 +115,7 @@ export default async function AdminPostDetailPage({ params }: Props) {
                                     sizes="(max-width: 768px) 100vw, 66vw"
                                     className="object-cover transition-transform duration-700 group-hover:scale-105"
                                 />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
+                                <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent pointer-events-none" />
                             </>
                         ) : (
                             <div className="flex flex-col items-center justify-center h-full text-muted-foreground space-y-2">

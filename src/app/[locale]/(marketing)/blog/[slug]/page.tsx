@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft, Calendar, User } from 'lucide-react';
 import { Metadata } from 'next';
 import { getTranslations, getLocale } from 'next-intl/server'; // 👈
+import { ReactionDock } from '@/features/blog/ui/ReactionDock';
+import { postRepository } from '@/services/container'; // Importem el repo directament per carregar dades inicials
 
 type Props = {
   params: Promise<{ slug: string; locale: string }>;
@@ -46,13 +48,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;
   const post = await postService.getPost(slug);
-  
+
   // Hooks de traducció
   const t = await getTranslations('BlogPost');
   const locale = await getLocale();
 
   if (!post) notFound();
-
+  // 1. Carreguem les reaccions inicials des del servidor (Server Side Rendering)
+  // Això fa que els números siguin correctes abans que el JS del client carregui
+  const reactions = await postRepository.getPostReactions(slug);
   return (
     <div className="min-h-screen bg-background pb-20">
 
@@ -88,7 +92,7 @@ export default async function BlogPostPage({ params }: Props) {
                 </span>
               ))}
             </div>
-            
+
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center border border-border">
                 <User className="w-4 h-4" />
@@ -99,7 +103,7 @@ export default async function BlogPostPage({ params }: Props) {
             <div className="flex items-center gap-2">
               <Calendar className="w-4 h-4 opacity-70" />
               <span>
-                {post.date 
+                {post.date
                   ? new Intl.DateTimeFormat(locale, { dateStyle: 'long' }).format(new Date(post.date))
                   : 'Avui'
                 }
@@ -120,12 +124,12 @@ export default async function BlogPostPage({ params }: Props) {
           <div className="prose prose-lg dark:prose-invert max-w-none prose-headings:font-bold prose-headings:tracking-tight prose-a:text-primary prose-img:rounded-xl prose-img:shadow-lg">
             <MDXContent source={post.content || ''} />
           </div>
-
+          <ReactionDock slug={slug} initialCounts={reactions} />
           {/* Footer Card */}
           <div className="mt-16 p-6 md:p-10 rounded-2xl bg-muted/30 border border-border text-center">
             <h3 className="text-xl md:text-2xl font-bold mb-4">{t('share_title')}</h3>
             <p className="text-muted-foreground mb-6 max-w-md mx-auto text-sm md:text-base">
-                {t('share_subtitle')}
+              {t('share_subtitle')}
             </p>
 
             <div className="flex flex-col sm:flex-row justify-center gap-4">

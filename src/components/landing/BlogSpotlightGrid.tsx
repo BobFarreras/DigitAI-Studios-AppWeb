@@ -7,6 +7,7 @@ import { BlogPostDTO } from '@/types/models';
 import { Link } from '@/routing';
 import Image from 'next/image';
 import { Calendar, Clock, ArrowUpRight } from 'lucide-react';
+import { Heart } from 'lucide-react'; // Importem el cor
 
 export function BlogSpotlightGrid({ posts }: { posts: BlogPostDTO[] }) {
   const mouseX = useMotionValue(0);
@@ -19,7 +20,7 @@ export function BlogSpotlightGrid({ posts }: { posts: BlogPostDTO[] }) {
   }
 
   return (
-    <div 
+    <div
       className="group relative grid grid-cols-1 md:grid-cols-3 gap-6"
       onMouseMove={handleMouseMove}
     >
@@ -31,16 +32,16 @@ export function BlogSpotlightGrid({ posts }: { posts: BlogPostDTO[] }) {
 }
 
 // 👇 2. Substituïm 'any' per 'MotionValue<number>'
-function SpotlightCard({ 
-  post, 
-  index, 
-  mouseX, 
-  mouseY 
-}: { 
-  post: BlogPostDTO; 
-  index: number; 
-  mouseX: MotionValue<number>; 
-  mouseY: MotionValue<number>; 
+function SpotlightCard({
+  post,
+  index,
+  mouseX,
+  mouseY
+}: {
+  post: BlogPostDTO;
+  index: number;
+  mouseX: MotionValue<number>;
+  mouseY: MotionValue<number>;
 }) {
   return (
     <motion.div
@@ -63,61 +64,67 @@ function SpotlightCard({
           `,
         }}
       />
-      
+
       {/* BLOC IMATGE */}
       <div className="aspect-video relative overflow-hidden">
         {post.coverImage ? (
-            <Image 
-                src={post.coverImage} 
-                alt={post.title} 
-                fill 
-                className="object-cover transition-transform duration-700 group-hover/card:scale-110"
-            />
+          <Image
+            src={post.coverImage}
+            alt={post.title}
+            fill
+            className="object-cover transition-transform duration-700 group-hover/card:scale-110"
+          />
         ) : (
-            <div className="w-full h-full bg-linear-to-br from-slate-800 to-black flex items-center justify-center">
-                <span className="text-white/20 font-bold text-4xl">DIGITAI</span>
-            </div>
+          <div className="w-full h-full bg-linear-to-br from-slate-800 to-black flex items-center justify-center">
+            <span className="text-white/20 font-bold text-4xl">DIGITAI</span>
+          </div>
         )}
-        
+        {/* 👇 AFEGIT: Badge de Reaccions a sobre la imatge */}
+        {post.totalReactions && post.totalReactions > 0 ? (
+          <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-md border border-white/10 text-white px-2 py-1 rounded-full text-xs font-bold flex items-center gap-1 shadow-lg z-10">
+            <Heart className="w-3 h-3 text-red-500 fill-red-500" />
+            {post.totalReactions}
+          </div>
+        ) : null}
         {/* Overlay fosc */}
         <div className="absolute inset-0 bg-black/20 group-hover/card:bg-black/0 transition-colors" />
-        
+
         {/* Tag flotant */}
         <div className="absolute top-4 left-4">
-            <span className="px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-[10px] font-bold text-white uppercase tracking-wider">
-                {post.tags[0] || 'TECH'}
-            </span>
+          <span className="px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-[10px] font-bold text-white uppercase tracking-wider">
+            {post.tags[0] || 'TECH'}
+          </span>
         </div>
       </div>
 
       {/* BLOC CONTINGUT */}
       <div className="p-6 relative">
         <div className="flex items-center gap-4 text-xs text-slate-400 mb-3">
-            <div className="flex items-center gap-1.5">
-                <Calendar className="w-3.5 h-3.5" />
-                {post.date ? new Date(post.date).toLocaleDateString() : 'Avui'}
-            </div>
-            <div className="flex items-center gap-1.5">
-                <Clock className="w-3.5 h-3.5" />
-                <span>5 min</span>
-            </div>
+          <div className="flex items-center gap-1.5">
+            <Calendar className="w-3.5 h-3.5" />
+            {post.date ? new Date(post.date).toLocaleDateString() : 'Avui'}
+          </div>
+          <div className="flex items-center gap-1.5">
+            <Clock className="w-3.5 h-3.5" />
+            <span>5 min</span>
+          </div>
         </div>
 
         <Link href={`/blog/${post.slug}`} className="block">
-            <h3 className="text-xl font-bold text-white mb-3 line-clamp-2 group-hover/card:text-primary transition-colors">
-                {post.title}
-            </h3>
+          <h3 className="text-xl font-bold text-white mb-3 line-clamp-2 group-hover/card:text-primary transition-colors">
+            {post.title}
+          </h3>
         </Link>
 
         <p className="text-slate-400 text-sm line-clamp-2 mb-6 leading-relaxed">
-            {post.description}
+          {post.description}
         </p>
 
-        <Link 
-            href={`/blog/${post.slug}`}
-            className="inline-flex items-center gap-2 text-sm font-bold text-white group-hover/card:text-primary transition-colors"
+        <Link
+          href={`/blog/${post.slug}`}
+          className="inline-flex items-center gap-2 text-sm font-bold text-white group-hover/card:text-primary transition-colors"
         >
-            Llegir Article <ArrowUpRight className="w-4 h-4 transition-transform group-hover/card:translate-x-1 group-hover/card:-translate-y-1" />
+          Llegir Article <ArrowUpRight className="w-4 h-4 transition-transform group-hover/card:translate-x-1 group-hover/card:-translate-y-1" />
         </Link>
       </div>
     </motion.div>
