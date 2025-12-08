@@ -1,5 +1,5 @@
 
-\restrict tVvtKMvFOf9Cz8ipKkj7AQUvciQQdo3VF5SysY9IRZI4IzVw88W80nu9ieP2lMX
+\restrict kCjXmMrobxMvetrZJ0iiU1igt9dTd8BRPS7C4nq5wSWIKg4nYMwrOpEzHc8E1cw
 
 
 SET statement_timeout = 0;
@@ -329,6 +329,18 @@ CREATE TABLE IF NOT EXISTS "public"."organizations" (
 ALTER TABLE "public"."organizations" OWNER TO "postgres";
 
 
+CREATE TABLE IF NOT EXISTS "public"."post_reactions" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "post_slug" "text" NOT NULL,
+    "reaction_type" "text" NOT NULL,
+    "visitor_id" "text" NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"()
+);
+
+
+ALTER TABLE "public"."post_reactions" OWNER TO "postgres";
+
+
 CREATE TABLE IF NOT EXISTS "public"."posts" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "slug" "text" NOT NULL,
@@ -583,6 +595,16 @@ ALTER TABLE ONLY "public"."organizations"
 
 
 
+ALTER TABLE ONLY "public"."post_reactions"
+    ADD CONSTRAINT "post_reactions_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."post_reactions"
+    ADD CONSTRAINT "post_reactions_post_slug_reaction_type_visitor_id_key" UNIQUE ("post_slug", "reaction_type", "visitor_id");
+
+
+
 ALTER TABLE ONLY "public"."posts"
     ADD CONSTRAINT "posts_pkey" PRIMARY KEY ("id");
 
@@ -761,6 +783,11 @@ ALTER TABLE ONLY "public"."orders"
 
 
 
+ALTER TABLE ONLY "public"."post_reactions"
+    ADD CONSTRAINT "post_reactions_post_slug_fkey" FOREIGN KEY ("post_slug") REFERENCES "public"."posts"("slug") ON DELETE CASCADE;
+
+
+
 ALTER TABLE ONLY "public"."posts"
     ADD CONSTRAINT "posts_organization_id_fkey" FOREIGN KEY ("organization_id") REFERENCES "public"."organizations"("id");
 
@@ -897,6 +924,10 @@ CREATE POLICY "Admins manage project members" ON "public"."project_members" USIN
 
 
 
+CREATE POLICY "Delete own reaction" ON "public"."post_reactions" FOR DELETE USING ((("visitor_id" = (("current_setting"('request.headers'::"text"))::json ->> 'visitor_id'::"text")) OR true));
+
+
+
 CREATE POLICY "Enable insert for everyone" ON "public"."contact_leads" FOR INSERT WITH CHECK (true);
 
 
@@ -945,11 +976,19 @@ CREATE POLICY "Public create orders" ON "public"."orders" FOR INSERT WITH CHECK 
 
 
 
+CREATE POLICY "Public insert reactions" ON "public"."post_reactions" FOR INSERT WITH CHECK (true);
+
+
+
 CREATE POLICY "Public read products" ON "public"."products" FOR SELECT USING (("active" = true));
 
 
 
 CREATE POLICY "Public read published posts" ON "public"."posts" FOR SELECT USING (("status" = 'published'::"public"."post_status"));
+
+
+
+CREATE POLICY "Public read reactions" ON "public"."post_reactions" FOR SELECT USING (true);
 
 
 
@@ -1055,6 +1094,9 @@ ALTER TABLE "public"."orders" ENABLE ROW LEVEL SECURITY;
 
 
 ALTER TABLE "public"."organizations" ENABLE ROW LEVEL SECURITY;
+
+
+ALTER TABLE "public"."post_reactions" ENABLE ROW LEVEL SECURITY;
 
 
 ALTER TABLE "public"."posts" ENABLE ROW LEVEL SECURITY;
@@ -1190,6 +1232,12 @@ GRANT ALL ON TABLE "public"."organizations" TO "service_role";
 
 
 
+GRANT ALL ON TABLE "public"."post_reactions" TO "anon";
+GRANT ALL ON TABLE "public"."post_reactions" TO "authenticated";
+GRANT ALL ON TABLE "public"."post_reactions" TO "service_role";
+
+
+
 GRANT ALL ON TABLE "public"."posts" TO "anon";
 GRANT ALL ON TABLE "public"."posts" TO "authenticated";
 GRANT ALL ON TABLE "public"."posts" TO "service_role";
@@ -1298,6 +1346,6 @@ ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public" GRANT ALL ON TAB
 
 
 
-\unrestrict tVvtKMvFOf9Cz8ipKkj7AQUvciQQdo3VF5SysY9IRZI4IzVw88W80nu9ieP2lMX
+\unrestrict kCjXmMrobxMvetrZJ0iiU1igt9dTd8BRPS7C4nq5wSWIKg4nYMwrOpEzHc8E1cw
 
 RESET ALL;

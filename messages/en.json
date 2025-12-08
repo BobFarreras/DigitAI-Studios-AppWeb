@@ -62,11 +62,9 @@
     "register_subtitle": "To view your full audit report",
     "already_have_account": "Already have an account?",
     "login_link": "Log in",
-   
     "social_google": "Continue with Google",
     "social_facebook": "Continue with Facebook"
   },
-   
   "Dashboard": {
     "welcome": "Welcome, {name}",
     "my_audits": "My Audits"
@@ -384,7 +382,8 @@
       "section4_list_2": "Information posted on forums, social networks, or any platform that allows third-party content.",
       "section4_list_3": "The exact precision of automatic audits, which are indicative and based on the Google Lighthouse API.",
       "section5_title": "Applicable Law and Jurisdiction",
-      "section5_p1": "Spanish legislation applies to all disputes related to this website. Parties expressly submit to the courts of Girona."
+      "section5_p1": "Spanish legislation applies to all disputes related to this website. Parties expressly submit to the courts of Girona.",
+      "last_update_prefix": "Last update:"
     },
     "privacitat": {
       "title": "Privacy Policy",
@@ -435,53 +434,52 @@
     "view_all": "Browse all blog posts"
   },
   "Solutions": {
-  "iot": {
-    "title": "IoT & Smart Spaces",
-    "description": "Merge the physical world with the digital one. Control access, lighting and sensors in real time, all from the palm of your hand.",
-    "scanning_text": "VERIFYING ACCESS...",
-    "access_granted": "DOOR OPEN"
-  },
-  "finance": {
-    "title": "Finances on Autopilot",
-    "description": "Eliminate human error. We automate invoicing, bank reconciliation and recurring payments so money flows on its own.",
-    "total_balance": "Current Balance",
-    "card_holder": "Account Holder"
-  },
-  "growth": {
-    "title": "Business Intelligence & Growth",
-    "description": "Stop guessing and start knowing. Dashboards that turn raw data into profitable decisions.",
-    "active_users": "ACTIVE USERS",
-    "conversion_rate": "CONVERSION RATE",
-    "monthly_revenue": "MRR (Revenue)",
-    "live_sales": "LIVE SALES"
-  },
-  "booking": {
-    "title": "Bookings & Clients 24/7",
-    "description": "Your virtual reception that never sleeps. Booking system, WhatsApp reminders and CRM that nurtures your clients automatically.",
-    "chat_user_1": "Hi, I want to book a court.",
-    "chat_bot_1": "I have Friday at 6 PM available 🎾",
-    "chat_user_2": "Perfect, booked!",
-    "booking_confirmed": "Booking Confirmed",
-    "new_booking": "NEW APPOINTMENT"
-  },
-  "tags": {
-    "qr": "QR Access",
-    "domotics": "Home Automation",
-    "sensors": "IoT Sensors",
-    "remote": "Remote Control",
-    "stripe": "Stripe Gateway",
-    "invoicing": "Auto-Invoicing",
-    "ocr": "OCR Scanner",
-    "signature": "Digital Signature",
-    "engine": "Booking Engine",
-    "whatsapp": "WhatsApp Bots",
-    "wallet": "Digital Wallet",
-    "crm": "Integrated CRM",
-    "social": "Auto-Posting",
-    "bi": "Business Intelligence",
-    "kpis": "KPIs in Real Time",
-    "leads": "Lead Capture"
+    "iot": {
+      "title": "IoT & Smart Spaces",
+      "description": "Merge the physical world with the digital one. Control access, lighting and sensors in real time, all from the palm of your hand.",
+      "scanning_text": "VERIFYING ACCESS...",
+      "access_granted": "DOOR OPEN"
+    },
+    "finance": {
+      "title": "Finances on Autopilot",
+      "description": "Eliminate human error. We automate invoicing, bank reconciliation and recurring payments so money flows on its own.",
+      "total_balance": "Current Balance",
+      "card_holder": "Account Holder"
+    },
+    "growth": {
+      "title": "Business Intelligence & Growth",
+      "description": "Stop guessing and start knowing. Dashboards that turn raw data into profitable decisions.",
+      "active_users": "ACTIVE USERS",
+      "conversion_rate": "CONVERSION RATE",
+      "monthly_revenue": "MRR (Revenue)",
+      "live_sales": "LIVE SALES"
+    },
+    "booking": {
+      "title": "Bookings & Clients 24/7",
+      "description": "Your virtual reception that never sleeps. Booking system, WhatsApp reminders and CRM that nurtures your clients automatically.",
+      "chat_user_1": "Hi, I want to book a court.",
+      "chat_bot_1": "I have Friday at 6 PM available 🎾",
+      "chat_user_2": "Perfect, booked!",
+      "booking_confirmed": "Booking Confirmed",
+      "new_booking": "NEW APPOINTMENT"
+    },
+    "tags": {
+      "qr": "QR Access",
+      "domotics": "Home Automation",
+      "sensors": "IoT Sensors",
+      "remote": "Remote Control",
+      "stripe": "Stripe Gateway",
+      "invoicing": "Auto-Invoicing",
+      "ocr": "OCR Scanner",
+      "signature": "Digital Signature",
+      "engine": "Booking Engine",
+      "whatsapp": "WhatsApp Bots",
+      "wallet": "Digital Wallet",
+      "crm": "Integrated CRM",
+      "social": "Auto-Posting",
+      "bi": "Business Intelligence",
+      "kpis": "KPIs in Real Time",
+      "leads": "Lead Capture"
+    }
   }
-}
-
 }
