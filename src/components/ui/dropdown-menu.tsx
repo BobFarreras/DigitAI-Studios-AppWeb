@@ -4,7 +4,7 @@ import * as React from 'react';
 import { Slot } from '@radix-ui/react-slot';
 import { cn } from '@/lib/utils';
 
-// Contexto para gestionar el estado abierto/cerrado
+// Context per gestionar l'estat obert/tancat
 const DropdownContext = React.createContext<{
   open: boolean;
   setOpen: (open: boolean) => void;
@@ -14,7 +14,7 @@ export const DropdownMenu = ({ children }: { children: React.ReactNode }) => {
   const [open, setOpen] = React.useState(false);
   const containerRef = React.useRef<HTMLDivElement>(null);
 
-  // Cerrar si se clica fuera
+  // Tancar si es clica fora
   React.useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
@@ -28,7 +28,7 @@ export const DropdownMenu = ({ children }: { children: React.ReactNode }) => {
   return (
     <DropdownContext.Provider value={{ open, setOpen }}>
       <div ref={containerRef} className="relative inline-block text-left">
-        {children}
+         {children}
       </div>
     </DropdownContext.Provider>
   );
@@ -37,7 +37,7 @@ export const DropdownMenu = ({ children }: { children: React.ReactNode }) => {
 export const DropdownMenuTrigger = React.forwardRef<
   HTMLButtonElement,
   React.ButtonHTMLAttributes<HTMLButtonElement> & { asChild?: boolean }
->(({ className, children, asChild = false, ...props }, ref) => { // 👈 Desestructurem asChild aquí
+>(({ className, children, asChild = false, ...props }, ref) => {
   const context = React.useContext(DropdownContext);
   if (!context) throw new Error("DropdownMenuTrigger must be used within DropdownMenu");
 
@@ -47,12 +47,12 @@ export const DropdownMenuTrigger = React.forwardRef<
     <Comp
       ref={ref}
       onClick={(e) => {
-        // Si hi ha un onClick original, l'executem
         if (props.onClick) props.onClick(e);
         context.setOpen(!context.open);
       }}
+      data-state={context.open ? 'open' : 'closed'}
       className={className}
-      {...props} // Ara props ja no té asChild
+      {...props}
     >
       {children}
     </Comp>
@@ -60,10 +60,14 @@ export const DropdownMenuTrigger = React.forwardRef<
 });
 DropdownMenuTrigger.displayName = "DropdownMenuTrigger";
 
+// ✅ AQUÍ ESTÀ LA SOLUCIÓ: Afegim 'side' a la definició de tipus
 export const DropdownMenuContent = React.forwardRef<
   HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> & { align?: 'start' | 'end' | 'center' }
->(({ className, align = 'center', children, ...props }, ref) => {
+  React.HTMLAttributes<HTMLDivElement> & { 
+    align?: 'start' | 'end' | 'center'; 
+    side?: 'top' | 'bottom'; // 👈 AFEGIT: Ara TypeScript accepta aquesta propietat
+  }
+>(({ className, align = 'center', side = 'bottom', children, ...props }, ref) => {
   const context = React.useContext(DropdownContext);
   if (!context) throw new Error("DropdownMenuContent must be used within DropdownMenu");
 
@@ -75,12 +79,19 @@ export const DropdownMenuContent = React.forwardRef<
     center: 'left-1/2 -translate-x-1/2',
   };
 
+  // ✅ Lògica CSS per posar-ho a dalt o a baix
+  const sideClasses = {
+    top: 'bottom-full mb-2 origin-bottom', // Surt cap amunt
+    bottom: 'mt-2 origin-top',             // Surt cap avall (default)
+  };
+
   return (
     <div
       ref={ref}
       className={cn(
-        "absolute z-50 mt-2 min-w-48 overflow-hidden rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95",
+        "absolute z-50 min-w-48 overflow-hidden rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95",
         alignmentClasses[align],
+        sideClasses[side], // 👈 Apliquem la classe
         className
       )}
       {...props}
@@ -97,7 +108,7 @@ export interface DropdownMenuItemProps extends React.HTMLAttributes<HTMLDivEleme
 }
 
 export const DropdownMenuItem = React.forwardRef<HTMLDivElement, DropdownMenuItemProps>(
-  ({ className, inset, asChild = false, onClick, ...props }, ref) => { // 👈 Desestructurem asChild aquí també
+  ({ className, inset, asChild = false, onClick, ...props }, ref) => {
     const context = React.useContext(DropdownContext);
     
     const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -116,7 +127,7 @@ export const DropdownMenuItem = React.forwardRef<HTMLDivElement, DropdownMenuIte
           inset && "pl-8",
           className
         )}
-        {...props} // Props netes sense asChild
+        {...props}
       />
     );
   }

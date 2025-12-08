@@ -1,16 +1,38 @@
+// =================== FILE: src/components/layout/LanguageSwitcher.tsx ===================
+
 'use client';
 
 import { useLocale, useTranslations } from 'next-intl';
-import { usePathname, useRouter } from '@/routing'; // 👈 IMPORTANT: Importar del teu routing tipat
+import { usePathname, useRouter } from '@/routing'; 
 import { Button } from '@/components/ui/button';
 import { 
   DropdownMenu, 
   DropdownMenuContent, 
   DropdownMenuItem, 
   DropdownMenuTrigger 
-} from '@/components/ui/dropdown-menu'; // Assumint que tens shadcn/ui, sinó un <select> natiu
+} from '@/components/ui/dropdown-menu'; 
 import { Globe } from 'lucide-react';
 import { startTransition } from 'react';
+
+// 1. Creem un petit component SVG per la Senyera
+function CatalanFlag({ className }: { className?: string }) {
+  return (
+    <svg 
+      xmlns="http://www.w3.org/2000/svg" 
+      viewBox="0 0 36 24" 
+      className={className}
+      preserveAspectRatio="none"
+    >
+      {/* Fons Groc */}
+      <rect width="36" height="24" fill="#FACC15" /> 
+      {/* 4 Barres Vermelles */}
+      <rect y="3" width="36" height="3" fill="#EF4444" />
+      <rect y="9" width="36" height="3" fill="#EF4444" />
+      <rect y="15" width="36" height="3" fill="#EF4444" />
+      <rect y="21" width="36" height="3" fill="#EF4444" />
+    </svg>
+  );
+}
 
 export function LanguageSwitcher() {
   const t = useTranslations('Common.languages');
@@ -20,7 +42,6 @@ export function LanguageSwitcher() {
 
   const handleLanguageChange = (nextLocale: 'ca' | 'es' | 'en') => {
     startTransition(() => {
-      // Això substitueix el segment d'idioma de la URL actual
       router.replace(pathname, { locale: nextLocale });
     });
   };
@@ -33,25 +54,37 @@ export function LanguageSwitcher() {
           <span className="sr-only">Canviar idioma</span>
         </Button>
       </DropdownMenuTrigger>
+      
       <DropdownMenuContent align="end">
+        
+        {/* CATALÀ */}
         <DropdownMenuItem 
           onClick={() => handleLanguageChange('ca')}
-          className={locale === 'ca' ? 'bg-primary/10 font-bold' : ''}
+          className={`gap-2 ${locale === 'ca' ? 'bg-primary/10 font-bold' : ''}`}
         >
-          🇦🇩 {t('ca')}
+          {/* Usem el component SVG amb una mida similar a un emoji */}
+          <CatalanFlag className="w-5 h-3.5 rounded-[2px] shadow-sm object-cover" /> 
+          {t('ca')}
         </DropdownMenuItem>
+
+        {/* CASTELLÀ */}
         <DropdownMenuItem 
           onClick={() => handleLanguageChange('es')}
-          className={locale === 'es' ? 'bg-primary/10 font-bold' : ''}
+          className={`gap-2 ${locale === 'es' ? 'bg-primary/10 font-bold' : ''}`}
         >
-          🇪🇸 {t('es')}
+          <span className="text-lg leading-none">🇪🇸</span> 
+          {t('es')}
         </DropdownMenuItem>
+
+        {/* ANGLÈS */}
         <DropdownMenuItem 
           onClick={() => handleLanguageChange('en')}
-          className={locale === 'en' ? 'bg-primary/10 font-bold' : ''}
+          className={`gap-2 ${locale === 'en' ? 'bg-primary/10 font-bold' : ''}`}
         >
-          🇺🇸 {t('en')}
+          <span className="text-lg leading-none">🇺🇸</span> 
+          {t('en')}
         </DropdownMenuItem>
+
       </DropdownMenuContent>
     </DropdownMenu>
   );

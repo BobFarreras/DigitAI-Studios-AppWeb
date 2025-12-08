@@ -9,7 +9,6 @@ import { cn } from '@/lib/utils';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
 
 // COMPONENTS
-import { Button } from '@/components/ui/button';
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { UserNav } from './UserNav'; // 👈 El nou component
@@ -24,7 +23,15 @@ import {
 type Props = {
   user: SupabaseUser | null;
 };
-
+// Definim els links del Dropdown (Pots moure això fora del component o dins)
+const DROPDOWN_LINKS = [
+  { href: '/#solutions', label: 'Solucions Tecnològiques' },
+  { href: '/#services', label: 'Serveis & Packs' },
+  { href: '/#audit', label: 'Auditoria Web Gratuïta' },
+  { href: '/#blog-feed', label: 'Blog & Recursos' },
+  { href: '/#testimonials', label: "Casos d'Èxit" },
+  { href: '/#contact', label: 'Contacte' }
+];
 export function Navbar({ user }: Props) {
   const t = useTranslations('Navbar');
   const [isScrolled, setIsScrolled] = useState(false);
@@ -37,20 +44,26 @@ export function Navbar({ user }: Props) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Lògica d'scroll suau (només per desktop, el mòbil ho té al seu component)
+
   const handleScrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    if (pathname === '/' && href.startsWith('/#')) {
+    // Només intervenim si estem a la home i és un enllaç amb àncora
+    const isHomePage = pathname === '/' || pathname === '/ca' || pathname === '/es' || pathname === '/en';
+
+    if (isHomePage && href.includes('#')) {
       e.preventDefault();
-      const id = href.replace('/#', '');
+      const id = href.split('#')[1];
       const element = document.getElementById(id);
       if (element) {
-        const headerOffset = 80;
-        const offsetPosition = element.getBoundingClientRect().top + window.pageYOffset - headerOffset;
+        const headerOffset = 85;
+        const elementPosition = element.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
         window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+
+        // Actualitzem la URL sense recarregar per si l'usuari fa refresh
+        window.history.pushState(null, '', href);
       }
     }
   };
-
   return (
     <>
       <header
@@ -79,26 +92,23 @@ export function Navbar({ user }: Props) {
 
             {/* Dropdown "Solucions" */}
             <DropdownMenu>
-              <DropdownMenuTrigger className="flex items-center gap-1 text-sm font-medium text-muted-foreground hover:text-primary transition-colors outline-none data-[state=open]:text-primary">
-                {t('solutions')} <ChevronDown className="w-4 h-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
+              <DropdownMenuTrigger className="flex items-center gap-1 text-sm font-medium text-muted-foreground hover:text-primary transition-colors outline-none data-[state=open]:text-primary group">
+                {t('solutions')}
+                <ChevronDown className="w-4 h-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-56 p-2">
-                {[
-                    { href: '/#serveis', label: 'Serveis Generals' },
-                    { href: '/#audit', label: 'Auditoria Web' },
-                    { href: '/#LatestPostsSection', label: 'Blog & Recursos' },
-                    { href: '/#testimonis', label: 'Casos d\'Èxit' },
-                    { href: '/#contacte', label: 'Contacte' }
-                ].map((link) => (
-                    <DropdownMenuItem key={link.href} asChild>
-                        <Link 
-                            href={link.href} 
-                            onClick={(e) => handleScrollToSection(e, link.href)}
-                            className="cursor-pointer font-medium"
-                        >
-                            {link.label}
-                        </Link>
-                    </DropdownMenuItem>
+
+              <DropdownMenuContent align="start" className="w-56 p-2 bg-card border-border shadow-xl">
+                {DROPDOWN_LINKS.map((link) => (
+                  <DropdownMenuItem key={link.href} asChild>
+                    <Link
+                      href={link.href}
+                      // Afegim l'event onClick per fer scroll suau si ja estem a la home
+                      onClick={(e) => handleScrollToSection(e, link.href)}
+                      className="cursor-pointer font-medium text-sm py-2.5 px-3 rounded-md hover:bg-primary/10 hover:text-primary transition-colors block w-full"
+                    >
+                      {link.label}
+                    </Link>
+                  </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
@@ -106,7 +116,7 @@ export function Navbar({ user }: Props) {
             <Link href="/projectes" className={cn("text-sm font-medium hover:text-primary transition-colors", pathname === '/projectes' ? "text-primary" : "text-muted-foreground")}>
               {t('projects')}
             </Link>
-            
+
             <Link href="/blog" className={cn("text-sm font-medium hover:text-primary transition-colors", pathname === '/blog' ? "text-primary" : "text-muted-foreground")}>
               {t('blog')}
             </Link>
@@ -116,14 +126,14 @@ export function Navbar({ user }: Props) {
           <div className="flex items-center gap-2 md:gap-4">
             {/* Utilitats */}
             <div className="hidden md:flex items-center gap-1 pr-2 border-r border-border/50">
-                <ThemeToggle />
-                <LanguageSwitcher />
+              <ThemeToggle />
+              <LanguageSwitcher />
             </div>
-            
+
             {/* Mòbil: Només mostrar toggles, el menú va a baix */}
             <div className="flex md:hidden gap-1">
-                <ThemeToggle />
-                <LanguageSwitcher />
+              <ThemeToggle />
+              <LanguageSwitcher />
             </div>
 
             {/* Lògica d'Usuari encapsulada */}
@@ -134,7 +144,7 @@ export function Navbar({ user }: Props) {
       </header>
 
       {/* 4. BARRA DE NAVEGACIÓ MÒBIL (Component Separat) */}
-      <PublicMobileNav />
+      <PublicMobileNav user={user} />
     </>
   );
 }

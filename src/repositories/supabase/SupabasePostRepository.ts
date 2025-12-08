@@ -7,8 +7,12 @@ import { Database } from '@/types/database.types';
 type PostRow = Database['public']['Tables']['posts']['Row'];
 type PostUpdate = Database['public']['Tables']['posts']['Update']; // 👈 Adéu 'any'
 
-// ⚠️ CONSTANT D'ORGANITZACIÓ (Posa-ho al .env en producció)
-const MY_ORG_ID = process.env.NEXT_PUBLIC_MAIN_ORG_ID || '2f1e89dd-0b95-4f7b-ab31-14a9916d374f';
+// ✅ CORRECTE:
+const MY_ORG_ID = process.env.NEXT_PUBLIC_MAIN_ORG_ID!; 
+
+if (!MY_ORG_ID) {
+    throw new Error("Manca NEXT_PUBLIC_MAIN_ORG_ID");
+}
 
 export class SupabasePostRepository implements IPostRepository {
 

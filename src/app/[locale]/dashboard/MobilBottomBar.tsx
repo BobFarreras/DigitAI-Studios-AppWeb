@@ -7,7 +7,7 @@ import {
   LayoutDashboard, 
   FileText, 
   FolderKanban, 
-  Settings, 
+  
   ShieldAlert, 
   LogOut, 
   Home, // Icona per la Web Pública
@@ -44,7 +44,8 @@ export function MobileBottomBar({ userRole }: MobileBottomBarProps) {
   const MENU_ITEMS = [
     { icon: LayoutDashboard, label: t('summary'), href: '/dashboard' },
     { icon: FileText, label: t('audits'), href: '/dashboard/audits' },
-    { icon: FolderKanban, label: 'Tests', href: '#proves' },
+    { icon: FolderKanban, label: 'projectes', href: '/dashboard/projects' },
+  
   ];
 
   const handleClick = (e: React.MouseEvent, href: string, label: string) => {

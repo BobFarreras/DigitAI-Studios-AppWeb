@@ -26,7 +26,8 @@ export type FormState = {
   };
 };
 
-
+// Recuperem la variable d'entorn
+const MAIN_ORG_ID = process.env.NEXT_PUBLIC_MAIN_ORG_ID;
 
 
 
@@ -62,16 +63,13 @@ export async function processWebAudit(
     // 2. ✨ LÒGICA MILLORADA: DETECCIÓ PER ORG_ID ✨
     const supabaseAdmin = createAdminClient();
     
-    // Aquest és l'ID de la teva organització principal (DigitAI Studios)
-    // IDEALMENT: Posa això al .env com NEXT_PUBLIC_MAIN_ORG_ID
-    const MAIN_ORG_ID = '2f1e89dd-0b95-4f7b-ab31-14a9916d374f';
 
     // Busquem si aquest email té un perfil DINS de la teva organització
     const { data: existingProfile } = await supabaseAdmin
       .from('profiles')
       .select('id')
       .ilike('email', email)
-      .eq('organization_id', MAIN_ORG_ID) // 👈 EL FILTRE CLAU
+      .eq('organization_id', MAIN_ORG_ID!) // 👈 EL FILTRE CLAU
       .maybeSingle();
 
     const encodedEmail = encodeURIComponent(email);

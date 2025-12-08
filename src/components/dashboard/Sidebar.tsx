@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, FileText, FolderKanban, Settings, LogOut, Sparkles, ShieldAlert } from 'lucide-react';
+import { LayoutDashboard, FileText, FolderKanban, Settings, LogOut, Sparkles, ShieldAlert, Home } from 'lucide-react';
 import { cn } from '@/lib/utils';
 // import { createClient } from '@/lib/supabase/client'; // ❌ Eliminem això
 // import { useRouter } from '@/routing'; // ❌ Eliminem això
@@ -10,6 +10,7 @@ import { useTranslations } from 'next-intl';
 import { useRouter } from '@/routing';
 // 👇 1. Importem l'acció de servidor
 import { signOutAction } from '@/features/auth/actions/auth';
+import { is } from 'zod/v4/locales';
 
 interface SidebarProps {
   userRole: 'admin' | 'client' | 'lead';
@@ -43,6 +44,7 @@ export function Sidebar({ userRole }: SidebarProps) {
     { icon: FolderKanban, label: t('projects'), href: '/dashboard/projects' },
     { icon: FileText, label: t('audits'), href: '/dashboard/audits' },
     { icon: Settings, label: t('settings'), href: '#config' },
+    { icon: Home, label: t('web'), href: '/' },
   ];
 
   if (userRole === 'admin') {
@@ -77,7 +79,11 @@ export function Sidebar({ userRole }: SidebarProps) {
               isActive = cleanPath === '/dashboard';
             } else {
               isActive = cleanPath.startsWith(item.href);
+
             }
+          }
+          if (item.href === '/') {
+            isActive = false;
           }
 
           const isAdminItem = item.href === '/admin';

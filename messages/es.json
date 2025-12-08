@@ -231,7 +231,8 @@
     "logout": "Cerrar Sesión",
     "pro_badge": "Plan Pro",
     "pro_text": "Desbloquea auditorías ilimitadas.",
-    "pro_button": "Mejorar"
+    "pro_button": "Mejorar",
+    "web":"Web"
   },
   "DashboardHeader": {
     "search_placeholder": "Buscar...",

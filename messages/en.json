@@ -231,7 +231,8 @@
     "logout": "Log Out",
     "pro_badge": "Pro Plan",
     "pro_text": "Unlock unlimited audits.",
-    "pro_button": "Upgrade"
+    "pro_button": "Upgrade",
+    "web":"Web"
   },
   "DashboardHeader": {
     "search_placeholder": "Search...",

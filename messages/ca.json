@@ -233,7 +233,8 @@
     "logout": "Tancar Sessió",
     "pro_badge": "Pla Pro",
     "pro_text": "Desbloqueja auditories il·limitades.",
-    "pro_button": "Millorar"
+    "pro_button": "Millorar",
+    "web":"Web"
   },
   "DashboardHeader": {
     "search_placeholder": "Cercar...",

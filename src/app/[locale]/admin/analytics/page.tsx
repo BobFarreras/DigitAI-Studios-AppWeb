@@ -51,12 +51,12 @@ return (
          <div className="lg:col-span-2 flex flex-col gap-4 h-full min-h-0">
             
             {/* A. GRÀFIC TRÀNSIT */}
-            <div className="flex-[2] min-h-0 bg-card border border-border rounded-xl shadow-sm overflow-hidden">
+            <div className="flex-2 min-h-0 bg-card border border-border rounded-xl shadow-sm overflow-hidden">
                 <TrafficChart data={dailyStats} />
             </div>
 
             {/* B. DETALLS */}
-            <div className="flex-[3] grid grid-cols-1 md:grid-cols-2 gap-4 min-h-0">
+            <div className="flex-3 grid grid-cols-1 md:grid-cols-2 gap-4 min-h-0">
                 <div className="min-h-0 overflow-hidden">
                     <TopPagesCard data={adv.topPages} />
                 </div>
