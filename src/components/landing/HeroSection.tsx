@@ -50,7 +50,8 @@ export function HeroSection() {
       {/* Element de fons (opcional) */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[120px] -z-10" />
 
-      <div className="container mx-auto px-14 grid lg:grid-cols-2 gap-16 items-center">
+      {/* ✅ CORRECCIÓ APLICADA AQUÍ: Padding responsiu */}
+      <div className="container mx-auto px-6 md:px-10 lg:px-14 grid lg:grid-cols-2 gap-16 items-center">
 
         {/* COLUMNA ESQUERRA: Text */}
         <motion.div
@@ -90,13 +91,10 @@ export function HeroSection() {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="relative"
         >
-          {/* 🛠️ FIX: Ús de variables semàntiques (bg-card, border-border)
-              Això farà que agafi el color lila fosc del teu globals.css en Dark Mode
-              i el color blanc en Light Mode automàticament.
-          */}
+          {/* 🛠️ FIX: Ús de variables semàntiques (bg-card, border-border) */}
           <div className={`relative w-full aspect-video bg-card rounded-xl border border-border shadow-2xl overflow-hidden group transition-colors duration-300 ${!showVideo ? 'animate-floating' : ''}`}>
 
-            {/* Barra superior estil navegador (Ara s'adapta al tema) */}
+            {/* Barra superior estil navegador */}
             <div className="h-8 border-b border-border bg-muted/50 flex items-center px-4 gap-2 z-20 relative transition-colors">
               <div className="w-2.5 h-2.5 rounded-full bg-red-500/50"></div>
               <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/50"></div>
@@ -153,7 +151,7 @@ export function HeroSection() {
             </div>
           </div>
 
-          {/* Floating Cards (Decoratives) - Adaptades al tema */}
+          {/* Floating Cards (Decoratives) */}
           <div className="absolute -bottom-6 -left-6 bg-card/90 backdrop-blur-md border border-border p-4 rounded-xl flex items-center gap-3 animate-pulse-glow shadow-xl z-30 transition-colors">
             <div className="relative">
               <div className="w-3 h-3 bg-green-500 rounded-full animate-ping absolute opacity-75"></div>

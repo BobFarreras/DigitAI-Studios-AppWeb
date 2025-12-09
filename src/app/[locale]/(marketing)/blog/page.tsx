@@ -2,7 +2,7 @@ import { Link } from '@/routing';
 import { postService } from '@/services/container';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { getTranslations, getLocale } from 'next-intl/server';
-import { Calendar, Tag, ImageIcon, Cpu } from 'lucide-react'; // 👈 Importat Heart
+import { Calendar, Tag, ImageIcon, Cpu } from 'lucide-react';
 import Image from 'next/image';
 
 export const revalidate = 3600;
@@ -14,7 +14,8 @@ export default async function BlogIndexPage() {
   const posts = await postService.getLatestPosts();
 
   return (
-    <div className="container mx-auto py-18 px-4">
+    // ✅ CORRECCIÓ: Padding responsiu (px-6 -> px-10 -> px-14)
+    <div className="container mx-auto py-18 px-6 md:px-10 lg:px-14">
       {/* CAPÇALERA */}
       <div className="text-center mb-16 space-y-4">
         <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-foreground">
@@ -34,8 +35,7 @@ export default async function BlogIndexPage() {
               {/* ZONA IMATGE */}
               <div className="relative h-56 w-full bg-muted dark:bg-slate-800 overflow-hidden">
 
-                {/* 🔴 INSÍGNIA DE VALORACIONS (Això faltava al teu codi) */}
-                {/* 👇 2. BADGE TECNOLÒGIC RENOVAT */}
+                {/* 🔴 INSÍGNIA DE VALORACIONS */}
                 {(post.totalReactions || 0) > 0 && (
                   <div className="absolute top-3 right-3 z-20 flex items-center gap-1.5 
                         bg-slate-900/80 backdrop-blur-md 

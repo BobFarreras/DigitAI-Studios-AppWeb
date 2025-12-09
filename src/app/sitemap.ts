@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next';
 import { postService } from '@/services/container';
 
 // ⚠️ IMPORTNAT: Canvia això pel teu domini real quan despleguis
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://digitaistudios.com';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const posts = await postService.getLatestPosts();

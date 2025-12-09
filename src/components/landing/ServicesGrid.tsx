@@ -14,7 +14,8 @@ export function ServicesGrid() {
   return (
     <section id="serveis" className="bg-background relative overflow-hidden py-24 transition-colors duration-300">
       
-      <div className="container mx-auto px-14">
+      {/* ✅ CORRECCIÓ APLICADA AQUÍ: Padding responsiu */}
+      <div className="container mx-auto px-6 md:px-10 lg:px-14">
         
         {/* CAPÇALERA */}
         <div className="text-center mb-16 max-w-3xl mx-auto">
@@ -38,7 +39,7 @@ export function ServicesGrid() {
              description={t('cards.appwebs.description')}
              icon={Globe}
              iconColorClass="text-blue-500"
-             wrapperClass="md:col-span-2 flex-row md:flex-row" // Flex row per posar text i imatge costat a costat
+             wrapperClass="md:col-span-2 flex-row md:flex-row" 
            >
              <WebMockup />
            </ServiceCard>

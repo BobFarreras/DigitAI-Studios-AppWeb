@@ -10,7 +10,8 @@ export function ProjectsCTA() {
 
   return (
     <section className="py-16 md:py-24 border-t border-border bg-muted/10">
-       <div className="container mx-auto px-4 text-center">
+       {/* ✅ CORRECCIÓ: Padding responsiu */}
+       <div className="container mx-auto px-6 md:px-10 lg:px-14 text-center">
           <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4 md:mb-6">
              {t('title_prefix')} <span className="gradient-text">{t('title_highlight')}</span>{t('title_suffix')}
           </h2>

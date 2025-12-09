@@ -12,7 +12,8 @@ export function ProjectsHero() {
       {/* Fons decoratiu */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] md:w-[1000px] h-[300px] md:h-[500px] bg-primary/10 blur-[80px] md:blur-[120px] rounded-full pointer-events-none opacity-50" />
       
-      <div className="container mx-auto px-4 text-center relative z-10">
+      {/* ✅ CORRECCIÓ: Padding responsiu */}
+      <div className="container mx-auto px-6 md:px-10 lg:px-14 text-center relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

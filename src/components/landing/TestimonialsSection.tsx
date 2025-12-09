@@ -50,7 +50,9 @@ export function TestimonialsSection({ testimonials }: Props) {
 
   return (
     <section id="testimonis" className="py-16 bg-muted/30 relative overflow-hidden">
-      <div className="container mx-auto px-14 relative z-10">
+      
+      {/* ✅ CORRECCIÓ APLICADA: Padding responsiu */}
+      <div className="container mx-auto px-6 md:px-10 lg:px-14 relative z-10">
         
         {/* CAPÇALERA */}
         <div className="flex flex-col md:flex-row justify-between items-end  md:mb-16 gap-6">
@@ -73,12 +75,11 @@ export function TestimonialsSection({ testimonials }: Props) {
         </div>
 
         {/* GRID */}
-        {/* Canviem grid-cols per adaptar-se al itemsToShow dinàmicament */}
         <div className={`grid gap-8 py-6 ${itemsToShow === 1 ? 'grid-cols-1' : 'grid-cols-3'}`}>
           <AnimatePresence mode='popLayout'>
             {getVisibleItems().map((item, i) => (
               <motion.div
-                key={`${item.id}-${currentIndex + i}`} // Clau única composta per forçar re-render correcte
+                key={`${item.id}-${currentIndex + i}`}
                 initial={{ opacity: 0, x: 50 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -50 }}
@@ -96,13 +97,11 @@ export function TestimonialsSection({ testimonials }: Props) {
   );
 }
 
-// --- TARGETA INDIVIDUAL (EFECTE CARPETA/FITXER) ---
-
+// ... (TestimonialCard i Mockups es mantenen iguals)
 function TestimonialCard({ item }: { item: Testimonial }) {
    return (
       <div className="relative w-full h-full group">
          
-         {/* CAPA 1: EL PROJECTE (FITXER) */}
          <div className="absolute inset-x-4 top-4 bottom-20 transition-all duration-500 cubic-bezier(0.25, 0.8, 0.25, 1) group-hover:-translate-y-20 ">
             <div className="w-full h-full rounded-t-xl overflow-hidden border border-primary/20 bg-slate-900 dark:bg-black shadow-2xl group-hover:shadow-primary/20">
                {item.projectType === 'web' && <MockupWeb url={item.projectUrl} image={item.image} title={item.company} />}
@@ -111,9 +110,7 @@ function TestimonialCard({ item }: { item: Testimonial }) {
             </div>
          </div>
 
-         {/* CAPA 2: EL TESTIMONI (CARPETA) */}
          <div className="absolute bottom-0 left-0 right-0 h-[280px] bg-card border border-border rounded-2xl p-8 shadow-xl z-10 transition-transform duration-500 group-hover:translate-y-6 flex flex-col">
-            
             <Quote className="absolute top-6 right-6 text-primary/10 w-12 h-12 rotate-180" />
 
             <div className="flex items-center gap-3 mb-4">
@@ -145,14 +142,11 @@ function TestimonialCard({ item }: { item: Testimonial }) {
    )
 }
 
-// --- MOCKUPS VISUALS ---
-
 function MockupWeb({ url, image, title }: { url?: string, image?: string | StaticImageData, title: string }) {
    const Wrapper = url ? Link : 'div';
    return (
       <Wrapper href={url || '#'} target={url ? "_blank" : undefined} className="block w-full h-full cursor-pointer group/mockup">
          <div className="w-full h-full bg-slate-50 dark:bg-[#0f111a] flex flex-col relative">
-            
             {url && (
                <div className="absolute inset-0 z-30 bg-black/60 backdrop-blur-[2px] flex items-center justify-center opacity-0 group-hover/mockup:opacity-100 transition-opacity duration-300">
                   <span className="bg-white text-black px-4 py-2 rounded-full font-bold text-xs flex items-center gap-2 shadow-lg transform scale-90 group-hover/mockup:scale-100 transition-transform">
@@ -160,13 +154,11 @@ function MockupWeb({ url, image, title }: { url?: string, image?: string | Stati
                   </span>
                </div>
             )}
-
             <div className="h-6 bg-slate-200 dark:bg-white/10 flex items-center px-3 gap-1.5 z-10">
                <div className="w-2 h-2 rounded-full bg-red-400/80"></div>
                <div className="w-2 h-2 rounded-full bg-yellow-400/80"></div>
                <div className="w-2 h-2 rounded-full bg-green-400/80"></div>
             </div>
-            
             <div className="flex-1 relative w-full">
                 {image ? (
                    <Image src={image} alt={title} fill className="object-cover object-top" />
@@ -185,13 +177,11 @@ function MockupWeb({ url, image, title }: { url?: string, image?: string | Stati
 function MockupApp({ image, title }: { image?: string | StaticImageData, title: string }) {
    return (
       <div className="w-full h-full bg-slate-800 dark:bg-black flex items-end justify-center p-4 pb-0 group/mockup relative">
-         
          <div className="absolute inset-0 z-30 bg-black/60 backdrop-blur-[2px] flex items-center justify-center opacity-0 group-hover/mockup:opacity-100 transition-opacity duration-300 rounded-t-xl">
              <span className="bg-white text-black px-4 py-2 rounded-full font-bold text-xs flex items-center gap-2 shadow-lg">
                 Veure App <ExternalLink className="w-3 h-3" />
              </span>
          </div>
-
          <div className="w-32 h-full bg-black border-2 border-slate-700 rounded-t-xl overflow-hidden relative">
             {image ? (
                 <Image src={image} alt={title} fill className="object-cover" />
@@ -214,9 +204,7 @@ function MockupAutomation() {
                 Veure Flux <Zap className="w-3 h-3" />
              </span>
          </div>
-
          <div className="absolute inset-0 bg-[radial-gradient(#ffffff10_1px,transparent_1px)] bg-size-[12px_12px]"></div>
-         
          <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none">
             <defs>
                <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -239,11 +227,9 @@ function MockupAutomation() {
                style={{ offsetPath: "path('M 20 30 C 50 30, 50 70, 80 70')" }}
             />
          </svg>
-
          <div className="absolute left-[20%] top-[30%] -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-lg bg-purple-500/20 border border-purple-500 flex items-center justify-center z-10 shadow-[0_0_15px_rgba(168,85,247,0.4)] backdrop-blur-sm">
             <Users className="w-5 h-5 text-purple-400" />
          </div>
-         
          <div className="absolute left-[80%] top-[50%] -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-lg bg-green-500/20 border border-green-500 flex items-center justify-center z-10 shadow-[0_0_15px_rgba(34,197,94,0.4)] backdrop-blur-sm">
             <Code className="w-5 h-5 text-green-400" />
          </div>

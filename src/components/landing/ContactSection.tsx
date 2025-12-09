@@ -19,12 +19,14 @@ export function ContactSection() {
   const [termsAccepted, setTermsAccepted] = useState(false);
 
   return (
-    <section id="contacte" className="py-24 bg-background relative overflow-hidden transition-colors duration-300 px-14">
+    // ✅ CORRECCIÓ: Padding responsiu (tret de la secció, aplicat al container)
+    <section id="contacte" className="py-24 bg-background relative overflow-hidden transition-colors duration-300">
       
       {/* Fons decoratiu */}
       <div className="absolute top-0 left-0 w-full h-full bg-linear-to-b from-transparent via-primary/5 to-transparent pointer-events-none" />
 
-      <div className="container mx-auto px-4 grid lg:grid-cols-2 gap-16 items-start relative z-10">
+      {/* ✅ CORRECCIÓ APLICADA AQUÍ */}
+      <div className="container mx-auto px-6 md:px-10 lg:px-14 grid lg:grid-cols-2 gap-16 items-start relative z-10">
         
         {/* COLUMNA ESQUERRA: Text i Punts */}
         <motion.div 

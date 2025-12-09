@@ -12,12 +12,15 @@ export async function LatestPostsSection() {
   if (latestPosts.length === 0) return null;
 
   return (
-    <section id="LatestPostsSection" className="py-24 bg-background relative overflow-hidden transition-colors duration-300 px-14">
+    // ✅ 1. Tret 'px-14' d'aquí per evitar conflictes
+    <section id="LatestPostsSection" className="py-24 bg-background relative overflow-hidden transition-colors duration-300">
+      
       <div className="absolute top-1/2 left-0 -translate-y-1/2 w-[500px] h-[500px] bg-primary/10 blur-[100px] rounded-full pointer-events-none opacity-50" />
       <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-blue-500/10 dark:bg-blue-500/20 blur-[120px] rounded-full pointer-events-none opacity-40" />
       <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] bg-[size:40px_40px] opacity-[0.03] dark:opacity-[0.05] pointer-events-none" />
 
-      <div className="container mx-auto px-4 relative z-10">
+      {/* ✅ 2. Aplicat padding responsiu al contenidor */}
+      <div className="container mx-auto px-6 md:px-10 lg:px-14 relative z-10">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           
           {/* TEXT */}
@@ -29,7 +32,7 @@ export async function LatestPostsSection() {
             
             <h2 className="text-4xl md:text-6xl font-black text-foreground leading-tight tracking-tight">
               Pensaments <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-500">
+              <span className="text-transparent bg-clip-text bg-linear-to-r from-primary to-blue-500">
                 Digitals.
               </span>
             </h2>
@@ -60,7 +63,7 @@ export async function LatestPostsSection() {
 
           {/* STACK */}
           <div className="relative">
-             <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 to-transparent rounded-full blur-3xl" />
+             <div className="absolute inset-0 bg-linear-to-tr from-primary/5 to-transparent rounded-full blur-3xl" />
              <DiaryStack posts={latestPosts} />
           </div>
 

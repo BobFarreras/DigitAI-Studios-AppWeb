@@ -14,7 +14,8 @@ export function ProductTeaser() {
     const t = useTranslations('ProductTeaser');
 
     return (
-        <section className="py-24 container mx-auto px-14">
+        // ✅ CORRECCIÓ: Padding responsiu aplicat directament aquí
+        <section className="py-24 container mx-auto px-6 md:px-10 lg:px-14">
 
             <div className="rounded-3xl bg-linear-to-br from-slate-50 via-white to-blue-50 dark:from-primary/10 dark:via-background dark:to-background border border-slate-200 dark:border-primary/20 p-8 md:p-12 overflow-hidden relative transition-colors duration-300 shadow-2xl shadow-slate-200/50 dark:shadow-none">
 
@@ -35,9 +36,7 @@ export function ProductTeaser() {
 
                         <p className="text-slate-600 dark:text-slate-400 text-lg mb-8 leading-relaxed">
                             {t.rich('description', {
-                                // 1. GESTIÓ DE NEGRETA
                                 strong: (chunks) => <strong>{chunks}</strong>,
-                                // 2. GESTIÓ DEL SALT DE LÍNIA (Assumint que el JSON usa <br />)
                                 br: (chunks) => <br />
                             })}
                         </p>
@@ -48,7 +47,7 @@ export function ProductTeaser() {
                         </Link>
                     </div>
 
-                    {/* MOCKUP VISUAL - (Sense canvis) */}
+                    {/* MOCKUP VISUAL */}
                     <div className="relative h-[400px] w-full flex items-center justify-center perspective-1000">
 
                         {/* CARD 1: RIBOTFLOW */}
