@@ -19,7 +19,7 @@ export function ContactSection() {
   const [termsAccepted, setTermsAccepted] = useState(false);
 
   return (
-    <section id="contacte" className="py-24 bg-background relative overflow-hidden transition-colors duration-300">
+    <section id="contacte" className="py-24 bg-background relative overflow-hidden transition-colors duration-300 px-14">
       
       {/* Fons decoratiu */}
       <div className="absolute top-0 left-0 w-full h-full bg-linear-to-b from-transparent via-primary/5 to-transparent pointer-events-none" />

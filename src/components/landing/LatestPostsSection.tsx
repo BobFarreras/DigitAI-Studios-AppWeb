@@ -12,7 +12,7 @@ export async function LatestPostsSection() {
   if (latestPosts.length === 0) return null;
 
   return (
-    <section id="LatestPostsSection" className="py-24 bg-background relative overflow-hidden transition-colors duration-300">
+    <section id="LatestPostsSection" className="py-24 bg-background relative overflow-hidden transition-colors duration-300 px-14">
       <div className="absolute top-1/2 left-0 -translate-y-1/2 w-[500px] h-[500px] bg-primary/10 blur-[100px] rounded-full pointer-events-none opacity-50" />
       <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-blue-500/10 dark:bg-blue-500/20 blur-[120px] rounded-full pointer-events-none opacity-40" />
       <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] bg-[size:40px_40px] opacity-[0.03] dark:opacity-[0.05] pointer-events-none" />

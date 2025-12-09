@@ -30,8 +30,9 @@ export default async function AdminAnalyticsPage() {
   const grandTotalDuration = dailyStats.reduce((acc, day) => acc + (day.totalDuration || 0), 0);
   const averageTimeSeconds = totalVisitors > 0 ? grandTotalDuration / totalVisitors : 0;
 
-return (
-    <div className="flex flex-col gap-4 h-[calc(100vh-2rem)] p-4 overflow-hidden bg-background text-foreground">
+  return (
+    // FIX 1: Canviem h-screen per h-auto en mòbil (scroll) i fix en LG
+    <div className="flex flex-col gap-4 h-auto lg:h-[calc(100vh-2rem)] p-4 overflow-y-auto lg:overflow-hidden bg-background text-foreground">
       
       {/* 1. KPI HEADER */}
       <div className="shrink-0">
@@ -43,41 +44,44 @@ return (
          />
       </div>
 
-      {/* 2. DASHBOARD GRID (Modificat per donar més espai a la dreta) */}
-      {/* Canviem a grid-cols-3: 2/3 esquerra, 1/3 dreta */}
+      {/* 2. DASHBOARD GRID */}
+      {/* FIX 2: En mòbil es veurà tot en columna (block). En LG serà grid. */}
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-4 min-h-0">
          
-         {/* --- ZONA PRINCIPAL (Columna Esquerra i Centre - 66%) --- */}
-         <div className="lg:col-span-2 flex flex-col gap-4 h-full min-h-0">
+         {/* --- ZONA PRINCIPAL (Esquerra) --- */}
+         <div className="lg:col-span-2 flex flex-col gap-4 h-auto lg:h-full min-h-0">
             
             {/* A. GRÀFIC TRÀNSIT */}
-            <div className="flex-2 min-h-0 bg-card border border-border rounded-xl shadow-sm overflow-hidden">
+            {/* FIX 3: Alçada fixa en mòbil (h-80), flexible en desktop (flex-[2]) */}
+            <div className="h-80 lg:h-auto lg:flex-2 min-h-0 bg-card border border-border rounded-xl shadow-sm overflow-hidden">
                 <TrafficChart data={dailyStats} />
             </div>
 
-            {/* B. DETALLS */}
-            <div className="flex-3 grid grid-cols-1 md:grid-cols-2 gap-4 min-h-0">
-                <div className="min-h-0 overflow-hidden">
+            {/* B. DETALLS (Top Pages & Referrers) */}
+            {/* FIX 4: Alçada automàtica en mòbil, flexible en desktop */}
+            <div className="h-auto lg:flex-3 grid grid-cols-1 md:grid-cols-2 gap-4 min-h-0">
+                {/* FIX 5: Alçada fixa per als cards en mòbil */}
+                <div className="h-80 lg:h-auto min-h-0 overflow-hidden">
                     <TopPagesCard data={adv.topPages} />
                 </div>
-                <div className="min-h-0 overflow-hidden">
+                <div className="h-80 lg:h-auto min-h-0 overflow-hidden">
                     <BarListChart title="Fonts de Trànsit" data={adv.referrers} />
                 </div>
             </div>
          </div>
 
-         {/* --- SIDEBAR DRET (Columna Dreta - 33%) --- */}
-         <div className="lg:col-span-1 flex flex-col gap-4 h-full min-h-0 overflow-y-auto custom-scrollbar pr-1">
+         {/* --- SIDEBAR DRET --- */}
+         <div className="lg:col-span-1 flex flex-col gap-4 h-auto lg:h-full min-h-0 lg:overflow-y-auto custom-scrollbar pr-1">
             
-            <div className="flex-1 min-h-[200px]"> {/* Augmentem una mica l'alçada mínima */}
+            <div className="h-64 lg:flex-1 lg:min-h-[200px]">
                <DeviceChart data={adv.devices} />
             </div>
 
-            <div className="flex-1 min-h-[200px]">
+            <div className="h-64 lg:flex-1 lg:min-h-[200px]">
                <VerticalBarChart title="Top Països" data={adv.countries} />
             </div>
 
-            <div className="flex-1 min-h-[200px]">
+            <div className="h-64 lg:flex-1 lg:min-h-[200px]">
                <BarListChart title="Navegadors" data={adv.browsers} />
             </div>
          </div>

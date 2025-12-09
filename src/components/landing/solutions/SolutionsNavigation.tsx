@@ -4,7 +4,6 @@ import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { SolutionItem } from './data';
-// 👇 1. Importem el hook de traducció
 import { useTranslations } from 'next-intl';
 
 interface Props {
@@ -14,7 +13,6 @@ interface Props {
 }
 
 export function SolutionsNavigation({ solutions, activeTab, setActiveTab }: Props) {
-  // 👇 2. Inicialitzem el hook amb el namespace 'SolutionsSection'
   const t = useTranslations('Solutions');
 
   return (
@@ -33,6 +31,7 @@ export function SolutionsNavigation({ solutions, activeTab, setActiveTab }: Prop
                 : "hover:bg-white/50 dark:hover:bg-white/5 hover:border-border"
             )}
           >
+            {/* 1. FONS ANIMAT (Posició absoluta, es queda al fons) */}
             {isActive && (
               <motion.div
                 layoutId="activeGlow"
@@ -40,8 +39,9 @@ export function SolutionsNavigation({ solutions, activeTab, setActiveTab }: Prop
               />
             )}
 
+            {/* 2. CONTINGUT (Afegim 'relative z-10' per posar-ho a sobre del fons) */}
             <div className={cn(
-              "w-12 h-12 rounded-xl flex items-center justify-center transition-colors duration-300 shrink-0",
+              "w-12 h-12 rounded-xl flex items-center justify-center transition-colors duration-300 shrink-0 relative z-10",
               isActive 
                 ? `bg-linear-to-br ${item.color} text-white shadow-lg` 
                 : "bg-muted text-muted-foreground group-hover:text-foreground"
@@ -49,9 +49,8 @@ export function SolutionsNavigation({ solutions, activeTab, setActiveTab }: Prop
               <item.icon className="w-6 h-6" />
             </div>
             
-            <div className="flex-1">
+            <div className="flex-1 relative z-10">
               <h3 className={cn("font-bold text-lg", isActive ? "text-foreground" : "text-muted-foreground group-hover:text-foreground")}>
-                {/* 👇 3. Traduïm el títol dinàmicament */}
                 {t(`${item.id}.title`)}
               </h3>
               {isActive && (
@@ -60,14 +59,13 @@ export function SolutionsNavigation({ solutions, activeTab, setActiveTab }: Prop
                   animate={{ opacity: 1, height: 'auto' }}
                   className="text-xs text-muted-foreground mt-1"
                 >
-                  {/* 👇 4. Traduïm i unim els tags utilitzant 'tagKeys' */}
                   {item.tagKeys.map(key => t(`tags.${key}`)).join(' • ')}
                 </motion.p>
               )}
             </div>
             
             {isActive && (
-                <ArrowRight className="w-5 h-5 text-primary animate-pulse shrink-0" />
+                <ArrowRight className="w-5 h-5 text-primary animate-pulse shrink-0 relative z-10" />
             )}
           </button>
         );

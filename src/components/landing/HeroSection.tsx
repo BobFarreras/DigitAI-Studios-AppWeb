@@ -50,7 +50,7 @@ export function HeroSection() {
       {/* Element de fons (opcional) */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[120px] -z-10" />
 
-      <div className="container mx-auto px-4 grid lg:grid-cols-2 gap-16 items-center">
+      <div className="container mx-auto px-14 grid lg:grid-cols-2 gap-16 items-center">
 
         {/* COLUMNA ESQUERRA: Text */}
         <motion.div

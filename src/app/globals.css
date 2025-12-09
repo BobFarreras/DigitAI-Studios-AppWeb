@@ -2,13 +2,15 @@
 @plugin "tailwindcss-animate";
 /* 👇 AQUESTA ÉS LA LÍNIA MÀGICA 👇 */
 @custom-variant dark (&:is(.dark *));
+
 /* =========================================
    1. VARIABLES DE COLOR
    ========================================= */
 :root {
   /* Mode Clar (Estàndard) */
   --background: 0 0% 100%;
-  --foreground: 260 10% 3.9%; /* Lleugerament tintat */
+  --foreground: 260 10% 3.9%;
+  /* Lleugerament tintat */
   --card: 0 0% 100%;
   --card-foreground: 260 10% 3.9%;
   --popover: 0 0% 100%;
@@ -34,7 +36,7 @@
   /* ✨ EL COLOR QUE BUSCAVES: Negre Apagat amb toc Lila */
   /* HSL: Hue 260 (Lila), Sat 8% (Apagat), Light 4% (Fosc casi negre) */
   /* CORREGIT: Afegit el '4%' que faltava */
-  --background: 260 8% 4%; 
+  --background: 260 8% 4%;
   --foreground: 260 10% 98%;
 
   /* Les targetes un pèl més clares que el fons (Light 7%) per crear profunditat */
@@ -69,7 +71,8 @@
   --ring: 263 70% 50%;
 
   /* P: Color addicional per gràfics o textos específics */
-  --p: 216 12% 84%; /* slate-300 */
+  --p: 216 12% 84%;
+  /* slate-300 */
 }
 
 /* =========================================
@@ -105,12 +108,25 @@
   --animate-pulse-glow: pulse-glow 2s ease-in-out infinite alternate;
 
   @keyframes floating {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-20px); }
+
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+
+    50% {
+      transform: translateY(-20px);
+    }
   }
+
   @keyframes pulse-glow {
-    from { box-shadow: 0 0 20px rgba(168, 85, 247, 0.4); }
-    to { box-shadow: 0 0 40px rgba(168, 85, 247, 0.8); }
+    from {
+      box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
+    }
+
+    to {
+      box-shadow: 0 0 40px rgba(168, 85, 247, 0.8);
+    }
   }
 }
 
@@ -121,6 +137,7 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
@@ -128,14 +145,20 @@
 }
 
 @layer components {
-  
+
   /* ICONES MODERNS (Tal com sortien a les imatges) */
   .benefit-icon {
     @apply w-14 h-14 rounded-2xl flex items-center justify-center mb-6 transition-all duration-300;
     /* Degradat molt subtil sobre el fons fosc */
     background: linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(99, 102, 241, 0.15) 100%);
     border: 1px solid rgba(168, 85, 247, 0.2);
-    box-shadow: 0 0 0 1px rgba(168, 85, 247, 0.05); /* Ring subtil */
+    box-shadow: 0 0 0 1px rgba(168, 85, 247, 0.05);
+    /* Ring subtil */
+  }
+
+  /* Classe personalitzada per als contenidors de la landing */
+  .landing-container {
+    @apply container mx-auto px-6 md:px-12 lg:px-20;
   }
 
   /* Efecte Hover Glow */
@@ -149,7 +172,7 @@
   .solution-card-futuristic {
     @apply bg-white/[0.03] border border-white/[0.08] backdrop-blur-sm rounded-2xl p-8 transition-all duration-300;
   }
-  
+
   .solution-card-futuristic:hover {
     @apply border-primary/40 bg-white/[0.06] -translate-y-1;
   }
@@ -168,11 +191,13 @@
   .gradient-text {
     @apply bg-gradient-to-r from-[#a855f7] to-[#6366f1] bg-clip-text text-transparent;
   }
+
   .gradient-bg {
     @apply bg-gradient-to-r from-[#a855f7] to-[#6366f1];
   }
+
   .section-divider {
-     /* Línia divisòria molt subtil, quasi invisible */
-     @apply h-[1px] w-full bg-gradient-to-r from-transparent via-white/10 to-transparent my-12;
+    /* Línia divisòria molt subtil, quasi invisible */
+    @apply h-[1px] w-full bg-gradient-to-r from-transparent via-white/10 to-transparent my-12;
   }
 }

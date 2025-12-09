@@ -14,7 +14,7 @@ export function ProductTeaser() {
     const t = useTranslations('ProductTeaser');
 
     return (
-        <section className="py-24 container mx-auto px-4">
+        <section className="py-24 container mx-auto px-14">
 
             <div className="rounded-3xl bg-linear-to-br from-slate-50 via-white to-blue-50 dark:from-primary/10 dark:via-background dark:to-background border border-slate-200 dark:border-primary/20 p-8 md:p-12 overflow-hidden relative transition-colors duration-300 shadow-2xl shadow-slate-200/50 dark:shadow-none">
 

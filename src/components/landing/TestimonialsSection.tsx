@@ -50,7 +50,7 @@ export function TestimonialsSection({ testimonials }: Props) {
 
   return (
     <section id="testimonis" className="py-16 bg-muted/30 relative overflow-hidden">
-      <div className="container mx-auto px-4 relative z-10">
+      <div className="container mx-auto px-14 relative z-10">
         
         {/* CAPÇALERA */}
         <div className="flex flex-col md:flex-row justify-between items-end  md:mb-16 gap-6">
