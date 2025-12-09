@@ -14,7 +14,7 @@ export default async function BlogIndexPage() {
   const posts = await postService.getLatestPosts();
 
   return (
-    <div className="container mx-auto py-16 px-4">
+    <div className="container mx-auto py-18 px-4">
       {/* CAPÇALERA */}
       <div className="text-center mb-16 space-y-4">
         <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-foreground">

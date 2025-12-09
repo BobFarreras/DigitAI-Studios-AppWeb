@@ -16,6 +16,6 @@ export const config = {
   matcher: [
     // 👇 HE AFEGIT 'webmanifest' i 'mp4' A L'EXCEPCIÓ DEL REGEX
     // Això diu: "Executa el middleware a tot ARREU EXCEPTE api, next, imatges, manifest i videos"
-    '/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|webmanifest|mp4)$).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|..*\\.(?:svg|png|jpg|jpeg|gif|webp|webmanifest|mp4)$).*)',
   ],
 };
