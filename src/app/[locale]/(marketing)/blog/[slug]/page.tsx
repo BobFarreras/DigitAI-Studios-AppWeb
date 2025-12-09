@@ -46,20 +46,50 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function BlogPostPage({ params }: Props) {
-  const { slug } = await params;
+  const { slug, locale } = await params;
   const post = await postService.getPost(slug);
 
   // Hooks de traducció
   const t = await getTranslations('BlogPost');
-  const locale = await getLocale();
+
 
   if (!post) notFound();
   // 1. Carreguem les reaccions inicials des del servidor (Server Side Rendering)
   // Això fa que els números siguin correctes abans que el JS del client carregui
   const reactions = await postRepository.getPostReactions(slug);
+
+
+  // 👇 CREEM L'OBJECTE JSON-LD
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: post.title,
+    description: post.description,
+    image: post.coverImage ? [post.coverImage] : [],
+    datePublished: post.date,
+    dateModified: post.date, // O updated_at si en tens
+    author: {
+      '@type': 'Organization', // O 'Person' si tens autor
+      name: 'DigitAI Studios',
+      url: 'https://digitaistudios.com'
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'DigitAI Studios',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://digitaistudios.com/branding/logo.png'
+      }
+    },
+    inLanguage: locale
+  };
   return (
     <div className="min-h-screen bg-background pb-20">
-
+      {/* 👇 INJECTEM L'SCRIPT AQUÍ, DINS DEL DIV PRINCIPAL */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* 1. HERO SECTION */}
       <div className="relative w-full flex items-end justify-center overflow-hidden min-h-[60vh] lg:min-h-[70vh] bg-slate-950">
 
