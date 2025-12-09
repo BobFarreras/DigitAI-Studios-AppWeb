@@ -12,14 +12,13 @@ export async function LatestPostsSection() {
   if (latestPosts.length === 0) return null;
 
   return (
-    // ✅ 1. Tret 'px-14' d'aquí per evitar conflictes
     <section id="LatestPostsSection" className="py-24 bg-background relative overflow-hidden transition-colors duration-300">
       
       <div className="absolute top-1/2 left-0 -translate-y-1/2 w-[500px] h-[500px] bg-primary/10 blur-[100px] rounded-full pointer-events-none opacity-50" />
       <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-blue-500/10 dark:bg-blue-500/20 blur-[120px] rounded-full pointer-events-none opacity-40" />
       <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] bg-[size:40px_40px] opacity-[0.03] dark:opacity-[0.05] pointer-events-none" />
 
-      {/* ✅ 2. Aplicat padding responsiu al contenidor */}
+      {/* ✅ PADDING RESPONSIU JA APLICAT */}
       <div className="container mx-auto px-6 md:px-10 lg:px-14 relative z-10">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           
@@ -27,18 +26,21 @@ export async function LatestPostsSection() {
           <div className="text-left space-y-8">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/30 bg-primary/5 text-primary text-xs font-bold uppercase tracking-widest">
                <Sparkles className="w-3 h-3" />
-               Diari de Bitàcola
+               {/* 🌐 TRADUCCIÓ: Badge */}
+               {t('badge')}
             </div>
             
             <h2 className="text-4xl md:text-6xl font-black text-foreground leading-tight tracking-tight">
-              Pensaments <br />
+              {/* 🌐 TRADUCCIÓ: Títol Principal (amb part acolorida) */}
+              {t('title_prefix')} <br />
               <span className="text-transparent bg-clip-text bg-linear-to-r from-primary to-blue-500">
-                Digitals.
+                {t('title_highlight')}
               </span>
             </h2>
             
             <p className="text-lg text-muted-foreground max-w-md leading-relaxed">
-              Explora els nostres aprenentatges, tutorials tècnics i reflexions sobre el futur de la tecnologia. Llisca les targetes per descobrir-ne més.
+              {/* 🌐 TRADUCCIÓ: Subtítol */}
+              {t('description')}
             </p>
 
             <div className="flex items-center gap-4 pt-4">
@@ -50,20 +52,24 @@ export async function LatestPostsSection() {
                   ))}
                </div>
                <div className="text-sm text-muted-foreground">
-                  Llegit per <span className="font-bold text-foreground">2k+ developers</span>
+                  {/* 🌐 TRADUCCIÓ: Social Proof (Llegit per...) */}
+                  {t.rich('read_by', {
+                    strong: (chunks) => <span className="font-bold text-foreground">{chunks}</span>
+                  })}
                </div>
             </div>
 
             <div className="pt-8">
                <Link href="/blog" className="group inline-flex items-center gap-2 text-foreground font-bold hover:text-primary transition-colors border-b-2 border-transparent hover:border-primary pb-0.5">
-                  Veure Índex Complet <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                  {/* 🌐 TRADUCCIÓ: CTA (Veure índex) */}
+                  {t('cta')} <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                </Link>
             </div>
           </div>
 
           {/* STACK */}
           <div className="relative">
-             <div className="absolute inset-0 bg-linear-to-tr from-primary/5 to-transparent rounded-full blur-3xl" />
+             <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 to-transparent rounded-full blur-3xl" />
              <DiaryStack posts={latestPosts} />
           </div>
 

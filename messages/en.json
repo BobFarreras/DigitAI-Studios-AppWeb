@@ -232,7 +232,7 @@
     "pro_badge": "Pro Plan",
     "pro_text": "Unlock unlimited audits.",
     "pro_button": "Upgrade",
-    "web":"Web"
+    "web": "Web"
   },
   "DashboardHeader": {
     "search_placeholder": "Search...",
@@ -429,10 +429,12 @@
     }
   },
   "LatestPosts": {
-    "badge": "Digital Academy",
-    "title_prefix": "Latest",
-    "title_highlight": "Insights",
-    "view_all": "Browse all blog posts"
+    "badge": "Logbook",
+    "title_prefix": "Digital",
+    "title_highlight": "Thoughts.",
+    "description": "Explore our learnings, technical tutorials, and reflections on the future of technology. Swipe through the cards to discover more.",
+    "read_by": "Read by <strong>2k+ developers</strong>",
+    "cta": "View Full Index"
   },
   "Solutions": {
     "iot": {

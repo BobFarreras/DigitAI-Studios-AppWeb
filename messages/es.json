@@ -232,7 +232,7 @@
     "pro_badge": "Plan Pro",
     "pro_text": "Desbloquea auditorías ilimitadas.",
     "pro_button": "Mejorar",
-    "web":"Web"
+    "web": "Web"
   },
   "DashboardHeader": {
     "search_placeholder": "Buscar...",
@@ -429,10 +429,12 @@
     }
   },
   "LatestPosts": {
-    "badge": "Academia Digital",
-    "title_prefix": "Últimos",
-    "title_highlight": "Conocimientos",
-    "view_all": "Explorar todo el blog"
+    "badge": "Diario de Bitácora",
+    "title_prefix": "Pensamientos",
+    "title_highlight": "Digitales.",
+    "description": "Explora nuestros aprendizajes, tutoriales técnicos y reflexiones sobre el futuro de la tecnología. Desliza las tarjetas para descubrir más.",
+    "read_by": "Leído por <strong>2k+ developers</strong>",
+    "cta": "Ver Índice Completo"
   },
   "Solutions": {
     "iot": {

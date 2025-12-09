@@ -234,7 +234,7 @@
     "pro_badge": "Pla Pro",
     "pro_text": "Desbloqueja auditories il·limitades.",
     "pro_button": "Millorar",
-    "web":"Web"
+    "web": "Web"
   },
   "DashboardHeader": {
     "search_placeholder": "Cercar...",
@@ -386,7 +386,7 @@
       "section4_list_3": "La precisió exacta de les auditories automàtiques, que són orientatives i basades en l'API de Google Lighthouse.",
       "section5_title": "Llei Aplicable i Jurisdicció",
       "section5_p1": "Per a la resolució de totes les controvèrsies relacionades amb el present lloc web, serà d'aplicació la legislació espanyola, a la qual se sotmeten expressament les parts, sent competents per a la resolució de tots els conflictes els Jutjats i Tribunals de la ciutat de Girona.",
-      "last_update_prefix":"Última actualització:"
+      "last_update_prefix": "Última actualització:"
     },
     "privacitat": {
       "title": "Política de Privacitat",
@@ -431,10 +431,12 @@
     }
   },
   "LatestPosts": {
-    "badge": "Acadèmia Digital",
-    "title_prefix": "Darrers",
-    "title_highlight": "Coneixements",
-    "view_all": "Explorar tot el blog"
+    "badge": "Diari de Bitàcola",
+    "title_prefix": "Pensaments",
+    "title_highlight": "Digitals.",
+    "description": "Explora els nostres aprenentatges, tutorials tècnics i reflexions sobre el futur de la tecnologia. Llisca les targetes per descobrir-ne més.",
+    "read_by": "Llegit per <strong>2k+ developers</strong>",
+    "cta": "Veure Índex Complet"
   },
   "Solutions": {
     "iot": {
