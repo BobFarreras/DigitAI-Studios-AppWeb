@@ -23,11 +23,17 @@ export function RegisterForm({ prefilledEmail }: { prefilledEmail: string }) {
   const [fullName, setFullName] = useState('');
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
+  const MAIN_ORG_ID = process.env.NEXT_PUBLIC_MAIN_ORG_ID;
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!termsAccepted) {
       setError("Has d'acceptar la política de privacitat per crear el compte.");
+      return;
+    }
+
+    if (!MAIN_ORG_ID) {
+      setError("Error de configuració: Manca l'ID de l'organització.");
       return;
     }
 
@@ -40,7 +46,12 @@ export function RegisterForm({ prefilledEmail }: { prefilledEmail: string }) {
       options: {
         data: {
           full_name: fullName,
-        }
+          // 🔥 AFEGIM AIXÒ: Passem l'ID de l'organització a les metadades
+          org_id: MAIN_ORG_ID,
+          role: 'client' // Explicitem el rol també
+        },
+        // Important per redireccions correctes
+        emailRedirectTo: `${window.location.origin}/auth/callback`
       }
     });
 
@@ -59,8 +70,8 @@ export function RegisterForm({ prefilledEmail }: { prefilledEmail: string }) {
     // Si vols, pots obligar a acceptar els termes abans de Google, 
     // tot i que normalment en OAuth s'accepten implícitament.
     if (!termsAccepted) {
-        setError("Si us plau, accepta la política de privacitat abans de continuar.");
-        return;
+      setError("Si us plau, accepta la política de privacitat abans de continuar.");
+      return;
     }
 
     setIsGoogleLoading(true);
@@ -76,8 +87,8 @@ export function RegisterForm({ prefilledEmail }: { prefilledEmail: string }) {
     });
 
     if (error) {
-        toast.error(error.message);
-        setIsGoogleLoading(false);
+      toast.error(error.message);
+      setIsGoogleLoading(false);
     }
   };
 
@@ -184,8 +195,8 @@ export function RegisterForm({ prefilledEmail }: { prefilledEmail: string }) {
           type="submit"
           disabled={isLoading || isGoogleLoading}
           className={`w-full h-12 font-bold rounded-lg transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2 ${termsAccepted
-              ? 'gradient-bg text-white hover:opacity-90'
-              : 'bg-muted text-muted-foreground cursor-not-allowed opacity-70'
+            ? 'gradient-bg text-white hover:opacity-90'
+            : 'bg-muted text-muted-foreground cursor-not-allowed opacity-70'
             }`}
         >
           {isLoading ? <Loader2 className="animate-spin" /> : <><UserPlus className="w-4 h-4" /> Crear Compte</>}
