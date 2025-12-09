@@ -31,6 +31,7 @@ export const viewport: Viewport = {
 
 // 2. METADADES GLOBALS
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://digitaistudios.com'),
   title: {
     default: 'DigitAI Studios | Desenvolupament Web & IA',
     template: '%s | DigitAI Studios'
