@@ -34,12 +34,33 @@ function CatalanFlag({ className }: { className?: string }) {
   );
 }
 
+// ✅ NOU: Component SVG per a la bandera italiana
+function ItalianFlag({ className }: { className?: string }) {
+  return (
+    <svg 
+      xmlns="http://www.w3.org/2000/svg" 
+      viewBox="0 0 36 24" 
+      className={className}
+      preserveAspectRatio="none"
+    >
+      {/* Verd */}
+      <rect width="12" height="24" fill="#008C45" /> 
+      {/* Blanc */}
+      <rect x="12" width="12" height="24" fill="#FFFFFF" /> 
+      {/* Vermell */}
+      <rect x="24" width="12" height="24" fill="#CD212A" /> 
+    </svg>
+  );
+}
+
+
 export function LanguageSwitcher() {
   const t = useTranslations('Common.languages');
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
 
+  // ✅ CORRECCIÓ: Afegim 'it' al tipatge de nextLocale
   const handleLanguageChange = (nextLocale: 'ca' | 'es' | 'en' | 'it') => {
     startTransition(() => {
       router.replace(pathname, { locale: nextLocale });
@@ -85,13 +106,12 @@ export function LanguageSwitcher() {
           {t('en')}
         </DropdownMenuItem>
 
-        
-        {/* ANGLÈS */}
+        {/* ✅ NOU: ITALIÀ */}
         <DropdownMenuItem 
           onClick={() => handleLanguageChange('it')}
           className={`gap-2 ${locale === 'it' ? 'bg-primary/10 font-bold' : ''}`}
         >
-          <span className="text-lg leading-none">it</span> 
+          <ItalianFlag className="w-5 h-3.5 rounded-[2px] shadow-sm object-cover" /> 
           {t('it')}
         </DropdownMenuItem>
 
