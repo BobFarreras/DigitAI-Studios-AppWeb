@@ -47,7 +47,7 @@ export function Navbar({ user }: Props) {
 
   const handleScrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     // Només intervenim si estem a la home i és un enllaç amb àncora
-    const isHomePage = pathname === '/' || pathname === '/ca' || pathname === '/es' || pathname === '/en';
+    const isHomePage = pathname === '/' || pathname === '/ca' || pathname === '/es' || pathname === '/en' || pathname === '/it';
 
     if (isHomePage && href.includes('#')) {
       e.preventDefault();

@@ -149,7 +149,6 @@ ESTRUCTURA DEL PROJECTE (./src)
 │   │   │   ├── SolutionsDisplay.tsx
 │   │   │   ├── SolutionsNavigation.tsx
 │   │   │   └── SolutionsShowcase.tsx
-│   │   ├── SolutionsShowcase.tsx
 │   │   ├── TechStackSection.tsx
 │   │   └── TestimonialsSection.tsx
 │   ├── layout
@@ -761,13 +760,15 @@ export async function getAdminUsersList(): Promise<UserProfile[]> {
 @plugin "tailwindcss-animate";
 /* 👇 AQUESTA ÉS LA LÍNIA MÀGICA 👇 */
 @custom-variant dark (&:is(.dark *));
+
 /* =========================================
    1. VARIABLES DE COLOR
    ========================================= */
 :root {
   /* Mode Clar (Estàndard) */
   --background: 0 0% 100%;
-  --foreground: 260 10% 3.9%; /* Lleugerament tintat */
+  --foreground: 260 10% 3.9%;
+  /* Lleugerament tintat */
   --card: 0 0% 100%;
   --card-foreground: 260 10% 3.9%;
   --popover: 0 0% 100%;
@@ -793,7 +794,7 @@ export async function getAdminUsersList(): Promise<UserProfile[]> {
   /* ✨ EL COLOR QUE BUSCAVES: Negre Apagat amb toc Lila */
   /* HSL: Hue 260 (Lila), Sat 8% (Apagat), Light 4% (Fosc casi negre) */
   /* CORREGIT: Afegit el '4%' que faltava */
-  --background: 260 8% 4%; 
+  --background: 260 8% 4%;
   --foreground: 260 10% 98%;
 
   /* Les targetes un pèl més clares que el fons (Light 7%) per crear profunditat */
@@ -828,7 +829,8 @@ export async function getAdminUsersList(): Promise<UserProfile[]> {
   --ring: 263 70% 50%;
 
   /* P: Color addicional per gràfics o textos específics */
-  --p: 216 12% 84%; /* slate-300 */
+  --p: 216 12% 84%;
+  /* slate-300 */
 }
 
 /* =========================================
@@ -864,12 +866,25 @@ export async function getAdminUsersList(): Promise<UserProfile[]> {
   --animate-pulse-glow: pulse-glow 2s ease-in-out infinite alternate;
 
   @keyframes floating {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-20px); }
+
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+
+    50% {
+      transform: translateY(-20px);
+    }
   }
+
   @keyframes pulse-glow {
-    from { box-shadow: 0 0 20px rgba(168, 85, 247, 0.4); }
-    to { box-shadow: 0 0 40px rgba(168, 85, 247, 0.8); }
+    from {
+      box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
+    }
+
+    to {
+      box-shadow: 0 0 40px rgba(168, 85, 247, 0.8);
+    }
   }
 }
 
@@ -880,6 +895,7 @@ export async function getAdminUsersList(): Promise<UserProfile[]> {
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
@@ -887,14 +903,20 @@ export async function getAdminUsersList(): Promise<UserProfile[]> {
 }
 
 @layer components {
-  
+
   /* ICONES MODERNS (Tal com sortien a les imatges) */
   .benefit-icon {
     @apply w-14 h-14 rounded-2xl flex items-center justify-center mb-6 transition-all duration-300;
     /* Degradat molt subtil sobre el fons fosc */
     background: linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(99, 102, 241, 0.15) 100%);
     border: 1px solid rgba(168, 85, 247, 0.2);
-    box-shadow: 0 0 0 1px rgba(168, 85, 247, 0.05); /* Ring subtil */
+    box-shadow: 0 0 0 1px rgba(168, 85, 247, 0.05);
+    /* Ring subtil */
+  }
+
+  /* Classe personalitzada per als contenidors de la landing */
+  .landing-container {
+    @apply container mx-auto px-6 md:px-12 lg:px-20;
   }
 
   /* Efecte Hover Glow */
@@ -908,7 +930,7 @@ export async function getAdminUsersList(): Promise<UserProfile[]> {
   .solution-card-futuristic {
     @apply bg-white/[0.03] border border-white/[0.08] backdrop-blur-sm rounded-2xl p-8 transition-all duration-300;
   }
-  
+
   .solution-card-futuristic:hover {
     @apply border-primary/40 bg-white/[0.06] -translate-y-1;
   }
@@ -927,12 +949,14 @@ export async function getAdminUsersList(): Promise<UserProfile[]> {
   .gradient-text {
     @apply bg-gradient-to-r from-[#a855f7] to-[#6366f1] bg-clip-text text-transparent;
   }
+
   .gradient-bg {
     @apply bg-gradient-to-r from-[#a855f7] to-[#6366f1];
   }
+
   .section-divider {
-     /* Línia divisòria molt subtil, quasi invisible */
-     @apply h-[1px] w-full bg-gradient-to-r from-transparent via-white/10 to-transparent my-12;
+    /* Línia divisòria molt subtil, quasi invisible */
+    @apply h-[1px] w-full bg-gradient-to-r from-transparent via-white/10 to-transparent my-12;
   }
 }
 
@@ -1033,7 +1057,7 @@ import { MetadataRoute } from 'next';
 import { postService } from '@/services/container';
 
 // ⚠️ IMPORTNAT: Canvia això pel teu domini real quan despleguis
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://digitaistudios.com';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const posts = await postService.getLatestPosts();
@@ -1074,7 +1098,7 @@ import { Link } from '@/routing';
 import { postService } from '@/services/container';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { getTranslations, getLocale } from 'next-intl/server';
-import { Calendar, Tag, ImageIcon, Cpu } from 'lucide-react'; // 👈 Importat Heart
+import { Calendar, Tag, ImageIcon, Cpu } from 'lucide-react';
 import Image from 'next/image';
 
 export const revalidate = 3600;
@@ -1086,7 +1110,8 @@ export default async function BlogIndexPage() {
   const posts = await postService.getLatestPosts();
 
   return (
-    <div className="container mx-auto py-16 px-4">
+    // ✅ CORRECCIÓ: Padding responsiu (px-6 -> px-10 -> px-14)
+    <div className="container mx-auto py-18 px-6 md:px-10 lg:px-14">
       {/* CAPÇALERA */}
       <div className="text-center mb-16 space-y-4">
         <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-foreground">
@@ -1106,8 +1131,7 @@ export default async function BlogIndexPage() {
               {/* ZONA IMATGE */}
               <div className="relative h-56 w-full bg-muted dark:bg-slate-800 overflow-hidden">
 
-                {/* 🔴 INSÍGNIA DE VALORACIONS (Això faltava al teu codi) */}
-                {/* 👇 2. BADGE TECNOLÒGIC RENOVAT */}
+                {/* 🔴 INSÍGNIA DE VALORACIONS */}
                 {(post.totalReactions || 0) > 0 && (
                   <div className="absolute top-3 right-3 z-20 flex items-center gap-1.5 
                         bg-slate-900/80 backdrop-blur-md 
@@ -1241,20 +1265,50 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function BlogPostPage({ params }: Props) {
-  const { slug } = await params;
+  const { slug, locale } = await params;
   const post = await postService.getPost(slug);
 
   // Hooks de traducció
   const t = await getTranslations('BlogPost');
-  const locale = await getLocale();
+
 
   if (!post) notFound();
   // 1. Carreguem les reaccions inicials des del servidor (Server Side Rendering)
   // Això fa que els números siguin correctes abans que el JS del client carregui
   const reactions = await postRepository.getPostReactions(slug);
+
+
+  // 👇 CREEM L'OBJECTE JSON-LD
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: post.title,
+    description: post.description,
+    image: post.coverImage ? [post.coverImage] : [],
+    datePublished: post.date,
+    dateModified: post.date, // O updated_at si en tens
+    author: {
+      '@type': 'Organization', // O 'Person' si tens autor
+      name: 'DigitAI Studios',
+      url: 'https://digitaistudios.com'
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'DigitAI Studios',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://digitaistudios.com/branding/logo.png'
+      }
+    },
+    inLanguage: locale
+  };
   return (
     <div className="min-h-screen bg-background pb-20">
-
+      {/* 👇 INJECTEM L'SCRIPT AQUÍ, DINS DEL DIV PRINCIPAL */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* 1. HERO SECTION */}
       <div className="relative w-full flex items-end justify-center overflow-hidden min-h-[60vh] lg:min-h-[70vh] bg-slate-950">
 
@@ -1793,11 +1847,11 @@ export default async function MarketingPage() {
 
 // =================== FILE: src/app/[locale]/(marketing)/projectes/page.tsx ===================
 
-// ARA (Import net des de la feature):
 import { ProjectsHero, ProjectsList, ProjectsCTA } from '@/features/projects';
 
 export default function ProjectsPage() {
   return (
+    // ✅ CORRECCIÓ: Tret 'px-14' del main per permetre fons full-width als components fills
     <main className="min-h-screen flex flex-col bg-background selection:bg-primary/30 transition-colors duration-300">
       <ProjectsHero />
       <ProjectsList />
@@ -1840,8 +1894,9 @@ export default async function AdminAnalyticsPage() {
   const grandTotalDuration = dailyStats.reduce((acc, day) => acc + (day.totalDuration || 0), 0);
   const averageTimeSeconds = totalVisitors > 0 ? grandTotalDuration / totalVisitors : 0;
 
-return (
-    <div className="flex flex-col gap-4 h-[calc(100vh-2rem)] p-4 overflow-hidden bg-background text-foreground">
+  return (
+    // FIX 1: Canviem h-screen per h-auto en mòbil (scroll) i fix en LG
+    <div className="flex flex-col gap-4 h-auto lg:h-[calc(100vh-2rem)] p-4 overflow-y-auto lg:overflow-hidden bg-background text-foreground">
       
       {/* 1. KPI HEADER */}
       <div className="shrink-0">
@@ -1853,41 +1908,44 @@ return (
          />
       </div>
 
-      {/* 2. DASHBOARD GRID (Modificat per donar més espai a la dreta) */}
-      {/* Canviem a grid-cols-3: 2/3 esquerra, 1/3 dreta */}
+      {/* 2. DASHBOARD GRID */}
+      {/* FIX 2: En mòbil es veurà tot en columna (block). En LG serà grid. */}
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-4 min-h-0">
          
-         {/* --- ZONA PRINCIPAL (Columna Esquerra i Centre - 66%) --- */}
-         <div className="lg:col-span-2 flex flex-col gap-4 h-full min-h-0">
+         {/* --- ZONA PRINCIPAL (Esquerra) --- */}
+         <div className="lg:col-span-2 flex flex-col gap-4 h-auto lg:h-full min-h-0">
             
             {/* A. GRÀFIC TRÀNSIT */}
-            <div className="flex-2 min-h-0 bg-card border border-border rounded-xl shadow-sm overflow-hidden">
+            {/* FIX 3: Alçada fixa en mòbil (h-80), flexible en desktop (flex-[2]) */}
+            <div className="h-80 lg:h-auto lg:flex-2 min-h-0 bg-card border border-border rounded-xl shadow-sm overflow-hidden">
                 <TrafficChart data={dailyStats} />
             </div>
 
-            {/* B. DETALLS */}
-            <div className="flex-3 grid grid-cols-1 md:grid-cols-2 gap-4 min-h-0">
-                <div className="min-h-0 overflow-hidden">
+            {/* B. DETALLS (Top Pages & Referrers) */}
+            {/* FIX 4: Alçada automàtica en mòbil, flexible en desktop */}
+            <div className="h-auto lg:flex-3 grid grid-cols-1 md:grid-cols-2 gap-4 min-h-0">
+                {/* FIX 5: Alçada fixa per als cards en mòbil */}
+                <div className="h-80 lg:h-auto min-h-0 overflow-hidden">
                     <TopPagesCard data={adv.topPages} />
                 </div>
-                <div className="min-h-0 overflow-hidden">
+                <div className="h-80 lg:h-auto min-h-0 overflow-hidden">
                     <BarListChart title="Fonts de Trànsit" data={adv.referrers} />
                 </div>
             </div>
          </div>
 
-         {/* --- SIDEBAR DRET (Columna Dreta - 33%) --- */}
-         <div className="lg:col-span-1 flex flex-col gap-4 h-full min-h-0 overflow-y-auto custom-scrollbar pr-1">
+         {/* --- SIDEBAR DRET --- */}
+         <div className="lg:col-span-1 flex flex-col gap-4 h-auto lg:h-full min-h-0 lg:overflow-y-auto custom-scrollbar pr-1">
             
-            <div className="flex-1 min-h-[200px]"> {/* Augmentem una mica l'alçada mínima */}
+            <div className="h-64 lg:flex-1 lg:min-h-[200px]">
                <DeviceChart data={adv.devices} />
             </div>
 
-            <div className="flex-1 min-h-[200px]">
+            <div className="h-64 lg:flex-1 lg:min-h-[200px]">
                <VerticalBarChart title="Top Països" data={adv.countries} />
             </div>
 
-            <div className="flex-1 min-h-[200px]">
+            <div className="h-64 lg:flex-1 lg:min-h-[200px]">
                <BarListChart title="Navegadors" data={adv.browsers} />
             </div>
          </div>
@@ -4525,8 +4583,6 @@ import { ThemeProvider } from "@/components/theme-provider";
 import "@/app/globals.css";
 import type { Metadata, Viewport } from 'next';
 import { Toaster } from 'sonner';
-
-// 👇 1. IMPORTACIONS NOVES
 import { Suspense } from 'react';
 import { AnalyticsTracker } from '@/features/analytics/ui/AnalyticsTracker';
 
@@ -4536,7 +4592,7 @@ const inter = Inter({
   display: 'swap',
 });
 
-// 1. CONFIGURACIÓ DEL VIEWPORT
+// 1. CONFIGURACIÓ DEL VIEWPORT (Estàtica)
 export const viewport: Viewport = {
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: 'white' },
@@ -4547,44 +4603,67 @@ export const viewport: Viewport = {
   maximumScale: 1,
 };
 
-// 2. METADADES GLOBALS
-export const metadata: Metadata = {
-  title: {
-    default: 'DigitAI Studios | Desenvolupament Web & IA',
-    template: '%s | DigitAI Studios'
-  },
-  description: 'Transformem negocis amb AppWebs, Apps Natives i Automatització IA. Solucions digitals 360°.',
-  keywords: ['Desenvolupament Web', 'App', 'React Native', 'Next.js', 'IA', 'Automatització', 'Girona'],
-  authors: [{ name: 'DigitAI Studios' }],
-  creator: 'DigitAI Studios',
-  manifest: '/manifest.webmanifest',
-  icons: {
-    icon: '/icons/icon-192.png',
-    shortcut: '/icons/icon-192.png',
-    apple: '/icons/apple-icon.png',
-    other: {
-      rel: 'apple-touch-icon-precomposed',
-      url: '/icons/apple-icon.png',
-    },
-  },
-  openGraph: {
-    type: 'website',
-    locale: 'ca_ES',
-    url: 'https://digitaistudios.com',
-    title: 'DigitAI Studios | Innovació Digital',
-    description: 'Apps, Webs i Automatització IA per a empreses modernes.',
-    siteName: 'DigitAI Studios',
-    images: [
-      {
-        url: '/images/og-image.jpg', // Nota: Millor ruta pública directa que '@/assets'
-        width: 1200,
-        height: 630,
-        alt: 'DigitAI Studios Cover',
-      },
-    ],
-  },
-};
+// 2. METADADES DINÀMIQUES (SEO + Hreflang + Canonical)
+export async function generateMetadata({
+  params
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  
+  // Defineix la URL base (Hardcoded com a fallback segur per evitar localhost en producció)
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://digitaistudios.com';
 
+  return {
+    metadataBase: new URL(baseUrl),
+    title: {
+      default: 'DigitAI Studios | Desenvolupament Web & IA',
+      template: '%s | DigitAI Studios'
+    },
+    description: 'Transformem negocis amb AppWebs, Apps Natives i Automatització IA. Solucions digitals 360°.',
+    keywords: ['Desenvolupament Web', 'App', 'React Native', 'Next.js', 'IA', 'Automatització', 'Girona'],
+    authors: [{ name: 'DigitAI Studios' }],
+    creator: 'DigitAI Studios',
+    manifest: '/manifest.webmanifest',
+    icons: {
+      icon: '/icons/icon-192.png',
+      shortcut: '/icons/icon-192.png',
+      apple: '/icons/apple-icon.png',
+      other: {
+        rel: 'apple-touch-icon-precomposed',
+        url: '/icons/apple-icon.png',
+      },
+    },
+    openGraph: {
+      type: 'website',
+      locale: locale === 'ca' ? 'ca_ES' : locale === 'es' ? 'es_ES' : 'en_US',
+      url: `${baseUrl}/${locale}`,
+      title: 'DigitAI Studios | Innovació Digital',
+      description: 'Apps, Webs i Automatització IA per a empreses modernes.',
+      siteName: 'DigitAI Studios',
+      images: [
+        {
+          url: '/images/og-image.jpg',
+          width: 1200,
+          height: 630,
+          alt: 'DigitAI Studios Cover',
+        },
+      ],
+    },
+    // 👇 AQUESTA ÉS LA CLAU PER ARREGLAR GSC i IDIOMES:
+    alternates: {
+      canonical: `${baseUrl}/${locale}`,
+      languages: {
+        'ca': `${baseUrl}/ca`,
+        'es': `${baseUrl}/es`,
+        'en': `${baseUrl}/en`,
+        // 'x-default': `${baseUrl}/ca` // Opcional: Si vols forçar el català com a default
+      },
+    },
+  };
+}
+
+// 3. LAYOUT PRINCIPAL
 export default async function LocaleLayout({
   children,
   params
@@ -4594,6 +4673,7 @@ export default async function LocaleLayout({
 }) {
   const { locale } = await params;
 
+  // Validació de seguretat de l'idioma
   if (!routing.locales.includes(locale as Locale)) {
     notFound();
   }
@@ -4610,11 +4690,12 @@ export default async function LocaleLayout({
             enableSystem
             disableTransitionOnChange
           >
+            {/* Analítica sense bloquejar la càrrega */}
             <Suspense fallback={null}>
               <AnalyticsTracker />
             </Suspense>
 
-            {/* 🔔 SONNER GLOBAL */}
+            {/* Notificacions Toast */}
             <Toaster richColors closeButton />
 
             {children}
@@ -5329,12 +5410,14 @@ export function ContactSection() {
   const [termsAccepted, setTermsAccepted] = useState(false);
 
   return (
+    // ✅ CORRECCIÓ: Padding responsiu (tret de la secció, aplicat al container)
     <section id="contacte" className="py-24 bg-background relative overflow-hidden transition-colors duration-300">
       
       {/* Fons decoratiu */}
       <div className="absolute top-0 left-0 w-full h-full bg-linear-to-b from-transparent via-primary/5 to-transparent pointer-events-none" />
 
-      <div className="container mx-auto px-4 grid lg:grid-cols-2 gap-16 items-start relative z-10">
+      {/* ✅ CORRECCIÓ APLICADA AQUÍ */}
+      <div className="container mx-auto px-6 md:px-10 lg:px-14 grid lg:grid-cols-2 gap-16 items-start relative z-10">
         
         {/* COLUMNA ESQUERRA: Text i Punts */}
         <motion.div 
@@ -5856,7 +5939,8 @@ export function HeroSection() {
       {/* Element de fons (opcional) */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[120px] -z-10" />
 
-      <div className="container mx-auto px-4 grid lg:grid-cols-2 gap-16 items-center">
+      {/* ✅ CORRECCIÓ APLICADA AQUÍ: Padding responsiu */}
+      <div className="container mx-auto px-6 md:px-10 lg:px-14 grid lg:grid-cols-2 gap-16 items-center">
 
         {/* COLUMNA ESQUERRA: Text */}
         <motion.div
@@ -5896,13 +5980,10 @@ export function HeroSection() {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="relative"
         >
-          {/* 🛠️ FIX: Ús de variables semàntiques (bg-card, border-border)
-              Això farà que agafi el color lila fosc del teu globals.css en Dark Mode
-              i el color blanc en Light Mode automàticament.
-          */}
+          {/* 🛠️ FIX: Ús de variables semàntiques (bg-card, border-border) */}
           <div className={`relative w-full aspect-video bg-card rounded-xl border border-border shadow-2xl overflow-hidden group transition-colors duration-300 ${!showVideo ? 'animate-floating' : ''}`}>
 
-            {/* Barra superior estil navegador (Ara s'adapta al tema) */}
+            {/* Barra superior estil navegador */}
             <div className="h-8 border-b border-border bg-muted/50 flex items-center px-4 gap-2 z-20 relative transition-colors">
               <div className="w-2.5 h-2.5 rounded-full bg-red-500/50"></div>
               <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/50"></div>
@@ -5959,7 +6040,7 @@ export function HeroSection() {
             </div>
           </div>
 
-          {/* Floating Cards (Decoratives) - Adaptades al tema */}
+          {/* Floating Cards (Decoratives) */}
           <div className="absolute -bottom-6 -left-6 bg-card/90 backdrop-blur-md border border-border p-4 rounded-xl flex items-center gap-3 animate-pulse-glow shadow-xl z-30 transition-colors">
             <div className="relative">
               <div className="w-3 h-3 bg-green-500 rounded-full animate-ping absolute opacity-75"></div>
@@ -5995,29 +6076,34 @@ export async function LatestPostsSection() {
 
   return (
     <section id="LatestPostsSection" className="py-24 bg-background relative overflow-hidden transition-colors duration-300">
+      
       <div className="absolute top-1/2 left-0 -translate-y-1/2 w-[500px] h-[500px] bg-primary/10 blur-[100px] rounded-full pointer-events-none opacity-50" />
       <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-blue-500/10 dark:bg-blue-500/20 blur-[120px] rounded-full pointer-events-none opacity-40" />
       <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] bg-[size:40px_40px] opacity-[0.03] dark:opacity-[0.05] pointer-events-none" />
 
-      <div className="container mx-auto px-4 relative z-10">
+      {/* ✅ PADDING RESPONSIU JA APLICAT */}
+      <div className="container mx-auto px-6 md:px-10 lg:px-14 relative z-10">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           
           {/* TEXT */}
           <div className="text-left space-y-8">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/30 bg-primary/5 text-primary text-xs font-bold uppercase tracking-widest">
                <Sparkles className="w-3 h-3" />
-               Diari de Bitàcola
+               {/* 🌐 TRADUCCIÓ: Badge */}
+               {t('badge')}
             </div>
             
             <h2 className="text-4xl md:text-6xl font-black text-foreground leading-tight tracking-tight">
-              Pensaments <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-500">
-                Digitals.
+              {/* 🌐 TRADUCCIÓ: Títol Principal (amb part acolorida) */}
+              {t('title_prefix')} <br />
+              <span className="text-transparent bg-clip-text bg-linear-to-r from-primary to-blue-500">
+                {t('title_highlight')}
               </span>
             </h2>
             
             <p className="text-lg text-muted-foreground max-w-md leading-relaxed">
-              Explora els nostres aprenentatges, tutorials tècnics i reflexions sobre el futur de la tecnologia. Llisca les targetes per descobrir-ne més.
+              {/* 🌐 TRADUCCIÓ: Subtítol */}
+              {t('description')}
             </p>
 
             <div className="flex items-center gap-4 pt-4">
@@ -6029,13 +6115,17 @@ export async function LatestPostsSection() {
                   ))}
                </div>
                <div className="text-sm text-muted-foreground">
-                  Llegit per <span className="font-bold text-foreground">2k+ developers</span>
+                  {/* 🌐 TRADUCCIÓ: Social Proof (Llegit per...) */}
+                  {t.rich('read_by', {
+                    strong: (chunks) => <span className="font-bold text-foreground">{chunks}</span>
+                  })}
                </div>
             </div>
 
             <div className="pt-8">
                <Link href="/blog" className="group inline-flex items-center gap-2 text-foreground font-bold hover:text-primary transition-colors border-b-2 border-transparent hover:border-primary pb-0.5">
-                  Veure Índex Complet <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                  {/* 🌐 TRADUCCIÓ: CTA (Veure índex) */}
+                  {t('cta')} <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                </Link>
             </div>
           </div>
@@ -6219,7 +6309,8 @@ export function ProductTeaser() {
     const t = useTranslations('ProductTeaser');
 
     return (
-        <section className="py-24 container mx-auto px-4">
+        // ✅ CORRECCIÓ: Padding responsiu aplicat directament aquí
+        <section className="py-24 container mx-auto px-6 md:px-10 lg:px-14">
 
             <div className="rounded-3xl bg-linear-to-br from-slate-50 via-white to-blue-50 dark:from-primary/10 dark:via-background dark:to-background border border-slate-200 dark:border-primary/20 p-8 md:p-12 overflow-hidden relative transition-colors duration-300 shadow-2xl shadow-slate-200/50 dark:shadow-none">
 
@@ -6240,9 +6331,7 @@ export function ProductTeaser() {
 
                         <p className="text-slate-600 dark:text-slate-400 text-lg mb-8 leading-relaxed">
                             {t.rich('description', {
-                                // 1. GESTIÓ DE NEGRETA
                                 strong: (chunks) => <strong>{chunks}</strong>,
-                                // 2. GESTIÓ DEL SALT DE LÍNIA (Assumint que el JSON usa <br />)
                                 br: (chunks) => <br />
                             })}
                         </p>
@@ -6253,7 +6342,7 @@ export function ProductTeaser() {
                         </Link>
                     </div>
 
-                    {/* MOCKUP VISUAL - (Sense canvis) */}
+                    {/* MOCKUP VISUAL */}
                     <div className="relative h-[400px] w-full flex items-center justify-center perspective-1000">
 
                         {/* CARD 1: RIBOTFLOW */}
@@ -7211,7 +7300,8 @@ export function ServicesGrid() {
   return (
     <section id="serveis" className="bg-background relative overflow-hidden py-24 transition-colors duration-300">
       
-      <div className="container mx-auto px-4">
+      {/* ✅ CORRECCIÓ APLICADA AQUÍ: Padding responsiu */}
+      <div className="container mx-auto px-6 md:px-10 lg:px-14">
         
         {/* CAPÇALERA */}
         <div className="text-center mb-16 max-w-3xl mx-auto">
@@ -7235,7 +7325,7 @@ export function ServicesGrid() {
              description={t('cards.appwebs.description')}
              icon={Globe}
              iconColorClass="text-blue-500"
-             wrapperClass="md:col-span-2 flex-row md:flex-row" // Flex row per posar text i imatge costat a costat
+             wrapperClass="md:col-span-2 flex-row md:flex-row" 
            >
              <WebMockup />
            </ServiceCard>
@@ -7936,40 +8026,194 @@ export function MockupFinance() {
 // =================== FILE: src/components/landing/solutions/mockups/MockupGrowth.tsx ===================
 
 'use client';
+
 import { motion } from 'framer-motion';
+import { TrendingUp, Activity, DollarSign, Zap } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
 export function MockupGrowth() {
-   return (
-      <div className="flex items-end justify-center gap-4 h-48 w-full px-10">
-         {[40, 70, 50, 90, 65, 85].map((height, i) => (
-            <motion.div
-               key={i}
-               initial={{ height: 0 }}
-               animate={{ height: `${height}%` }}
-               transition={{ delay: i * 0.1, duration: 0.5, type: "spring" }}
-               className="w-12 bg-gradient-to-t from-orange-500 to-red-500 rounded-t-lg relative group shadow-lg"
+  const [revenue, setRevenue] = useState(8450);
+  
+  // 1. Dades Vives: Incrementa suaument
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setRevenue(prev => {
+        const next = prev + 15;
+        return next > 9999 ? 8450 : next;
+      });
+    }, 50);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    // CONTENIDOR RESPONSIVE I ADAPTABLE AL TEMA (Light/Dark)
+    <div className="relative w-full h-full min-h-[260px] flex items-center justify-center p-4">
+      
+      {/* Targeta Principal amb Glassmorphism */}
+      <div className="relative w-full max-w-[380px] aspect-[4/3] bg-white dark:bg-[#0a0a0a] rounded-2xl border border-slate-200 dark:border-white/10 shadow-2xl overflow-hidden flex flex-col group transition-colors duration-500">
+        
+        {/* --- FONS AMBIENTAL (Subtil) --- */}
+        {/* Light: Graella grisa molt suau | Dark: Graella fosca */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:20px_20px]" />
+        
+        {/* Glow Taronja de fons (Més fort en dark) */}
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-40 h-40 bg-orange-500/10 dark:bg-orange-500/20 blur-[60px] rounded-full pointer-events-none" />
+
+        {/* --- HEADER --- */}
+        <div className="relative z-10 flex justify-between items-start p-5 border-b border-slate-100 dark:border-white/5">
+            <div>
+                <div className="flex items-center gap-2 mb-1">
+                    <div className="p-1.5 bg-orange-100 dark:bg-orange-500/20 rounded-md">
+                        <Activity className="w-3.5 h-3.5 text-orange-600 dark:text-orange-400" />
+                    </div>
+                    <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
+                        Real-time Growth
+                    </span>
+                </div>
+                <div className="text-3xl font-black text-slate-900 dark:text-white flex items-baseline gap-1 font-mono tracking-tight">
+                    ${revenue.toLocaleString()}
+                </div>
+            </div>
+            
+            {/* Badge ROI (Pulsant) */}
+            <motion.div 
+                animate={{ scale: [1, 1.05, 1], boxShadow: ["0 0 0px rgba(249,115,22,0)", "0 4px 12px rgba(249,115,22,0.3)", "0 0 0px rgba(249,115,22,0)"] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="bg-orange-500 text-white px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1 shadow-lg shadow-orange-500/20"
             >
-               <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-white dark:bg-slate-800 text-xs font-bold px-2 py-1 rounded shadow opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap border border-border">
-                  {height}% ROI
-               </div>
+                <TrendingUp className="w-3 h-3" /> +28%
             </motion.div>
-         ))}
-         
-         <svg className="absolute inset-0 w-full h-full pointer-events-none overflow-visible">
-            <motion.path
-               d="M 40 140 L 100 80 L 160 110 L 220 50 L 280 90 L 340 60"
-               fill="none"
-               stroke="#10b981"
-               strokeWidth="4"
-               strokeLinecap="round"
-               initial={{ pathLength: 0 }}
-               animate={{ pathLength: 1 }}
-               transition={{ duration: 1.5, delay: 0.5 }}
-               style={{ filter: 'drop-shadow(0 0 10px rgba(16, 185, 129, 0.5))' }}
+        </div>
+
+        {/* --- ÀREA DEL GRÀFIC --- */}
+        <div className="relative flex-1 w-full mt-2">
+            
+            {/* Línia d'escaneig vertical (Scanner) */}
+            <motion.div 
+                animate={{ left: ['0%', '100%'], opacity: [0, 1, 0] }}
+                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute top-0 bottom-0 w-[1px] bg-gradient-to-b from-transparent via-orange-400 to-transparent z-20"
             />
-         </svg>
+
+            <svg className="w-full h-full overflow-visible px-4 pb-2" viewBox="0 0 340 120" preserveAspectRatio="none">
+                <defs>
+                    <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#f97316" stopOpacity="0.3" /> {/* Light */}
+                        <stop offset="100%" stopColor="#f97316" stopOpacity="0" />
+                    </linearGradient>
+                    <filter id="orangeGlow" x="-20%" y="-20%" width="140%" height="140%">
+                        <feGaussianBlur stdDeviation="3" result="blur" />
+                        <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                    </filter>
+                </defs>
+
+                {/* 1. Ombra de la línia (Dóna profunditat en Light Mode) */}
+                <motion.path
+                    d="M0 100 C 40 100, 70 120, 120 70 S 180 50, 240 80 S 300 40, 340 10"
+                    fill="none"
+                    stroke="rgba(0,0,0,0.1)"
+                    strokeWidth="4"
+                    className="dark:hidden" // Només en light mode
+                    initial={{ pathLength: 0 }}
+                    animate={{ pathLength: 1 }}
+                    transition={{ duration: 1.5, delay: 0.1 }}
+                    style={{ transform: 'translateY(4px)' }}
+                />
+
+                {/* 2. Àrea sota la línia */}
+                <motion.path
+                    d="M0 100 C 40 100, 70 120, 120 70 S 180 50, 240 80 S 300 40, 340 10 V 150 H 0 Z"
+                    fill="url(#areaGradient)"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 1 }}
+                />
+
+                {/* 3. Línia Principal (Taronja) */}
+                <motion.path
+                    d="M0 100 C 40 100, 70 120, 120 70 S 180 50, 240 80 S 300 40, 340 10"
+                    fill="none"
+                    stroke="#f97316"
+                    strokeWidth="4"
+                    strokeLinecap="round"
+                    initial={{ pathLength: 0 }}
+                    animate={{ pathLength: 1 }}
+                    transition={{ duration: 1.5, ease: "easeOut" }}
+                    // Glow només en dark mode per no "embrutar" el light
+                    className="dark:drop-shadow-[0_0_8px_rgba(249,115,22,0.8)]"
+                />
+
+                {/* 4. Punts Interactius (Pop-up seqüencial) */}
+                {[
+                    { cx: 120, cy: 70, label: "$3k" },
+                    { cx: 240, cy: 80, label: "$5k" },
+                    { cx: 340, cy: 10, label: "$8.4k" }
+                ].map((p, i) => (
+                    <g key={i}>
+                        {/* Cercle */}
+                        <motion.circle
+                            cx={p.cx}
+                            cy={p.cy}
+                            r="5"
+                            className="fill-white stroke-orange-500 dark:fill-slate-900 dark:stroke-orange-400"
+                            strokeWidth="3"
+                            initial={{ scale: 0 }}
+                            animate={{ scale: [0, 1.2, 1] }}
+                            transition={{ delay: 1.5 + (i * 0.4), duration: 0.5 }}
+                        />
+                        {/* Etiqueta flotant */}
+                        <motion.g
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 1.8 + (i * 0.4) }}
+                        >
+                            <rect x={p.cx - 18} y={p.cy - 30} width="36" height="20" rx="4" className="fill-slate-900 dark:fill-white" />
+                            <text x={p.cx} y={p.cy - 16} textAnchor="middle" className="fill-white dark:fill-slate-900 text-[10px] font-bold font-mono">
+                                {p.label}
+                            </text>
+                        </motion.g>
+                    </g>
+                ))}
+            </svg>
+        </div>
+
+        {/* --- FLOATERS (ELEMENTS FLOTANTS DECORATIUS) --- */}
+        
+        {/* Moneda Flotant */}
+        <motion.div
+            animate={{ y: [0, -10, 0], rotate: [0, 5, 0] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute top-20 right-8 bg-white dark:bg-slate-800 p-2 rounded-full shadow-lg border border-orange-100 dark:border-white/10 z-20"
+        >
+            <DollarSign className="w-5 h-5 text-orange-500" />
+        </motion.div>
+
+        {/* Partícules (Espurnes d'èxit) - Deterministes */}
+        {[...Array(6)].map((_, i) => (
+            <motion.div
+                key={i}
+                className="absolute w-1.5 h-1.5 bg-orange-400 rounded-full opacity-60"
+                style={{
+                    left: `${(i * 17) % 80 + 10}%`,
+                    top: `${(i * 23) % 50 + 40}%`
+                }}
+                animate={{
+                    y: [0, -60],
+                    opacity: [0, 1, 0],
+                    scale: [0.5, 1, 0]
+                }}
+                transition={{
+                    duration: 2 + (i % 2),
+                    repeat: Infinity,
+                    delay: i * 0.7,
+                    ease: "easeOut"
+                }}
+            />
+        ))}
+
       </div>
-   )
+    </div>
+  );
 }
 
 // =================== FILE: src/components/landing/solutions/mockups/MockupIoT.tsx ===================
@@ -8105,11 +8349,13 @@ import { MockupFinance } from './mockups/MockupFinance';
 import { MockupBooking } from './mockups/MockupBooking';
 import { MockupGrowth } from './mockups/MockupGrowth';
 import { useTranslations } from 'next-intl';
+
 export function SolutionsDisplay({ solution }: { solution: SolutionItem }) {
   const t = useTranslations('Solutions');
+  
   return (
-    <div className="w-full h-full relative flex flex-col"> {/* Afegit flex flex-col */}
-      <div className="absolute inset-0 bg-linear-to-br from-white/40 to-white/10 dark:from-slate-900/80 dark:to-slate-900/40 backdrop-blur-xl border border-white/20 dark:border-white/10 rounded-4xl shadow-2xl overflow-hidden">
+    <div className="w-full h-full relative flex flex-col">
+      <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-white/10 dark:from-slate-900/80 dark:to-slate-900/40 backdrop-blur-xl border border-white/20 dark:border-white/10 rounded-4xl shadow-2xl overflow-hidden">
 
         <AnimatePresence mode="wait">
           <motion.div
@@ -8118,12 +8364,12 @@ export function SolutionsDisplay({ solution }: { solution: SolutionItem }) {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 1.02 }}
             transition={{ duration: 0.3 }}
-            className="w-full h-full p-6 md:p-12 flex flex-col"
+            className="w-full h-full p-6 md:p-10 lg:p-12 flex flex-col"
           >
-            {/* Header Text - Més compacte en mòbil */}
-            <div className="mb-4 md:mb-8 shrink-0">
+            {/* Header Text */}
+            <div className="mb-4 md:mb-6 shrink-0 relative z-10">
               <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-2 md:mb-4 flex items-center gap-2 md:gap-3">
-                <solution.icon className={`w-6 h-6 md:w-8 md:h-8 text-transparent bg-clip-text bg-linear-to-r ${solution.color}`} />
+                <solution.icon className={`w-6 h-6 md:w-8 md:h-8 text-transparent bg-clip-text bg-gradient-to-r ${solution.color}`} />
                 {t(`${solution.id}.title`)}
               </h3>
               <p className="text-sm md:text-lg text-muted-foreground leading-relaxed md:max-w-2xl line-clamp-3 md:line-clamp-none">
@@ -8131,9 +8377,11 @@ export function SolutionsDisplay({ solution }: { solution: SolutionItem }) {
               </p>
             </div>
 
-            {/* Mockup Area - Ocupa l'espai restant */}
-            <div className="flex-1 relative flex items-center justify-center bg-slate-50/50 dark:bg-black/20 rounded-2xl border border-dashed border-border/50 overflow-hidden min-h-0">
-              <div className="w-full h-full relative scale-90 md:scale-100">
+            {/* Mockup Area */}
+            {/* FIX: padding bottom extra en mòbil/tablet per deixar espai al Dock flotant */}
+            <div className="flex-1 relative flex items-center justify-center bg-slate-50/50 dark:bg-black/20 rounded-2xl border border-dashed border-border/50 overflow-hidden min-h-0 pb-16 lg:pb-0">
+              {/* FIX: Escala lleugerament reduïda en Tablet (md) per evitar talls laterals */}
+              <div className="w-full h-full relative scale-90 md:scale-[0.85] lg:scale-100 origin-center transition-transform duration-500">
                 {solution.id === 'iot' && <MockupIoT />}
                 {solution.id === 'finance' && <MockupFinance />}
                 {solution.id === 'booking' && <MockupBooking />}
@@ -8141,11 +8389,10 @@ export function SolutionsDisplay({ solution }: { solution: SolutionItem }) {
               </div>
             </div>
 
-            {/* Tags Footer - Amagats en mòbil si no hi caben, o scrollable */}
-            <div className="mt-4 md:mt-8 flex flex-wrap gap-2 ...">
-              {/* 4. Mapegem els tags traduint cada clau */}
+            {/* Tags Footer - Visible només en Desktop per no saturar tablet */}
+            <div className="hidden lg:flex mt-4 md:mt-8 flex-wrap gap-2">
               {solution.tagKeys.map(tagKey => (
-                <span key={tagKey} className="...">
+                <span key={tagKey} className="px-3 py-1 rounded-full bg-background/50 border border-border text-xs font-bold uppercase tracking-wider text-muted-foreground">
                   {t(`tags.${tagKey}`)}
                 </span>
               ))}
@@ -8167,7 +8414,6 @@ import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { SolutionItem } from './data';
-// 👇 1. Importem el hook de traducció
 import { useTranslations } from 'next-intl';
 
 interface Props {
@@ -8177,7 +8423,6 @@ interface Props {
 }
 
 export function SolutionsNavigation({ solutions, activeTab, setActiveTab }: Props) {
-  // 👇 2. Inicialitzem el hook amb el namespace 'SolutionsSection'
   const t = useTranslations('Solutions');
 
   return (
@@ -8196,6 +8441,7 @@ export function SolutionsNavigation({ solutions, activeTab, setActiveTab }: Prop
                 : "hover:bg-white/50 dark:hover:bg-white/5 hover:border-border"
             )}
           >
+            {/* 1. FONS ANIMAT (Posició absoluta, es queda al fons) */}
             {isActive && (
               <motion.div
                 layoutId="activeGlow"
@@ -8203,8 +8449,9 @@ export function SolutionsNavigation({ solutions, activeTab, setActiveTab }: Prop
               />
             )}
 
+            {/* 2. CONTINGUT (Afegim 'relative z-10' per posar-ho a sobre del fons) */}
             <div className={cn(
-              "w-12 h-12 rounded-xl flex items-center justify-center transition-colors duration-300 shrink-0",
+              "w-12 h-12 rounded-xl flex items-center justify-center transition-colors duration-300 shrink-0 relative z-10",
               isActive 
                 ? `bg-linear-to-br ${item.color} text-white shadow-lg` 
                 : "bg-muted text-muted-foreground group-hover:text-foreground"
@@ -8212,9 +8459,8 @@ export function SolutionsNavigation({ solutions, activeTab, setActiveTab }: Prop
               <item.icon className="w-6 h-6" />
             </div>
             
-            <div className="flex-1">
+            <div className="flex-1 relative z-10">
               <h3 className={cn("font-bold text-lg", isActive ? "text-foreground" : "text-muted-foreground group-hover:text-foreground")}>
-                {/* 👇 3. Traduïm el títol dinàmicament */}
                 {t(`${item.id}.title`)}
               </h3>
               {isActive && (
@@ -8223,14 +8469,13 @@ export function SolutionsNavigation({ solutions, activeTab, setActiveTab }: Prop
                   animate={{ opacity: 1, height: 'auto' }}
                   className="text-xs text-muted-foreground mt-1"
                 >
-                  {/* 👇 4. Traduïm i unim els tags utilitzant 'tagKeys' */}
                   {item.tagKeys.map(key => t(`tags.${key}`)).join(' • ')}
                 </motion.p>
               )}
             </div>
             
             {isActive && (
-                <ArrowRight className="w-5 h-5 text-primary animate-pulse shrink-0" />
+                <ArrowRight className="w-5 h-5 text-primary animate-pulse shrink-0 relative z-10" />
             )}
           </button>
         );
@@ -8247,12 +8492,13 @@ import { useState } from 'react';
 import { SOLUTIONS } from './data';
 import { SolutionsNavigation } from './SolutionsNavigation';
 import { SolutionsDisplay } from './SolutionsDisplay';
-// 👇 Importem el nou Dock
 import { MobileSolutionsDock } from './MobileSolutionsDock';
+import { useTranslations } from 'next-intl';
 
 export function SolutionsShowcase() {
   const [activeTab, setActiveTab] = useState(SOLUTIONS[0].id);
   const activeSolution = SOLUTIONS.find(s => s.id === activeTab)!;
+  const t = useTranslations('SolutionsSection');
 
   return (
     <section className="py-16 md:py-24 bg-slate-50 dark:bg-black/50 relative overflow-hidden transition-colors duration-500">
@@ -8260,7 +8506,8 @@ export function SolutionsShowcase() {
       {/* Fons Ambient */}
       <div className={`absolute inset-0 opacity-10 bg-linear-to-br ${activeSolution.color} blur-[150px] transition-all duration-700`} />
 
-      <div className="container mx-auto px-4 relative z-10">
+      {/* ✅ CORRECCIÓ: Padding responsiu (px-6 -> px-10 -> px-14) */}
+      <div className="container mx-auto px-6 md:px-10 lg:px-14 relative z-10">
         
         <div className="text-center max-w-3xl mx-auto mb-8 md:mb-16">
           <h2 className="text-3xl md:text-5xl font-black text-foreground mb-4">
@@ -8272,388 +8519,35 @@ export function SolutionsShowcase() {
         </div>
 
         {/* --- ESTRUCTURA RESPONSIVE --- */}
-        <div className="flex flex-col lg:grid lg:grid-cols-12 gap-8 items-stretch lg:h-[600px]">
+        <div className="flex flex-col lg:grid lg:grid-cols-12 gap-8 items-stretch lg:h-[650px]">
           
-          {/* 1. NAVEGACIÓ D'ESCRIPTORI (s'amaga en mòbil) */}
+          {/* 1. NAVEGACIÓ D'ESCRIPTORI */}
           <SolutionsNavigation 
             solutions={SOLUTIONS} 
             activeTab={activeTab} 
             setActiveTab={setActiveTab} 
           />
           
-          {/* 2. VISUALITZACIÓ (Ocupa tot en mòbil, 8 columnes en PC) */}
-          <div className="lg:col-span-8 flex flex-col h-[550px] md:h-auto">
+          {/* 2. VISUALITZACIÓ */}
+          <div className="lg:col-span-8 flex flex-col h-[550px] md:h-[650px] lg:h-auto relative z-10">
              <SolutionsDisplay solution={activeSolution} />
              
-             {/* 3. DOCK MÒBIL (S'amaga en escriptori) */}
-             <MobileSolutionsDock 
-                solutions={SOLUTIONS} 
-                activeTab={activeTab} 
-                setActiveTab={setActiveTab} 
-             />
-          </div>
-
-        </div>
-      </div>
-    </section>
-  );
-}
-
-// =================== FILE: src/components/landing/SolutionsShowcase.tsx ===================
-
-'use client';
-
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  QrCode, 
-  CreditCard, 
-  CalendarCheck, 
-  BarChart4, 
-  Smartphone, 
-  Wifi, 
-  Zap, 
-  Share2,
-  Lock,
-  ArrowRight
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-
-// --- DEFINICIÓ DELS MÒDULS ---
-const SOLUTIONS = [
-  {
-    id: 'iot',
-    title: 'Smart Spaces & IoT',
-    icon: Wifi,
-    description: 'Controla el món físic des del digital. Obre portes, encén llums i monitoritza espais.',
-    tags: ['Accés QR', 'Shelly/Domòtica', 'Sensors', 'Control Remot'],
-    color: 'from-cyan-500 to-blue-500'
-  },
-  {
-    id: 'finance',
-    title: 'Finances Automatitzades',
-    icon: CreditCard,
-    description: 'Deixa que la IA gestioni els diners. Facturació, cobraments i control de despeses sense errors.',
-    tags: ['Stripe Payments', 'Auto-Facturació', 'Rebuts OCR', 'Signatura Digital'],
-    color: 'from-green-500 to-emerald-600'
-  },
-  {
-    id: 'booking',
-    title: 'Gestió de Clients & Cites',
-    icon: CalendarCheck,
-    description: 'La teva agenda s\'omple sola. Sistema de reserves, recordatoris i fidelització.',
-    tags: ['Booking Engine', 'Recordatoris WhatsApp', 'Digital Wallet', 'Chatbots IA'],
-    color: 'from-purple-500 to-pink-500'
-  },
-  {
-    id: 'growth',
-    title: 'Growth & Analítica',
-    icon: BarChart4,
-    description: 'Pren decisions basades en dades, no en intuïcions. Màrqueting automàtic i dashboards.',
-    tags: ['Social Auto-Post', 'Business Intelligence', 'KPIs en viu', 'CRM'],
-    color: 'from-orange-500 to-red-500'
-  }
-];
-
-export function SolutionsShowcase() {
-  const [activeTab, setActiveTab] = useState(SOLUTIONS[0].id);
-  const activeSolution = SOLUTIONS.find(s => s.id === activeTab)!;
-
-  return (
-    <section className="py-24 bg-slate-50 dark:bg-black/50 relative overflow-hidden transition-colors duration-500">
-      
-      {/* Fons Ambient */}
-      <div className={`absolute inset-0 opacity-10 bg-gradient-to-br ${activeSolution.color} blur-[150px] transition-all duration-700`} />
-
-      <div className="container mx-auto px-4 relative z-10">
-        
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-4xl md:text-5xl font-black text-foreground mb-4">
-            Més enllà d'una <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-400">Simple Web</span>.
-          </h2>
-          <p className="text-xl text-muted-foreground">
-            Creem ecosistemes digitals que connecten programari, maquinari i intel·ligència artificial.
-          </p>
-        </div>
-
-        <div className="grid lg:grid-cols-12 gap-8 items-stretch h-full min-h-[600px]">
-          
-          {/* --- COLUMNA ESQUERRA: NAVEGACIÓ --- */}
-          <div className="lg:col-span-4 flex flex-col gap-4">
-            {SOLUTIONS.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => setActiveTab(item.id)}
-                className={cn(
-                  "relative group flex items-center gap-4 p-6 rounded-2xl text-left transition-all duration-300 border border-transparent",
-                  activeTab === item.id 
-                    ? "bg-white dark:bg-slate-900 shadow-xl border-primary/20 scale-[1.02]" 
-                    : "hover:bg-white/50 dark:hover:bg-white/5 hover:border-border"
-                )}
-              >
-                {/* Indicador actiu animat */}
-                {activeTab === item.id && (
-                  <motion.div
-                    layoutId="activeGlow"
-                    className={`absolute inset-0 rounded-2xl bg-gradient-to-r ${item.color} opacity-5 dark:opacity-10`}
+             {/* 3. DOCK MÒBIL/TABLET */}
+             <div className="absolute bottom-6 left-0 right-0 z-50 flex justify-center lg:hidden pointer-events-none">
+                <div className="pointer-events-auto">
+                  <MobileSolutionsDock 
+                      solutions={SOLUTIONS} 
+                      activeTab={activeTab} 
+                      setActiveTab={setActiveTab} 
                   />
-                )}
-
-                <div className={cn(
-                  "w-12 h-12 rounded-xl flex items-center justify-center transition-colors duration-300",
-                  activeTab === item.id 
-                    ? `bg-gradient-to-br ${item.color} text-white shadow-lg` 
-                    : "bg-muted text-muted-foreground group-hover:text-foreground"
-                )}>
-                  <item.icon className="w-6 h-6" />
                 </div>
-                
-                <div className="flex-1">
-                  <h3 className={cn("font-bold text-lg", activeTab === item.id ? "text-foreground" : "text-muted-foreground group-hover:text-foreground")}>
-                    {item.title}
-                  </h3>
-                  {activeTab === item.id && (
-                    <motion.p 
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      className="text-xs text-muted-foreground mt-1"
-                    >
-                      {item.tags.join(' • ')}
-                    </motion.p>
-                  )}
-                </div>
-                
-                {activeTab === item.id && (
-                    <ArrowRight className="w-5 h-5 text-primary animate-pulse" />
-                )}
-              </button>
-            ))}
-          </div>
-
-          {/* --- COLUMNA DRETA: FINESTRA HOLOGRÀFICA --- */}
-          <div className="lg:col-span-8 relative">
-            <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-white/10 dark:from-slate-900/80 dark:to-slate-900/40 backdrop-blur-xl border border-white/20 dark:border-white/10 rounded-[32px] shadow-2xl overflow-hidden">
-              
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={activeTab}
-                  initial={{ opacity: 0, y: 20, scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -20, scale: 1.05 }}
-                  transition={{ duration: 0.4, ease: "easeOut" }}
-                  className="w-full h-full p-8 md:p-12 flex flex-col"
-                >
-                  {/* Contingut Textual */}
-                  <div className="mb-8">
-                    <h3 className="text-3xl font-bold text-foreground mb-4 flex items-center gap-3">
-                       <activeSolution.icon className={`w-8 h-8 text-transparent bg-clip-text bg-gradient-to-r ${activeSolution.color}`} /> 
-                       {activeSolution.title}
-                    </h3>
-                    <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl">
-                      {activeSolution.description}
-                    </p>
-                  </div>
-
-                  {/* VISUALITZACIÓ DINÀMICA (MOCKUPS) */}
-                  <div className="flex-1 relative flex items-center justify-center bg-slate-50/50 dark:bg-black/20 rounded-2xl border border-dashed border-border/50 overflow-hidden">
-                     {activeTab === 'iot' && <MockupIoT />}
-                     {activeTab === 'finance' && <MockupFinance />}
-                     {activeTab === 'booking' && <MockupBooking />}
-                     {activeTab === 'growth' && <MockupGrowth />}
-                  </div>
-
-                  {/* Footer Tags */}
-                  <div className="mt-8 flex flex-wrap gap-2">
-                    {activeSolution.tags.map(tag => (
-                      <span key={tag} className="px-3 py-1 rounded-full bg-background border border-border text-xs font-bold uppercase tracking-wider text-muted-foreground shadow-sm">
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-
-                </motion.div>
-              </AnimatePresence>
-
-            </div>
+             </div>
           </div>
 
         </div>
       </div>
     </section>
   );
-}
-
-// ----------------------------------------------------------------------
-// SUB-COMPONENTS VISUALS (MOCKUPS ANIMATS)
-// ----------------------------------------------------------------------
-
-function MockupIoT() {
-  return (
-    <div className="relative w-full h-full flex items-center justify-center p-10">
-       {/* TELÈFON ESCANEJANT */}
-       <motion.div 
-         initial={{ y: 20, opacity: 0 }}
-         animate={{ y: 0, opacity: 1 }}
-         transition={{ delay: 0.2 }}
-         className="absolute left-10 bottom-10 w-40 h-64 bg-slate-900 rounded-3xl border-4 border-slate-700 shadow-2xl flex flex-col items-center justify-center z-20"
-       >
-          <div className="w-20 h-20 bg-white rounded-lg p-2 mb-4">
-             <QrCode className="w-full h-full text-black" />
-          </div>
-          <span className="text-xs text-green-400 font-mono animate-pulse">Scanning...</span>
-       </motion.div>
-
-       {/* ONES DE SENYAL */}
-       <motion.div 
-          animate={{ scale: [1, 2], opacity: [0.5, 0] }}
-          transition={{ repeat: Infinity, duration: 2 }}
-          className="absolute left-[110px] bottom-[150px] w-20 h-20 border-2 border-cyan-500 rounded-full z-10"
-       />
-
-       {/* PORTA INTEL·LIGENT / SHELLY */}
-       <motion.div 
-         initial={{ opacity: 0, x: 20 }}
-         animate={{ opacity: 1, x: 0 }}
-         className="w-64 h-80 bg-slate-100 dark:bg-slate-800 rounded-t-full border-8 border-slate-300 dark:border-slate-700 relative flex items-center justify-center shadow-inner"
-       >
-          <div className="absolute top-1/2 left-4 w-4 h-4 bg-red-500 rounded-full shadow-[0_0_10px_red]" />
-          <motion.div 
-             animate={{ rotateY: -100 }}
-             transition={{ delay: 1.5, duration: 1, type: "spring" }}
-             className="w-full h-full bg-white dark:bg-slate-600 rounded-t-full origin-left border-r border-slate-200 dark:border-slate-500 flex items-center justify-center"
-          >
-             <div className="w-4 h-4 bg-slate-400 rounded-full absolute right-4 top-1/2" />
-             <div className="bg-green-500/20 text-green-600 px-4 py-2 rounded-lg font-bold border border-green-500 flex items-center gap-2">
-                <Lock className="w-4 h-4" /> UNLOCKED
-             </div>
-          </motion.div>
-       </motion.div>
-    </div>
-  )
-}
-
-function MockupFinance() {
-  return (
-    <div className="w-full max-w-md space-y-4">
-       {/* TARGETA STRIPE */}
-       <motion.div 
-         initial={{ y: -50, opacity: 0 }}
-         animate={{ y: 0, opacity: 1 }}
-         className="bg-gradient-to-r from-slate-900 to-slate-800 text-white p-6 rounded-2xl shadow-xl border border-slate-700 relative overflow-hidden"
-       >
-          <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-3xl" />
-          <div className="flex justify-between items-start mb-8">
-             <div className="text-xl font-bold">Stripe</div>
-             <Wifi className="w-6 h-6 rotate-90" />
-          </div>
-          <div className="text-lg font-mono tracking-widest mb-4">**** **** **** 4242</div>
-          <div className="flex justify-between text-xs opacity-70">
-             <span>Card Holder</span>
-             <span>Expires</span>
-          </div>
-       </motion.div>
-
-       {/* FLUX DE FACTURACIÓ */}
-       <div className="flex gap-3">
-          {[1, 2, 3].map((i) => (
-             <motion.div
-               key={i}
-               initial={{ scale: 0, opacity: 0 }}
-               animate={{ scale: 1, opacity: 1 }}
-               transition={{ delay: i * 0.3 }}
-               className="flex-1 bg-white dark:bg-slate-800 p-3 rounded-xl border border-border shadow-sm flex flex-col items-center gap-2"
-             >
-                <div className="w-8 h-8 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600">€</div>
-                <div className="h-2 w-12 bg-slate-200 dark:bg-slate-700 rounded-full" />
-                <div className="h-2 w-8 bg-slate-200 dark:bg-slate-700 rounded-full" />
-             </motion.div>
-          ))}
-       </div>
-    </div>
-  )
-}
-
-function MockupBooking() {
-   return (
-     <div className="relative w-full h-full p-6 flex flex-col items-center">
-        {/* CALENDARI */}
-        <div className="w-full max-w-sm bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-border overflow-hidden">
-           <div className="bg-primary/10 p-4 flex justify-between items-center border-b border-primary/10">
-              <span className="font-bold text-primary">Gener 2025</span>
-              <div className="flex gap-1">
-                 <div className="w-2 h-2 rounded-full bg-red-400" />
-                 <div className="w-2 h-2 rounded-full bg-yellow-400" />
-                 <div className="w-2 h-2 rounded-full bg-green-400" />
-              </div>
-           </div>
-           <div className="p-4 grid grid-cols-7 gap-2">
-              {[...Array(14)].map((_, i) => (
-                 <div key={i} className="aspect-square rounded-md bg-slate-100 dark:bg-slate-700/50 flex items-center justify-center text-xs text-muted-foreground">
-                    {i + 1}
-                 </div>
-              ))}
-              <motion.div 
-                 initial={{ scale: 0 }}
-                 animate={{ scale: 1 }}
-                 transition={{ delay: 0.5, type: "spring" }}
-                 className="aspect-square rounded-md bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold shadow-lg shadow-primary/30 col-span-2 w-full"
-              >
-                 RESERVAT
-              </motion.div>
-           </div>
-        </div>
-
-        {/* NOTIFICACIÓ MÒBIL */}
-        <motion.div 
-           initial={{ y: 50, opacity: 0 }}
-           animate={{ y: -20, opacity: 1 }}
-           transition={{ delay: 1 }}
-           className="absolute bottom-4 bg-black/80 backdrop-blur-md text-white p-3 rounded-xl shadow-2xl flex items-center gap-3 w-64 border border-white/10"
-        >
-           <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-              <Smartphone className="w-4 h-4" />
-           </div>
-           <div className="text-xs">
-              <div className="font-bold">Nova Reserva</div>
-              <div className="opacity-80">Joan ha reservat per demà.</div>
-           </div>
-        </motion.div>
-     </div>
-   )
-}
-
-function MockupGrowth() {
-   return (
-      <div className="flex items-end justify-center gap-4 h-40 w-full px-10">
-         {[40, 70, 50, 90, 65, 85].map((height, i) => (
-            <motion.div
-               key={i}
-               initial={{ height: 0 }}
-               animate={{ height: `${height}%` }}
-               transition={{ delay: i * 0.1, duration: 0.5, type: "spring" }}
-               className="w-12 bg-gradient-to-t from-orange-500 to-red-500 rounded-t-lg relative group"
-            >
-               <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-white dark:bg-slate-800 text-xs font-bold px-2 py-1 rounded shadow opacity-0 group-hover:opacity-100 transition-opacity">
-                  {height}%
-               </div>
-            </motion.div>
-         ))}
-         
-         {/* LÍNIA DE TENDÈNCIA */}
-         <svg className="absolute inset-0 w-full h-full pointer-events-none overflow-visible">
-            <motion.path
-               d="M 40 120 L 100 60 L 160 90 L 220 30 L 280 70 L 340 40"
-               fill="none"
-               stroke="#10b981"
-               strokeWidth="4"
-               initial={{ pathLength: 0 }}
-               animate={{ pathLength: 1 }}
-               transition={{ duration: 1.5, delay: 0.5 }}
-            />
-         </svg>
-      </div>
-   )
 }
 
 // =================== FILE: src/components/landing/TechStackSection.tsx ===================
@@ -8935,7 +8829,9 @@ export function TestimonialsSection({ testimonials }: Props) {
 
   return (
     <section id="testimonis" className="py-16 bg-muted/30 relative overflow-hidden">
-      <div className="container mx-auto px-4 relative z-10">
+      
+      {/* ✅ CORRECCIÓ APLICADA: Padding responsiu */}
+      <div className="container mx-auto px-6 md:px-10 lg:px-14 relative z-10">
         
         {/* CAPÇALERA */}
         <div className="flex flex-col md:flex-row justify-between items-end  md:mb-16 gap-6">
@@ -8958,12 +8854,11 @@ export function TestimonialsSection({ testimonials }: Props) {
         </div>
 
         {/* GRID */}
-        {/* Canviem grid-cols per adaptar-se al itemsToShow dinàmicament */}
         <div className={`grid gap-8 py-6 ${itemsToShow === 1 ? 'grid-cols-1' : 'grid-cols-3'}`}>
           <AnimatePresence mode='popLayout'>
             {getVisibleItems().map((item, i) => (
               <motion.div
-                key={`${item.id}-${currentIndex + i}`} // Clau única composta per forçar re-render correcte
+                key={`${item.id}-${currentIndex + i}`}
                 initial={{ opacity: 0, x: 50 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -50 }}
@@ -8981,13 +8876,11 @@ export function TestimonialsSection({ testimonials }: Props) {
   );
 }
 
-// --- TARGETA INDIVIDUAL (EFECTE CARPETA/FITXER) ---
-
+// ... (TestimonialCard i Mockups es mantenen iguals)
 function TestimonialCard({ item }: { item: Testimonial }) {
    return (
       <div className="relative w-full h-full group">
          
-         {/* CAPA 1: EL PROJECTE (FITXER) */}
          <div className="absolute inset-x-4 top-4 bottom-20 transition-all duration-500 cubic-bezier(0.25, 0.8, 0.25, 1) group-hover:-translate-y-20 ">
             <div className="w-full h-full rounded-t-xl overflow-hidden border border-primary/20 bg-slate-900 dark:bg-black shadow-2xl group-hover:shadow-primary/20">
                {item.projectType === 'web' && <MockupWeb url={item.projectUrl} image={item.image} title={item.company} />}
@@ -8996,9 +8889,7 @@ function TestimonialCard({ item }: { item: Testimonial }) {
             </div>
          </div>
 
-         {/* CAPA 2: EL TESTIMONI (CARPETA) */}
          <div className="absolute bottom-0 left-0 right-0 h-[280px] bg-card border border-border rounded-2xl p-8 shadow-xl z-10 transition-transform duration-500 group-hover:translate-y-6 flex flex-col">
-            
             <Quote className="absolute top-6 right-6 text-primary/10 w-12 h-12 rotate-180" />
 
             <div className="flex items-center gap-3 mb-4">
@@ -9030,14 +8921,11 @@ function TestimonialCard({ item }: { item: Testimonial }) {
    )
 }
 
-// --- MOCKUPS VISUALS ---
-
 function MockupWeb({ url, image, title }: { url?: string, image?: string | StaticImageData, title: string }) {
    const Wrapper = url ? Link : 'div';
    return (
       <Wrapper href={url || '#'} target={url ? "_blank" : undefined} className="block w-full h-full cursor-pointer group/mockup">
          <div className="w-full h-full bg-slate-50 dark:bg-[#0f111a] flex flex-col relative">
-            
             {url && (
                <div className="absolute inset-0 z-30 bg-black/60 backdrop-blur-[2px] flex items-center justify-center opacity-0 group-hover/mockup:opacity-100 transition-opacity duration-300">
                   <span className="bg-white text-black px-4 py-2 rounded-full font-bold text-xs flex items-center gap-2 shadow-lg transform scale-90 group-hover/mockup:scale-100 transition-transform">
@@ -9045,13 +8933,11 @@ function MockupWeb({ url, image, title }: { url?: string, image?: string | Stati
                   </span>
                </div>
             )}
-
             <div className="h-6 bg-slate-200 dark:bg-white/10 flex items-center px-3 gap-1.5 z-10">
                <div className="w-2 h-2 rounded-full bg-red-400/80"></div>
                <div className="w-2 h-2 rounded-full bg-yellow-400/80"></div>
                <div className="w-2 h-2 rounded-full bg-green-400/80"></div>
             </div>
-            
             <div className="flex-1 relative w-full">
                 {image ? (
                    <Image src={image} alt={title} fill className="object-cover object-top" />
@@ -9070,13 +8956,11 @@ function MockupWeb({ url, image, title }: { url?: string, image?: string | Stati
 function MockupApp({ image, title }: { image?: string | StaticImageData, title: string }) {
    return (
       <div className="w-full h-full bg-slate-800 dark:bg-black flex items-end justify-center p-4 pb-0 group/mockup relative">
-         
          <div className="absolute inset-0 z-30 bg-black/60 backdrop-blur-[2px] flex items-center justify-center opacity-0 group-hover/mockup:opacity-100 transition-opacity duration-300 rounded-t-xl">
              <span className="bg-white text-black px-4 py-2 rounded-full font-bold text-xs flex items-center gap-2 shadow-lg">
                 Veure App <ExternalLink className="w-3 h-3" />
              </span>
          </div>
-
          <div className="w-32 h-full bg-black border-2 border-slate-700 rounded-t-xl overflow-hidden relative">
             {image ? (
                 <Image src={image} alt={title} fill className="object-cover" />
@@ -9099,9 +8983,7 @@ function MockupAutomation() {
                 Veure Flux <Zap className="w-3 h-3" />
              </span>
          </div>
-
          <div className="absolute inset-0 bg-[radial-gradient(#ffffff10_1px,transparent_1px)] bg-size-[12px_12px]"></div>
-         
          <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none">
             <defs>
                <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -9124,11 +9006,9 @@ function MockupAutomation() {
                style={{ offsetPath: "path('M 20 30 C 50 30, 50 70, 80 70')" }}
             />
          </svg>
-
          <div className="absolute left-[20%] top-[30%] -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-lg bg-purple-500/20 border border-purple-500 flex items-center justify-center z-10 shadow-[0_0_15px_rgba(168,85,247,0.4)] backdrop-blur-sm">
             <Users className="w-5 h-5 text-purple-400" />
          </div>
-         
          <div className="absolute left-[80%] top-[50%] -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-lg bg-green-500/20 border border-green-500 flex items-center justify-center z-10 shadow-[0_0_15px_rgba(34,197,94,0.4)] backdrop-blur-sm">
             <Code className="w-5 h-5 text-green-400" />
          </div>
@@ -9187,7 +9067,7 @@ export function Footer() {
 
   return (
     <footer className="bg-background border-t border-border pt-16 pb-8 transition-colors duration-300">
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-14">
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-16">
           
@@ -9672,7 +9552,6 @@ export function PublicMobileNav({ user }: PublicMobileNavProps) {
       const element = document.getElementById(id);
 
       if (element) {
-        // Tanquem el menú (si fos un dropdown) donant temps
         setTimeout(() => {
           const headerOffset = 85;
           const elementPosition = element.getBoundingClientRect().top;
@@ -9683,7 +9562,7 @@ export function PublicMobileNav({ user }: PublicMobileNavProps) {
       }
     }
   };
-  // Llista de sub-enllaços (coincideix amb Escriptori)
+
   const SOLUTIONS_LINKS = [
     { href: '/#solutions', label: 'Solucions Tech' },
     { href: '/#services', label: 'Serveis' },
@@ -9692,14 +9571,12 @@ export function PublicMobileNav({ user }: PublicMobileNavProps) {
     { href: '/#contacte', label: 'Contacte' }
   ];
 
-  // Element dinàmic d'Usuari
   const authItem: NavItem = user
     ? { id: 'auth', label: t('dashboard'), href: '/dashboard', icon: LayoutDashboard }
     : { id: 'auth', label: t('login'), href: '/auth/login', icon: UserCircle };
 
   const NAV_ITEMS: NavItem[] = [
     { id: 'home', label: t('home'), href: '/', icon: Home },
-    // El botó central que obre el menú 👇
     { id: 'solutions', label: t('solutions'), href: '#', icon: Zap, isDropdown: true },
     { id: 'projects', label: t('projects'), href: '/projectes', icon: FolderGit2 },
     { id: 'blog', label: t('blog'), href: '/blog', icon: BookOpen },
@@ -9708,7 +9585,12 @@ export function PublicMobileNav({ user }: PublicMobileNavProps) {
 
   return (
     <div className="md:hidden fixed bottom-0 left-0 w-full z-50 bg-background/95 backdrop-blur-xl border-t border-border pb-safe transition-all duration-300">
-      <div className="flex justify-around items-center h-16 px-2">
+      
+      {/* 🛠️ CANVI CLAU: 
+          Substituïm 'flex justify-around px-2' per 'grid grid-cols-5'.
+          Això fa que cada icona tingui exactament la mateixa amplada.
+      */}
+      <div className="grid grid-cols-5 h-16 items-center">
         {NAV_ITEMS.map((item) => {
 
           const isActive = item.href === '/'
@@ -9725,17 +9607,15 @@ export function PublicMobileNav({ user }: PublicMobileNavProps) {
                 <DropdownMenuTrigger className="flex flex-col items-center justify-center w-full h-full gap-1 active:scale-95 transition-transform outline-none group focus:outline-none">
                   <div className="relative">
                     <Icon className={cn("w-6 h-6 group-data-[state=open]:text-primary text-muted-foreground")} strokeWidth={2.5} />
-                    {/* Fletxeta indicadora */}
                     <div className="absolute -top-1 -right-1 bg-background rounded-full p-px border border-border">
                       <ChevronUp className="w-2 h-2 text-muted-foreground" />
                     </div>
                   </div>
-                  <span className="text-[10px] font-medium text-muted-foreground group-data-[state=open]:text-primary">
+                  <span className="text-[10px] font-medium text-muted-foreground group-data-[state=open]:text-primary truncate w-full text-center px-1">
                     {item.label}
                   </span>
                 </DropdownMenuTrigger>
 
-                {/* Menú desplegable cap amunt */}
                 <DropdownMenuContent
                   side="top"
                   align="center"
@@ -9745,7 +9625,6 @@ export function PublicMobileNav({ user }: PublicMobileNavProps) {
                     <DropdownMenuItem key={subLink.href} asChild>
                       <Link
                         href={subLink.href}
-                        // Aquí connectem l'event de clic amb la funció d'scroll
                         onClick={(e) => handleScrollToSection(e, subLink.href)}
                         className="w-full cursor-pointer text-sm py-2.5 px-2 font-medium rounded-lg focus:bg-primary/10 active:bg-primary/10"
                       >
@@ -9763,7 +9642,6 @@ export function PublicMobileNav({ user }: PublicMobileNavProps) {
             <Link
               key={item.id}
               href={item.href}
-              // També apliquem scroll si és un link directe a secció (per si de cas)
               onClick={(e) => item.href.includes('#') && handleScrollToSection(e, item.href)}
               className={cn(
                 "flex flex-col items-center justify-center w-full h-full gap-1 active:scale-95 transition-transform",
@@ -9782,7 +9660,7 @@ export function PublicMobileNav({ user }: PublicMobileNavProps) {
                 )}
                 strokeWidth={isActive ? 2.5 : 2}
               />
-              <span className={cn("text-[10px] font-medium", isActive ? "font-bold" : "font-medium")}>
+              <span className={cn("text-[10px] truncate w-full text-center px-1", isActive ? "font-bold" : "font-medium")}>
                 {item.label}
               </span>
             </Link>
@@ -12414,11 +12292,17 @@ export function RegisterForm({ prefilledEmail }: { prefilledEmail: string }) {
   const [fullName, setFullName] = useState('');
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
+  const MAIN_ORG_ID = process.env.NEXT_PUBLIC_MAIN_ORG_ID;
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!termsAccepted) {
       setError("Has d'acceptar la política de privacitat per crear el compte.");
+      return;
+    }
+
+    if (!MAIN_ORG_ID) {
+      setError("Error de configuració: Manca l'ID de l'organització.");
       return;
     }
 
@@ -12431,7 +12315,12 @@ export function RegisterForm({ prefilledEmail }: { prefilledEmail: string }) {
       options: {
         data: {
           full_name: fullName,
-        }
+          // 🔥 AFEGIM AIXÒ: Passem l'ID de l'organització a les metadades
+          org_id: MAIN_ORG_ID,
+          role: 'client' // Explicitem el rol també
+        },
+        // Important per redireccions correctes
+        emailRedirectTo: `${window.location.origin}/auth/callback`
       }
     });
 
@@ -12450,8 +12339,8 @@ export function RegisterForm({ prefilledEmail }: { prefilledEmail: string }) {
     // Si vols, pots obligar a acceptar els termes abans de Google, 
     // tot i que normalment en OAuth s'accepten implícitament.
     if (!termsAccepted) {
-        setError("Si us plau, accepta la política de privacitat abans de continuar.");
-        return;
+      setError("Si us plau, accepta la política de privacitat abans de continuar.");
+      return;
     }
 
     setIsGoogleLoading(true);
@@ -12467,8 +12356,8 @@ export function RegisterForm({ prefilledEmail }: { prefilledEmail: string }) {
     });
 
     if (error) {
-        toast.error(error.message);
-        setIsGoogleLoading(false);
+      toast.error(error.message);
+      setIsGoogleLoading(false);
     }
   };
 
@@ -12575,8 +12464,8 @@ export function RegisterForm({ prefilledEmail }: { prefilledEmail: string }) {
           type="submit"
           disabled={isLoading || isGoogleLoading}
           className={`w-full h-12 font-bold rounded-lg transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2 ${termsAccepted
-              ? 'gradient-bg text-white hover:opacity-90'
-              : 'bg-muted text-muted-foreground cursor-not-allowed opacity-70'
+            ? 'gradient-bg text-white hover:opacity-90'
+            : 'bg-muted text-muted-foreground cursor-not-allowed opacity-70'
             }`}
         >
           {isLoading ? <Loader2 className="animate-spin" /> : <><UserPlus className="w-4 h-4" /> Crear Compte</>}
@@ -14562,7 +14451,8 @@ import { ProjectCard } from './ProjectCard';
 export function ProjectsList() {
   return (
     <section className="py-10 pb-20 md:pb-32">
-      <div className="container mx-auto px-4 space-y-20 md:space-y-32">
+      {/* ✅ CORRECCIÓ: Padding responsiu */}
+      <div className="container mx-auto px-6 md:px-10 lg:px-14 space-y-20 md:space-y-32">
          {PROJECTS.map((project, index) => (
             <ProjectCard key={project.id} project={project} index={index} />
          ))}
@@ -14585,7 +14475,8 @@ export function ProjectsCTA() {
 
   return (
     <section className="py-16 md:py-24 border-t border-border bg-muted/10">
-       <div className="container mx-auto px-4 text-center">
+       {/* ✅ CORRECCIÓ: Padding responsiu */}
+       <div className="container mx-auto px-6 md:px-10 lg:px-14 text-center">
           <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4 md:mb-6">
              {t('title_prefix')} <span className="gradient-text">{t('title_highlight')}</span>{t('title_suffix')}
           </h2>
@@ -14618,7 +14509,8 @@ export function ProjectsHero() {
       {/* Fons decoratiu */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] md:w-[1000px] h-[300px] md:h-[500px] bg-primary/10 blur-[80px] md:blur-[120px] rounded-full pointer-events-none opacity-50" />
       
-      <div className="container mx-auto px-4 text-center relative z-10">
+      {/* ✅ CORRECCIÓ: Padding responsiu */}
+      <div className="container mx-auto px-6 md:px-10 lg:px-14 text-center relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -16482,7 +16374,7 @@ export const config = {
   matcher: [
     // 👇 HE AFEGIT 'webmanifest' i 'mp4' A L'EXCEPCIÓ DEL REGEX
     // Això diu: "Executa el middleware a tot ARREU EXCEPTE api, next, imatges, manifest i videos"
-    '/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|webmanifest|mp4)$).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|..*\\.(?:svg|png|jpg|jpeg|gif|webp|webmanifest|mp4)$).*)',
   ],
 };
 

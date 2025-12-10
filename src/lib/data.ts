@@ -1,8 +1,13 @@
-// src/lib/data.ts
-import { StaticImageData } from 'next/image'; // 👈 Necessari pel tipatge
+// FITXER: src/lib/data.ts
 
-import bioshopImg from '@/assets/images/testimoni-garatgeestacio.jpg';
-import salutFlow from '@/assets/images/salutflow.png';
+import { StaticImageData } from 'next/image';
+
+// Imatges reals (Assegura't que els fitxers existeixen a aquesta ruta)
+import garatgeImg from '@/assets/images/testimoni-garatgeestacio.jpg';
+import salutFlowImg from '@/assets/images/salutflow.png';
+import dataflow from '@/assets/images/cap-dataflow.jpg';
+
+
 
 export type Testimonial = {
   id: number | string;
@@ -17,49 +22,62 @@ export type Testimonial = {
 
 export const TESTIMONIALS: Testimonial[] = [
   {
-    id: 1,
-    name: "Marc Vila",
-    company: "Gestoria Vila",
-    text: "Hem estalviat 20h setmanals gràcies al bot de WhatsApp.",
+    id: 'garatge-estacio',
+    name: "Vado",
+    company: "Garatge Estació",
+    // ✅ Text específic sobre el nou disseny i les reserves d'autocaravanes
+    text: "Estem molt contents amb el nou disseny. El sistema de reserves online per a cites de taller i la zona d'autocaravanes ens ha facilitat moltíssim la gestió.",
+    rating: 5,
+    projectType: 'web',
+    projectUrl: 'https://garatgeestacio.com',
+    image: garatgeImg
+  },
+  {
+    id: 'guirigall',
+    name: "Adriana",
+    company: "Guirigall",
+    // ✅ Text específic sobre automatització de RRSS
+    text: "L'automatització de les xarxes socials ha estat un canvi clau. Ara tenim presència constant sense haver d'estar pendents del mòbil cada dia.",
     rating: 5,
     projectType: 'automation'
   },
   {
-    id: 2,
-    name: "Anna Soler",
-    company: "Garatge Estació", // He vist el nom al fitxer jpg
-    text: "La web carrega instantàniament. Les vendes han pujat un 40%.",
-    rating: 5,
-    projectType: 'web',
-    projectUrl: 'https://garatgeestacio.com',
-    // ✅ 3. USEM LA VARIABLE IMPORTADA
-    image: bioshopImg
-  },
-  {
-    id: 3,
-    name: "Jordi P.",
-    company: "Tech Solutions",
-    text: "Han entès la nostra idea d'App a la primera.",
+    id: 'inspira',
+    name: "Santi Serralvo",
+    company: "Inspira Esport i Salut",
+    text: "L'App Salut Flow ha professionalitzat la relació amb els nostres usuaris. Una eina intuïtiva que ens ajuda a créixer.",
     rating: 5,
     projectType: 'app',
-    image: salutFlow
-  },
-
-  // Nous exemples per al carrousel
-  {
-    id: 4,
-    name: "Laura M.",
-    company: "Clínica Dental",
-    text: "El sistema de cites prèvies ha eliminat les trucades perdudes.",
-    rating: 5,
-    projectType: 'web'
+    image: salutFlowImg
   },
   {
-    id: 5,
-    name: "Pere Roig",
-    company: "Logística Ràpida",
-    text: "L'App per als repartidors funciona fins i tot sense cobertura.",
+    id: 'aquabalance',
+    name: "Marta Puig",
+    company: "Aquabalance",
+    text: "Necessitàvem una web que transmetés pau i professionalitat. El resultat ha superat les expectatives amb una imatge neta i moderna.",
     rating: 5,
-    projectType: 'app'
+    projectType: 'web',
+    projectUrl: 'https://aquabalance.com',
+    image: salutFlowImg
+  },
+  {
+    id: 'rsc',
+    name: "Raul Solà",
+    company: "RSC Instal·lacions",
+    text: "Una web ràpida i directa. Ara els clients poden veure clarament els nostres serveis d'instal·lació i contactar-nos fàcilment.",
+    rating: 5,
+    projectType: 'web',
+    projectUrl: 'https://rscinstallacions.com/',
+    image: salutFlowImg
+  },
+  {
+    id: 'analytic',
+    name: "Ignasi Farreras",
+    company: "Ocaso",
+    text: "L'appWeb ens permet visualitzar grafiques i estadistiques arxius exel que ens permet ser mes aguils i eficients.",
+    rating: 5,
+    projectType: 'web',
+    projectUrl: 'https://analytics-pwa.vercel.app/',
+    image: dataflow
   }
 ];

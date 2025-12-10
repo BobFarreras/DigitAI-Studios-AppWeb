@@ -1,3 +1,5 @@
+// FITXER: src/components/landing/TestimonialsSection.tsx
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -6,39 +8,32 @@ import { Star, Quote, ChevronLeft, ChevronRight, Globe, Smartphone, Zap, Users, 
 import Image, { StaticImageData } from 'next/image';
 import Link from 'next/link';
 import type { Testimonial } from '@/lib/data';
+import { useTranslations } from 'next-intl';
 
 type Props = {
   testimonials: Testimonial[];
 };
 
 export function TestimonialsSection({ testimonials }: Props) {
+  const t = useTranslations('Testimonials'); // Namespace principal
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [itemsToShow, setItemsToShow] = useState(3); // Per defecte 3 (escriptori)
+  const [itemsToShow, setItemsToShow] = useState(3);
 
-  // Detectem la mida de la pantalla per ajustar itemsToShow
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 768) {
-        setItemsToShow(1); // Mòbil: 1 ítem
+        setItemsToShow(1);
       } else {
-        setItemsToShow(3); // Escriptori: 3 ítems
+        setItemsToShow(3);
       }
     };
-
-    // Executem al principi
     handleResize();
-
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const nextSlide = () => {
-    setCurrentIndex((prev) => (prev + 1) % testimonials.length);
-  };
-
-  const prevSlide = () => {
-    setCurrentIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
-  };
+  const nextSlide = () => setCurrentIndex((prev) => (prev + 1) % testimonials.length);
+  const prevSlide = () => setCurrentIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
 
   const getVisibleItems = () => {
     const items = [];
@@ -50,25 +45,22 @@ export function TestimonialsSection({ testimonials }: Props) {
 
   return (
     <section id="testimonis" className="py-16 bg-muted/30 relative overflow-hidden">
-      
-      {/* ✅ CORRECCIÓ APLICADA: Padding responsiu */}
       <div className="container mx-auto px-6 md:px-10 lg:px-14 relative z-10">
         
-        {/* CAPÇALERA */}
-        <div className="flex flex-col md:flex-row justify-between items-end  md:mb-16 gap-6">
+        {/* CAPÇALERA TRADUÏDA */}
+        <div className="flex flex-col md:flex-row justify-between items-end md:mb-16 gap-6">
            <div className="max-w-2xl">
               <h2 className="text-3xl lg:text-5xl font-bold text-foreground leading-tight">
-                No ens creguis a nosaltres. <br/>
-                Mira el que hem <span className="gradient-text">Construït</span>.
+                {t('title_prefix')} <br/>
+                <span className="gradient-text">{t('title_highlight')}</span>.
               </h2>
            </div>
 
-           {/* CONTROLS */}
            <div className="flex gap-3">
-              <button onClick={prevSlide} className="p-3 rounded-full border border-border bg-card hover:bg-primary hover:text-white transition-all shadow-sm">
+              <button onClick={prevSlide} className="p-3 rounded-full border border-border bg-card hover:bg-primary hover:text-white transition-all shadow-sm" aria-label="Previous">
                  <ChevronLeft className="w-6 h-6" />
               </button>
-              <button onClick={nextSlide} className="p-3 rounded-full border border-border bg-card hover:bg-primary hover:text-white transition-all shadow-sm">
+              <button onClick={nextSlide} className="p-3 rounded-full border border-border bg-card hover:bg-primary hover:text-white transition-all shadow-sm" aria-label="Next">
                  <ChevronRight className="w-6 h-6" />
               </button>
            </div>
@@ -97,11 +89,13 @@ export function TestimonialsSection({ testimonials }: Props) {
   );
 }
 
-// ... (TestimonialCard i Mockups es mantenen iguals)
+// --- SUB-COMPONENTS TRADUÏTS ---
+
 function TestimonialCard({ item }: { item: Testimonial }) {
+   const t = useTranslations('Testimonials'); // Reutilitzem el namespace
+
    return (
       <div className="relative w-full h-full group">
-         
          <div className="absolute inset-x-4 top-4 bottom-20 transition-all duration-500 cubic-bezier(0.25, 0.8, 0.25, 1) group-hover:-translate-y-20 ">
             <div className="w-full h-full rounded-t-xl overflow-hidden border border-primary/20 bg-slate-900 dark:bg-black shadow-2xl group-hover:shadow-primary/20">
                {item.projectType === 'web' && <MockupWeb url={item.projectUrl} image={item.image} title={item.company} />}
@@ -134,7 +128,7 @@ function TestimonialCard({ item }: { item: Testimonial }) {
             </p>
             
             <div className="mt-auto pt-4 border-t border-border flex justify-between items-center opacity-50">
-               <span className="text-[10px] uppercase tracking-widest font-bold">Projecte Realitzat</span>
+               <span className="text-[10px] uppercase tracking-widest font-bold">{t('project_label')}</span>
                <div className="w-16 h-1 bg-foreground/10 rounded-full"></div>
             </div>
          </div>
@@ -143,14 +137,16 @@ function TestimonialCard({ item }: { item: Testimonial }) {
 }
 
 function MockupWeb({ url, image, title }: { url?: string, image?: string | StaticImageData, title: string }) {
+   const t = useTranslations('Testimonials.mockups'); // Namespace específic per botons
    const Wrapper = url ? Link : 'div';
+   
    return (
       <Wrapper href={url || '#'} target={url ? "_blank" : undefined} className="block w-full h-full cursor-pointer group/mockup">
          <div className="w-full h-full bg-slate-50 dark:bg-[#0f111a] flex flex-col relative">
             {url && (
                <div className="absolute inset-0 z-30 bg-black/60 backdrop-blur-[2px] flex items-center justify-center opacity-0 group-hover/mockup:opacity-100 transition-opacity duration-300">
                   <span className="bg-white text-black px-4 py-2 rounded-full font-bold text-xs flex items-center gap-2 shadow-lg transform scale-90 group-hover/mockup:scale-100 transition-transform">
-                     Visitar Web <ExternalLink className="w-3 h-3" />
+                     {t('visit_web')} <ExternalLink className="w-3 h-3" />
                   </span>
                </div>
             )}
@@ -165,7 +161,7 @@ function MockupWeb({ url, image, title }: { url?: string, image?: string | Stati
                 ) : (
                    <div className="flex flex-col items-center justify-center h-full gap-2 bg-white dark:bg-black/50">
                       <Globe className="w-8 h-8 text-blue-500/20" />
-                      <span className="text-xs text-muted-foreground font-bold">{title} Web</span>
+                      <span className="text-xs text-muted-foreground font-bold">{title}</span>
                    </div>
                 )}
             </div>
@@ -175,11 +171,13 @@ function MockupWeb({ url, image, title }: { url?: string, image?: string | Stati
 }
 
 function MockupApp({ image, title }: { image?: string | StaticImageData, title: string }) {
+   const t = useTranslations('Testimonials.mockups');
+
    return (
       <div className="w-full h-full bg-slate-800 dark:bg-black flex items-end justify-center p-4 pb-0 group/mockup relative">
          <div className="absolute inset-0 z-30 bg-black/60 backdrop-blur-[2px] flex items-center justify-center opacity-0 group-hover/mockup:opacity-100 transition-opacity duration-300 rounded-t-xl">
              <span className="bg-white text-black px-4 py-2 rounded-full font-bold text-xs flex items-center gap-2 shadow-lg">
-                Veure App <ExternalLink className="w-3 h-3" />
+                {t('view_app')} <ExternalLink className="w-3 h-3" />
              </span>
          </div>
          <div className="w-32 h-full bg-black border-2 border-slate-700 rounded-t-xl overflow-hidden relative">
@@ -188,8 +186,8 @@ function MockupApp({ image, title }: { image?: string | StaticImageData, title: 
             ) : (
                <div className="w-full h-full bg-slate-900 flex flex-col items-center justify-center">
                    <Smartphone className="w-6 h-6 text-primary" />
-                   <span className="text-[10px] text-slate-400 mt-2">{title} App</span>
-                </div>
+                   <span className="text-[10px] text-slate-400 mt-2">{title}</span>
+               </div>
             )}
          </div>
       </div>
@@ -197,15 +195,18 @@ function MockupApp({ image, title }: { image?: string | StaticImageData, title: 
 }
 
 function MockupAutomation() {
+   const t = useTranslations('Testimonials.mockups');
+
    return (
       <div className="w-full h-full bg-[#1a1d2d] relative overflow-hidden group/mockup">
          <div className="absolute inset-0 z-30 bg-black/60 backdrop-blur-[2px] flex items-center justify-center opacity-0 group-hover/mockup:opacity-100 transition-opacity duration-300">
              <span className="bg-white text-black px-4 py-2 rounded-full font-bold text-xs flex items-center gap-2 shadow-lg">
-                Veure Flux <Zap className="w-3 h-3" />
+                 {t('view_flow')} <Zap className="w-3 h-3" />
              </span>
          </div>
          <div className="absolute inset-0 bg-[radial-gradient(#ffffff10_1px,transparent_1px)] bg-size-[12px_12px]"></div>
          <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none">
+            {/* ... SVG Path Logic ... (mateix que tenies) */}
             <defs>
                <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
                   <stop offset="0%" stopColor="#a855f7" stopOpacity="0.5" />

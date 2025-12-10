@@ -111,7 +111,8 @@
     "languages": {
       "ca": "Català",
       "es": "Español",
-      "en": "English"
+      "en": "English",
+      "it": "Italia"
     }
   },
   "Services": {
@@ -485,6 +486,21 @@
       "bi": "Intel·ligència de Negoci",
       "kpis": "KPIs en Temps Real",
       "leads": "Captació de Leads"
+    }
+  },
+  "SolutionsSection": {
+    "title_prefix": "Més enllà d'una",
+    "title_highlight": "Simple Web",
+    "description": "Creem ecosistemes digitals que connecten programari, maquinari i intel·ligència artificial."
+  },
+  "Testimonials": {
+    "title_prefix": "No ens creguis a nosaltres. Mira el que hem",
+    "title_highlight": "Construït",
+    "project_label": "Projecte Realitzat",
+    "mockups": {
+      "visit_web": "Visitar Web",
+      "view_app": "Veure App",
+      "view_flow": "Veure Flux"
     }
   }
 }

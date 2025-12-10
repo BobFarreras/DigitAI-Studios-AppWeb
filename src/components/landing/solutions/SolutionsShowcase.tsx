@@ -1,3 +1,5 @@
+// FITXER: src/components/landing/solutions/SolutionsShowcase.tsx
+
 'use client';
 
 import { useState } from 'react';
@@ -10,6 +12,8 @@ import { useTranslations } from 'next-intl';
 export function SolutionsShowcase() {
   const [activeTab, setActiveTab] = useState(SOLUTIONS[0].id);
   const activeSolution = SOLUTIONS.find(s => s.id === activeTab)!;
+  
+  // Connectem amb el namespace 'SolutionsSection'
   const t = useTranslations('SolutionsSection');
 
   return (
@@ -18,15 +22,14 @@ export function SolutionsShowcase() {
       {/* Fons Ambient */}
       <div className={`absolute inset-0 opacity-10 bg-linear-to-br ${activeSolution.color} blur-[150px] transition-all duration-700`} />
 
-      {/* ✅ CORRECCIÓ: Padding responsiu (px-6 -> px-10 -> px-14) */}
       <div className="container mx-auto px-6 md:px-10 lg:px-14 relative z-10">
         
         <div className="text-center max-w-3xl mx-auto mb-8 md:mb-16">
           <h2 className="text-3xl md:text-5xl font-black text-foreground mb-4">
-            Més enllà d'una <span className="text-transparent bg-clip-text bg-linear-to-r from-primary to-purple-400">Simple Web</span>.
+            {t('title_prefix')} <span className="text-transparent bg-clip-text bg-linear-to-r from-primary to-purple-400">{t('title_highlight')}</span>.
           </h2>
           <p className="text-lg md:text-xl text-muted-foreground">
-            Creem ecosistemes digitals que connecten programari, maquinari i intel·ligència artificial.
+            {t('description')}
           </p>
         </div>
 

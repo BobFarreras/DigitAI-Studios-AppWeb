@@ -5,8 +5,8 @@
     "projects": "Proyectos",
     "blog": "Blog",
     "login": "Entrar",
-    "register": "Registrarse",
-    "dashboard": "Panel",
+    "register": "Regístrate",
+    "dashboard": "Dashboard",
     "logout": "Cerrar Sesión"
   },
   "Hero": {
@@ -14,19 +14,19 @@
     "title_highlight_1": "AppWeb",
     "title_middle": "Automatizamos el",
     "title_highlight_2": "día a día",
-    "subtitle": "Deja de perder tiempo con tareas manuales. Desarrollamos plataformas a medida y te enseñamos a usar la IA para escalar tu negocio.",
+    "subtitle": "Deja de perder tiempo en tareas manuales. Desarrollamos plataformas a medida y te enseñamos a utilizar la IA para escalar tu negocio.",
     "cta_primary": "Hablemos de tu Proyecto",
     "cta_secondary": "Auditoría Gratuita"
   },
   "TechStack": {
-    "subtitle": "Impulsado por el stack tecnológico del futuro"
+    "subtitle": "Potenciado por el stack tecnológico del futuro"
   },
   "AuditSection": {
     "title_prefix": "Tu web es un",
     "title_cost": "coste",
     "title_connector": "o una",
     "title_investment": "Inversión",
-    "description_stat": "El 40% de los usuarios abandona una web si tarda más de 3 segundos en cargar.",
+    "description_stat": "El 40% de los usuarios abandonan una web si tarda más de 3 segundos.",
     "description_cta": "Deja que nuestra IA analice tu sitio y te diga exactamente qué está fallando."
   },
   "AuditForm": {
@@ -41,29 +41,31 @@
     "success_message": "Revisa los datos del formulario."
   },
   "HomePage": {
-    "title": "Automatiza tu presencia digital",
+    "title": "Automatiza tu presencia web",
     "cta": "Auditoría Gratuita",
     "form_title": "Analiza tu web en segundos"
   },
   "Auth": {
     "login_title": "Bienvenido de nuevo",
-    "login_subtitle": "Accede a tu panel de control digital.",
+    "login_subtitle": "Entra a tu panel de control digital.",
     "social_github": "Continuar con GitHub",
     "or_email": "O con email",
     "label_email": "Email",
     "label_password": "Contraseña",
-    "forgot_password": "¿Olvidaste tu contraseña?",
+    "forgot_password": "¿Has olvidado la contraseña?",
     "cta_login": "Entrar",
-    "cta_loading": "Iniciando sesión...",
-    "no_account_prefix": "¿No tienes cuenta?",
+    "cta_loading": "Entrando...",
+    "no_account_prefix": "¿Todavía no tienes cuenta?",
     "register_link": "Regístrate gratis",
-    "social_maintenance_error": "🚧 El inicio de sesión social está en mantenimiento. Por favor, utiliza tu email y contraseña.",
+    "social_maintenance_error": "🚧 El login social está en mantenimiento. Usa tu email y contraseña.",
     "register_title": "Crea tu cuenta",
     "register_subtitle": "Para ver tu informe completo de auditoría",
     "already_have_account": "¿Ya tienes cuenta?",
-    "login_link": "Iniciar sesión",
+    "login_link": "Entrar",
     "social_google": "Continuar con Google",
-    "social_facebook": "Continuar con Facebook"
+    "social_google_register": "Regístrate con Google",
+    "social_facebook": "Continuar con Facebook",
+    "social_facebook_register": "Regístrate con Facebook"
   },
   "Dashboard": {
     "welcome": "Bienvenido, {name}",
@@ -71,8 +73,8 @@
   },
   "AuditIssues": {
     "is-on-https": {
-      "title": "El sitio web no utiliza HTTPS seguro",
-      "description": "Tu web no es segura. Esto ahuyenta a los clientes y Google te penaliza."
+      "title": "El sitio web no usa HTTPS seguro",
+      "description": "Tu web no es segura. Esto asusta a los clientes y Google te penaliza gravemente."
     },
     "meta-description": {
       "title": "Falta la Meta Descripción",
@@ -100,7 +102,7 @@
     },
     "cumulative-layout-shift": {
       "title": "Movimientos inesperados (CLS)",
-      "description": "La web \"se mueve\" mientras carga, causando clics erróneos."
+      "description": "La web ‘se mueve’ mientras carga, causando clics erróneos."
     }
   },
   "Common": {
@@ -109,13 +111,14 @@
     "languages": {
       "ca": "Catalán",
       "es": "Español",
-      "en": "English"
+      "en": "English",
+      "it": "Italiano"
     }
   },
   "Services": {
     "badge": "SOLUCIONES 360°",
     "title_prefix": "Todo para",
-    "title_highlight": "Dominar el Digital",
+    "title_highlight": "Dominar lo Digital",
     "subtitle": "Desarrollo, Producto y Automatización.",
     "cards": {
       "appwebs": {
@@ -139,11 +142,11 @@
   },
   "ProblemSolution": {
     "badge": "Más que una página web",
-    "title_prefix": "Tu web debe",
+    "title_prefix": "Tu web tiene que",
     "title_highlight": "Facturar",
-    "title_suffix": "no solo 'estar'.",
-    "description_problem": "La mayoría de negocios tienen una 'Tarjeta de Visita' digital: bonita, pero inútil. No permite reservar, no vende y no fideliza.",
-    "description_solution": "Nosotros transformamos tu web en una <strong>AppWeb (PWA)</strong>: una herramienta potente donde tus clientes pueden comprar, reservar hora e interactuar contigo desde el móvil, sin descargar nada.",
+    "title_suffix": "no solo ‘estar’.",
+    "description_problem": "La mayoría de negocios tienen una ‘Tarjeta de Visita’ digital: bonita, pero inútil. No permite reservar, no vende y no fideliza.",
+    "description_solution": "Nosotros transformamos tu web en una <strong>AppWeb (PWA)</strong>: una herramienta potente donde tus clientes pueden comprar, reservar hora e interactuar contigo desde su móvil, sin descargar nada.",
     "benefits": {
       "appointments": "Citas previas y reservas automáticas.",
       "ecommerce": "Tienda online y pagos integrados.",
@@ -151,7 +154,7 @@
     },
     "visual": {
       "problem_card": {
-        "title": "Web 'Aparador'",
+        "title": "Web ‘Escaparate’",
         "item1": "Reservas Online",
         "item2": "Panel de Ventas",
         "item3": "App Móvil"
@@ -171,7 +174,7 @@
   "ContactSection": {
     "title_prefix": "Empieza tu",
     "title_highlight": "transformación",
-    "description": "Toda gran empresa comienza con una decisión. Contáctanos y descubre cómo la automatización puede revolucionar tu negocio.",
+    "description": "Toda gran empresa empieza con una decisión. Contacta con nosotros y descubre cómo la automatización puede revolucionar tu negocio.",
     "features": {
       "agile": {
         "title": "Implementación Ágil",
@@ -206,7 +209,7 @@
     "badge": "INNOVATION LAB",
     "title_prefix": "No solo vendemos software.",
     "title_highlight": "Creamos Productos.",
-    "description": "Descubre <strong>SalutFlow</strong> y <strong>RibotFlow</strong>, nuestras plataformas SaaS propias.<br/><br/>Usamos la misma tecnología puntera para tus proyectos.",
+    "description": "Descubre <strong>SalutFlow</strong> y <strong>RibotFlow</strong>, nuestras plataformas SaaS propias.<br /><br />Utilizamos la misma tecnología punta para tus proyectos.",
     "cta": "Explorar Productos"
   },
   "Footer": {
@@ -254,7 +257,7 @@
   },
   "AuditList": {
     "title": "Mis Auditorías",
-    "subtitle": "Historial completo y análisis de rendimiento.",
+    "subtitle": "Histórico completo y análisis de rendimiento.",
     "new_audit_button": "Nueva Auditoría",
     "performance": "Rendimiento",
     "status": {
@@ -287,7 +290,7 @@
     "badge": "DigitAI Innovation Lab",
     "title_prefix": "No solo vendemos código.",
     "title_highlight": "Construimos Empresas.",
-    "description": "Estos son nuestros productos propios. Utilizamos la misma tecnología y metodología para tus proyectos que la que usamos para escalar los nuestros."
+    "description": "Estos son nuestros productos propios. Utilizamos la misma tecnología y metodología para tus proyectos que la que usamos para escalar nuestros negocios."
   },
   "ProjectsCTA": {
     "title_prefix": "¿Tienes una idea para el próximo",
@@ -320,7 +323,7 @@
   "BlogIndex": {
     "title": "Blog & Recursos",
     "subtitle": "Aprende a optimizar tu presencia digital con nuestras guías.",
-    "no_posts": "Todavía no hay artículos publicados.",
+    "no_posts": "Aún no hay artículos publicados.",
     "read_more": "Leer más",
     "published_recently": "Recientemente",
     "fallback_image": "Sin Imagen"
@@ -361,7 +364,7 @@
   "Legal": {
     "last_update_prefix": "Última actualización:",
     "common": {
-      "transparency_desc": "La transparencia es nuestra prioridad. Aquí tienes toda la información legal sobre quiénes somos y las normas de este sitio web."
+      "transparency_desc": "La transparencia es nuestra prioridad. Aquí tienes toda la información legal sobre quiénes somos y las reglas de este sitio web."
     },
     "avis_legal": {
       "title": "Aviso Legal",
@@ -379,11 +382,11 @@
       "section3_quote": "Todos los contenidos (marcas, logotipos, textos, fotografías, iconos, imágenes, etc.), así como el diseño gráfico, código fuente y software, son propiedad exclusiva de <strong>DigitAI Studios</strong> o de terceros que han autorizado su uso, estando protegidos por la legislación nacional e internacional.",
       "section4_title": "Exención de Responsabilidad",
       "section4_p1": "DigitAI Studios no se hace responsable de:",
-      "section4_list_1": "Las posibles fallas de seguridad que puedan producirse ni de los posibles daños al sistema informático del usuario (virus, malware, etc.).",
-      "section4_list_2": "La información y contenidos almacenados en foros, redes sociales o cualquier otro medio que permita a terceros publicar contenidos de forma independiente.",
+      "section4_list_1": "Posibles fallos de seguridad ni de los daños al sistema informático del usuario (virus, malware, etc.).",
+      "section4_list_2": "La información y contenidos almacenados en foros, redes sociales u otros medios que permitan a terceros publicar contenido de forma independiente.",
       "section4_list_3": "La precisión exacta de las auditorías automáticas, que son orientativas y basadas en la API de Google Lighthouse.",
       "section5_title": "Ley Aplicable y Jurisdicción",
-      "section5_p1": "Para la resolución de todas las controversias relacionadas con este sitio web, será de aplicación la legislación española, a la cual se someten expresamente las partes, siendo competentes los Juzgados y Tribunales de la ciudad de Girona.",
+      "section5_p1": "Para la resolución de todas las controversias relacionadas con este sitio web, será de aplicación la legislación española, a la que se someten expresamente las partes, siendo competentes los Juzgados y Tribunales de Girona.",
       "last_update_prefix": "Última actualización:"
     },
     "privacitat": {
@@ -396,15 +399,15 @@
       "data_audit_title": "Auditoría Web",
       "data_audit_desc": "La URL de la web que quieres analizar y tu correo electrónico para enviarte el informe.",
       "data_account_title": "Cuenta de Usuario",
-      "data_account_desc": "Tu nombre, correo electrónico y contraseña encriptada cuando te registras en el Panel.",
+      "data_account_desc": "Tu nombre, correo electrónico y contraseña encriptada cuando te registras en el Dashboard.",
       "section3_title": "3. ¿Con quién compartimos los datos?",
       "section3_desc": "No vendemos tus datos a nadie. Solo los compartimos con proveedores tecnológicos necesarios para el funcionamiento del servicio:",
-      "provider_supabase": "Supabase: Base de datos y autenticación (Alojado en UE/AWS).",
+      "provider_supabase": "Supabase: Base de datos y autenticación (Alojado en la UE/AWS).",
       "provider_resend": "Resend: Envío de emails transaccionales.",
-      "provider_google": "Google Cloud: API para procesar auditorías web.",
+      "provider_google": "Google Cloud: API para procesar las auditorías web.",
       "section4_title": "4. Tus derechos",
-      "section4_p1": "Tienes control total sobre tus datos. En cualquier momento puedes:",
-      "rights_list_1": "Acceder, rectificar o eliminar tus datos.",
+      "section4_p1": "Tienes el control total sobre tus datos. En cualquier momento puedes:",
+      "rights_list_1": "Acceder, rectificar o suprimir tus datos.",
       "rights_list_2": "Limitar su tratamiento.",
       "rights_list_3": "Oponerte a recibir comunicaciones.",
       "rights_list_4": "Solicitar la portabilidad de los datos.",
@@ -412,9 +415,9 @@
     },
     "cookies": {
       "title": "Política de Cookies",
-      "subtitle": "Utilizamos cookies para asegurar que la web funcione correctamente y para entender cómo podemos mejorarla. Aquí tienes todos los detalles.",
+      "subtitle": "Utilizamos cookies para asegurar que la web funcione correctamente y para entender cómo mejorarla. Aquí tienes todos los detalles.",
       "section1_title": "1. ¿Qué son las Cookies?",
-      "section1_quote": "Una cookie es un pequeño archivo de texto que se almacena en tu navegador cuando visitas casi cualquier página web. Su utilidad es que la web sea capaz de recordar tu visita cuando regreses a navegar por ella, o mantener tu sesión abierta.",
+      "section1_quote": "Una cookie es un pequeño archivo de texto que se almacena en tu navegador cuando visitas casi cualquier página web. Su utilidad es permitir que la web recuerde tu visita, mantenga tu sesión abierta o registre tus preferencias.",
       "section2_title": "2. ¿Qué cookies utilizamos?",
       "section2_p1": "Esta web utiliza los siguientes tipos de cookies:",
       "tech_title": "Necesarias (Técnicas)",
@@ -422,7 +425,7 @@
       "tech_1": "Supabase Auth: Gestiona la sesión segura.",
       "tech_2": "Next-Intl: Recuerda el idioma preferido.",
       "analytics_title": "Analíticas",
-      "analytics_desc": "Nos permiten cuantificar el número de usuarios y analizar la utilización que hacen del servicio para mejorarlo.",
+      "analytics_desc": "Nos permiten cuantificar el número de usuarios y analizar su uso del servicio para mejorarlo.",
       "analytics_1": "Analytics Propio: Estadísticas anónimas respetuosas con la privacidad (sin rastreo invasivo de Google).",
       "section3_title": "3. ¿Cómo desactivarlas?",
       "section3_p1": "Puedes permitir, bloquear o eliminar las cookies instaladas en tu equipo mediante la configuración del navegador:"
@@ -439,7 +442,7 @@
   "Solutions": {
     "iot": {
       "title": "IoT y Espacios Inteligentes",
-      "description": "Fusiona el mundo físico con el digital. Controla accesos, iluminación y sensores en tiempo real, todo desde la palma de tu mano.",
+      "description": "Fusiona el mundo físico con el digital. Controla accesos, iluminación y sensores en tiempo real, todo desde la palma de la mano.",
       "scanning_text": "VERIFICANDO ACCESO...",
       "access_granted": "PUERTA ABIERTA"
     },
@@ -447,11 +450,11 @@
       "title": "Finanzas en Piloto Automático",
       "description": "Elimina el error humano. Automatizamos la facturación, la conciliación bancaria y los cobros recurrentes para que el dinero fluya solo.",
       "total_balance": "Saldo Actual",
-      "card_holder": "Titular de la Cuenta"
+      "card_holder": "Titular Cuenta"
     },
     "growth": {
       "title": "Business Intelligence & Growth",
-      "description": "Deja de adivinar y empieza a saber. Cuadros de mando (Dashboards) que transforman datos en bruto en decisiones rentables.",
+      "description": "Deja de adivinar y empieza a saber. Dashboards que transforman datos brutos en decisiones rentables.",
       "active_users": "USUARIOS AHORA",
       "conversion_rate": "CONVERSIÓN",
       "monthly_revenue": "MRR (Ingresos)",
@@ -462,7 +465,7 @@
       "description": "Tu recepción virtual que nunca duerme. Sistema de citas, recordatorios por WhatsApp y CRM que fideliza a tus clientes automáticamente.",
       "chat_user_1": "Hola, quiero reservar pista.",
       "chat_bot_1": "Tengo libre el viernes a las 18h 🎾",
-      "chat_user_2": "Perfecto, ¡reservado!",
+      "chat_user_2": "Perfecto, adjudicado!",
       "booking_confirmed": "Reserva Confirmada",
       "new_booking": "NUEVA CITA"
     },
@@ -483,6 +486,21 @@
       "bi": "Inteligencia de Negocio",
       "kpis": "KPIs en Tiempo Real",
       "leads": "Captación de Leads"
+    }
+  },
+  "SolutionsSection": {
+    "title_prefix": "Más allá de una",
+    "title_highlight": "Simple Web",
+    "description": "Creamos ecosistemas digitales que conectan software, hardware e inteligencia artificial."
+  },
+  "Testimonials": {
+    "title_prefix": "No nos creas a nosotros. Mira lo que hemos",
+    "title_highlight": "Construido",
+    "project_label": "Proyecto Realizado",
+    "mockups": {
+      "visit_web": "Visitar Web",
+      "view_app": "Ver App",
+      "view_flow": "Ver Flujo"
     }
   }
 }

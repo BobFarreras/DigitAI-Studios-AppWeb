@@ -1,5 +1,5 @@
 
-\restrict f8UWQpIXNBIzwp97kTSJ548MbEfD8SCwQCpnOuXOesgLuKvX5vrOtG22cgLklPD
+\restrict UdKNe6FhyjuP1hM61qycnyGbYUpgg0dYyggULhCgSWACBJzNImFT7itINLd1BLN
 
 
 SET statement_timeout = 0;
@@ -114,49 +114,74 @@ ALTER FUNCTION "public"."get_my_org_ids"() OWNER TO "postgres";
 
 CREATE OR REPLACE FUNCTION "public"."handle_new_user"() RETURNS "trigger"
     LANGUAGE "plpgsql" SECURITY DEFINER
-    AS $_$
-declare
-  assigned_role text;
-  assigned_org uuid;
-  org_id_text text;
-begin
-  -- 1. Determinar Rol (Admin si és el dev, client si no)
-  if new.email = 'digitaistudios.developer@gmail.com' then
+    SET "search_path" TO 'public'
+    AS $$
+DECLARE
+  assigned_role public.user_role;
+  target_org_id uuid;
+  metadata jsonb;
+BEGIN
+  -- Recuperem les metadades que envia el teu RegisterForm.tsx
+  metadata := coalesce(new.raw_user_meta_data, '{}'::jsonb);
+
+  -- ----------------------------------------------------------
+  -- A. LÒGICA D'ORGANITZACIÓ (Clau pel futur multi-web)
+  -- ----------------------------------------------------------
+  -- 1. Primer mirem si la web ens ha enviat un ID (això ho fa el .env.local)
+  -- 2. Si no (ex: login Google sense params), usem el teu ID per defecte
+  target_org_id := coalesce(
+    (metadata->>'org_id')::uuid, 
+    '2f1e89dd-0b95-4f7b-ab31-14a9916d374f'::uuid -- ⚠️ EL TEU ID PER DEFECTE
+  );
+
+  -- Si encara és null (cas impossible amb el fallback, però per seguretat),
+  -- podríem llançar un error o deixar-ho passar si la columna ho permet.
+  
+  -- ----------------------------------------------------------
+  -- B. LÒGICA DE ROLS
+  -- ----------------------------------------------------------
+  IF new.email = 'digitaistudios.developer@gmail.com' THEN
     assigned_role := 'admin';
-  else
-    assigned_role := 'client';
-  end if;
+  ELSE
+    -- Si ve el rol a les metadades l'usem, si no 'client'
+    assigned_role := coalesce((metadata->>'role')::public.user_role, 'client');
+  END IF;
 
-  -- 2. Extreure Org ID de les metadades
-  -- Nota: Supabase passa les dades a 'raw_user_meta_data'
-  org_id_text := new.raw_user_meta_data->>'org_id';
-
-  -- Validació bàsica d'UUID
-  if org_id_text ~ '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$' then
-     assigned_org := org_id_text::uuid;
-  else
-     assigned_org := NULL;
-  end if;
-
-  -- 3. Inserir a Profiles (BLOC CRÍTIC)
-  insert into public.profiles (id, email, full_name, role, organization_id)
-  values (
-    new.id, 
-    new.email, 
-    new.raw_user_meta_data->>'full_name',
-    assigned_role,
-    assigned_org
+  -- ----------------------------------------------------------
+  -- C. INSERCIÓ AL PERFIL PÚBLIC
+  -- ----------------------------------------------------------
+  INSERT INTO public.profiles (
+    id,
+    email,
+    full_name,
+    avatar_url,
+    role,
+    organization_id,
+    created_at,
+    updated_at
   )
-  -- Si ja existeix (conflicte), no fem res per no petar el registre
+  VALUES (
+    new.id,
+    new.email,
+    -- Agafem el nom del formulari o usem l'email com a fallback
+    coalesce(metadata->>'full_name', new.email),
+    metadata->>'avatar_url',
+    assigned_role,
+    target_org_id, -- Aquí va l'ID calculat al pas A
+    now(),
+    now()
+  )
+  -- Si hi ha conflicte (l'usuari ja existeix), no fem res per no trencar el flux
   ON CONFLICT (id, organization_id) DO NOTHING;
 
-  return new;
-exception when others then
-  -- Si falla alguna cosa, loguegem però NO bloquegem la creació de l'usuari a Auth
-  raise warning 'Error al trigger handle_new_user: %', SQLERRM;
-  return new;
-end;
-$_$;
+  RETURN new;
+EXCEPTION
+  WHEN OTHERS THEN
+    -- Loguegem l'error a Supabase però deixem que l'usuari es creï a Auth
+    RAISE WARNING 'Error al trigger handle_new_user: %', SQLERRM;
+    RETURN new;
+END;
+$$;
 
 
 ALTER FUNCTION "public"."handle_new_user"() OWNER TO "postgres";
@@ -908,7 +933,9 @@ CREATE POLICY "Admins can view all organizations" ON "public"."organizations" US
 
 
 
-CREATE POLICY "Admins can view all profiles" ON "public"."profiles" FOR SELECT USING (("public"."is_admin"() = true));
+CREATE POLICY "Admins can view all profiles" ON "public"."profiles" FOR SELECT USING ((EXISTS ( SELECT 1
+   FROM "public"."profiles" "profiles_1"
+  WHERE (("profiles_1"."id" = "auth"."uid"()) AND ("profiles_1"."role" = 'admin'::"public"."user_role")))));
 
 
 
@@ -1346,6 +1373,6 @@ ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public" GRANT ALL ON TAB
 
 
 
-\unrestrict f8UWQpIXNBIzwp97kTSJ548MbEfD8SCwQCpnOuXOesgLuKvX5vrOtG22cgLklPD
+\unrestrict UdKNe6FhyjuP1hM61qycnyGbYUpgg0dYyggULhCgSWACBJzNImFT7itINLd1BLN
 
 RESET ALL;

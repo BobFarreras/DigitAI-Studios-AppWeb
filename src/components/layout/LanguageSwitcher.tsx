@@ -40,7 +40,7 @@ export function LanguageSwitcher() {
   const router = useRouter();
   const pathname = usePathname();
 
-  const handleLanguageChange = (nextLocale: 'ca' | 'es' | 'en') => {
+  const handleLanguageChange = (nextLocale: 'ca' | 'es' | 'en' | 'it') => {
     startTransition(() => {
       router.replace(pathname, { locale: nextLocale });
     });
@@ -83,6 +83,16 @@ export function LanguageSwitcher() {
         >
           <span className="text-lg leading-none">🇺🇸</span> 
           {t('en')}
+        </DropdownMenuItem>
+
+        
+        {/* ANGLÈS */}
+        <DropdownMenuItem 
+          onClick={() => handleLanguageChange('it')}
+          className={`gap-2 ${locale === 'it' ? 'bg-primary/10 font-bold' : ''}`}
+        >
+          <span className="text-lg leading-none">it</span> 
+          {t('it')}
         </DropdownMenuItem>
 
       </DropdownMenuContent>
