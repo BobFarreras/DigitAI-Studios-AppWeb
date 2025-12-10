@@ -3,9 +3,8 @@
 import { Link } from '@/routing';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { FlaskConical, Users, ListChecks, ArrowRight, Plus } from 'lucide-react';
+import { FlaskConical, Users, ListChecks, ArrowRight, Plus, Folder } from 'lucide-react';
 
-// ✅ 1. CORRECCIÓ: Acceptem 'null' perquè Supabase pot retornar nulls
 type CampaignSummary = {
     id: string;
     title: string;
@@ -19,52 +18,72 @@ export function ProjectCampaignsList({ campaigns, projectId }: { campaigns: Camp
     
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center">
-                <h3 className="text-lg font-bold text-slate-200 flex items-center gap-2">
-                    <FlaskConical className="w-5 h-5 text-purple-500" />
-                    Campanyes de Test ({campaigns.length})
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <h3 className="text-xl font-bold text-foreground flex items-center gap-2">
+                    <div className="p-2 bg-purple-100 dark:bg-purple-900/20 rounded-lg text-purple-600 dark:text-purple-400">
+                        <FlaskConical className="w-5 h-5" />
+                    </div>
+                    Campanyes de Test
+                    <span className="ml-2 text-sm font-medium text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
+                        {campaigns.length}
+                    </span>
                 </h3>
                 <Link href={`/admin/tests/new?projectId=${projectId}`}>
-                    <Button size="sm" className="bg-purple-600 hover:bg-purple-700 text-white">
+                    <Button size="sm" className="bg-purple-600 hover:bg-purple-700 text-white shadow-lg shadow-purple-500/20">
                         <Plus className="w-4 h-4 mr-2" /> Nova Campanya
                     </Button>
                 </Link>
             </div>
 
             {campaigns.length === 0 ? (
-                <div className="border-2 border-dashed border-slate-800 rounded-xl p-10 text-center">
-                    <p className="text-slate-500 mb-4">Aquest projecte no té cap prova activa.</p>
+                <div className="border-2 border-dashed border-border bg-muted/10 rounded-2xl p-12 text-center flex flex-col items-center">
+                    <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center mb-4">
+                        <Folder className="w-6 h-6 text-muted-foreground" />
+                    </div>
+                    <h4 className="text-foreground font-semibold mb-1">Sense proves actives</h4>
+                    <p className="text-muted-foreground text-sm mb-6 max-w-sm">
+                        Aquest projecte encara no té cap campanya de QA configurada. Comença creant-ne una.
+                    </p>
                     <Link href={`/admin/tests/new?projectId=${projectId}`}>
-                        <Button variant="outline">Crear primera prova</Button>
+                        <Button variant="outline" className="border-purple-200 text-purple-700 hover:bg-purple-50 dark:border-purple-800 dark:text-purple-300 dark:hover:bg-purple-900/20">
+                            Crear primera prova
+                        </Button>
                     </Link>
                 </div>
             ) : (
                 <div className="grid gap-4 md:grid-cols-2">
                     {campaigns.map((camp) => (
-                        <Link key={camp.id} href={`/admin/tests/${camp.id}?source=project`} className="block group">
-                            <Card className="bg-slate-900 border-slate-800 group-hover:border-purple-500/50 transition-all h-full">
-                                <CardHeader className="pb-2">
-                                    <div className="flex justify-between items-start">
-                                        <CardTitle className="text-base text-white truncate pr-2">
+                        <Link key={camp.id} href={`/admin/tests/${camp.id}?source=project`} className="block group h-full">
+                            <Card className="bg-card border-border hover:border-purple-500/50 dark:hover:border-purple-500/50 hover:shadow-md transition-all duration-300 h-full overflow-hidden relative">
+                                {/* Decoració Hover */}
+                                <div className="absolute inset-0 bg-linear-to-r from-purple-500/0 via-purple-500/0 to-purple-500/0 group-hover:via-purple-500/5 transition-colors duration-500 pointer-events-none" />
+                                
+                                <CardHeader className="pb-3 border-b border-border/50 bg-muted/20">
+                                    <div className="flex justify-between items-start gap-4">
+                                        <CardTitle className="text-base font-bold text-foreground truncate leading-tight">
                                             {camp.title}
                                         </CardTitle>
-                                        {/* Passem l'estat, assegurant-nos que sigui un string o undefined */}
                                         <StatusBadge status={camp.status || 'unknown'} />
                                     </div>
                                 </CardHeader>
-                                <CardContent>
-                                    <div className="flex items-center gap-6 text-sm text-slate-400 mt-2">
-                                        <div className="flex items-center gap-1.5">
-                                            <Users className="w-4 h-4 text-blue-400" />
-                                            <span className="font-mono font-bold text-slate-200">{camp.testerCount}</span> testers
+                                <CardContent className="pt-4">
+                                    <div className="flex items-center gap-6 text-sm">
+                                        <div className="flex items-center gap-2 text-muted-foreground group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                                            <Users className="w-4 h-4" />
+                                            <span className="font-mono font-bold text-foreground">{camp.testerCount}</span> 
+                                            <span className="text-xs">testers</span>
                                         </div>
-                                        <div className="flex items-center gap-1.5">
-                                            <ListChecks className="w-4 h-4 text-green-400" />
-                                            <span className="font-mono font-bold text-slate-200">{camp.taskCount}</span> tasques
+                                        <div className="flex items-center gap-2 text-muted-foreground group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors">
+                                            <ListChecks className="w-4 h-4" />
+                                            <span className="font-mono font-bold text-foreground">{camp.taskCount}</span> 
+                                            <span className="text-xs">tasques</span>
                                         </div>
                                     </div>
-                                    <div className="mt-4 flex items-center text-xs text-purple-400 font-bold opacity-0 group-hover:opacity-100 transition-opacity">
-                                        Gestionar Equip i Tasques <ArrowRight className="w-3 h-3 ml-1" />
+                                    
+                                    <div className="mt-5 flex items-center justify-end">
+                                        <span className="text-xs font-bold text-purple-600 dark:text-purple-400 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all transform -translate-x-2.5 group-hover:translate-x-0">
+                                            Gestionar <ArrowRight className="w-3 h-3" />
+                                        </span>
                                     </div>
                                 </CardContent>
                             </Card>
@@ -76,22 +95,19 @@ export function ProjectCampaignsList({ campaigns, projectId }: { campaigns: Camp
     );
 }
 
-// ✅ 2. CORRECCIÓ: Tipatge robust per a l'índex de l'objecte
+// 🎨 StatusBadge amb colors Adaptatius (Light/Dark)
 function StatusBadge({ status }: { status: string }) {
-    // Definim explícitament que és un Record de string -> string
-    // Així TS permet indexar amb qualsevol string
     const styles: Record<string, string> = {
-        active: 'bg-green-500/10 text-green-400 border-green-500/20',
-        draft: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20',
-        completed: 'bg-slate-500/10 text-slate-400 border-slate-500/20',
-        unknown: 'bg-slate-500/10 text-slate-500 border-slate-500/20' // Fallback visual
+        active: 'bg-green-100 text-green-700 border-green-200 dark:bg-green-500/10 dark:text-green-400 dark:border-green-500/20',
+        draft: 'bg-yellow-100 text-yellow-700 border-yellow-200 dark:bg-yellow-500/10 dark:text-yellow-400 dark:border-yellow-500/20',
+        completed: 'bg-slate-100 text-slate-600 border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700',
+        unknown: 'bg-slate-100 text-slate-500 border-slate-200 dark:bg-slate-800 dark:text-slate-500 dark:border-slate-700'
     };
   
-    // Si l'status no existeix al mapa, fem servir 'completed' o 'unknown' per defecte
-    const style = styles[status] || styles.completed;
+    const style = styles[status] || styles.unknown;
 
     return (
-        <span className={`px-2 py-0.5 rounded text-[10px] uppercase font-bold border ${style}`}>
+        <span className={`px-2.5 py-0.5 rounded-full text-[10px] uppercase font-bold tracking-wider border ${style}`}>
             {status}
         </span>
     )

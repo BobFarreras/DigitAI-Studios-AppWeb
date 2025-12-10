@@ -175,7 +175,7 @@ export function ContactSection() {
                 {/* Tooltip flotant si intenten passar per sobre sense acceptar */}
                 {!termsAccepted && (
                     <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-foreground text-background text-xs px-3 py-1.5 rounded-md shadow-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap font-medium z-20">
-                        {t('tooltip_privacy')}
+                        {t('tooltip_privacy',)}
                         <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-foreground rotate-45"></div>
                     </div>
                 )}

@@ -6,11 +6,9 @@ import { TesterManager } from '@/features/tests/ui/TesterManager';
 import { VisualFlowBuilder } from '@/features/tests/ui/VisualFlowBuilder';
 import { CampaignDetailsForm } from '@/features/tests/ui/CampaignDetailsForm';
 import { createClient } from '@/lib/supabase/server';
-// 👇 1. Importem el nou component
 import { BackButton } from '@/components/ui/back-button';
 import { DeleteCampaignButton } from '@/features/tests/ui/DeleteCampaignButton';
 import { CampaignAnalytics } from '@/features/tests/ui/CampaignAnalytics';
-
 
 export default async function AdminTestDetailPage({ params }: { params: Promise<{ id: string }> }) {
   await requireAdmin();
@@ -18,11 +16,9 @@ export default async function AdminTestDetailPage({ params }: { params: Promise<
   const repo = new SupabaseTestRepository();
   const supabase = await createClient();
 
-  // 1. Context de la Campanya
   const ctx = await repo.getCampaignWithContext(id, 'admin');
-  if (!ctx.campaign) return <div>Campanya no trobada</div>;
+  if (!ctx.campaign) return <div className="p-8 text-center text-muted-foreground">Campanya no trobada</div>;
 
-  // 2. Busquem el Projecte
   const { data: project } = await supabase
     .from('projects')
     .select('organization_id')
@@ -31,65 +27,72 @@ export default async function AdminTestDetailPage({ params }: { params: Promise<
 
   if (!project || !project.organization_id) return <div>Error d'integritat: Projecte sense organització</div>;
 
-  // 3. Carreguem les llistes
   const [assigned, available] = await Promise.all([
     repo.getAssignedTesters(id),
     repo.getProjectMembersForTest(id, ctx.campaign.projectId, project.organization_id)
   ]);
   const analyticsData = await repo.getCampaignResults(id);
-  return (
-    <div className="p-6 max-w-6xl mx-auto space-y-6">
 
-      {/* Header Simple amb Botó Enrere Intel·ligent */}
-      <div className="flex flex-col gap-4">
-        {/* 👇 2. Col·loquem el botó a dalt de tot. Passem el projectId per si cal. */}
-        <div>
+  return (
+    <div className="p-6 max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500">
+
+      {/* --- HEADER --- */}
+      <div className="flex flex-col gap-6">
+        <div className="flex justify-between items-start">
           <BackButton projectId={ctx.campaign.projectId} />
-          {/* 👇 BOTÓ D'ELIMINAR A LA DRETA */}
           <DeleteCampaignButton
             campaignId={ctx.campaign.id}
             projectId={ctx.campaign.projectId}
           />
         </div>
 
-        <div className="flex justify-between items-center">
+        <div className="flex flex-col md:flex-row justify-between items-end gap-4 border-b border-border pb-6">
           <div>
-            <h1 className="text-3xl font-bold text-white flex items-center gap-3">
-              {ctx.campaign.title}
-            </h1>
-            <p className="text-slate-400 mt-1">Gestió integral de la prova</p>
+            <div className="flex items-center gap-3 mb-2">
+               <h1 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">
+                 {ctx.campaign.title}
+               </h1>
+               <span className="px-2 py-0.5 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-300 text-xs font-mono font-bold border border-purple-200 dark:border-purple-800">
+                 {ctx.campaign.status}
+               </span>
+            </div>
+            <p className="text-muted-foreground text-lg">Gestió integral i resultats de la prova</p>
           </div>
-          <div className="bg-purple-900/50 text-purple-300 px-3 py-1 rounded text-xs font-mono border border-purple-500/30">
-            ID: {ctx.campaign.id.slice(0, 8)}
+          
+          <div className="flex items-center gap-2 text-xs font-mono text-muted-foreground bg-muted/50 px-3 py-1.5 rounded-md border border-border">
+            <span>ID:</span>
+            <span className="font-bold text-foreground">{ctx.campaign.id.split('-')[0]}...</span>
           </div>
         </div>
       </div>
 
-      <Tabs defaultValue="results" className="w-full"> {/* Pots canviar el default a 'results' si vols veure això primer */}
-        <TabsList className="grid w-full grid-cols-4 bg-slate-900 border border-slate-800">
-          <TabsTrigger value="results">📊 Resultats</TabsTrigger> {/* Nova pestanya */}
-          <TabsTrigger value="details">📝 Detalls</TabsTrigger>
-          <TabsTrigger value="tasks">✅ Checklist</TabsTrigger>
-          <TabsTrigger value="team">👥 Equip</TabsTrigger>
+      {/* --- TABS --- */}
+      <Tabs defaultValue="results" className="w-full space-y-6">
+        <TabsList className="grid w-full grid-cols-4 bg-muted/50 p-1 rounded-xl border border-border">
+          <TabsTrigger value="results" className="rounded-lg data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm transition-all">📊 Resultats</TabsTrigger>
+          <TabsTrigger value="details" className="rounded-lg data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm transition-all">📝 Detalls</TabsTrigger>
+          <TabsTrigger value="tasks" className="rounded-lg data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm transition-all">✅ Checklist</TabsTrigger>
+          <TabsTrigger value="team" className="rounded-lg data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm transition-all">👥 Equip</TabsTrigger>
         </TabsList>
 
-        {/* 0. RESULTATS (NOU) */}
-        <TabsContent value="results" className="mt-6">
+        <TabsContent value="results" className="focus-visible:outline-none">
           <CampaignAnalytics data={analyticsData} />
         </TabsContent>
 
-        <TabsContent value="details" className="mt-6">
+        <TabsContent value="details" className="focus-visible:outline-none">
           <CampaignDetailsForm campaign={ctx.campaign} />
         </TabsContent>
 
-        <TabsContent value="tasks" className="mt-6">
+        <TabsContent value="tasks" className="focus-visible:outline-none">
           <VisualFlowBuilder campaignId={id} tasks={ctx.tasks} />
         </TabsContent>
 
-        <TabsContent value="team" className="mt-6">
-          <Card className="bg-slate-900 border-slate-800">
-            <CardHeader><CardTitle className="text-white">Assignar Usuaris</CardTitle></CardHeader>
-            <CardContent>
+        <TabsContent value="team" className="focus-visible:outline-none">
+          <Card className="bg-card border-border shadow-sm">
+            <CardHeader className="border-b border-border bg-muted/30">
+                <CardTitle className="text-foreground">Assignar Usuaris</CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
               <TesterManager
                 campaignId={id}
                 assignedTesters={assigned}

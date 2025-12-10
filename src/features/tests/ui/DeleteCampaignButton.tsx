@@ -22,8 +22,6 @@ export function DeleteCampaignButton({ campaignId, projectId }: Props) {
     setIsDeleting(true);
     try {
       await deleteCampaignAction(campaignId, projectId);
-      // Nota: Si l'acció fa redirect, el codi d'aquí sota potser no s'arriba a executar, 
-      // però el toast ajuda si hi ha retard.
       toast.success("Campanya eliminada");
     } catch (error) {
       console.error(error);
@@ -38,7 +36,7 @@ export function DeleteCampaignButton({ campaignId, projectId }: Props) {
       size="sm" 
       onClick={handleDelete} 
       disabled={isDeleting}
-      className="bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white border border-red-500/50 transition-colors"
+      className="bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 dark:bg-red-900/10 dark:text-red-400 dark:border-red-900/50 dark:hover:bg-red-900/30 transition-colors"
     >
       {isDeleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4 mr-2" />}
       Eliminar Test
