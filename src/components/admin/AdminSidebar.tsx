@@ -11,7 +11,8 @@ import {
   BookOpenCheck, 
   FlaskConical, 
   Home,
-  Briefcase
+  Briefcase,
+  Settings
 } from 'lucide-react';
 
 export function AdminSidebar() {
@@ -23,6 +24,7 @@ export function AdminSidebar() {
     { label: 'Projectes', href: '/admin/projects', icon: Briefcase },
     { label: 'QA / Tests', href: '/admin/tests', icon: FlaskConical },
     { label: 'Blog', href: '/admin/blog', icon: BookOpenCheck },
+    { label: 'Configuració', href: '/admin/settings', icon: Settings   }
   ];
 
   return (

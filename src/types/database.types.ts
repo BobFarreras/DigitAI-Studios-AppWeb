@@ -799,6 +799,122 @@ export type Database = {
           },
         ]
       }
+      social_connections: {
+        Row: {
+          access_token: string
+          created_at: string
+          expires_at: number | null
+          id: string
+          organization_id: string | null
+          provider: string
+          provider_account_id: string | null
+          provider_avatar_url: string | null
+          provider_page_id: string | null
+          provider_page_name: string | null
+          refresh_token: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          access_token: string
+          created_at?: string
+          expires_at?: number | null
+          id?: string
+          organization_id?: string | null
+          provider: string
+          provider_account_id?: string | null
+          provider_avatar_url?: string | null
+          provider_page_id?: string | null
+          provider_page_name?: string | null
+          refresh_token?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          access_token?: string
+          created_at?: string
+          expires_at?: number | null
+          id?: string
+          organization_id?: string | null
+          provider?: string
+          provider_account_id?: string | null
+          provider_avatar_url?: string | null
+          provider_page_id?: string | null
+          provider_page_name?: string | null
+          refresh_token?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "social_connections_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "social_connections_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users_summary"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      social_posts: {
+        Row: {
+          content: string
+          created_at: string
+          error_message: string | null
+          external_id: string | null
+          id: string
+          media_url: string | null
+          platform: Database["public"]["Enums"]["social_platform"]
+          post_id: string
+          published_at: string | null
+          scheduled_at: string | null
+          status: Database["public"]["Enums"]["social_status"]
+          updated_at: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          error_message?: string | null
+          external_id?: string | null
+          id?: string
+          media_url?: string | null
+          platform: Database["public"]["Enums"]["social_platform"]
+          post_id: string
+          published_at?: string | null
+          scheduled_at?: string | null
+          status?: Database["public"]["Enums"]["social_status"]
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          error_message?: string | null
+          external_id?: string | null
+          id?: string
+          media_url?: string | null
+          platform?: Database["public"]["Enums"]["social_platform"]
+          post_id?: string
+          published_at?: string | null
+          scheduled_at?: string | null
+          status?: Database["public"]["Enums"]["social_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "social_posts_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       test_assignments: {
         Row: {
           assigned_at: string | null
@@ -1095,6 +1211,8 @@ export type Database = {
       content_status: "queued" | "generating" | "review" | "published"
       post_status: "draft" | "published" | "archived"
       project_status: "pending" | "active" | "maintenance" | "archived"
+      social_platform: "linkedin" | "facebook" | "instagram"
+      social_status: "draft" | "approved" | "scheduled" | "published" | "failed"
       user_role: "admin" | "client" | "lead" | "staff"
     }
     CompositeTypes: {
@@ -1230,6 +1348,8 @@ export const Constants = {
       content_status: ["queued", "generating", "review", "published"],
       post_status: ["draft", "published", "archived"],
       project_status: ["pending", "active", "maintenance", "archived"],
+      social_platform: ["linkedin", "facebook", "instagram"],
+      social_status: ["draft", "approved", "scheduled", "published", "failed"],
       user_role: ["admin", "client", "lead", "staff"],
     },
   },

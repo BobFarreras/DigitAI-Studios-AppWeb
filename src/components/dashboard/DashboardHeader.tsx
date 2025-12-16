@@ -37,7 +37,7 @@ export function DashboardHeader({ userEmail }: { userEmail?: string }) {
             <div className="flex items-center gap-3">
                <div className="text-right hidden md:block">
                   <p className="text-sm font-medium text-foreground leading-none">{t('account')}</p>
-                  <p className="text-xs text-muted-foreground truncate max-w-[120px]">{userEmail}</p>
+                  <p className="text-xs text-muted-foreground truncate max-w-30">{userEmail}</p>
                </div>
                <div className="w-9 h-9 rounded-full bg-linear-to-br from-primary to-blue-500 flex items-center justify-center text-white font-bold shadow-lg ring-2 ring-background">
                   {userEmail ? userEmail.charAt(0).toUpperCase() : 'U'}

@@ -83,6 +83,9 @@ importers:
       octokit:
         specifier: ^5.0.5
         version: 5.0.5
+      openai:
+        specifier: ^6.13.0
+        version: 6.13.0(ws@8.18.3)(zod@4.2.0)
       react:
         specifier: ^19.2.3
         version: 19.2.3
@@ -3304,6 +3307,18 @@ packages:
   octokit@5.0.5:
     resolution: {integrity: sha512-4+/OFSqOjoyULo7eN7EA97DE0Xydj/PW5aIckxqQIoFjFwqXKuFCvXUJObyJfBF9Khu4RL/jlDRI9FPaMGfPnw==}
     engines: {node: '>= 20'}
+
+  openai@6.13.0:
+    resolution: {integrity: sha512-yHbMo+EpNGPG3sRrXvmo0LhUPFN4bAURJw3G17bE+ax1G4tcTFCa9ZjvCWh3cvni0aHY0uWlk2IxcsPH4NR9Ow==}
+    hasBin: true
+    peerDependencies:
+      ws: ^8.18.0
+      zod: ^3.25 || ^4.0
+    peerDependenciesMeta:
+      ws:
+        optional: true
+      zod:
+        optional: true
 
   optionator@0.9.4:
     resolution: {integrity: sha512-6IpQ7mKUxRcZNLIObR0hz7lxsapSSIYNZJwXPGeF0mTVqGKFIXj1DQcMoT22S3ROcLyY/rz0PWaWZ9ayWmad9g==}
@@ -7646,6 +7661,11 @@ snapshots:
       '@octokit/request-error': 7.1.0
       '@octokit/types': 16.0.0
       '@octokit/webhooks': 14.2.0
+
+  openai@6.13.0(ws@8.18.3)(zod@4.2.0):
+    optionalDependencies:
+      ws: 8.18.3
+      zod: 4.2.0
 
   optionator@0.9.4:
     dependencies:

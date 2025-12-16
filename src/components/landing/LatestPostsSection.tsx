@@ -56,7 +56,7 @@ export async function LatestPostsSection() {
                  <div className="flex -space-x-4 rtl:space-x-reverse">
                    {[...Array(4)].map((_, i) => (
                       <div key={i} className="w-10 h-10 rounded-full border-2 border-background bg-muted flex items-center justify-center overflow-hidden relative shadow-sm">
-                         <Image src={`https://api.dicebear.com/7.x/notionists/svg?seed=${i}&backgroundColor=transparent`} alt="avatar" loading="lazy" className="w-full h-full object-cover"/>
+                         <img src={`https://api.dicebear.com/7.x/notionists/svg?seed=${i}&backgroundColor=transparent`} alt="avatar" loading="lazy" className="w-full h-full object-cover"/>
                       </div>
                    ))}
                  </div>
