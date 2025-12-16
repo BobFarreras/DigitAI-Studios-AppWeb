@@ -6,7 +6,7 @@ import { SOLUTIONS } from './data';
 import { SolutionsNavigation } from './SolutionsNavigation';
 import { SolutionsDisplay } from './SolutionsDisplay';
 import { MobileSolutionsDock } from './MobileSolutionsDock';
-import { Reveal } from '@/components/animations/Reveal'; // ✅ IMPORTEM EL NOSTRE COMPONENT OPTIMITZAT
+import { Reveal } from '@/components/animations/Reveal';
 
 export function SolutionsShowcase() {
   const [activeTab, setActiveTab] = useState(SOLUTIONS[0].id);
@@ -14,16 +14,19 @@ export function SolutionsShowcase() {
   const t = useTranslations('SolutionsSection');
 
   return (
-    <section className="py-16 md:py-24 bg-slate-50 dark:bg-black/50 relative overflow-hidden transition-colors duration-500">
+    <section className="py-16 md:py-24 bg-background relative overflow-hidden transition-colors duration-500">
       
-      {/* Fons Ambient (No el toquem, és pur CSS) */}
+      {/* 🚀 OPTIMITZACIÓ: Blob només visible a partir de Tablet (md). A mòbil és massa pesat. */}
       <div 
-        className={`absolute inset-0 opacity-10 bg-linear-to-br ${activeSolution.color} blur-[150px] transition-all duration-700 will-change-[background-color]`} 
+        className={`hidden md:block absolute inset-0 opacity-10 bg-linear-to-br ${activeSolution.color} blur-[150px] transition-all duration-700 will-change-[background-color]`} 
       />
+      
+      {/* Pattern lleuger per a mòbil en lloc del blob */}
+      <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] bg-[size:40px_40px] opacity-[0.03] pointer-events-none" />
 
       <div className="container mx-auto px-6 md:px-10 lg:px-14 relative z-10">
         
-        {/* HEADER: Animació suau cap amunt */}
+        {/* HEADER */}
         <div className="max-w-3xl mx-auto mb-8 md:mb-16 text-center">
           <Reveal direction="up" width="100%">
             <h2 className="text-3xl md:text-5xl font-black text-foreground mb-4">
@@ -39,9 +42,8 @@ export function SolutionsShowcase() {
         </div>
 
         {/* --- ESTRUCTURA RESPONSIVE --- */}
-        {/* Animem tot el bloc principal amb un petit retard perquè la UI no es bloquegi al renderitzar-ho tot de cop */}
         <Reveal delay={0.2} width="100%" direction="up">
-          <div className="flex flex-col lg:grid lg:grid-cols-12 gap-8 items-stretch lg:h-162.5">
+          <div className="flex flex-col lg:grid lg:grid-cols-12 gap-6 lg:gap-8 items-stretch lg:h-162.5">
             
             {/* 1. NAVEGACIÓ D'ESCRIPTORI */}
             <SolutionsNavigation 
@@ -51,12 +53,11 @@ export function SolutionsShowcase() {
             />
             
             {/* 2. VISUALITZACIÓ */}
-            <div className="lg:col-span-8 flex flex-col h-137.5 md:h-162.5 lg:h-auto relative z-10">
+            <div className="lg:col-span-8 flex flex-col h-[500px] md:h-162.5 lg:h-auto relative z-10">
                <SolutionsDisplay solution={activeSolution} />
                
-               {/* 3. DOCK MÒBIL/TABLET */}
-               {/* El posem dins del Reveal perquè aparegui conjuntament */}
-               <div className="absolute bottom-6 left-0 right-0 z-50 flex justify-center lg:hidden pointer-events-none">
+               {/* 3. DOCK MÒBIL - Dins el mateix bloc per context */}
+               <div className="absolute -bottom-4 left-0 right-0 z-50 flex justify-center lg:hidden pointer-events-none">
                   <div className="pointer-events-auto">
                     <MobileSolutionsDock 
                         solutions={SOLUTIONS} 
