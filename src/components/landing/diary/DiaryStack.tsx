@@ -20,12 +20,12 @@ export function DiaryStack({ posts }: { posts: BlogPostDTO[] }) {
 
   return (
     // overflow-visible és CRÍTIC perquè les cartes puguin "volar" des de fora
-    <div className="relative w-full h-[750px] flex items-center justify-center overflow-visible my-8">
+    <div className="relative w-full h-187.5 flex items-center justify-center overflow-visible my-8">
       
    
 
       {/* CONTENIDOR DE LA PILA */}
-      <div className="relative w-full max-w-lg h-[600px] z-10 perspective-1000">
+      <div className="relative w-full max-w-lg h-150 z-10 perspective-1000">
         <AnimatePresence mode="popLayout">
           
           {currentIndex >= posts.length ? (

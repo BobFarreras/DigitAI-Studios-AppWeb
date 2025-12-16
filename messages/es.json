@@ -597,5 +597,13 @@
       "view_app": "Ver App",
       "view_flow": "Ver Flujo"
     }
+  },
+  "Diary": {
+    "empty_state": {
+      "title": "¡Estás al día!",
+      "description": "Has visto nuestros artículos destacados. ¿Quieres ver más contenido?",
+      "btn_reset": "Volver a empezar",
+      "btn_view_all": "Ver Todo"
+    }
   }
 }

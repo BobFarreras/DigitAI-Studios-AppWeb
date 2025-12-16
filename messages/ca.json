@@ -597,5 +597,13 @@
       "view_app": "Veure App",
       "view_flow": "Veure Flux"
     }
+  },
+  "Diary": {
+    "empty_state": {
+      "title": "Estàs al dia!",
+      "description": "Has vist els nostres articles destacats. Vols veure més contingut?",
+      "btn_reset": "Tornar a començar",
+      "btn_view_all": "Veure Tot"
+    }
   }
 }

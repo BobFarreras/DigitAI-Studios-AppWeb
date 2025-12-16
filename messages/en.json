@@ -597,5 +597,13 @@
       "view_app": "View App",
       "view_flow": "View Flow"
     }
+  },
+  "Diary": {
+    "empty_state": {
+      "title": "You're all caught up!",
+      "description": "You've seen our featured articles. Want to see more content?",
+      "btn_reset": "Start over",
+      "btn_view_all": "View All"
+    }
   }
 }
