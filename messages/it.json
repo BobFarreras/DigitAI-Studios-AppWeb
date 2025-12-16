@@ -460,13 +460,24 @@
       "live_sales": "VENDITE LIVE"
     },
     "booking": {
-      "title": "Prenotazioni & Clienti 24/7",
-      "description": "La tua reception virtuale che non dorme mai.",
-      "chat_user_1": "Ciao, vorrei prenotare un campo.",
-      "chat_bot_1": "Ho disponibile venerdì alle 18 🎾",
-      "chat_user_2": "Perfetto, fatto!",
+      "title": "Prenotazioni e Clienti 24/7",
+      "description": "La tua reception virtuale che non dorme mai. Sistema di prenotazioni, promemoria via WhatsApp e CRM che fidelizza automaticamente i tuoi clienti.",
+      "chat_user_1": "Ciao, vorrei prenotare il campo.",
+      "chat_bot_1": "Ho disponibilità venerdì alle 18 🎾",
+      "chat_user_2": "Perfetto, assegnato!",
       "booking_confirmed": "Prenotazione Confermata",
-      "new_booking": "NUOVA PRENOTAZIONE"
+      "status_idle": "In attesa di richieste...",
+      "new_message_label": "Nuovo Messaggio",
+      "mock_user_name": "Joan Garcia",
+      "agent_name": "DigitAI Agent",
+      "status_processing": "Alla ricerca del miglior slot...",
+      "status_confirmed": "CONFERMATO",
+      "tag_auto": "AUTO",
+      "month_short": "GEN",
+      "month_year": "Gennaio 2025",
+      "date_long": "Venerdì, 15 - 10:00 AM",
+      "platform_whatsapp": "WhatsApp",
+      "new_booking": "Nuova Prenotazione"
     },
     "tags": {
       "qr": "Accesso QR",

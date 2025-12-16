@@ -22,12 +22,16 @@
     "subtitle": "Powered by the tech stack of the future"
   },
   "AuditSection": {
-    "title_prefix": "Your website is a",
-    "title_cost": "cost",
+    "title_prefix": "Is your site a",
+    "title_cost": "Cost",
     "title_connector": "or an",
     "title_investment": "Investment",
-    "description_stat": "40% of users leave a website if it takes more than 3 seconds to load.",
-    "description_cta": "Let our AI analyze your site and tell you exactly what’s wrong."
+    "description_stat": "94% of first impressions are design and speed related.",
+    "description_cta": "Discover what's wrong in less than 30 seconds.",
+    "logged_title": "Hi, {name}! 👋",
+    "logged_desc": "You already have full access to advanced audit tools. You don't need to use this public form.",
+    "btn_dashboard": "Go to Audit Dashboard",
+    "logged_footer": "Your current plan allows unlimited audits from the panel."
   },
   "AuditForm": {
     "title": "Analyze your website in seconds",
@@ -69,7 +73,60 @@
   },
   "Dashboard": {
     "welcome": "Welcome, {name}",
-    "my_audits": "My Audits"
+    "my_audits": "My Audits",
+    "projects": {
+      "meta_title": "My Projects",
+      "title": "My Projects",
+      "subtitle": "Manage your applications and participate in testing phases.",
+      "empty_title": "No projects yet",
+      "empty_desc": "Contact us to start your first development.",
+      "btn_request": "Request Project",
+      "badge_beta": "BETA AVAILABLE",
+      "status_configuring": "configuring...",
+      "status_pending": "PENDING"
+    },
+    "test_runner": {
+      "badge_mode": "Tester Mode Active",
+      "label_progress": "Progress",
+      "card_instructions": "Instructions",
+      "no_instructions": "No special instructions. Validate each point on the list.",
+      "checklist_title": "Checklist",
+      "success_title": "Congratulations!",
+      "success_msg": "You have completed all tasks in this mission.",
+      "motivation_start": "Let's start the mission! 🚀",
+      "motivation_early": "Good start! Keep it up. 💪",
+      "motivation_late": "You're past the halfway mark! You're on fire. 🔥",
+      "motivation_done": "MISSION ACCOMPLISHED! 🎉 Thanks for your time."
+    },
+    "project_detail": {
+      "level_label": "Level",
+      "xp_label": "XP",
+      "next_label": "Next",
+      "current_project_label": "Current Project",
+      "missions_title": "Available Missions",
+      "empty_missions_title": "No active missions",
+      "empty_missions_desc": "You don't have assigned tests for this project right now."
+    },
+    "tester_dashboard": {
+      "error_no_user": "User not found.",
+      "level_label": "Level {level}",
+      "xp_label": "XP",
+      "next_level_label": "Next Level",
+      "motivation_text": "Complete tasks to earn XP and rank up!",
+      "active_missions_title": "Active Missions",
+      "empty_state_title": "You don't have any assigned missions yet.",
+      "empty_state_desc": "Ask your Project Manager to assign you one!",
+      "no_description": "No description...",
+      "tasks_count": "{count} Tasks"
+    },
+    "mobile_nav": {
+      "summary": "Summary",
+      "audits": "Audits",
+      "projects": "Projects",
+      "web": "Web",
+      "logout_short": "Exit",
+      "coming_soon": "will be available soon! 🚀"
+    }
   },
   "AuditIssues": {
     "is-on-https": {
@@ -229,13 +286,20 @@
     "platform": "Platform",
     "summary": "Summary",
     "audits": "Audits",
-    "projects": "Projects",
-    "settings": "Settings",
-    "logout": "Log Out",
     "pro_badge": "Pro Plan",
     "pro_text": "Unlock unlimited audits.",
     "pro_button": "Upgrade",
-    "web": "Web"
+    "web": "Web",
+    "overview": "Overview",
+    "projects": "Projects",
+    "analytics": "Analytics",
+    "users": "Users",
+    "settings": "Settings",
+    "logout": "Log Out",
+    "logout_confirm_title": "Signing out?",
+    "logout_confirm_desc": "Your session will be closed and you will be returned to the home page.",
+    "cancel": "Cancel",
+    "logout_action": "Yes, Log Out"
   },
   "DashboardHeader": {
     "search_placeholder": "Search...",
@@ -440,6 +504,26 @@
     "cta": "View Full Index"
   },
   "Solutions": {
+    "app_mockup": {
+      "app_name": "Gym App",
+      "app_category": "Sports Management",
+      "btn_install": "Install App",
+      "chat_header": "AI Assistant",
+      "chat_msg_bot": "Hi! Want to book a court? 🎾",
+      "chat_msg_user": "Yes, tomorrow at 6 PM.",
+      "notif_title": "WhatsApp API",
+      "notif_msg": "Message sent automatically",
+      "success_title": "Booking Confirmed!",
+      "success_msg": "We sent the ticket to your WhatsApp."
+    },
+    "dashboard_mockup": {
+      "col_todo": "TO DO",
+      "col_progress": "IN PROGRESS",
+      "col_done": "DONE",
+      "card_date": "Dec 12",
+      "label_you": "You",
+      "label_preview": "LIVE PREVIEW"
+    },
     "iot": {
       "title": "IoT & Smart Spaces",
       "description": "Merge the physical and digital worlds. Control access, lighting, and sensors in real time from your hand.",
@@ -462,12 +546,23 @@
     },
     "booking": {
       "title": "Bookings & Clients 24/7",
-      "description": "Your virtual reception that never sleeps. Appointments, WhatsApp reminders, and CRM that retains customers automatically.",
-      "chat_user_1": "Hi, I'd like to book a court.",
-      "chat_bot_1": "I have Friday at 6 PM available 🎾",
-      "chat_user_2": "Perfect, done!",
+      "description": "Your virtual front desk that never sleeps. Appointment booking, WhatsApp reminders, and a CRM that automatically retains your clients.",
+      "chat_user_1": "Hi, I’d like to book a court.",
+      "chat_bot_1": "I have availability on Friday at 6 PM 🎾",
+      "chat_user_2": "Perfect, booked!",
       "booking_confirmed": "Booking Confirmed",
-      "new_booking": "NEW APPOINTMENT"
+      "status_idle": "Waiting for requests...",
+      "new_message_label": "New Message",
+      "mock_user_name": "Joan Garcia",
+      "agent_name": "DigitAI Agent",
+      "status_processing": "Finding the best slot...",
+      "status_confirmed": "CONFIRMED",
+      "tag_auto": "AUTO",
+      "month_short": "JAN",
+      "month_year": "January 2025",
+      "date_long": "Friday, 15 - 10:00 AM",
+      "platform_whatsapp": "WhatsApp",
+      "new_booking": "New booking"
     },
     "tags": {
       "qr": "QR Access",

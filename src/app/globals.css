@@ -143,7 +143,25 @@
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
+/* Millora el rendiment del scroll en mòbil */
+html {
+  scroll-behavior: smooth;
+  -webkit-tap-highlight-color: transparent;
+}
 
+/* Evita que les imatges "parpellegin" mentre es carreguen */
+img {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* En pantalles petites, reduïm la complexitat si cal */
+@media (max-width: 768px) {
+  * {
+    /* Opcional: Desactivar ombres complexes en mòbil si va molt lent */
+    /* box-shadow: none !important; */
+  }
+}
 @layer components {
 
   /* ICONES MODERNS (Tal com sortien a les imatges) */

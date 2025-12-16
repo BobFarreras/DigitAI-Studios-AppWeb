@@ -6,7 +6,8 @@ import { DeviceChart } from '@/features/analytics/ui/DeviceChart';
 import { BarListChart } from '@/features/analytics/ui/BarListChart';
 import { VerticalBarChart } from '@/features/analytics/ui/VerticalBarChart';
 import { UnifiedStatBar } from '@/features/analytics/ui/UnifiedStatBar';
-
+// Això fa que la pàgina no es guardi a la caché estàtica per sempre (per veure dades noves)
+export const dynamic = 'force-dynamic';
 export const revalidate = 60;
 
 function formatDuration(seconds: number): string {
@@ -73,15 +74,15 @@ export default async function AdminAnalyticsPage() {
          {/* --- SIDEBAR DRET --- */}
          <div className="lg:col-span-1 flex flex-col gap-4 h-auto lg:h-full min-h-0 lg:overflow-y-auto custom-scrollbar pr-1">
             
-            <div className="h-64 lg:flex-1 lg:min-h-[200px]">
+            <div className="h-64 lg:flex-1 lg:min-h-50">
                <DeviceChart data={adv.devices} />
             </div>
 
-            <div className="h-64 lg:flex-1 lg:min-h-[200px]">
+            <div className="h-64 lg:flex-1 lg:min-h-50">
                <VerticalBarChart title="Top Països" data={adv.countries} />
             </div>
 
-            <div className="h-64 lg:flex-1 lg:min-h-[200px]">
+            <div className="h-64 lg:flex-1 lg:min-h-50">
                <BarListChart title="Navegadors" data={adv.browsers} />
             </div>
          </div>

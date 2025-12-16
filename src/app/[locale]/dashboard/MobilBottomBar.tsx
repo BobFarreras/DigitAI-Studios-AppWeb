@@ -7,10 +7,9 @@ import {
   LayoutDashboard, 
   FileText, 
   FolderKanban, 
-  
   ShieldAlert, 
   LogOut, 
-  Home, // Icona per la Web Pública
+  Home, 
   X
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -24,34 +23,37 @@ interface MobileBottomBarProps {
 }
 
 export function MobileBottomBar({ userRole }: MobileBottomBarProps) {
-  const t = useTranslations('Sidebar');
+  const t = useTranslations('Dashboard.mobile_nav'); // Namespace específic per mòbil (labels curts)
+  const tCommon = useTranslations('Dashboard.sidebar'); // Reutilitzem textos del sidebar/logout
   const pathname = usePathname();
   const router = useRouter();
   
-  // Estat per controlar el diàleg de sortida
   const [showExitDialog, setShowExitDialog] = useState(false);
   const [isSigningOut, setIsSigningOut] = useState(false);
 
+  // Neteja del path per saber on som
   const cleanPath = pathname.replace(/^\/[a-z]{2}/, '') || '/';
 
   const handleLogout = async () => {
     setIsSigningOut(true);
     await signOutAction();
-    router.refresh();
-    router.push('/auth/login');
+    // No cal router.push aquí perquè el server action ja fa redirect, 
+    // però per si de cas a client:
+    router.refresh(); 
   };
 
   const MENU_ITEMS = [
     { icon: LayoutDashboard, label: t('summary'), href: '/dashboard' },
-    { icon: FileText, label: t('audits'), href: '/dashboard/audits' },
-    { icon: FolderKanban, label: 'projectes', href: '/dashboard/projects' },
-  
+    // Nota: Si '/dashboard/audits' no existeix encara, redirigeix o canvia-ho
+    { icon: FileText, label: t('audits'), href: '/dashboard/audits' }, 
+    { icon: FolderKanban, label: t('projects'), href: '/dashboard/projects' },
   ];
 
   const handleClick = (e: React.MouseEvent, href: string, label: string) => {
     if (href.startsWith('#')) {
       e.preventDefault();
-      alert(`${label} estarà disponible properament! 🚀`);
+      // Opcional: Toast en lloc d'alert
+      alert(`${label} ${t('coming_soon')}`); 
     }
   };
 
@@ -90,7 +92,7 @@ export function MobileBottomBar({ userRole }: MobileBottomBarProps) {
                               className={cn("w-5 h-5 transition-all", isActive && "fill-current/20 scale-110")} 
                               strokeWidth={isActive ? 2.5 : 2} 
                           />
-                          <span className={cn("text-[10px] font-medium", isActive ? "font-bold" : "")}>
+                          <span className={cn("text-[10px] font-medium truncate max-w-15", isActive ? "font-bold" : "")}>
                               {item.label}
                           </span>
                       </Link>
@@ -120,7 +122,7 @@ export function MobileBottomBar({ userRole }: MobileBottomBarProps) {
                   className="flex flex-col items-center justify-center w-full h-full gap-1 active:scale-95 transition-transform text-muted-foreground hover:text-foreground"
               >
                   <Home className="w-5 h-5" strokeWidth={2} />
-                  <span className="text-[10px] font-medium">Web</span>
+                  <span className="text-[10px] font-medium">{t('web')}</span>
               </Link>
 
               {/* 4. BOTÓ LOGOUT (Obre Modal)  */}
@@ -129,7 +131,7 @@ export function MobileBottomBar({ userRole }: MobileBottomBarProps) {
                   className="flex flex-col items-center justify-center w-full h-full gap-1 active:scale-95 transition-transform text-red-400 hover:text-red-500"
               >
                   <LogOut className="w-5 h-5" strokeWidth={2} />
-                  <span className="text-[10px] font-medium">Sortir</span>
+                  <span className="text-[10px] font-medium">{t('logout_short')}</span>
               </button>
 
           </div>
@@ -170,9 +172,9 @@ export function MobileBottomBar({ userRole }: MobileBottomBarProps) {
                 </div>
                 
                 <div>
-                  <h3 className="text-lg font-bold text-foreground">Vols tancar la sessió?</h3>
+                  <h3 className="text-lg font-bold text-foreground">{tCommon('logout_confirm_title')}</h3>
                   <p className="text-sm text-muted-foreground mt-1">
-                    Hauràs de tornar a introduir les teves credencials per accedir al dashboard.
+                    {tCommon('logout_confirm_desc')}
                   </p>
                 </div>
 
@@ -182,7 +184,7 @@ export function MobileBottomBar({ userRole }: MobileBottomBarProps) {
                     onClick={() => setShowExitDialog(false)}
                     className="flex-1 rounded-xl h-11"
                   >
-                    Cancel·lar
+                    {tCommon('cancel')}
                   </Button>
                   <Button 
                     variant="destructive" 
@@ -190,7 +192,7 @@ export function MobileBottomBar({ userRole }: MobileBottomBarProps) {
                     disabled={isSigningOut}
                     className="flex-1 rounded-xl h-11 bg-red-500 hover:bg-red-600 text-white shadow-lg shadow-red-500/20"
                   >
-                    {isSigningOut ? 'Tancant...' : 'Sí, sortir'}
+                    {isSigningOut ? '...' : tCommon('logout_action')}
                   </Button>
                 </div>
               </div>

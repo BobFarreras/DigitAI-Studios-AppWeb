@@ -23,11 +23,15 @@
   },
   "AuditSection": {
     "title_prefix": "Tu web es un",
-    "title_cost": "coste",
+    "title_cost": "Gasto",
     "title_connector": "o una",
     "title_investment": "Inversión",
-    "description_stat": "El 40% de los usuarios abandonan una web si tarda más de 3 segundos.",
-    "description_cta": "Deja que nuestra IA analice tu sitio y te diga exactamente qué está fallando."
+    "description_stat": "El 94% de las primeras impresiones están relacionadas con el diseño y la velocidad.",
+    "description_cta": "Descubre qué está fallando en menos de 30 segundos.",
+    "logged_title": "¡Hola, {name}! 👋",
+    "logged_desc": "Ya tienes acceso completo a las herramientas de auditoría avanzada. No necesitas usar este formulario público.",
+    "btn_dashboard": "Ir al Dashboard de Auditoría",
+    "logged_footer": "Tu plan actual permite auditorías ilimitadas desde el panel."
   },
   "AuditForm": {
     "title": "Analiza tu web en segundos",
@@ -69,7 +73,60 @@
   },
   "Dashboard": {
     "welcome": "Bienvenido, {name}",
-    "my_audits": "Mis Auditorías"
+    "my_audits": "Mis Auditorías",
+    "projects": {
+      "meta_title": "Mis Proyectos",
+      "title": "Mis Proyectos",
+      "subtitle": "Gestiona tus aplicaciones y participa en las fases de test.",
+      "empty_title": "Aún no tienes proyectos",
+      "empty_desc": "Contacta con nosotros para empezar tu primer desarrollo.",
+      "btn_request": "Solicitar Proyecto",
+      "badge_beta": "BETA DISPONIBLE",
+      "status_configuring": "configurando...",
+      "status_pending": "PENDIENTE"
+    },
+    "test_runner": {
+      "badge_mode": "Modo Tester Activo",
+      "label_progress": "Progreso",
+      "card_instructions": "Instrucciones",
+      "no_instructions": "Sin instrucciones especiales. Valida cada punto de la lista.",
+      "checklist_title": "Lista de Verificación",
+      "success_title": "¡Felicidades!",
+      "success_msg": "Has completado todas las tareas de esta misión.",
+      "motivation_start": "¡Empecemos la misión! 🚀",
+      "motivation_early": "¡Buen comienzo! Sigue así. 💪",
+      "motivation_late": "¡Ya has pasado la mitad! Eres un crack. 🔥",
+      "motivation_done": "¡MISIÓN CUMPLIDA! 🎉 Gracias por tu tiempo."
+    },
+    "project_detail": {
+      "level_label": "Nivel",
+      "xp_label": "XP",
+      "next_label": "Siguiente",
+      "current_project_label": "Proyecto Actual",
+      "missions_title": "Misiones Disponibles",
+      "empty_missions_title": "Ninguna misión activa",
+      "empty_missions_desc": "No tienes pruebas asignadas para este proyecto ahora mismo."
+    },
+    "tester_dashboard": {
+      "error_no_user": "No se ha encontrado el usuario.",
+      "level_label": "Nivel {level}",
+      "xp_label": "XP",
+      "next_level_label": "Siguiente Nivel",
+      "motivation_text": "¡Completa tareas para ganar XP y subir de rango!",
+      "active_missions_title": "Misiones Activas",
+      "empty_state_title": "No tienes ninguna misión asignada todavía.",
+      "empty_state_desc": "¡Pide a tu Project Manager que te asigne!",
+      "no_description": "Sin descripción...",
+      "tasks_count": "{count} Tareas"
+    },
+    "mobile_nav": {
+      "summary": "Resumen",
+      "audits": "Auditorías",
+      "projects": "Proyectos",
+      "web": "Web",
+      "logout_short": "Salir",
+      "coming_soon": "estará disponible próximamente! 🚀"
+    }
   },
   "AuditIssues": {
     "is-on-https": {
@@ -229,13 +286,20 @@
     "platform": "Plataforma",
     "summary": "Resumen",
     "audits": "Auditorías",
-    "projects": "Proyectos",
-    "settings": "Configuración",
-    "logout": "Cerrar Sesión",
     "pro_badge": "Plan Pro",
     "pro_text": "Desbloquea auditorías ilimitadas.",
     "pro_button": "Mejorar",
-    "web": "Web"
+    "web": "Web",
+    "overview": "Resumen General",
+    "projects": "Proyectos",
+    "analytics": "Analítica Web",
+    "users": "Usuarios",
+    "settings": "Configuración",
+    "logout": "Cerrar Sesión",
+    "logout_confirm_title": "¿Quieres salir?",
+    "logout_confirm_desc": "Tu sesión se cerrará y volverás a la página principal.",
+    "cancel": "Cancelar",
+    "logout_action": "Sí, Cerrar Sesión"
   },
   "DashboardHeader": {
     "search_placeholder": "Buscar...",
@@ -440,6 +504,26 @@
     "cta": "Ver Índice Completo"
   },
   "Solutions": {
+    "app_mockup": {
+      "app_name": "Gym App",
+      "app_category": "Gestión Deportiva",
+      "btn_install": "Instalar App",
+      "chat_header": "Asistente IA",
+      "chat_msg_bot": "¡Hola! ¿Quieres reservar pista? 🎾",
+      "chat_msg_user": "Sí, mañana a las 18h.",
+      "notif_title": "WhatsApp API",
+      "notif_msg": "Mensaje enviado automáticamente",
+      "success_title": "¡Reserva Confirmada!",
+      "success_msg": "Te hemos enviado el ticket al WhatsApp."
+    },
+    "dashboard_mockup": {
+      "col_todo": "PENDIENTES",
+      "col_progress": "EN PROGRESO",
+      "col_done": "HECHO",
+      "card_date": "12 Dic",
+      "label_you": "Tú",
+      "label_preview": "VISTA PREVIA EN VIVO"
+    },
     "iot": {
       "title": "IoT y Espacios Inteligentes",
       "description": "Fusiona el mundo físico con el digital. Controla accesos, iluminación y sensores en tiempo real, todo desde la palma de la mano.",
@@ -465,9 +549,20 @@
       "description": "Tu recepción virtual que nunca duerme. Sistema de citas, recordatorios por WhatsApp y CRM que fideliza a tus clientes automáticamente.",
       "chat_user_1": "Hola, quiero reservar pista.",
       "chat_bot_1": "Tengo libre el viernes a las 18h 🎾",
-      "chat_user_2": "Perfecto, adjudicado!",
+      "chat_user_2": "Perfecto, ¡adjudicado!",
       "booking_confirmed": "Reserva Confirmada",
-      "new_booking": "NUEVA CITA"
+      "status_idle": "Esperando solicitudes...",
+      "new_message_label": "Nuevo Mensaje",
+      "mock_user_name": "Joan Garcia",
+      "agent_name": "DigitAI Agent",
+      "status_processing": "Buscando el mejor hueco...",
+      "status_confirmed": "CONFIRMADO",
+      "tag_auto": "AUTO",
+      "month_short": "ENE",
+      "month_year": "Enero 2025",
+      "date_long": "Viernes, 15 - 10:00 AM",
+      "platform_whatsapp": "WhatsApp",
+      "new_booking": "Nueva Reserva"
     },
     "tags": {
       "qr": "Acceso QR",

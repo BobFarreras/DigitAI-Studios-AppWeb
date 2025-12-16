@@ -1,5 +1,5 @@
 
-\restrict UdKNe6FhyjuP1hM61qycnyGbYUpgg0dYyggULhCgSWACBJzNImFT7itINLd1BLN
+\restrict B3iEwaYtcnLAmChn0d85XCpKeDSoaWAn3fnHIkjVoqlPjb7oKcvy6XdEMj3xNLq
 
 
 SET statement_timeout = 0;
@@ -92,14 +92,88 @@ $$;
 ALTER FUNCTION "public"."decrement_stock"("p_product_id" "uuid", "p_quantity" integer) OWNER TO "postgres";
 
 
-CREATE OR REPLACE FUNCTION "public"."get_my_org_id"() RETURNS "uuid"
-    LANGUAGE "sql" STABLE SECURITY DEFINER
+CREATE OR REPLACE FUNCTION "public"."get_analytics_browsers"("date_from" timestamp without time zone) RETURNS TABLE("name" "text", "value" bigint)
+    LANGUAGE "sql"
     AS $$
-  SELECT organization_id FROM public.profiles WHERE id = auth.uid();
+  select 
+    coalesce(browser, 'Desconegut') as name,
+    count(*) as value
+  from analytics_events
+  where created_at >= date_from
+  group by browser
+  order by value desc
+  limit 10;
 $$;
 
 
-ALTER FUNCTION "public"."get_my_org_id"() OWNER TO "postgres";
+ALTER FUNCTION "public"."get_analytics_browsers"("date_from" timestamp without time zone) OWNER TO "postgres";
+
+
+CREATE OR REPLACE FUNCTION "public"."get_analytics_countries"("date_from" timestamp without time zone) RETURNS TABLE("name" "text", "value" bigint)
+    LANGUAGE "sql"
+    AS $$
+  select 
+    coalesce(country_code, 'Unknown') as name,
+    count(*) as value
+  from analytics_events
+  where created_at >= date_from
+  group by country_code
+  order by value desc
+  limit 10;
+$$;
+
+
+ALTER FUNCTION "public"."get_analytics_countries"("date_from" timestamp without time zone) OWNER TO "postgres";
+
+
+CREATE OR REPLACE FUNCTION "public"."get_analytics_devices"("date_from" timestamp without time zone) RETURNS TABLE("name" "text", "value" bigint)
+    LANGUAGE "sql"
+    AS $$
+  select 
+    coalesce(device_type, 'desktop') as name,
+    count(*) as value
+  from analytics_events
+  where created_at >= date_from
+  group by device_type
+  order by value desc;
+$$;
+
+
+ALTER FUNCTION "public"."get_analytics_devices"("date_from" timestamp without time zone) OWNER TO "postgres";
+
+
+CREATE OR REPLACE FUNCTION "public"."get_analytics_os"("date_from" timestamp without time zone) RETURNS TABLE("name" "text", "value" bigint)
+    LANGUAGE "sql"
+    AS $$
+  select 
+    coalesce(os, 'Desconegut') as name,
+    count(*) as value
+  from analytics_events
+  where created_at >= date_from
+  group by os
+  order by value desc
+  limit 10;
+$$;
+
+
+ALTER FUNCTION "public"."get_analytics_os"("date_from" timestamp without time zone) OWNER TO "postgres";
+
+
+CREATE OR REPLACE FUNCTION "public"."get_analytics_referrers"("date_from" timestamp without time zone) RETURNS TABLE("name" "text", "value" bigint)
+    LANGUAGE "sql"
+    AS $$
+  select 
+    coalesce(referrer, 'Directe') as name,
+    count(*) as value
+  from analytics_events
+  where created_at >= date_from
+  group by referrer
+  order by value desc
+  limit 10;
+$$;
+
+
+ALTER FUNCTION "public"."get_analytics_referrers"("date_from" timestamp without time zone) OWNER TO "postgres";
 
 
 CREATE OR REPLACE FUNCTION "public"."get_my_org_ids"() RETURNS SETOF "uuid"
@@ -201,6 +275,19 @@ $$;
 
 ALTER FUNCTION "public"."is_admin"() OWNER TO "postgres";
 
+
+CREATE OR REPLACE FUNCTION "public"."refresh_analytics_views"() RETURNS "void"
+    LANGUAGE "plpgsql"
+    AS $$
+BEGIN
+  -- 'CONCURRENTLY' permet llegir la vista mentre s'actualitza sense bloquejos
+  REFRESH MATERIALIZED VIEW CONCURRENTLY mv_analytics_top_pages;
+END;
+$$;
+
+
+ALTER FUNCTION "public"."refresh_analytics_views"() OWNER TO "postgres";
+
 SET default_tablespace = '';
 
 SET default_table_access_method = "heap";
@@ -219,7 +306,9 @@ CREATE TABLE IF NOT EXISTS "public"."analytics_events" (
     "browser" "text",
     "os" "text",
     "referrer" "text",
-    "duration_seconds" integer DEFAULT 0
+    "duration_seconds" integer DEFAULT 0,
+    "country_code" "text",
+    "region" "text"
 );
 
 
@@ -308,6 +397,20 @@ CREATE TABLE IF NOT EXISTS "public"."content_queue" (
 
 
 ALTER TABLE "public"."content_queue" OWNER TO "postgres";
+
+
+CREATE MATERIALIZED VIEW "public"."mv_analytics_top_pages" AS
+ SELECT "path",
+    "count"(*) AS "visits",
+    "count"(DISTINCT "session_id") AS "unique_visitors",
+    "max"("created_at") AS "last_visit"
+   FROM "public"."analytics_events"
+  GROUP BY "path"
+  ORDER BY ("count"(*)) DESC
+  WITH NO DATA;
+
+
+ALTER MATERIALIZED VIEW "public"."mv_analytics_top_pages" OWNER TO "postgres";
 
 
 CREATE TABLE IF NOT EXISTS "public"."order_items" (
@@ -742,6 +845,10 @@ CREATE INDEX "idx_bookings_time" ON "public"."bookings" USING "btree" ("start_ti
 
 
 
+CREATE UNIQUE INDEX "idx_mv_top_pages" ON "public"."mv_analytics_top_pages" USING "btree" ("path");
+
+
+
 CREATE INDEX "idx_posts_org" ON "public"."posts" USING "btree" ("organization_id");
 
 
@@ -933,12 +1040,6 @@ CREATE POLICY "Admins can view all organizations" ON "public"."organizations" US
 
 
 
-CREATE POLICY "Admins can view all profiles" ON "public"."profiles" FOR SELECT USING ((EXISTS ( SELECT 1
-   FROM "public"."profiles" "profiles_1"
-  WHERE (("profiles_1"."id" = "auth"."uid"()) AND ("profiles_1"."role" = 'admin'::"public"."user_role")))));
-
-
-
 CREATE POLICY "Admins manage all" ON "public"."test_campaigns" USING ("public"."is_admin"());
 
 
@@ -975,14 +1076,6 @@ CREATE POLICY "Manage own results" ON "public"."test_results" USING (("auth"."ui
 
 
 
-CREATE POLICY "Org admins manage services" ON "public"."services" USING (("organization_id" IN ( SELECT "public"."get_my_org_ids"() AS "get_my_org_ids")));
-
-
-
-CREATE POLICY "Org admins view bookings" ON "public"."bookings" FOR SELECT USING (("organization_id" IN ( SELECT "public"."get_my_org_ids"() AS "get_my_org_ids")));
-
-
-
 CREATE POLICY "Owner Read Policy" ON "public"."web_audits" FOR SELECT TO "authenticated" USING (("email" = ( SELECT ("auth"."jwt"() ->> 'email'::"text"))));
 
 
@@ -1011,7 +1104,7 @@ CREATE POLICY "Public read products" ON "public"."products" FOR SELECT USING (("
 
 
 
-CREATE POLICY "Public read published posts" ON "public"."posts" FOR SELECT USING (("status" = 'published'::"public"."post_status"));
+CREATE POLICY "Public read published posts" ON "public"."posts" FOR SELECT USING ((("status" = 'published'::"public"."post_status") AND ("published" = true)));
 
 
 
@@ -1023,19 +1116,43 @@ CREATE POLICY "Public read services" ON "public"."services" FOR SELECT USING (tr
 
 
 
+CREATE POLICY "RLS: Admins can delete profiles in their organization" ON "public"."profiles" FOR DELETE TO "authenticated" USING (("organization_id" IN ( SELECT "profiles_1"."organization_id"
+   FROM "public"."profiles" "profiles_1"
+  WHERE (("profiles_1"."id" = "auth"."uid"()) AND ("profiles_1"."role" = 'admin'::"public"."user_role")))));
+
+
+
+CREATE POLICY "RLS: Enable insert for authenticated users (handled by trigger)" ON "public"."profiles" FOR INSERT TO "authenticated" WITH CHECK (true);
+
+
+
+CREATE POLICY "RLS: Org admins manage services" ON "public"."services" USING (("organization_id" IN ( SELECT "profiles"."organization_id"
+   FROM "public"."profiles"
+  WHERE (("profiles"."id" = "auth"."uid"()) AND ("profiles"."role" = 'admin'::"public"."user_role")))));
+
+
+
+CREATE POLICY "RLS: Org admins view bookings" ON "public"."bookings" FOR SELECT USING (("organization_id" IN ( SELECT "profiles"."organization_id"
+   FROM "public"."profiles"
+  WHERE (("profiles"."id" = "auth"."uid"()) AND ("profiles"."role" = 'admin'::"public"."user_role")))));
+
+
+
+CREATE POLICY "RLS: Org members can view their organization profiles" ON "public"."profiles" FOR SELECT USING ((("auth"."uid"() = "id") OR ("organization_id" IN ( SELECT "profiles_1"."organization_id"
+   FROM "public"."profiles" "profiles_1"
+  WHERE ("profiles_1"."id" = "auth"."uid"())))));
+
+
+
+CREATE POLICY "RLS: Users can update own profile" ON "public"."profiles" FOR UPDATE USING (("auth"."uid"() = "id")) WITH CHECK (("auth"."uid"() = "id"));
+
+
+
 CREATE POLICY "Read tasks" ON "public"."test_tasks" FOR SELECT USING (true);
 
 
 
 CREATE POLICY "Users can insert their own audits" ON "public"."web_audits" FOR INSERT WITH CHECK (("auth"."uid"() = "user_id"));
-
-
-
-CREATE POLICY "Users can read own profile" ON "public"."profiles" FOR SELECT USING (("auth"."uid"() = "id"));
-
-
-
-CREATE POLICY "Users can update own profile" ON "public"."profiles" FOR UPDATE USING (("auth"."uid"() = "id"));
 
 
 
@@ -1049,19 +1166,11 @@ CREATE POLICY "Users can view own orders" ON "public"."orders" FOR SELECT USING 
 
 
 
-CREATE POLICY "Users can view own organization" ON "public"."organizations" FOR SELECT USING (("id" = "public"."get_my_org_id"()));
-
-
-
-CREATE POLICY "Users can view own profile" ON "public"."profiles" FOR SELECT USING (("auth"."uid"() = "id"));
-
-
-
 CREATE POLICY "Users can view their own audits" ON "public"."web_audits" FOR SELECT USING (("auth"."uid"() = "user_id"));
 
 
 
-CREATE POLICY "Users manage own org posts" ON "public"."posts" USING (("organization_id" IN ( SELECT "public"."get_my_org_ids"() AS "get_my_org_ids"))) WITH CHECK (("organization_id" IN ( SELECT "public"."get_my_org_ids"() AS "get_my_org_ids")));
+CREATE POLICY "Users manage own org posts" ON "public"."posts" TO "authenticated" USING (("organization_id" IN ( SELECT "public"."get_my_org_ids"() AS "get_my_org_ids"))) WITH CHECK (("organization_id" IN ( SELECT "public"."get_my_org_ids"() AS "get_my_org_ids")));
 
 
 
@@ -1175,9 +1284,33 @@ GRANT ALL ON FUNCTION "public"."decrement_stock"("p_product_id" "uuid", "p_quant
 
 
 
-GRANT ALL ON FUNCTION "public"."get_my_org_id"() TO "anon";
-GRANT ALL ON FUNCTION "public"."get_my_org_id"() TO "authenticated";
-GRANT ALL ON FUNCTION "public"."get_my_org_id"() TO "service_role";
+GRANT ALL ON FUNCTION "public"."get_analytics_browsers"("date_from" timestamp without time zone) TO "anon";
+GRANT ALL ON FUNCTION "public"."get_analytics_browsers"("date_from" timestamp without time zone) TO "authenticated";
+GRANT ALL ON FUNCTION "public"."get_analytics_browsers"("date_from" timestamp without time zone) TO "service_role";
+
+
+
+GRANT ALL ON FUNCTION "public"."get_analytics_countries"("date_from" timestamp without time zone) TO "anon";
+GRANT ALL ON FUNCTION "public"."get_analytics_countries"("date_from" timestamp without time zone) TO "authenticated";
+GRANT ALL ON FUNCTION "public"."get_analytics_countries"("date_from" timestamp without time zone) TO "service_role";
+
+
+
+GRANT ALL ON FUNCTION "public"."get_analytics_devices"("date_from" timestamp without time zone) TO "anon";
+GRANT ALL ON FUNCTION "public"."get_analytics_devices"("date_from" timestamp without time zone) TO "authenticated";
+GRANT ALL ON FUNCTION "public"."get_analytics_devices"("date_from" timestamp without time zone) TO "service_role";
+
+
+
+GRANT ALL ON FUNCTION "public"."get_analytics_os"("date_from" timestamp without time zone) TO "anon";
+GRANT ALL ON FUNCTION "public"."get_analytics_os"("date_from" timestamp without time zone) TO "authenticated";
+GRANT ALL ON FUNCTION "public"."get_analytics_os"("date_from" timestamp without time zone) TO "service_role";
+
+
+
+GRANT ALL ON FUNCTION "public"."get_analytics_referrers"("date_from" timestamp without time zone) TO "anon";
+GRANT ALL ON FUNCTION "public"."get_analytics_referrers"("date_from" timestamp without time zone) TO "authenticated";
+GRANT ALL ON FUNCTION "public"."get_analytics_referrers"("date_from" timestamp without time zone) TO "service_role";
 
 
 
@@ -1196,6 +1329,12 @@ GRANT ALL ON FUNCTION "public"."handle_new_user"() TO "service_role";
 GRANT ALL ON FUNCTION "public"."is_admin"() TO "anon";
 GRANT ALL ON FUNCTION "public"."is_admin"() TO "authenticated";
 GRANT ALL ON FUNCTION "public"."is_admin"() TO "service_role";
+
+
+
+GRANT ALL ON FUNCTION "public"."refresh_analytics_views"() TO "anon";
+GRANT ALL ON FUNCTION "public"."refresh_analytics_views"() TO "authenticated";
+GRANT ALL ON FUNCTION "public"."refresh_analytics_views"() TO "service_role";
 
 
 
@@ -1238,6 +1377,12 @@ GRANT ALL ON TABLE "public"."contact_leads" TO "service_role";
 GRANT ALL ON TABLE "public"."content_queue" TO "anon";
 GRANT ALL ON TABLE "public"."content_queue" TO "authenticated";
 GRANT ALL ON TABLE "public"."content_queue" TO "service_role";
+
+
+
+GRANT ALL ON TABLE "public"."mv_analytics_top_pages" TO "anon";
+GRANT ALL ON TABLE "public"."mv_analytics_top_pages" TO "authenticated";
+GRANT ALL ON TABLE "public"."mv_analytics_top_pages" TO "service_role";
 
 
 
@@ -1373,6 +1518,6 @@ ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public" GRANT ALL ON TAB
 
 
 
-\unrestrict UdKNe6FhyjuP1hM61qycnyGbYUpgg0dYyggULhCgSWACBJzNImFT7itINLd1BLN
+\unrestrict B3iEwaYtcnLAmChn0d85XCpKeDSoaWAn3fnHIkjVoqlPjb7oKcvy6XdEMj3xNLq
 
 RESET ALL;

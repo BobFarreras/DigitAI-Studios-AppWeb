@@ -98,6 +98,7 @@ ESTRUCTURA DEL PROJECTE (./src)
 │       └── layout.tsx
 ├── assets
 │   └── images
+│       ├── cap-dataflow.jpg
 │       ├── hero.webp
 │       ├── og-image.jpg
 │       ├── pantalla-ribotflow.jpg
@@ -694,7 +695,8 @@ export interface IWebScanner {
 
 'use server'
 
-import { createClient } from '@/lib/supabase/server';
+// 👇 1. Importem createAdminClient (el que té la clau de servei)
+import { createClient, createAdminClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 
 export type UserProfile = {
@@ -703,29 +705,38 @@ export type UserProfile = {
   role: 'admin' | 'client' | 'lead';
   created_at: string;
   full_name: string | null;
-  organization_id: string; // Afegim això per debug si cal
+  organization_id: string;
 };
 
-// Recuperem la variable d'entorn
 const MAIN_ORG_ID = process.env.NEXT_PUBLIC_MAIN_ORG_ID;
 
 export async function getAdminUsersList(): Promise<UserProfile[]> {
-  const supabase = await createClient();
- 
-  // 1. Verificar sessió actual
-  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  // Client normal per verificar qui fa la petició (AUTH)
+  const supabaseAuth = await createClient();
+  
+  // 👇 2. Client ADMIN per fer les consultes a la DB (DADES)
+  // Aquest client se salta les Policies RLS, evitant la recursió infinita.
+  const supabaseAdmin = createAdminClient();
+
+  // A. Verificar sessió actual
+  const { data: { user }, error: authError } = await supabaseAuth.auth.getUser();
   if (authError || !user) redirect('/auth/login');
 
-  // 2. 🛡️ SUPER ADMIN CHECK
+  if (!MAIN_ORG_ID) {
+      console.error("❌ ERROR CRÍTIC: Manca NEXT_PUBLIC_MAIN_ORG_ID al .env");
+      return [];
+  }
+
+  // B. 🛡️ SUPER ADMIN CHECK MANUAL
+  // Fem servir el client Admin per llegir el perfil sense activar polítiques recursives
   const isSuperAdmin = user.email === process.env.ADMIN_EMAIL;
 
   if (!isSuperAdmin) {
-    // Si no ets el Super Admin, comprovem si tens rol admin dins de l'organització principal
-    const { data: currentUserProfile } = await supabase
+    const { data: currentUserProfile } = await supabaseAdmin
       .from('profiles')
       .select('role')
       .eq('id', user.id)
-      .eq('organization_id', MAIN_ORG_ID!) // 👈 Forcem la comprovació a l'org principal
+      .eq('organization_id', MAIN_ORG_ID)
       .single();
 
     if (currentUserProfile?.role !== 'admin') {
@@ -733,17 +744,11 @@ export async function getAdminUsersList(): Promise<UserProfile[]> {
     }
   }
 
-  if (!MAIN_ORG_ID) {
-      console.error("❌ ERROR CRÍTIC: Manca NEXT_PUBLIC_MAIN_ORG_ID al .env");
-      return [];
-  }
-
-  // 3. Obtenir dades FILTRADES per la Main Org
-  // 🔥 AQUI ESTÀ LA SOLUCIÓ: .eq('organization_id', MAIN_ORG_ID)
-  const { data: profiles, error } = await supabase
+  // C. Obtenir dades (Amb client Admin)
+  const { data: profiles, error } = await supabaseAdmin
     .from('profiles')
     .select('*')
-    .eq('organization_id', MAIN_ORG_ID) // 👈 Filtre estricte
+    .eq('organization_id', MAIN_ORG_ID)
     .order('created_at', { ascending: false });
 
   if (error) {
@@ -2853,11 +2858,9 @@ import { TesterManager } from '@/features/tests/ui/TesterManager';
 import { VisualFlowBuilder } from '@/features/tests/ui/VisualFlowBuilder';
 import { CampaignDetailsForm } from '@/features/tests/ui/CampaignDetailsForm';
 import { createClient } from '@/lib/supabase/server';
-// 👇 1. Importem el nou component
 import { BackButton } from '@/components/ui/back-button';
 import { DeleteCampaignButton } from '@/features/tests/ui/DeleteCampaignButton';
 import { CampaignAnalytics } from '@/features/tests/ui/CampaignAnalytics';
-
 
 export default async function AdminTestDetailPage({ params }: { params: Promise<{ id: string }> }) {
   await requireAdmin();
@@ -2865,11 +2868,9 @@ export default async function AdminTestDetailPage({ params }: { params: Promise<
   const repo = new SupabaseTestRepository();
   const supabase = await createClient();
 
-  // 1. Context de la Campanya
   const ctx = await repo.getCampaignWithContext(id, 'admin');
-  if (!ctx.campaign) return <div>Campanya no trobada</div>;
+  if (!ctx.campaign) return <div className="p-8 text-center text-muted-foreground">Campanya no trobada</div>;
 
-  // 2. Busquem el Projecte
   const { data: project } = await supabase
     .from('projects')
     .select('organization_id')
@@ -2878,65 +2879,72 @@ export default async function AdminTestDetailPage({ params }: { params: Promise<
 
   if (!project || !project.organization_id) return <div>Error d'integritat: Projecte sense organització</div>;
 
-  // 3. Carreguem les llistes
   const [assigned, available] = await Promise.all([
     repo.getAssignedTesters(id),
     repo.getProjectMembersForTest(id, ctx.campaign.projectId, project.organization_id)
   ]);
   const analyticsData = await repo.getCampaignResults(id);
-  return (
-    <div className="p-6 max-w-6xl mx-auto space-y-6">
 
-      {/* Header Simple amb Botó Enrere Intel·ligent */}
-      <div className="flex flex-col gap-4">
-        {/* 👇 2. Col·loquem el botó a dalt de tot. Passem el projectId per si cal. */}
-        <div>
+  return (
+    <div className="p-6 max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500">
+
+      {/* --- HEADER --- */}
+      <div className="flex flex-col gap-6">
+        <div className="flex justify-between items-start">
           <BackButton projectId={ctx.campaign.projectId} />
-          {/* 👇 BOTÓ D'ELIMINAR A LA DRETA */}
           <DeleteCampaignButton
             campaignId={ctx.campaign.id}
             projectId={ctx.campaign.projectId}
           />
         </div>
 
-        <div className="flex justify-between items-center">
+        <div className="flex flex-col md:flex-row justify-between items-end gap-4 border-b border-border pb-6">
           <div>
-            <h1 className="text-3xl font-bold text-white flex items-center gap-3">
-              {ctx.campaign.title}
-            </h1>
-            <p className="text-slate-400 mt-1">Gestió integral de la prova</p>
+            <div className="flex items-center gap-3 mb-2">
+               <h1 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">
+                 {ctx.campaign.title}
+               </h1>
+               <span className="px-2 py-0.5 rounded-full bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-300 text-xs font-mono font-bold border border-purple-200 dark:border-purple-800">
+                 {ctx.campaign.status}
+               </span>
+            </div>
+            <p className="text-muted-foreground text-lg">Gestió integral i resultats de la prova</p>
           </div>
-          <div className="bg-purple-900/50 text-purple-300 px-3 py-1 rounded text-xs font-mono border border-purple-500/30">
-            ID: {ctx.campaign.id.slice(0, 8)}
+          
+          <div className="flex items-center gap-2 text-xs font-mono text-muted-foreground bg-muted/50 px-3 py-1.5 rounded-md border border-border">
+            <span>ID:</span>
+            <span className="font-bold text-foreground">{ctx.campaign.id.split('-')[0]}...</span>
           </div>
         </div>
       </div>
 
-      <Tabs defaultValue="results" className="w-full"> {/* Pots canviar el default a 'results' si vols veure això primer */}
-        <TabsList className="grid w-full grid-cols-4 bg-slate-900 border border-slate-800">
-          <TabsTrigger value="results">📊 Resultats</TabsTrigger> {/* Nova pestanya */}
-          <TabsTrigger value="details">📝 Detalls</TabsTrigger>
-          <TabsTrigger value="tasks">✅ Checklist</TabsTrigger>
-          <TabsTrigger value="team">👥 Equip</TabsTrigger>
+      {/* --- TABS --- */}
+      <Tabs defaultValue="results" className="w-full space-y-6">
+        <TabsList className="grid w-full grid-cols-4 bg-muted/50 p-1 rounded-xl border border-border">
+          <TabsTrigger value="results" className="rounded-lg data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm transition-all">📊 Resultats</TabsTrigger>
+          <TabsTrigger value="details" className="rounded-lg data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm transition-all">📝 Detalls</TabsTrigger>
+          <TabsTrigger value="tasks" className="rounded-lg data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm transition-all">✅ Checklist</TabsTrigger>
+          <TabsTrigger value="team" className="rounded-lg data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm transition-all">👥 Equip</TabsTrigger>
         </TabsList>
 
-        {/* 0. RESULTATS (NOU) */}
-        <TabsContent value="results" className="mt-6">
+        <TabsContent value="results" className="focus-visible:outline-none">
           <CampaignAnalytics data={analyticsData} />
         </TabsContent>
 
-        <TabsContent value="details" className="mt-6">
+        <TabsContent value="details" className="focus-visible:outline-none">
           <CampaignDetailsForm campaign={ctx.campaign} />
         </TabsContent>
 
-        <TabsContent value="tasks" className="mt-6">
+        <TabsContent value="tasks" className="focus-visible:outline-none">
           <VisualFlowBuilder campaignId={id} tasks={ctx.tasks} />
         </TabsContent>
 
-        <TabsContent value="team" className="mt-6">
-          <Card className="bg-slate-900 border-slate-800">
-            <CardHeader><CardTitle className="text-white">Assignar Usuaris</CardTitle></CardHeader>
-            <CardContent>
+        <TabsContent value="team" className="focus-visible:outline-none">
+          <Card className="bg-card border-border shadow-sm">
+            <CardHeader className="border-b border-border bg-muted/30">
+                <CardTitle className="text-foreground">Assignar Usuaris</CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
               <TesterManager
                 campaignId={id}
                 assignedTesters={assigned}
@@ -5566,7 +5574,7 @@ export function ContactSection() {
                 {/* Tooltip flotant si intenten passar per sobre sense acceptar */}
                 {!termsAccepted && (
                     <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-foreground text-background text-xs px-3 py-1.5 rounded-md shadow-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap font-medium z-20">
-                        {t('tooltip_privacy')}
+                        {t('tooltip_privacy',)}
                         <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-foreground rotate-45"></div>
                     </div>
                 )}
@@ -8486,6 +8494,8 @@ export function SolutionsNavigation({ solutions, activeTab, setActiveTab }: Prop
 
 // =================== FILE: src/components/landing/solutions/SolutionsShowcase.tsx ===================
 
+// FITXER: src/components/landing/solutions/SolutionsShowcase.tsx
+
 'use client';
 
 import { useState } from 'react';
@@ -8498,6 +8508,8 @@ import { useTranslations } from 'next-intl';
 export function SolutionsShowcase() {
   const [activeTab, setActiveTab] = useState(SOLUTIONS[0].id);
   const activeSolution = SOLUTIONS.find(s => s.id === activeTab)!;
+  
+  // Connectem amb el namespace 'SolutionsSection'
   const t = useTranslations('SolutionsSection');
 
   return (
@@ -8506,15 +8518,14 @@ export function SolutionsShowcase() {
       {/* Fons Ambient */}
       <div className={`absolute inset-0 opacity-10 bg-linear-to-br ${activeSolution.color} blur-[150px] transition-all duration-700`} />
 
-      {/* ✅ CORRECCIÓ: Padding responsiu (px-6 -> px-10 -> px-14) */}
       <div className="container mx-auto px-6 md:px-10 lg:px-14 relative z-10">
         
         <div className="text-center max-w-3xl mx-auto mb-8 md:mb-16">
           <h2 className="text-3xl md:text-5xl font-black text-foreground mb-4">
-            Més enllà d'una <span className="text-transparent bg-clip-text bg-linear-to-r from-primary to-purple-400">Simple Web</span>.
+            {t('title_prefix')} <span className="text-transparent bg-clip-text bg-linear-to-r from-primary to-purple-400">{t('title_highlight')}</span>.
           </h2>
           <p className="text-lg md:text-xl text-muted-foreground">
-            Creem ecosistemes digitals que connecten programari, maquinari i intel·ligència artificial.
+            {t('description')}
           </p>
         </div>
 
@@ -8777,6 +8788,8 @@ export function TechStackSection() {
 
 // =================== FILE: src/components/landing/TestimonialsSection.tsx ===================
 
+// FITXER: src/components/landing/TestimonialsSection.tsx
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -8785,39 +8798,32 @@ import { Star, Quote, ChevronLeft, ChevronRight, Globe, Smartphone, Zap, Users, 
 import Image, { StaticImageData } from 'next/image';
 import Link from 'next/link';
 import type { Testimonial } from '@/lib/data';
+import { useTranslations } from 'next-intl';
 
 type Props = {
   testimonials: Testimonial[];
 };
 
 export function TestimonialsSection({ testimonials }: Props) {
+  const t = useTranslations('Testimonials'); // Namespace principal
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [itemsToShow, setItemsToShow] = useState(3); // Per defecte 3 (escriptori)
+  const [itemsToShow, setItemsToShow] = useState(3);
 
-  // Detectem la mida de la pantalla per ajustar itemsToShow
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 768) {
-        setItemsToShow(1); // Mòbil: 1 ítem
+        setItemsToShow(1);
       } else {
-        setItemsToShow(3); // Escriptori: 3 ítems
+        setItemsToShow(3);
       }
     };
-
-    // Executem al principi
     handleResize();
-
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const nextSlide = () => {
-    setCurrentIndex((prev) => (prev + 1) % testimonials.length);
-  };
-
-  const prevSlide = () => {
-    setCurrentIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
-  };
+  const nextSlide = () => setCurrentIndex((prev) => (prev + 1) % testimonials.length);
+  const prevSlide = () => setCurrentIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
 
   const getVisibleItems = () => {
     const items = [];
@@ -8829,25 +8835,22 @@ export function TestimonialsSection({ testimonials }: Props) {
 
   return (
     <section id="testimonis" className="py-16 bg-muted/30 relative overflow-hidden">
-      
-      {/* ✅ CORRECCIÓ APLICADA: Padding responsiu */}
       <div className="container mx-auto px-6 md:px-10 lg:px-14 relative z-10">
         
-        {/* CAPÇALERA */}
-        <div className="flex flex-col md:flex-row justify-between items-end  md:mb-16 gap-6">
+        {/* CAPÇALERA TRADUÏDA */}
+        <div className="flex flex-col md:flex-row justify-between items-end md:mb-16 gap-6">
            <div className="max-w-2xl">
               <h2 className="text-3xl lg:text-5xl font-bold text-foreground leading-tight">
-                No ens creguis a nosaltres. <br/>
-                Mira el que hem <span className="gradient-text">Construït</span>.
+                {t('title_prefix')} <br/>
+                <span className="gradient-text">{t('title_highlight')}</span>.
               </h2>
            </div>
 
-           {/* CONTROLS */}
            <div className="flex gap-3">
-              <button onClick={prevSlide} className="p-3 rounded-full border border-border bg-card hover:bg-primary hover:text-white transition-all shadow-sm">
+              <button onClick={prevSlide} className="p-3 rounded-full border border-border bg-card hover:bg-primary hover:text-white transition-all shadow-sm" aria-label="Previous">
                  <ChevronLeft className="w-6 h-6" />
               </button>
-              <button onClick={nextSlide} className="p-3 rounded-full border border-border bg-card hover:bg-primary hover:text-white transition-all shadow-sm">
+              <button onClick={nextSlide} className="p-3 rounded-full border border-border bg-card hover:bg-primary hover:text-white transition-all shadow-sm" aria-label="Next">
                  <ChevronRight className="w-6 h-6" />
               </button>
            </div>
@@ -8876,11 +8879,13 @@ export function TestimonialsSection({ testimonials }: Props) {
   );
 }
 
-// ... (TestimonialCard i Mockups es mantenen iguals)
+// --- SUB-COMPONENTS TRADUÏTS ---
+
 function TestimonialCard({ item }: { item: Testimonial }) {
+   const t = useTranslations('Testimonials'); // Reutilitzem el namespace
+
    return (
       <div className="relative w-full h-full group">
-         
          <div className="absolute inset-x-4 top-4 bottom-20 transition-all duration-500 cubic-bezier(0.25, 0.8, 0.25, 1) group-hover:-translate-y-20 ">
             <div className="w-full h-full rounded-t-xl overflow-hidden border border-primary/20 bg-slate-900 dark:bg-black shadow-2xl group-hover:shadow-primary/20">
                {item.projectType === 'web' && <MockupWeb url={item.projectUrl} image={item.image} title={item.company} />}
@@ -8913,7 +8918,7 @@ function TestimonialCard({ item }: { item: Testimonial }) {
             </p>
             
             <div className="mt-auto pt-4 border-t border-border flex justify-between items-center opacity-50">
-               <span className="text-[10px] uppercase tracking-widest font-bold">Projecte Realitzat</span>
+               <span className="text-[10px] uppercase tracking-widest font-bold">{t('project_label')}</span>
                <div className="w-16 h-1 bg-foreground/10 rounded-full"></div>
             </div>
          </div>
@@ -8922,14 +8927,16 @@ function TestimonialCard({ item }: { item: Testimonial }) {
 }
 
 function MockupWeb({ url, image, title }: { url?: string, image?: string | StaticImageData, title: string }) {
+   const t = useTranslations('Testimonials.mockups'); // Namespace específic per botons
    const Wrapper = url ? Link : 'div';
+   
    return (
       <Wrapper href={url || '#'} target={url ? "_blank" : undefined} className="block w-full h-full cursor-pointer group/mockup">
          <div className="w-full h-full bg-slate-50 dark:bg-[#0f111a] flex flex-col relative">
             {url && (
                <div className="absolute inset-0 z-30 bg-black/60 backdrop-blur-[2px] flex items-center justify-center opacity-0 group-hover/mockup:opacity-100 transition-opacity duration-300">
                   <span className="bg-white text-black px-4 py-2 rounded-full font-bold text-xs flex items-center gap-2 shadow-lg transform scale-90 group-hover/mockup:scale-100 transition-transform">
-                     Visitar Web <ExternalLink className="w-3 h-3" />
+                     {t('visit_web')} <ExternalLink className="w-3 h-3" />
                   </span>
                </div>
             )}
@@ -8944,7 +8951,7 @@ function MockupWeb({ url, image, title }: { url?: string, image?: string | Stati
                 ) : (
                    <div className="flex flex-col items-center justify-center h-full gap-2 bg-white dark:bg-black/50">
                       <Globe className="w-8 h-8 text-blue-500/20" />
-                      <span className="text-xs text-muted-foreground font-bold">{title} Web</span>
+                      <span className="text-xs text-muted-foreground font-bold">{title}</span>
                    </div>
                 )}
             </div>
@@ -8954,11 +8961,13 @@ function MockupWeb({ url, image, title }: { url?: string, image?: string | Stati
 }
 
 function MockupApp({ image, title }: { image?: string | StaticImageData, title: string }) {
+   const t = useTranslations('Testimonials.mockups');
+
    return (
       <div className="w-full h-full bg-slate-800 dark:bg-black flex items-end justify-center p-4 pb-0 group/mockup relative">
          <div className="absolute inset-0 z-30 bg-black/60 backdrop-blur-[2px] flex items-center justify-center opacity-0 group-hover/mockup:opacity-100 transition-opacity duration-300 rounded-t-xl">
              <span className="bg-white text-black px-4 py-2 rounded-full font-bold text-xs flex items-center gap-2 shadow-lg">
-                Veure App <ExternalLink className="w-3 h-3" />
+                {t('view_app')} <ExternalLink className="w-3 h-3" />
              </span>
          </div>
          <div className="w-32 h-full bg-black border-2 border-slate-700 rounded-t-xl overflow-hidden relative">
@@ -8967,8 +8976,8 @@ function MockupApp({ image, title }: { image?: string | StaticImageData, title: 
             ) : (
                <div className="w-full h-full bg-slate-900 flex flex-col items-center justify-center">
                    <Smartphone className="w-6 h-6 text-primary" />
-                   <span className="text-[10px] text-slate-400 mt-2">{title} App</span>
-                </div>
+                   <span className="text-[10px] text-slate-400 mt-2">{title}</span>
+               </div>
             )}
          </div>
       </div>
@@ -8976,15 +8985,18 @@ function MockupApp({ image, title }: { image?: string | StaticImageData, title: 
 }
 
 function MockupAutomation() {
+   const t = useTranslations('Testimonials.mockups');
+
    return (
       <div className="w-full h-full bg-[#1a1d2d] relative overflow-hidden group/mockup">
          <div className="absolute inset-0 z-30 bg-black/60 backdrop-blur-[2px] flex items-center justify-center opacity-0 group-hover/mockup:opacity-100 transition-opacity duration-300">
              <span className="bg-white text-black px-4 py-2 rounded-full font-bold text-xs flex items-center gap-2 shadow-lg">
-                Veure Flux <Zap className="w-3 h-3" />
+                 {t('view_flow')} <Zap className="w-3 h-3" />
              </span>
          </div>
          <div className="absolute inset-0 bg-[radial-gradient(#ffffff10_1px,transparent_1px)] bg-size-[12px_12px]"></div>
          <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none">
+            {/* ... SVG Path Logic ... (mateix que tenies) */}
             <defs>
                <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
                   <stop offset="0%" stopColor="#a855f7" stopOpacity="0.5" />
@@ -9183,13 +9195,34 @@ function CatalanFlag({ className }: { className?: string }) {
   );
 }
 
+// ✅ NOU: Component SVG per a la bandera italiana
+function ItalianFlag({ className }: { className?: string }) {
+  return (
+    <svg 
+      xmlns="http://www.w3.org/2000/svg" 
+      viewBox="0 0 36 24" 
+      className={className}
+      preserveAspectRatio="none"
+    >
+      {/* Verd */}
+      <rect width="12" height="24" fill="#008C45" /> 
+      {/* Blanc */}
+      <rect x="12" width="12" height="24" fill="#FFFFFF" /> 
+      {/* Vermell */}
+      <rect x="24" width="12" height="24" fill="#CD212A" /> 
+    </svg>
+  );
+}
+
+
 export function LanguageSwitcher() {
   const t = useTranslations('Common.languages');
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
 
-  const handleLanguageChange = (nextLocale: 'ca' | 'es' | 'en') => {
+  // ✅ CORRECCIÓ: Afegim 'it' al tipatge de nextLocale
+  const handleLanguageChange = (nextLocale: 'ca' | 'es' | 'en' | 'it') => {
     startTransition(() => {
       router.replace(pathname, { locale: nextLocale });
     });
@@ -9232,6 +9265,15 @@ export function LanguageSwitcher() {
         >
           <span className="text-lg leading-none">🇺🇸</span> 
           {t('en')}
+        </DropdownMenuItem>
+
+        {/* ✅ NOU: ITALIÀ */}
+        <DropdownMenuItem 
+          onClick={() => handleLanguageChange('it')}
+          className={`gap-2 ${locale === 'it' ? 'bg-primary/10 font-bold' : ''}`}
+        >
+          <ItalianFlag className="w-5 h-3.5 rounded-[2px] shadow-sm object-cover" /> 
+          {t('it')}
         </DropdownMenuItem>
 
       </DropdownMenuContent>
@@ -9408,7 +9450,7 @@ export function Navbar({ user }: Props) {
 
   const handleScrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     // Només intervenim si estem a la home i és un enllaç amb àncora
-    const isHomePage = pathname === '/' || pathname === '/ca' || pathname === '/es' || pathname === '/en';
+    const isHomePage = pathname === '/' || pathname === '/ca' || pathname === '/es' || pathname === '/en' || pathname === '/it';
 
     if (isHomePage && href.includes('#')) {
       e.preventDefault();
@@ -14227,9 +14269,8 @@ export function NewProjectForm() {
 import { Link } from '@/routing';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { FlaskConical, Users, ListChecks, ArrowRight, Plus } from 'lucide-react';
+import { FlaskConical, Users, ListChecks, ArrowRight, Plus, Folder } from 'lucide-react';
 
-// ✅ 1. CORRECCIÓ: Acceptem 'null' perquè Supabase pot retornar nulls
 type CampaignSummary = {
     id: string;
     title: string;
@@ -14243,52 +14284,72 @@ export function ProjectCampaignsList({ campaigns, projectId }: { campaigns: Camp
     
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center">
-                <h3 className="text-lg font-bold text-slate-200 flex items-center gap-2">
-                    <FlaskConical className="w-5 h-5 text-purple-500" />
-                    Campanyes de Test ({campaigns.length})
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <h3 className="text-xl font-bold text-foreground flex items-center gap-2">
+                    <div className="p-2 bg-purple-100 dark:bg-purple-900/20 rounded-lg text-purple-600 dark:text-purple-400">
+                        <FlaskConical className="w-5 h-5" />
+                    </div>
+                    Campanyes de Test
+                    <span className="ml-2 text-sm font-medium text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
+                        {campaigns.length}
+                    </span>
                 </h3>
                 <Link href={`/admin/tests/new?projectId=${projectId}`}>
-                    <Button size="sm" className="bg-purple-600 hover:bg-purple-700 text-white">
+                    <Button size="sm" className="bg-purple-600 hover:bg-purple-700 text-white shadow-lg shadow-purple-500/20">
                         <Plus className="w-4 h-4 mr-2" /> Nova Campanya
                     </Button>
                 </Link>
             </div>
 
             {campaigns.length === 0 ? (
-                <div className="border-2 border-dashed border-slate-800 rounded-xl p-10 text-center">
-                    <p className="text-slate-500 mb-4">Aquest projecte no té cap prova activa.</p>
+                <div className="border-2 border-dashed border-border bg-muted/10 rounded-2xl p-12 text-center flex flex-col items-center">
+                    <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center mb-4">
+                        <Folder className="w-6 h-6 text-muted-foreground" />
+                    </div>
+                    <h4 className="text-foreground font-semibold mb-1">Sense proves actives</h4>
+                    <p className="text-muted-foreground text-sm mb-6 max-w-sm">
+                        Aquest projecte encara no té cap campanya de QA configurada. Comença creant-ne una.
+                    </p>
                     <Link href={`/admin/tests/new?projectId=${projectId}`}>
-                        <Button variant="outline">Crear primera prova</Button>
+                        <Button variant="outline" className="border-purple-200 text-purple-700 hover:bg-purple-50 dark:border-purple-800 dark:text-purple-300 dark:hover:bg-purple-900/20">
+                            Crear primera prova
+                        </Button>
                     </Link>
                 </div>
             ) : (
                 <div className="grid gap-4 md:grid-cols-2">
                     {campaigns.map((camp) => (
-                        <Link key={camp.id} href={`/admin/tests/${camp.id}?source=project`} className="block group">
-                            <Card className="bg-slate-900 border-slate-800 group-hover:border-purple-500/50 transition-all h-full">
-                                <CardHeader className="pb-2">
-                                    <div className="flex justify-between items-start">
-                                        <CardTitle className="text-base text-white truncate pr-2">
+                        <Link key={camp.id} href={`/admin/tests/${camp.id}?source=project`} className="block group h-full">
+                            <Card className="bg-card border-border hover:border-purple-500/50 dark:hover:border-purple-500/50 hover:shadow-md transition-all duration-300 h-full overflow-hidden relative">
+                                {/* Decoració Hover */}
+                                <div className="absolute inset-0 bg-linear-to-r from-purple-500/0 via-purple-500/0 to-purple-500/0 group-hover:via-purple-500/5 transition-colors duration-500 pointer-events-none" />
+                                
+                                <CardHeader className="pb-3 border-b border-border/50 bg-muted/20">
+                                    <div className="flex justify-between items-start gap-4">
+                                        <CardTitle className="text-base font-bold text-foreground truncate leading-tight">
                                             {camp.title}
                                         </CardTitle>
-                                        {/* Passem l'estat, assegurant-nos que sigui un string o undefined */}
                                         <StatusBadge status={camp.status || 'unknown'} />
                                     </div>
                                 </CardHeader>
-                                <CardContent>
-                                    <div className="flex items-center gap-6 text-sm text-slate-400 mt-2">
-                                        <div className="flex items-center gap-1.5">
-                                            <Users className="w-4 h-4 text-blue-400" />
-                                            <span className="font-mono font-bold text-slate-200">{camp.testerCount}</span> testers
+                                <CardContent className="pt-4">
+                                    <div className="flex items-center gap-6 text-sm">
+                                        <div className="flex items-center gap-2 text-muted-foreground group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                                            <Users className="w-4 h-4" />
+                                            <span className="font-mono font-bold text-foreground">{camp.testerCount}</span> 
+                                            <span className="text-xs">testers</span>
                                         </div>
-                                        <div className="flex items-center gap-1.5">
-                                            <ListChecks className="w-4 h-4 text-green-400" />
-                                            <span className="font-mono font-bold text-slate-200">{camp.taskCount}</span> tasques
+                                        <div className="flex items-center gap-2 text-muted-foreground group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors">
+                                            <ListChecks className="w-4 h-4" />
+                                            <span className="font-mono font-bold text-foreground">{camp.taskCount}</span> 
+                                            <span className="text-xs">tasques</span>
                                         </div>
                                     </div>
-                                    <div className="mt-4 flex items-center text-xs text-purple-400 font-bold opacity-0 group-hover:opacity-100 transition-opacity">
-                                        Gestionar Equip i Tasques <ArrowRight className="w-3 h-3 ml-1" />
+                                    
+                                    <div className="mt-5 flex items-center justify-end">
+                                        <span className="text-xs font-bold text-purple-600 dark:text-purple-400 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all transform -translate-x-2.5 group-hover:translate-x-0">
+                                            Gestionar <ArrowRight className="w-3 h-3" />
+                                        </span>
                                     </div>
                                 </CardContent>
                             </Card>
@@ -14300,22 +14361,19 @@ export function ProjectCampaignsList({ campaigns, projectId }: { campaigns: Camp
     );
 }
 
-// ✅ 2. CORRECCIÓ: Tipatge robust per a l'índex de l'objecte
+// 🎨 StatusBadge amb colors Adaptatius (Light/Dark)
 function StatusBadge({ status }: { status: string }) {
-    // Definim explícitament que és un Record de string -> string
-    // Així TS permet indexar amb qualsevol string
     const styles: Record<string, string> = {
-        active: 'bg-green-500/10 text-green-400 border-green-500/20',
-        draft: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20',
-        completed: 'bg-slate-500/10 text-slate-400 border-slate-500/20',
-        unknown: 'bg-slate-500/10 text-slate-500 border-slate-500/20' // Fallback visual
+        active: 'bg-green-100 text-green-700 border-green-200 dark:bg-green-500/10 dark:text-green-400 dark:border-green-500/20',
+        draft: 'bg-yellow-100 text-yellow-700 border-yellow-200 dark:bg-yellow-500/10 dark:text-yellow-400 dark:border-yellow-500/20',
+        completed: 'bg-slate-100 text-slate-600 border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700',
+        unknown: 'bg-slate-100 text-slate-500 border-slate-200 dark:bg-slate-800 dark:text-slate-500 dark:border-slate-700'
     };
   
-    // Si l'status no existeix al mapa, fem servir 'completed' o 'unknown' per defecte
-    const style = styles[status] || styles.completed;
+    const style = styles[status] || styles.unknown;
 
     return (
-        <span className={`px-2 py-0.5 rounded text-[10px] uppercase font-bold border ${style}`}>
+        <span className={`px-2.5 py-0.5 rounded-full text-[10px] uppercase font-bold tracking-wider border ${style}`}>
             {status}
         </span>
     )
@@ -14915,22 +14973,20 @@ export async function submitTestFeedback(taskId: string, status: 'pass' | 'fail'
 
 'use client';
 
-import { Card, CardContent } from '@/components/ui/card'; // ❌ Treu CardTitle, CardHeader
+import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-// ❌ Treu Badge (no es fa servir)
 import { Progress } from '@/components/ui/progress';
 import { CheckCircle2, XCircle, AlertTriangle, MessageSquare, Activity } from 'lucide-react';
 
-// ✅ Definim tipus per a les dades que rebem (COINCIDENT AMB EL REPOSITORI)
 type TestResult = {
     id: string;
-    status: 'pass' | 'fail' | 'blocked'; // Aquí és on fallava
+    status: 'pass' | 'fail' | 'blocked';
     comment?: string | null;
     updated_at: string;
     taskTitle: string;
     user_id: string;
     tester: {
-        id?: string; // Opcional perquè a vegades ve del map
+        id?: string;
         full_name: string | null;
         email: string;
         avatar_url: string | null;
@@ -14942,7 +14998,6 @@ type AnalyticsData = {
     totalTasks: number;
 };
 
-// Tipus auxiliar per a les estadístiques d'usuari
 type UserStat = {
     user: TestResult['tester'];
     completed: number;
@@ -14957,7 +15012,6 @@ export function CampaignAnalytics({ data }: { data: AnalyticsData }) {
     const totalExecutions = results.length;
     const passed = results.filter(r => r.status === 'pass').length;
     const failed = results.filter(r => r.status === 'fail').length;
-    // const blocked = results.filter(r => r.status === 'blocked').length; // No l'usem al KPI card, però existeix
     
     const successRate = totalExecutions > 0 ? Math.round((passed / totalExecutions) * 100) : 0;
 
@@ -14981,7 +15035,7 @@ export function CampaignAnalytics({ data }: { data: AnalyticsData }) {
 
     const leaderboard = Array.from(userStats.values());
 
-    // 3. Filtrar Incidències (Fails, Blocked o amb Comentaris)
+    // 3. Filtrar Incidències
     const issues = results.filter(r => r.status === 'fail' || r.status === 'blocked' || r.comment);
 
     return (
@@ -14989,65 +15043,65 @@ export function CampaignAnalytics({ data }: { data: AnalyticsData }) {
             
             {/* KPI CARDS */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <Card className="bg-slate-900 border-slate-800">
+                <Card className="bg-card border-border text-card-foreground shadow-sm">
                     <CardContent className="p-6">
-                        <div className="text-slate-400 text-xs uppercase font-bold mb-1">Total Validacions</div>
-                        <div className="text-3xl font-bold text-white">{totalExecutions}</div>
+                        <div className="text-muted-foreground text-xs uppercase font-bold mb-1">Total Validacions</div>
+                        <div className="text-3xl font-bold text-foreground">{totalExecutions}</div>
                     </CardContent>
                 </Card>
-                <Card className="bg-slate-900 border-slate-800">
+                <Card className="bg-card border-border text-card-foreground shadow-sm">
                     <CardContent className="p-6">
-                        <div className="text-slate-400 text-xs uppercase font-bold mb-1">Taxa d'Èxit</div>
-                        <div className={`text-3xl font-bold ${successRate > 80 ? 'text-green-400' : 'text-yellow-400'}`}>
+                        <div className="text-muted-foreground text-xs uppercase font-bold mb-1">Taxa d'Èxit</div>
+                        <div className={`text-3xl font-bold ${successRate > 80 ? 'text-green-600 dark:text-green-400' : 'text-yellow-600 dark:text-yellow-400'}`}>
                             {successRate}%
                         </div>
                     </CardContent>
                 </Card>
-                <Card className="bg-red-900/10 border-red-900/20">
+                <Card className="bg-red-50 dark:bg-red-900/10 border-red-200 dark:border-red-900/20 shadow-sm">
                     <CardContent className="p-6">
-                        <div className="text-red-400 text-xs uppercase font-bold mb-1">Errors Crítics</div>
-                        <div className="text-3xl font-bold text-red-500">{failed}</div>
+                        <div className="text-red-600 dark:text-red-400 text-xs uppercase font-bold mb-1">Errors Crítics</div>
+                        <div className="text-3xl font-bold text-red-700 dark:text-red-500">{failed}</div>
                     </CardContent>
                 </Card>
-                <Card className="bg-slate-900 border-slate-800">
+                <Card className="bg-card border-border text-card-foreground shadow-sm">
                     <CardContent className="p-6">
-                        <div className="text-slate-400 text-xs uppercase font-bold mb-1">Testers Actius</div>
-                        <div className="text-3xl font-bold text-blue-400">{leaderboard.length}</div>
+                        <div className="text-muted-foreground text-xs uppercase font-bold mb-1">Testers Actius</div>
+                        <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">{leaderboard.length}</div>
                     </CardContent>
                 </Card>
             </div>
 
             <div className="grid lg:grid-cols-3 gap-8">
                 
-                {/* FEEDBACK & INCIDÈNCIES (2 cols) */}
+                {/* FEEDBACK & INCIDÈNCIES */}
                 <div className="lg:col-span-2 space-y-4">
-                    <h3 className="font-bold text-white flex items-center gap-2">
-                        <MessageSquare className="w-5 h-5 text-orange-400" />
+                    <h3 className="font-bold text-foreground flex items-center gap-2">
+                        <MessageSquare className="w-5 h-5 text-orange-500" />
                         Feedback i Incidències Recents
                     </h3>
                     
                     {issues.length === 0 ? (
-                        <div className="p-8 border border-slate-800 rounded-xl text-center text-slate-500 bg-slate-900/50">
+                        <div className="p-8 border border-dashed border-border rounded-xl text-center text-muted-foreground bg-muted/20">
                             Tot net! No hi ha comentaris ni errors reportats.
                         </div>
                     ) : (
                         <div className="space-y-3">
                             {issues.map((issue) => (
-                                <div key={issue.id} className="bg-slate-900 border border-slate-800 p-4 rounded-xl flex gap-4 items-start">
-                                    <div className="mt-1">
+                                <div key={issue.id} className="bg-card border border-border p-4 rounded-xl flex gap-4 items-start shadow-sm">
+                                    <div className="mt-1 shrink-0">
                                         {issue.status === 'fail' && <XCircle className="w-5 h-5 text-red-500" />}
                                         {issue.status === 'blocked' && <AlertTriangle className="w-5 h-5 text-orange-500" />}
                                         {issue.status === 'pass' && <CheckCircle2 className="w-5 h-5 text-green-500" />}
                                     </div>
-                                    <div className="flex-1">
+                                    <div className="flex-1 min-w-0">
                                         <div className="flex justify-between items-start mb-1">
-                                            <h4 className="font-bold text-slate-200 text-sm">{issue.taskTitle}</h4>
-                                            <span className="text-xs text-slate-500">
+                                            <h4 className="font-bold text-foreground text-sm truncate pr-2">{issue.taskTitle}</h4>
+                                            <span className="text-xs text-muted-foreground whitespace-nowrap">
                                                 {new Date(issue.updated_at).toLocaleDateString()}
                                             </span>
                                         </div>
                                         {issue.comment && (
-                                            <p className="text-sm text-slate-400 bg-black/20 p-2 rounded mb-2">
+                                            <p className="text-sm text-foreground bg-muted p-3 rounded-lg mb-3 leading-relaxed">
                                                 "{issue.comment}"
                                             </p>
                                         )}
@@ -15056,7 +15110,7 @@ export function CampaignAnalytics({ data }: { data: AnalyticsData }) {
                                                 <AvatarImage src={issue.tester.avatar_url || ''} />
                                                 <AvatarFallback className="text-[9px]">{issue.tester.email[0].toUpperCase()}</AvatarFallback>
                                             </Avatar>
-                                            <span className="text-xs text-slate-500">{issue.tester.full_name || issue.tester.email}</span>
+                                            <span className="text-xs text-muted-foreground truncate">{issue.tester.full_name || issue.tester.email}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -15065,40 +15119,37 @@ export function CampaignAnalytics({ data }: { data: AnalyticsData }) {
                     )}
                 </div>
 
-                {/* LEADERBOARD / PROGRÉS USUARIS (1 col) */}
+                {/* LEADERBOARD */}
                 <div className="space-y-4">
-                    <h3 className="font-bold text-white flex items-center gap-2">
-                        <Activity className="w-5 h-5 text-blue-400" />
+                    <h3 className="font-bold text-foreground flex items-center gap-2">
+                        <Activity className="w-5 h-5 text-blue-500" />
                         Progrés de l'Equip
                     </h3>
                     
-                    <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-6">
+                    <div className="bg-card border border-border rounded-xl p-4 space-y-6 shadow-sm">
                         {leaderboard.length === 0 ? (
-                            <p className="text-sm text-slate-500 text-center">Encara ningú ha començat.</p>
+                            <p className="text-sm text-muted-foreground text-center">Encara ningú ha començat.</p>
                         ) : (
                             leaderboard.map((stat, index) => {
-                                // Evitem divisió per zero
                                 const progress = totalTasks > 0 ? Math.round((stat.completed / totalTasks) * 100) : 0;
-                                
                                 return (
-                                    // Afegim index a la clau per seguretat extra
                                     <div key={`${stat.user.email}-${index}`}>
                                         <div className="flex justify-between items-center mb-2">
-                                            <div className="flex items-center gap-2">
+                                            <div className="flex items-center gap-2 min-w-0">
                                                 <Avatar className="w-6 h-6">
                                                     <AvatarImage src={stat.user.avatar_url || ''} />
                                                     <AvatarFallback className="text-[10px]">{stat.user.email[0].toUpperCase()}</AvatarFallback>
                                                 </Avatar>
-                                                <span className="text-sm font-medium text-slate-300 truncate max-w-[100px]">
+                                                <span className="text-sm font-medium text-foreground truncate max-w-[100px]">
                                                     {stat.user.full_name || 'Usuari'}
                                                 </span>
                                             </div>
-                                            <span className="text-xs font-bold text-white">{progress}%</span>
+                                            <span className="text-xs font-bold text-foreground">{progress}%</span>
                                         </div>
-                                        <Progress value={progress} className="h-1.5 bg-slate-800" />
-                                        <div className="flex gap-2 mt-1 justify-end">
-                                            <span className="text-[10px] text-green-500">{stat.passed} OK</span>
-                                            <span className="text-[10px] text-red-500">{stat.failed} KO</span>
+                                        <Progress value={progress} className="h-1.5" />
+                                        <div className="flex gap-2 mt-1 justify-end font-mono">
+                                            <span className="text-[10px] text-green-600 dark:text-green-400">{stat.passed} OK</span>
+                                            <span className="text-[10px] text-red-600 dark:text-red-400">{stat.failed} KO</span>
                                         </div>
                                     </div>
                                 )
@@ -15116,25 +15167,22 @@ export function CampaignAnalytics({ data }: { data: AnalyticsData }) {
 
 'use client';
 
-import { useActionState } from 'react';
+import { useActionState, useEffect } from 'react';
 import { TestCampaignDTO } from '@/types/models';
-import { updateCampaignAction, ActionState } from '@/features/tests/actions/admin-actions'; // Importa l'acció nova
+import { updateCampaignAction, ActionState } from '@/features/tests/actions/admin-actions';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Save, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { useEffect } from 'react';
 
 const initialState: ActionState = { success: false, message: '' };
 
 export function CampaignDetailsForm({ campaign }: { campaign: TestCampaignDTO }) {
-    // Creem dos estats separats per evitar que un formulari bloquegi l'altre
     const [stateGeneral, actionGeneral, isPendingGeneral] = useActionState(updateCampaignAction, initialState);
     const [stateDocs, actionDocs, isPendingDocs] = useActionState(updateCampaignAction, initialState);
 
-    // Efecte per mostrar Toast quan es guarda correctament
     useEffect(() => {
         if (stateGeneral.success) toast.success(stateGeneral.message);
         else if (stateGeneral.message) toast.error(stateGeneral.message);
@@ -15148,28 +15196,28 @@ export function CampaignDetailsForm({ campaign }: { campaign: TestCampaignDTO })
     return (
         <div className="grid lg:grid-cols-2 gap-8">
             
-            {/* --- FORMULARI 1: CONFIGURACIÓ GENERAL --- */}
-            <Card className="bg-slate-900 border-slate-800">
+            {/* --- CONFIGURACIÓ GENERAL --- */}
+            <Card className="bg-card border-border shadow-sm">
                 <CardContent className="p-6">
                     <form action={actionGeneral} className="space-y-4">
                         <input type="hidden" name="id" value={campaign.id} />
                         
-                        <h3 className="text-lg font-bold text-white mb-4">Configuració General</h3>
+                        <h3 className="text-lg font-bold text-foreground mb-4">Configuració General</h3>
                         
                         <div className="space-y-2">
-                            <label className="text-sm text-slate-400">Títol de la Campanya</label>
+                            <label className="text-sm font-medium text-foreground">Títol de la Campanya</label>
                             <Input 
                                 name="title"
                                 defaultValue={campaign.title} 
-                                className="bg-black border-slate-700 text-white" 
+                                className="bg-background border-input text-foreground" 
                             />
                         </div>
                         
                         <div className="space-y-2">
-                            <label className="text-sm text-slate-400">Estat</label>
+                            <label className="text-sm font-medium text-foreground">Estat</label>
                             <select 
                                 name="status"
-                                className="w-full h-10 px-3 py-2 rounded-md border border-slate-700 bg-black text-white text-sm focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-transparent"
+                                className="w-full h-10 px-3 py-2 rounded-md border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring"
                                 defaultValue={campaign.status}
                             >
                                 <option value="active">Activa (Visible)</option>
@@ -15179,15 +15227,15 @@ export function CampaignDetailsForm({ campaign }: { campaign: TestCampaignDTO })
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-sm text-slate-400">Descripció Curta</label>
+                            <label className="text-sm font-medium text-foreground">Descripció Curta</label>
                             <Input 
                                 name="description"
                                 defaultValue={campaign.description || ''} 
-                                className="bg-black border-slate-700 text-white" 
+                                className="bg-background border-input text-foreground" 
                             />
                         </div>
 
-                        <Button disabled={isPendingGeneral} className="w-full mt-4 bg-slate-800 hover:bg-slate-700 text-white">
+                        <Button disabled={isPendingGeneral} className="w-full mt-4">
                             {isPendingGeneral ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
                             Guardar Configuració
                         </Button>
@@ -15195,22 +15243,22 @@ export function CampaignDetailsForm({ campaign }: { campaign: TestCampaignDTO })
                 </CardContent>
             </Card>
 
-            {/* --- FORMULARI 2: DOCUMENTACIÓ --- */}
-            <Card className="bg-slate-900 border-slate-800 flex flex-col">
+            {/* --- DOCUMENTACIÓ --- */}
+            <Card className="bg-card border-border shadow-sm flex flex-col">
                 <CardContent className="p-6 flex-1 flex flex-col h-full">
                     <form action={actionDocs} className="contents">
                         <input type="hidden" name="id" value={campaign.id} />
 
                         <div className="mb-2">
-                            <h3 className="text-lg font-bold text-white">Documentació per al Tester</h3>
-                            <p className="text-xs text-slate-500 mt-1">
+                            <h3 className="text-lg font-bold text-foreground">Documentació per al Tester</h3>
+                            <p className="text-xs text-muted-foreground mt-1">
                                 Aquest text apareixerà a la part esquerra de la pantalla del tester.
                             </p>
                         </div>
                         
                         <Textarea 
                             name="instructions"
-                            className="bg-black border-slate-700 text-white font-mono text-sm flex-1 min-h-[300px] resize-none leading-relaxed p-4 mb-4" 
+                            className="bg-background border-input text-foreground font-mono text-sm flex-1 min-h-[300px] resize-none leading-relaxed p-4 mb-4" 
                             defaultValue={campaign.instructions || ''}
                             placeholder="# Guia de Proves..."
                         />
@@ -15228,11 +15276,9 @@ export function CampaignDetailsForm({ campaign }: { campaign: TestCampaignDTO })
 
 // =================== FILE: src/features/tests/ui/CreateCampaignForm.tsx ===================
 
-// src/features/tests/ui/CreateCampaignForm.tsx
 'use client';
 
 import { useActionState } from 'react';
-// IMPORT CRÍTIC: Assegura't que la ruta és correcta
 import { createCampaignAction, ActionState } from '@/features/tests/actions/admin-actions';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15248,36 +15294,36 @@ type ProjectSummary = {
     name: string;
 };
 
-// 👇 ASSEGURA'T QUE POSA 'export function', NO 'export default function'
 export function CreateCampaignForm({ projects }: { projects: ProjectSummary[] }) {
   const [state, action, isPending] = useActionState(createCampaignAction, initialState);
 
   return (
     <form action={action} className="space-y-6">
-        {/* ... (el teu codi del formulari) ... */}
-        {/* Si no tens el codi a mà, copia'l del pas anterior, però la clau és la línia de l'export */}
+        
         <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-300">Projecte</label>
-            <select name="projectId" required className="w-full p-3 rounded-lg bg-slate-900 border border-slate-700 text-white">
+            <label className="text-sm font-medium text-foreground">Projecte</label>
+            <select name="projectId" required className="w-full p-3 rounded-lg bg-background border border-input text-foreground focus:ring-2 focus:ring-ring outline-none">
                 <option value="">Selecciona...</option>
                 {projects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
             </select>
         </div>
         <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-300">Títol</label>
-            <Input name="title" required className="bg-slate-900 border-slate-700 text-white" />
+            <label className="text-sm font-medium text-foreground">Títol</label>
+            <Input name="title" required className="bg-background border-input text-foreground" />
         </div>
         <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-300">Descripció</label>
-            <Input name="description" className="bg-slate-900 border-slate-700 text-white" />
+            <label className="text-sm font-medium text-foreground">Descripció</label>
+            <Input name="description" className="bg-background border-input text-foreground" />
         </div>
         <div className="space-y-2">
-            <label className="text-sm font-medium text-slate-300">Instruccions Inicials</label>
-            <textarea name="instructions" rows={4} className="w-full p-3 rounded-lg bg-slate-900 border-slate-700 text-white" />
+            <label className="text-sm font-medium text-foreground">Instruccions Inicials</label>
+            <textarea name="instructions" rows={4} className="w-full p-3 rounded-lg bg-background border border-input text-foreground focus:ring-2 focus:ring-ring outline-none" />
         </div>
         
         {state.message && !state.success && (
-            <div className="text-red-400 text-sm flex gap-2"><AlertCircle className="w-4 h-4"/> {state.message}</div>
+            <div className="text-red-500 text-sm flex gap-2 font-medium bg-red-50 dark:bg-red-900/10 p-2 rounded">
+                <AlertCircle className="w-4 h-4"/> {state.message}
+            </div>
         )}
 
         <Button type="submit" disabled={isPending} className="w-full">
@@ -15313,8 +15359,6 @@ export function DeleteCampaignButton({ campaignId, projectId }: Props) {
     setIsDeleting(true);
     try {
       await deleteCampaignAction(campaignId, projectId);
-      // Nota: Si l'acció fa redirect, el codi d'aquí sota potser no s'arriba a executar, 
-      // però el toast ajuda si hi ha retard.
       toast.success("Campanya eliminada");
     } catch (error) {
       console.error(error);
@@ -15329,7 +15373,7 @@ export function DeleteCampaignButton({ campaignId, projectId }: Props) {
       size="sm" 
       onClick={handleDelete} 
       disabled={isDeleting}
-      className="bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white border border-red-500/50 transition-colors"
+      className="bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 dark:bg-red-900/10 dark:text-red-400 dark:border-red-900/50 dark:hover:bg-red-900/30 transition-colors"
     >
       {isDeleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4 mr-2" />}
       Eliminar Test
@@ -16141,11 +16185,16 @@ export async function requireAdmin() {
 
 // =================== FILE: src/lib/data.ts ===================
 
-// src/lib/data.ts
-import { StaticImageData } from 'next/image'; // 👈 Necessari pel tipatge
+// FITXER: src/lib/data.ts
 
-import bioshopImg from '@/assets/images/testimoni-garatgeestacio.jpg';
-import salutFlow from '@/assets/images/salutflow.png';
+import { StaticImageData } from 'next/image';
+
+// Imatges reals (Assegura't que els fitxers existeixen a aquesta ruta)
+import garatgeImg from '@/assets/images/testimoni-garatgeestacio.jpg';
+import salutFlowImg from '@/assets/images/salutflow.png';
+import dataflow from '@/assets/images/cap-dataflow.jpg';
+
+
 
 export type Testimonial = {
   id: number | string;
@@ -16160,50 +16209,63 @@ export type Testimonial = {
 
 export const TESTIMONIALS: Testimonial[] = [
   {
-    id: 1,
-    name: "Marc Vila",
-    company: "Gestoria Vila",
-    text: "Hem estalviat 20h setmanals gràcies al bot de WhatsApp.",
+    id: 'garatge-estacio',
+    name: "Vado",
+    company: "Garatge Estació",
+    // ✅ Text específic sobre el nou disseny i les reserves d'autocaravanes
+    text: "Estem molt contents amb el nou disseny. El sistema de reserves online per a cites de taller i la zona d'autocaravanes ens ha facilitat moltíssim la gestió.",
+    rating: 5,
+    projectType: 'web',
+    projectUrl: 'https://garatgeestacio.com',
+    image: garatgeImg
+  },
+  {
+    id: 'guirigall',
+    name: "Adriana",
+    company: "Guirigall",
+    // ✅ Text específic sobre automatització de RRSS
+    text: "L'automatització de les xarxes socials ha estat un canvi clau. Ara tenim presència constant sense haver d'estar pendents del mòbil cada dia.",
     rating: 5,
     projectType: 'automation'
   },
   {
-    id: 2,
-    name: "Anna Soler",
-    company: "Garatge Estació", // He vist el nom al fitxer jpg
-    text: "La web carrega instantàniament. Les vendes han pujat un 40%.",
-    rating: 5,
-    projectType: 'web',
-    projectUrl: 'https://garatgeestacio.com',
-    // ✅ 3. USEM LA VARIABLE IMPORTADA
-    image: bioshopImg
-  },
-  {
-    id: 3,
-    name: "Jordi P.",
-    company: "Tech Solutions",
-    text: "Han entès la nostra idea d'App a la primera.",
+    id: 'inspira',
+    name: "Santi Serralvo",
+    company: "Inspira Esport i Salut",
+    text: "L'App Salut Flow ha professionalitzat la relació amb els nostres usuaris. Una eina intuïtiva que ens ajuda a créixer.",
     rating: 5,
     projectType: 'app',
-    image: salutFlow
-  },
-
-  // Nous exemples per al carrousel
-  {
-    id: 4,
-    name: "Laura M.",
-    company: "Clínica Dental",
-    text: "El sistema de cites prèvies ha eliminat les trucades perdudes.",
-    rating: 5,
-    projectType: 'web'
+    image: salutFlowImg
   },
   {
-    id: 5,
-    name: "Pere Roig",
-    company: "Logística Ràpida",
-    text: "L'App per als repartidors funciona fins i tot sense cobertura.",
+    id: 'aquabalance',
+    name: "Marta Puig",
+    company: "Aquabalance",
+    text: "Necessitàvem una web que transmetés pau i professionalitat. El resultat ha superat les expectatives amb una imatge neta i moderna.",
     rating: 5,
-    projectType: 'app'
+    projectType: 'web',
+    projectUrl: 'https://aquabalance.com',
+    image: salutFlowImg
+  },
+  {
+    id: 'rsc',
+    name: "Raul Solà",
+    company: "RSC Instal·lacions",
+    text: "Una web ràpida i directa. Ara els clients poden veure clarament els nostres serveis d'instal·lació i contactar-nos fàcilment.",
+    rating: 5,
+    projectType: 'web',
+    projectUrl: 'https://rscinstallacions.com/',
+    image: salutFlowImg
+  },
+  {
+    id: 'analytic',
+    name: "Ignasi Farreras",
+    company: "Ocaso",
+    text: "L'appWeb ens permet visualitzar grafiques i estadistiques arxius exel que ens permet ser mes aguils i eficients.",
+    rating: 5,
+    projectType: 'web',
+    projectUrl: 'https://analytics-pwa.vercel.app/',
+    image: dataflow
   }
 ];
 
@@ -17669,7 +17731,7 @@ import { defineRouting } from 'next-intl/routing';
 import { createNavigation } from 'next-intl/navigation';
 
 export const routing = defineRouting({
-  locales: ['ca', 'es', 'en'],
+  locales: ['ca', 'es', 'en', 'it'],
   defaultLocale: 'ca',
   localePrefix: 'as-needed' // Opcional: per si vols /ca o no
 });

@@ -1,134 +1,107 @@
 'use client';
 
-import Link from 'next/link';
+import { Link } from '@/routing';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, FileText, FolderKanban, Settings, LogOut, Sparkles, ShieldAlert, Home } from 'lucide-react';
-import { cn } from '@/lib/utils';
-// import { createClient } from '@/lib/supabase/client'; // ❌ Eliminem això
-// import { useRouter } from '@/routing'; // ❌ Eliminem això
 import { useTranslations } from 'next-intl';
-import { useRouter } from '@/routing';
-// 👇 1. Importem l'acció de servidor
-import { signOutAction } from '@/features/auth/actions/auth';
-import { is } from 'zod/v4/locales';
-
+import {
+  LayoutDashboard,
+  Settings,
+  FileText,
+  BarChart3,
+  Users,
+  ShieldCheck // <--- Icona per Admin
+  
+} from 'lucide-react';
+import { cn } from '@/lib/utils'; // Assegura't de tenir aquesta utilitat o fes servir template strings
+import { LogoutButton } from './LogoutButton'; // <--- Importa el nou component
 interface SidebarProps {
-  userRole: 'admin' | 'client' | 'lead';
+  userRole?: 'admin' | 'client' | 'lead';
 }
 
-export function Sidebar({ userRole }: SidebarProps) {
+export function Sidebar({ userRole = 'client' }: SidebarProps) {
   const t = useTranslations('Sidebar');
   const pathname = usePathname();
-  const router = useRouter(); // 👈 RECUPEREM EL ROUTER
-  // const router = useRouter(); // ❌ Eliminat
-  // const supabase = createClient(); // ❌ Eliminat
 
-  // ✅ LOGOUT HÍBRID AQUÍ TAMBÉ
-  const handleSignOut = async () => {
-    await signOutAction();
-    router.refresh();
-    router.push('/auth/login');
-  };
-
-  const handleClick = (e: React.MouseEvent, href: string, label: string) => {
-    if (href.startsWith('#')) {
-      e.preventDefault();
-      alert(`${label} estarà disponible properament! 🚀`);
-    }
-  };
-
-  const cleanPath = pathname.replace(/^\/[a-z]{2}/, '') || '/';
-
-  const MENU_ITEMS = [
-    { icon: LayoutDashboard, label: t('summary'), href: '/dashboard' },
-    { icon: FolderKanban, label: t('projects'), href: '/dashboard/projects' },
-    { icon: FileText, label: t('audits'), href: '/dashboard/audits' },
-    { icon: Settings, label: t('settings'), href: '#config' },
-    { icon: Home, label: t('web'), href: '/' },
+  // Definim els items segons el rol
+  const menuItems = [
+    {
+      label: t('overview'),
+      href: '/dashboard',
+      icon: LayoutDashboard,
+      roles: ['admin', 'client', 'lead'],
+    },
+    {
+      label: 'Admin Panel', // Pots posar t('admin_panel')
+      href: '/admin',       // <--- La ruta on vols anar
+      icon: ShieldCheck,
+      roles: ['admin'],     // <--- NOMÉS ADMIN
+    },
+    {
+      label: t('projects'),
+      href: '/dashboard/projects',
+      icon: FileText,
+      roles: ['admin', 'client'],
+    },
+    {
+      label: t('analytics'),
+      href: '/dashboard/audits',
+      icon: BarChart3,
+      roles: ['admin', 'client'],
+    },
+    {
+      label: t('users'),
+      href: '/dashboard/users',
+      icon: Users,
+      roles: ['admin'], // Només admin
+    },
+    {
+      label: t('settings'),
+      href: '/dashboard/settings',
+      icon: Settings,
+      roles: ['admin'],
+    },
   ];
 
-  if (userRole === 'admin') {
-    MENU_ITEMS.unshift({
-      icon: ShieldAlert,
-      label: 'Admin Panel',
-      href: '/admin'
-    });
-  }
+  // Filtrem els items segons el rol de l'usuari
+  const visibleItems = menuItems.filter(item => item.roles.includes(userRole));
 
   return (
-    <aside className="w-64 h-screen bg-card border-r border-border flex flex-col sticky top-0 transition-colors duration-300">
+    <aside className="w-64 h-screen bg-slate-50 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col fixed left-0 top-0">
 
-      {/* LOGO AREA */}
-      <div className="p-6 border-b border-border">
-        <Link href="/" className="flex items-center gap-2 text-xl font-bold text-foreground">
-          DigitAI <span className="text-primary">Hub</span>
-        </Link>
+      {/* Logo Area */}
+      <div className="h-16 flex items-center px-6 border-b border-slate-200 dark:border-slate-800">
+        <span className="font-bold text-xl tracking-tight">DigitAI<span className="text-blue-600">.</span></span>
       </div>
 
-      {/* NAVIGATION */}
-      <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
-        <div className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-4 px-2">
-          {t('platform')}
-        </div>
-
-        {MENU_ITEMS.map((item) => {
-          let isActive = false;
-
-          if (!item.href.startsWith('#')) {
-            if (item.href === '/dashboard') {
-              isActive = cleanPath === '/dashboard';
-            } else {
-              isActive = cleanPath.startsWith(item.href);
-
-            }
-          }
-          if (item.href === '/') {
-            isActive = false;
-          }
-
-          const isAdminItem = item.href === '/admin';
+      {/* Navigation */}
+      <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+        {visibleItems.map((item) => {
+          const isActive = pathname === item.href;
 
           return (
             <Link
-              key={item.label}
+              key={item.href} // UTILITZEM LA URL COM A KEY (És única)
               href={item.href}
-              onClick={(e) => item.href.startsWith('#') && handleClick(e, item.href, item.label)}
               className={cn(
                 "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200",
                 isActive
-                  ? "bg-primary/10 text-primary border border-primary/20 shadow-sm"
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted",
-                (isAdminItem && !isActive) && "text-red-500 hover:text-red-600 hover:bg-red-500/10"
+                  ? "bg-blue-600 text-white shadow-md shadow-blue-500/20"
+                  : "text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white"
               )}
             >
-              <item.icon className={cn("w-5 h-5", isActive ? "text-primary" : "text-current")} />
+              <item.icon className={cn("w-5 h-5", isActive ? "text-white" : "text-current")} />
               {item.label}
             </Link>
           );
         })}
-
-        {userRole !== 'admin' && (
-          <div className="mt-8 p-4 rounded-xl bg-linear-to-br from-primary/10 to-blue-500/10 border border-primary/20 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-20 h-20 bg-primary/20 blur-2xl rounded-full pointer-events-none"></div>
-            <div className="flex items-center gap-2 text-foreground font-bold text-sm mb-2">
-              <Sparkles className="w-4 h-4 text-primary" />
-              {t('pro_badge')}
-            </div>
-            <p className="text-xs text-muted-foreground mb-3">{t('pro_text')}</p>
-            <button className="w-full py-1.5 text-xs font-bold bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity">
-              {t('pro_button')}
-            </button>
-          </div>
-        )}
       </nav>
 
-      {/* FOOTER */}
-      <div className="p-4 border-t border-border">
-        {/* Utilitzem la nova funció handleSignOut */}
-        <button onClick={handleSignOut} className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-red-500 hover:bg-red-500/10 transition-colors">
-          <LogOut className="w-5 h-5" />
-          {t('logout')}
-        </button>
+      {/* Footer / Logout */}
+      <div className="p-4 border-t border-slate-200 dark:border-slate-800">
+        {/* Footer / Logout */}
+        <div className="p-4 border-t border-slate-200 dark:border-slate-800">
+          <LogoutButton /> {/* <--- Substituïm el <button> antic per aquest */}
+        </div>
       </div>
     </aside>
   );

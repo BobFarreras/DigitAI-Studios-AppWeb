@@ -5,10 +5,9 @@ import { AuditForm } from '@/features/audit/ui/AuditForm';
 import { useTranslations } from 'next-intl';
 import { User } from '@supabase/supabase-js';
 import { Button } from '@/components/ui/button';
-import { Link } from '@/routing'; // Usem el teu routing tipat
+import { Link } from '@/routing'; 
 import { LayoutDashboard, ArrowRight } from 'lucide-react';
 
-// Acceptem l'usuari com a prop opcional
 interface Props {
   currentUser?: User | null;
 }
@@ -16,12 +15,15 @@ interface Props {
 export function AuditSection({ currentUser }: Props) {
   const t = useTranslations('AuditSection');
 
+  // Extraiem el nom (o part de l'email) per saludar
+  const userName = currentUser?.email?.split('@')[0] || 'User';
+
   return (
     <section id="audit" className="py-14 relative overflow-hidden bg-background transition-colors duration-300">
       
       {/* FONS DECORATIU */}
       <div className="absolute inset-0 bg-linear-to-b from-transparent via-primary/5 to-transparent pointer-events-none" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-500/10 dark:bg-primary/10 blur-[120px] rounded-full pointer-events-none opacity-50" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-150 h-150 bg-blue-500/10 dark:bg-primary/10 blur-[120px] rounded-full pointer-events-none opacity-50" />
 
       <div className="container mx-auto px-4 relative z-10">
         
@@ -59,21 +61,22 @@ export function AuditSection({ currentUser }: Props) {
                 </div>
                 <div>
                     <h3 className="text-xl font-bold text-foreground">
-                        Hola, {currentUser.email?.split('@')[0]}! 👋
+                        {/* Passem el nom com a variable a la traducció */}
+                        {t('logged_title', { name: userName })} 
                     </h3>
                     <p className="text-muted-foreground mt-2">
-                        Ja tens accés complet a les eines d'auditoria avançada. No cal que facis servir aquest formulari públic.
+                        {t('logged_desc')}
                     </p>
                 </div>
                 
                 <Link href="/dashboard/new-audit">
                     <Button className="w-full h-12 text-lg font-bold rounded-xl gradient-bg text-white hover:opacity-90 shadow-lg">
-                        Anar al Dashboard d'Auditoria <ArrowRight className="ml-2 w-5 h-5" />
+                        {t('btn_dashboard')} <ArrowRight className="ml-2 w-5 h-5" />
                     </Button>
                 </Link>
                 
                 <p className="text-xs text-muted-foreground">
-                    El teu pla actual permet auditories il·limitades des del panell.
+                    {t('logged_footer')}
                 </p>
             </div>
           ) : (

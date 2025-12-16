@@ -5,12 +5,13 @@ import { GamificationService } from '@/services/GamificationService';
 import { SupabaseTestRepository } from '@/repositories/supabase/SupabaseTestRepository';
 import { MissionCard } from '@/features/tests/ui/MissionCard';
 import { Progress } from '@/components/ui/progress';
+import { getTranslations } from 'next-intl/server';
 
 type Props = {
     params: Promise<{ id: string }>
 }
 
-// ✅ MAPA D'EMOJIS (En lloc de components Lucide)
+// Map d'emojis (podries moure això a configuració o DB en el futur)
 const RANK_EMOJIS: Record<string, string> = {
     'Novell': '🐣',
     'Bug Hunter': '🐛',
@@ -20,6 +21,7 @@ const RANK_EMOJIS: Record<string, string> = {
 
 export default async function ProjectDetailPage({ params }: Props) {
     const { id } = await params;
+    const t = await getTranslations('Dashboard.project_detail');
     const supabase = await createClient();
 
     const { data: { user } } = await supabase.auth.getUser();
@@ -37,7 +39,6 @@ export default async function ProjectDetailPage({ params }: Props) {
     const project = projectRes.data;
     if (!project) return notFound();
 
-    // Seleccionem l'emoji segons el nom del rang
     const currentEmoji = RANK_EMOJIS[stats.rankName] || '🌱';
 
     return (
@@ -53,7 +54,6 @@ export default async function ProjectDetailPage({ params }: Props) {
                     <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
                         <div>
                             <div className="flex items-center gap-4 mb-2">
-                                {/* 🟢 AQUÍ VA L'EMOJI GRAN */}
                                 <div className="">
                                     <span className="text-6xl filter drop-shadow-md">
                                         {currentEmoji}
@@ -62,22 +62,22 @@ export default async function ProjectDetailPage({ params }: Props) {
                                 
                                 <div>
                                     <h1 className="text-2xl font-bold">{stats.rankName}</h1>
-                                    <p className="text-purple-200 text-sm">Nivell {stats.level}</p>
+                                    <p className="text-purple-200 text-sm">{t('level_label')} {stats.level}</p>
                                 </div>
                             </div>
                             
                             <div className="max-w-md mt-4">
                                 <div className="flex justify-between text-xs mb-1 uppercase font-bold tracking-wider opacity-70">
-                                    <span>XP: {stats.xp}</span>
-                                    <span>Següent: {stats.nextLevelXp}</span>
+                                    <span>{t('xp_label')}: {stats.xp}</span>
+                                    <span>{t('next_label')}: {stats.nextLevelXp}</span>
                                 </div>
                                 <Progress value={stats.progressToNext} className="h-3 bg-black/30" />
                             </div>
                         </div>
 
-                        <div className="bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/20 min-w-[200px]">
+                        <div className="bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/20 min-w-50">
                             <div className="flex items-center gap-2 text-purple-200 text-xs mb-1 uppercase tracking-wider font-bold">
-                                <Layout className="w-3 h-3" /> Projecte Actual
+                                <Layout className="w-3 h-3" /> {t('current_project_label')}
                             </div>
                             <div className="text-xl font-bold text-white mb-1">{project.name}</div>
                             {project.domain && (
@@ -92,15 +92,15 @@ export default async function ProjectDetailPage({ params }: Props) {
                 {/* 2. LLISTA DE MISSIONS */}
                 <div>
                     <h2 className="text-xl font-bold mb-6 flex items-center gap-2 text-slate-800 dark:text-white">
-                        <Target className="w-5 h-5 text-red-500" /> Missions Disponibles
+                        <Target className="w-5 h-5 text-red-500" /> {t('missions_title')}
                     </h2>
 
                     {missions.length === 0 ? (
                         <div className="text-center py-24 bg-white dark:bg-slate-900 rounded-2xl border border-dashed border-slate-300 dark:border-slate-700">
                             <FlaskConical className="w-16 h-16 mx-auto text-slate-300 mb-4" />
-                            <h3 className="text-xl font-bold text-slate-700 dark:text-slate-200">Cap missió activa</h3>
+                            <h3 className="text-xl font-bold text-slate-700 dark:text-slate-200">{t('empty_missions_title')}</h3>
                             <p className="text-slate-500 max-w-md mx-auto mt-2">
-                                No tens proves assignades per a aquest projecte ara mateix.
+                                {t('empty_missions_desc')}
                             </p>
                         </div>
                     ) : (

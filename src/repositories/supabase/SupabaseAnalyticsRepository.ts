@@ -1,4 +1,4 @@
-import { createClient, createAdminClient } from '@/lib/supabase/server'; // 👈 Afegim createAdminClient
+import { createClient, createAdminClient } from '@/lib/supabase/server';
 import { AnalyticsEventDTO } from '@/types/models';
 import { Database, Json } from '@/types/database.types';
 import {
@@ -6,15 +6,25 @@ import {
   DailyStats,
   PageStat,
   DeviceStat,
-
-  StatItem // 👈 Assegura't d'importar aquest tipus nou que vam crear
+  StatItem
 } from '../interfaces/IAnalyticsRepository';
 
 type AnalyticsInsert = Database['public']['Tables']['analytics_events']['Insert'];
 
+// ✅ 1. INTERFÍCIES LOCALS (Utilitzades per mapejar la resposta crua de la DB)
+interface StatDBResult {
+  name: string;
+  value: number;
+}
+
+interface TopPageDBResult {
+  path: string;
+  visits: number;
+}
+
 export class SupabaseAnalyticsRepository implements IAnalyticsRepository {
 
-  // 🟢 CORRECCIÓ: Ara prometem retornar un número (ID) o null
+  // --- ESCRIURE DADES (TRACKING) ---
   async trackEvent(event: AnalyticsEventDTO): Promise<number | null> {
     const supabaseAdmin = createAdminClient();
 
@@ -25,7 +35,7 @@ export class SupabaseAnalyticsRepository implements IAnalyticsRepository {
       meta: (event.meta as unknown as Json) || null,
       duration_seconds: event.duration || 0,
       referrer: event.referrer || null,
-      country: event.geo?.country || null,
+      country_code: event.geo?.country || null,
       city: event.geo?.city || null,
       device_type: event.device?.type || 'unknown',
       browser: event.device?.browser || 'unknown',
@@ -39,43 +49,38 @@ export class SupabaseAnalyticsRepository implements IAnalyticsRepository {
       .single();
 
     if (error) {
-      console.error("Error al Repositori:", error.message);
-      return null; // ✅ Ara això és vàlid
+      console.error("Error tracking event:", error.message);
+      return null;
     }
-
-    return data.id; // ✅ Ara això és vàlid
+    return data.id;
   }
-  // 👇 NOU MÈTODE
+
   async updateDuration(eventId: number, duration: number): Promise<void> {
-    const supabaseAdmin = createAdminClient();
-
-    // Evitem actualitzacions absurdes (ex: 0 segons o negatius)
     if (duration <= 0) return;
-
+    const supabaseAdmin = createAdminClient();
     await supabaseAdmin
       .from('analytics_events')
       .update({ duration_seconds: duration })
       .eq('id', eventId);
   }
+
+  // --- LLEGIR DADES (DASHBOARD) ---
+
   async getLast7DaysStats(): Promise<DailyStats[]> {
     const supabase = await createClient();
-
+    
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-    // 1. AFEGIM duration_seconds A LA QUERY
     const { data, error } = await supabase
       .from('analytics_events')
       .select('created_at, session_id, duration_seconds')
-      .gte('created_at', sevenDaysAgo.toISOString())
-      .order('created_at', { ascending: true });
+      .gte('created_at', sevenDaysAgo.toISOString());
 
     if (error || !data) return [];
 
-    // Map per agrupar per dia
     const statsMap = new Map<string, { views: number; sessions: Set<string>; duration: number }>();
 
-    // Inicialitzem els últims 7 dies a 0
     for (let i = 6; i >= 0; i--) {
       const d = new Date();
       d.setDate(d.getDate() - i);
@@ -84,17 +89,16 @@ export class SupabaseAnalyticsRepository implements IAnalyticsRepository {
     }
 
     data.forEach((row) => {
-      if (row.created_at) {
-        const date = new Date(row.created_at);
-        const key = date.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' });
+      if (!row.created_at) return;
 
-        if (statsMap.has(key)) {
-          const entry = statsMap.get(key)!;
-          entry.views++;
-          if (row.session_id) entry.sessions.add(row.session_id);
-          // 2. ACUMULEM LA DURADA
-          entry.duration += row.duration_seconds || 0;
-        }
+      const date = new Date(row.created_at);
+      const key = date.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' });
+      
+      if (statsMap.has(key)) {
+        const entry = statsMap.get(key)!;
+        entry.views++;
+        if (row.session_id) entry.sessions.add(row.session_id);
+        entry.duration += row.duration_seconds || 0;
       }
     });
 
@@ -102,11 +106,10 @@ export class SupabaseAnalyticsRepository implements IAnalyticsRepository {
       date,
       views: val.views,
       visitors: val.sessions.size,
-      totalDuration: val.duration // 👈 Retornem la suma
+      totalDuration: val.duration
     }));
   }
 
-  // 🛠️ MÈTODE CORREGIT AMB TOTS ELS TIPUS DE RETORN
   async getAdvancedStats(): Promise<{
     topPages: PageStat[];
     devices: DeviceStat[];
@@ -116,98 +119,90 @@ export class SupabaseAnalyticsRepository implements IAnalyticsRepository {
     os: StatItem[];
   }> {
     const supabase = await createClient();
-
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    const dateStr = thirtyDaysAgo.toISOString();
 
-    // 1. Seleccionem TOTS els camps necessaris
-    // IMPORTANT: Assegura't que aquests camps existeixen a la DB i als tipus generats
-    // Si 'referrer' no existeix, regenera els tipus (npx supabase gen types...)
-    const { data, error } = await supabase
-      .from('analytics_events')
-      .select('path, device_type, country, session_id, referrer, browser, os')
-      .gte('created_at', thirtyDaysAgo.toISOString());
+    console.log("📊 [AnalyticsRepo] Fetching advanced stats since:", dateStr);
 
-    if (error || !data) {
-      return { topPages: [], devices: [], countries: [], referrers: [], browsers: [], os: [] };
-    }
+    // 1. Preparem les crides (Sense 'any', usant @ts-expect-error)
+    // Utilitzem @ts-expect-error perquè els tipus no existeixen al client encara,
+    // però NO fem servir 'as any'.
+    
+ 
+    const pagesReq = supabase.from('mv_analytics_top_pages').select('path, visits').limit(10);
+    
 
-    // 2. Inicialitzem els Maps
-    const pagesMap = new Map<string, number>();
-    const devicesMap = new Map<string, number>();
-    const countryMap = new Map<string, Set<string>>(); // Set per usuaris únics
-    const referrerMap = new Map<string, number>();
-    const browserMap = new Map<string, number>();
-    const osMap = new Map<string, number>();
+    const countriesReq = supabase.rpc('get_analytics_countries', { date_from: dateStr });
+   
+    const devicesReq = supabase.rpc('get_analytics_devices', { date_from: dateStr });
+ 
+    const referrersReq = supabase.rpc('get_analytics_referrers', { date_from: dateStr });
+ 
+    const browsersReq = supabase.rpc('get_analytics_browsers', { date_from: dateStr });
+ 
+    const osReq = supabase.rpc('get_analytics_os', { date_from: dateStr });
 
-    // 3. Processem les dades
-    data.forEach(row => {
-      // Pages
-      const cleanPath = row.path || '/';
-      pagesMap.set(cleanPath, (pagesMap.get(cleanPath) || 0) + 1);
+    // 2. Executem tot en paral·lel
+    const [pagesRes, countriesRes, devicesRes, referrersRes, browsersRes, osRes] = await Promise.all([
+      pagesReq,
+      countriesReq,
+      devicesReq,
+      referrersReq,
+      browsersReq,
+      osReq
+    ]);
 
-      // Devices
-      const dev = row.device_type === 'mobile' ? 'Mòbil' : row.device_type === 'tablet' ? 'Tauleta' : 'PC';
-      devicesMap.set(dev, (devicesMap.get(dev) || 0) + 1);
+    // 3. CASTING STRICTE (Aquí és on arreglem l'error de l'ESLint)
+    // Convertim 'unknown' -> 'TopPageDBResult[]' explícitament.
+    // Això satisfà ESLint (no hi ha 'any') i TypeScript (tipatge segur).
 
-      // Countries (Set)
-      const country = row.country === 'Unknown' ? 'Desconegut' : row.country;
-      if (country) {
-        if (!countryMap.has(country)) countryMap.set(country, new Set());
-        if (row.session_id) countryMap.get(country)!.add(row.session_id);
-      }
+    const rawPages = (pagesRes.data || []) as unknown as TopPageDBResult[];
+    const rawCountries = (countriesRes.data || []) as unknown as StatDBResult[];
+    const rawDevices = (devicesRes.data || []) as unknown as StatDBResult[];
+    const rawReferrers = (referrersRes.data || []) as unknown as StatDBResult[];
+    const rawBrowsers = (browsersRes.data || []) as unknown as StatDBResult[];
+    const rawOs = (osRes.data || []) as unknown as StatDBResult[];
 
-      // Referrers
-      let ref = row.referrer || 'Directe';
-      try {
-        if (ref.startsWith('http')) ref = new URL(ref).hostname.replace('www.', '');
-      } catch { }
-      referrerMap.set(ref, (referrerMap.get(ref) || 0) + 1);
+    // 4. MAPPING FINAL
+    const topPages = rawPages.map((p) => ({ 
+        path: p.path, 
+        views: p.visits 
+    }));
 
-      // Browsers
-      const browser = row.browser || 'Altres';
-      browserMap.set(browser, (browserMap.get(browser) || 0) + 1);
+    const countries = rawCountries.map((c) => ({
+        name: (!c.name || c.name === 'XX') ? 'Desconegut' : c.name,
+        value: c.value,
+        color: '#10b981'
+    }));
 
-      // OS
-      const os = row.os || 'Altres';
-      osMap.set(os, (osMap.get(os) || 0) + 1);
+    const devices = rawDevices.map((d, i) => {
+        const colors = ['#8884d8', '#00C49F', '#FFBB28', '#FF8042'];
+        return {
+            name: d.name,
+            value: d.value,
+            fill: colors[i % colors.length]
+        };
     });
 
-    // 4. Funcions auxiliars per formatar a StatItem[]
-    const toStatArray = (map: Map<string, number>, colors: string[]): StatItem[] =>
-      Array.from(map.entries())
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 5)
-        .map(([name, value], i) => ({ name, value, color: colors[i % colors.length] }));
+    const referrers = rawReferrers.map((r) => ({
+        name: r.name,
+        value: r.value,
+        color: '#3b82f6'
+    }));
 
-    // 5. Generem els arrays finals
-    const referrers = toStatArray(referrerMap, ['#3b82f6', '#60a5fa', '#93c5fd', '#bfdbfe', '#dbeafe']);
-    const browsers = toStatArray(browserMap, ['#f59e0b', '#fbbf24', '#fcd34d', '#fde68a', '#fef3c7']);
-    const os = toStatArray(osMap, ['#ec4899', '#f472b6', '#fbcfe8', '#fce7f3', '#fdf2f8']);
+    const browsers = rawBrowsers.map((b) => ({
+        name: b.name,
+        value: b.value,
+        color: '#f59e0b'
+    }));
 
-    const countries: StatItem[] = Array.from(countryMap.entries())
-      .map(([name, set]) => ({
-        name: name === 'Unknown' ? '🌍 Desconegut' : name,
-        value: set.size,
-        color: '#10b981'
-      }))
-      .sort((a, b) => b.value - a.value)
-      .slice(0, 5);
+    const os = rawOs.map((o) => ({
+        name: o.name,
+        value: o.value,
+        color: '#ec4899'
+    }));
 
-    const topPages: PageStat[] = Array.from(pagesMap.entries())
-      .map(([path, views]) => ({ path, views }))
-      .sort((a, b) => b.views - a.views)
-      .slice(0, 15);
-
-    const deviceColors = ['#8884d8', '#00C49F', '#FFBB28'];
-    const devices: DeviceStat[] = Array.from(devicesMap.entries())
-      .map(([name, value], index) => ({
-        name,
-        value,
-        fill: deviceColors[index % deviceColors.length]
-      }));
-
-    // ✅ CORRECCIÓ FINAL: Retornem TOTS els camps que la interfície espera
     return {
       topPages,
       devices,

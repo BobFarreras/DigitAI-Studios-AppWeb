@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { CalendarCheck, MessageSquare, Clock, ChevronRight, CheckCircle2, Loader2, User, Bot, Sparkles } from 'lucide-react';
+import { CalendarCheck, MessageSquare, Clock, ChevronRight, CheckCircle2, User, Bot } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState, useEffect } from 'react';
 
@@ -9,12 +9,15 @@ export function MockupBooking() {
   const t = useTranslations('Solutions.booking');
   const [step, setStep] = useState(0);
 
+  // Array de dies de la setmana traduïts o abreujats
+  const weekDays = ['M', 'T', 'W', 'T', 'F', 'S', 'S']; 
+
   useEffect(() => {
     const cycle = async () => {
       setStep(0);
-      setTimeout(() => setStep(1), 1000); // Pas 1: Sol·licitud (Surt el xat en PC / Card en Mòbil)
-      setTimeout(() => setStep(2), 3000); // Pas 2: Processant (IA en Mòbil / Res en PC encara)
-      setTimeout(() => setStep(3), 5000); // Pas 3: Èxit (Ticket en Mòbil / Notificació i Calendari en PC)
+      setTimeout(() => setStep(1), 1000); // Pas 1: Sol·licitud
+      setTimeout(() => setStep(2), 3000); // Pas 2: Processant
+      setTimeout(() => setStep(3), 5000); // Pas 3: Èxit
       setTimeout(() => setStep(0), 8000); // Reset
     };
     cycle();
@@ -23,17 +26,17 @@ export function MockupBooking() {
   }, []);
 
   return (
-    <div className="relative w-full h-full min-h-[300px] flex flex-col items-center justify-center p-6 overflow-visible">
+    <div className="relative w-full h-full min-h-75 flex flex-col items-center justify-center p-6 overflow-visible">
        
        {/* Fons Ambient */}
        <div className="absolute top-0 left-0 w-64 h-64 bg-purple-500/20 rounded-full blur-[80px]" />
        <div className="absolute bottom-0 right-0 w-64 h-64 bg-pink-500/20 rounded-full blur-[80px]" />
 
        {/* =================================================================================
-           📱 VERSIÓ MÒBIL: WIDGET D'ESTAT (El que t'ha agradat)
+           📱 VERSIÓ MÒBIL: WIDGET D'ESTAT
            md:hidden
        ================================================================================= */}
-       <div className="md:hidden w-full max-w-[280px] h-[220px] flex flex-col items-center justify-center relative">
+       <div className="md:hidden w-full max-w-70 h-55 flex flex-col items-center justify-center relative">
           <AnimatePresence mode="wait">
              
              {/* ESTAT 0: IDLE */}
@@ -49,7 +52,7 @@ export function MockupBooking() {
                       <CalendarCheck className="w-8 h-8 text-slate-400" />
                       <div className="absolute top-0 right-0 w-4 h-4 bg-green-500 rounded-full animate-pulse" />
                    </div>
-                   <p className="text-sm text-slate-400 font-medium">Waiting for requests...</p>
+                   <p className="text-sm text-slate-400 font-medium">{t('status_idle')}</p>
                 </motion.div>
              )}
 
@@ -67,8 +70,8 @@ export function MockupBooking() {
                          <User className="w-5 h-5 text-white" />
                       </div>
                       <div>
-                         <div className="text-xs text-slate-400 uppercase font-bold">New Message</div>
-                         <div className="text-sm font-bold text-white">Joan Garcia</div>
+                         <div className="text-xs text-slate-400 uppercase font-bold">{t('new_message_label')}</div>
+                         <div className="text-sm font-bold text-white">{t('mock_user_name')}</div>
                       </div>
                    </div>
                    <div className="bg-slate-800/50 p-3 rounded-lg text-xs text-slate-200 italic">
@@ -84,7 +87,7 @@ export function MockupBooking() {
                    initial={{ scale: 0.9, opacity: 0 }}
                    animate={{ scale: 1, opacity: 1 }}
                    exit={{ scale: 1.1, opacity: 0 }}
-                   className="w-full bg-gradient-to-br from-purple-900 to-slate-900 border border-purple-500/30 p-5 rounded-2xl shadow-xl flex flex-col items-center text-center"
+                   className="w-full bg-linear-to-br from-purple-900 to-slate-900 border border-purple-500/30 p-5 rounded-2xl shadow-xl flex flex-col items-center text-center"
                 >
                    <div className="relative mb-3">
                       <div className="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center z-10 relative">
@@ -93,11 +96,11 @@ export function MockupBooking() {
                       <motion.div 
                         animate={{ rotate: 360 }}
                         transition={{ repeat: Infinity, duration: 3, ease: "linear" }}
-                        className="absolute inset-[-4px] border-2 border-dashed border-purple-400/50 rounded-xl z-0"
+                        className="absolute -inset-1 border-2 border-dashed border-purple-400/50 rounded-xl z-0"
                       />
                    </div>
-                   <h4 className="text-white font-bold text-sm">DigitAI Agent</h4>
-                   <p className="text-xs text-purple-300 mt-1">Finding best slot...</p>
+                   <h4 className="text-white font-bold text-sm">{t('agent_name')}</h4>
+                   <p className="text-xs text-purple-300 mt-1">{t('status_processing')}</p>
                 </motion.div>
              )}
 
@@ -111,17 +114,17 @@ export function MockupBooking() {
                 >
                    <div className="bg-green-500 p-3 flex justify-between items-center">
                       <span className="text-xs font-black text-white uppercase tracking-wider flex items-center gap-2">
-                         <CheckCircle2 className="w-4 h-4" /> Confirmed
+                         <CheckCircle2 className="w-4 h-4" /> {t('status_confirmed')}
                       </span>
-                      <span className="text-[10px] text-green-100 bg-green-600 px-2 py-0.5 rounded-full">AUTO</span>
+                      <span className="text-[10px] text-green-100 bg-green-600 px-2 py-0.5 rounded-full">{t('tag_auto')}</span>
                    </div>
                    <div className="p-5 flex items-center gap-4">
                       <div className="flex flex-col items-center justify-center bg-slate-100 dark:bg-slate-800 rounded-lg w-14 h-14 border border-slate-200 dark:border-slate-700">
-                         <span className="text-[10px] text-slate-400 uppercase font-bold">JAN</span>
+                         <span className="text-[10px] text-slate-400 uppercase font-bold">{t('month_short')}</span>
                          <span className="text-2xl font-black text-slate-800 dark:text-white leading-none">15</span>
                       </div>
                       <div>
-                         <div className="text-sm font-bold text-slate-800 dark:text-white">Joan Garcia</div>
+                         <div className="text-sm font-bold text-slate-800 dark:text-white">{t('mock_user_name')}</div>
                          <div className="text-xs text-slate-500 flex items-center gap-1 mt-1">
                             <Clock className="w-3 h-3" /> 10:00 AM
                          </div>
@@ -134,7 +137,7 @@ export function MockupBooking() {
        </div>
 
        {/* =================================================================================
-           💻 VERSIÓ ESCRIPTORI: CALENDARI + XAT BUBBLE (Recuperat i arreglat)
+           💻 VERSIÓ ESCRIPTORI: CALENDARI + XAT BUBBLE
            hidden md:flex
        ================================================================================= */}
        <div className="hidden md:flex relative w-full h-full items-center justify-center perspective-1000">
@@ -144,14 +147,14 @@ export function MockupBooking() {
             initial={{ rotateX: 10, scale: 0.95 }}
             whileInView={{ rotateX: 0, scale: 1 }}
             transition={{ duration: 0.8 }}
-            className="absolute w-[500px] h-[320px] bg-white/80 dark:bg-slate-900/90 backdrop-blur-xl border border-white/50 dark:border-white/10 rounded-2xl shadow-2xl p-6 flex flex-col z-0 overflow-hidden"
+            className="absolute w-125 h-80 bg-white/80 dark:bg-slate-900/90 backdrop-blur-xl border border-white/50 dark:border-white/10 rounded-2xl shadow-2xl p-6 flex flex-col z-0 overflow-hidden"
           >
              <div className="flex justify-between items-center mb-6">
                 <div className="flex items-center gap-3">
                    <div className="p-2 bg-purple-500/10 rounded-lg">
                       <CalendarCheck className="w-6 h-6 text-purple-600 dark:text-purple-400" />
                    </div>
-                   <div className="font-bold text-lg text-foreground">January 2025</div>
+                   <div className="font-bold text-lg text-foreground">{t('month_year')}</div>
                 </div>
                 <div className="flex gap-1">
                    <div className="w-8 h-8 rounded-full border border-border flex items-center justify-center"><ChevronRight className="w-4 h-4 rotate-180" /></div>
@@ -160,7 +163,7 @@ export function MockupBooking() {
              </div>
 
              <div className="grid grid-cols-7 gap-2 flex-1">
-                {['M','T','W','T','F','S','S'].map((d, i) => (
+                {weekDays.map((d, i) => (
                    <div key={`h-${i}`} className="text-center text-xs font-bold text-muted-foreground py-2">{d}</div>
                 ))}
                 {[...Array(31)].map((_, i) => {
@@ -183,7 +186,7 @@ export function MockupBooking() {
              </div>
           </motion.div>
 
-          {/* 2. Targeta Notificació (Dreta) - Surt al pas 3 */}
+          {/* 2. Targeta Notificació (Dreta) */}
           <motion.div 
              initial={{ y: 20, opacity: 0, x: 50 }}
              animate={{ 
@@ -199,15 +202,14 @@ export function MockupBooking() {
              </div>
              <div>
                 <div className="text-xs font-bold text-purple-400 uppercase tracking-wider mb-1">{t('new_booking')}</div>
-                <div className="text-sm font-bold text-white">Joan Garcia</div>
+                <div className="text-sm font-bold text-white">{t('mock_user_name')}</div>
                 <div className="text-xs text-slate-400 flex items-center gap-1 mt-1">
-                   <Clock className="w-3 h-3" /> Friday, 15th - 10:00 AM
+                   <Clock className="w-3 h-3" /> {t('date_long')}
                 </div>
              </div>
           </motion.div>
 
-          {/* 3. MISSATGE FLOTANT (Esquerra) - RESTAURAT ✅ */}
-          {/* Apareix al pas 1 i es queda fins al final del cicle */}
+          {/* 3. MISSATGE FLOTANT (Esquerra) */}
           <motion.div
              initial={{ opacity: 0, scale: 0.8, x: -100, y: -20 }}
              animate={{ 
@@ -217,16 +219,15 @@ export function MockupBooking() {
                 y: step >= 1 ? -30 : -20 
              }}
              transition={{ type: "spring", stiffness: 100, damping: 15 }}
-             className="absolute left-1/2 bottom-1/2 z-30 bg-white dark:bg-slate-800 p-4 rounded-2xl rounded-br-none shadow-2xl border border-border max-w-[220px]"
+             className="absolute left-1/2 bottom-1/2 z-30 bg-white dark:bg-slate-800 p-4 rounded-2xl rounded-br-none shadow-2xl border border-border max-w-55"
           >
              <div className="flex items-center gap-2 mb-2 opacity-50">
-                <MessageSquare className="w-3 h-3" /> <span className="text-[10px] uppercase font-bold">WhatsApp</span>
+                <MessageSquare className="w-3 h-3" /> <span className="text-[10px] uppercase font-bold">{t('platform_whatsapp')}</span>
              </div>
              <p className="text-sm text-foreground italic">"{t('chat_user_1')}"</p>
           </motion.div>
 
        </div>
-
     </div>
   )
 }

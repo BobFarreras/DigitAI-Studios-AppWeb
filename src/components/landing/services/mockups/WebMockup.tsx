@@ -2,10 +2,13 @@
 
 import { motion } from 'framer-motion';
 import { LayoutGrid, List, Search, MoreHorizontal, Plus, UserCircle } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 export function WebMockup() {
+  const t = useTranslations('Solutions.dashboard_mockup');
+
   return (
-    // CONTENIDOR PRINCIPAL: Ocupa tot l'ample i s'enganxa a baix
+    // CONTENIDOR PRINCIPAL
     <div className="w-full mt-6 -mb-1 relative">
       
       {/* 🖥️ FINESTRA NAVEGADOR (Full Width) */}
@@ -32,7 +35,7 @@ export function WebMockup() {
         </div>
 
         {/* 🧩 UI DASHBOARD (App Layout) */}
-        <div className="flex flex-1 min-h-[220px] bg-slate-50/50 dark:bg-transparent relative overflow-hidden">
+        <div className="flex flex-1 min-h-55 bg-slate-50/50 dark:bg-transparent relative overflow-hidden">
             
             {/* Sidebar (Esquerra) */}
             <div className="w-14 border-r border-slate-200 dark:border-white/5 bg-white dark:bg-[#151925] flex flex-col items-center py-4 gap-4 z-10">
@@ -69,7 +72,7 @@ export function WebMockup() {
                     {/* Column 1: To Do */}
                     <div className="space-y-3">
                         <div className="flex justify-between text-[10px] uppercase font-bold text-slate-400 mb-1">
-                            <span>To Do</span>
+                            <span>{t('col_todo')}</span>
                             <MoreHorizontal className="w-3 h-3" />
                         </div>
                         
@@ -90,7 +93,7 @@ export function WebMockup() {
                             {/* Hover Reveal Action */}
                             <div className="mt-3 flex justify-between items-center opacity-50 group-hover:opacity-100 transition-opacity">
                                 <div className="w-4 h-4 rounded-full bg-slate-200 dark:bg-slate-700"></div>
-                                <div className="text-[9px] text-slate-400">Dec 12</div>
+                                <div className="text-[9px] text-slate-400">{t('card_date')}</div>
                             </div>
                         </motion.div>
 
@@ -98,10 +101,10 @@ export function WebMockup() {
                         <div className="bg-slate-200/50 dark:bg-white/5 p-3 rounded-lg border border-transparent h-24 animate-pulse"></div>
                     </div>
 
-                    {/* Column 2: In Progress (Mobile amagat si és molt estret, visible en tablet) */}
+                    {/* Column 2: In Progress */}
                     <div className="space-y-3">
                         <div className="flex justify-between text-[10px] uppercase font-bold text-slate-400 mb-1">
-                            <span>In Progress</span>
+                            <span>{t('col_progress')}</span>
                             <MoreHorizontal className="w-3 h-3" />
                         </div>
 
@@ -121,20 +124,20 @@ export function WebMockup() {
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M5.65376 12.3673H5.46026L5.31717 12.4976L0.500002 16.8829L0.500002 1.19841L11.7841 12.3673H5.65376Z" fill="#3b82f6" stroke="white" />
                                 </svg>
-                                <div className="absolute top-4 left-2 bg-blue-600 text-white text-[9px] px-1.5 py-0.5 rounded shadow-sm">You</div>
+                                <div className="absolute top-4 left-2 bg-blue-600 text-white text-[9px] px-1.5 py-0.5 rounded shadow-sm">{t('label_you')}</div>
                             </motion.div>
 
                             <div className="h-2 w-full bg-slate-800 dark:bg-slate-300 rounded-full mb-2"></div>
                             <div className="h-24 w-full bg-blue-50 dark:bg-blue-500/10 rounded border border-blue-100 dark:border-blue-500/20 mb-2 flex items-center justify-center">
-                                <div className="text-[9px] text-blue-500 font-bold">LIVE PREVIEW</div>
+                                <div className="text-[9px] text-blue-500 font-bold">{t('label_preview')}</div>
                             </div>
                         </motion.div>
                     </div>
 
-                    {/* Column 3: Done (Només Desktop o Tablet gran) */}
+                    {/* Column 3: Done */}
                     <div className="hidden md:block space-y-3">
                         <div className="flex justify-between text-[10px] uppercase font-bold text-slate-400 mb-1">
-                            <span>Done</span>
+                            <span>{t('col_done')}</span>
                             <div className="text-green-500 text-[10px]">98%</div>
                         </div>
                         

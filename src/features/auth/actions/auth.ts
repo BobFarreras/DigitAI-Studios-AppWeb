@@ -1,11 +1,11 @@
 'use server';
 
 import { createClient } from '@/lib/supabase/server';
+import { redirect } from 'next/navigation';
 
 export async function signOutAction() {
   const supabase = await createClient();
-  
-  // 1. Tanquem sessió al servidor (neteja cookies)
   await supabase.auth.signOut();
-return { success: true };
+  // Redirigim a la home pública amb el locale per defecte o l'actual si el passem
+  redirect('/');
 }

@@ -22,12 +22,16 @@
     "subtitle": "Potenciat per l'stack tecnològic del futur"
   },
   "AuditSection": {
-    "title_prefix": "La teva web és un",
-    "title_cost": "cost",
+    "title_prefix": "La teva web és una",
+    "title_cost": "Despesa",
     "title_connector": "o una",
     "title_investment": "Inversió",
-    "description_stat": "El 40% dels usuaris abandonen una web si triga més de 3 segons.",
-    "description_cta": "Deixa que la nostra IA analitzi el teu site i et digui exactament què està fallant."
+    "description_stat": "El 94% de les primeres impressions són relacionades amb el disseny i velocitat.",
+    "description_cta": "Descobreix què està fallant en menys de 30 segons.",
+    "logged_title": "Hola, {name}! 👋",
+    "logged_desc": "Ja tens accés complet a les eines d'auditoria avançada. No cal que facis servir aquest formulari públic.",
+    "btn_dashboard": "Anar al Dashboard d'Auditoria",
+    "logged_footer": "El teu pla actual permet auditories il·limitades des del panell."
   },
   "AuditForm": {
     "title": "Analitza la teva web en segons",
@@ -69,7 +73,60 @@
   },
   "Dashboard": {
     "welcome": "Benvingut, {name}",
-    "my_audits": "Les meves Auditories"
+    "my_audits": "Les meves Auditories",
+    "projects": {
+      "meta_title": "Els Meus Projectes",
+      "title": "Els Meus Projectes",
+      "subtitle": "Gestiona les teves aplicacions i participa en les fases de test.",
+      "empty_title": "Encara no tens projectes",
+      "empty_desc": "Contacta amb nosaltres per començar el teu primer desenvolupament.",
+      "btn_request": "Sol·licitar Projecte",
+      "badge_beta": "BETA DISPONIBLE",
+      "status_configuring": "configurant...",
+      "status_pending": "PENDENT"
+    },
+    "test_runner": {
+      "badge_mode": "Mode Tester Actiu",
+      "label_progress": "Progrés",
+      "card_instructions": "Instruccions",
+      "no_instructions": "Sense instruccions especials. Valida cada punt de la llista.",
+      "checklist_title": "Llista de Verificació",
+      "success_title": "Felicitats!",
+      "success_msg": "Has completat totes les tasques d'aquesta missió.",
+      "motivation_start": "Comencem la missió! 🚀",
+      "motivation_early": "Bon començament! Continua així. 💪",
+      "motivation_late": "Ja has passat la meitat! Ets un crack. 🔥",
+      "motivation_done": "MISSIÓ COMPLERTA! 🎉 Gràcies pel teu temps."
+    },
+    "project_detail": {
+      "level_label": "Nivell",
+      "xp_label": "XP",
+      "next_label": "Següent",
+      "current_project_label": "Projecte Actual",
+      "missions_title": "Missions Disponibles",
+      "empty_missions_title": "Cap missió activa",
+      "empty_missions_desc": "No tens proves assignades per a aquest projecte ara mateix."
+    },
+    "tester_dashboard": {
+      "error_no_user": "No s'ha trobat l'usuari.",
+      "level_label": "Nivell {level}",
+      "xp_label": "XP",
+      "next_level_label": "Següent Nivell",
+      "motivation_text": "Completa tasques per guanyar XP i pujar de rang!",
+      "active_missions_title": "Missions Actives",
+      "empty_state_title": "No tens cap missió assignada encara.",
+      "empty_state_desc": "Demana al teu Project Manager que t'assigni!",
+      "no_description": "Sense descripció...",
+      "tasks_count": "{count} Tasques"
+    },
+    "mobile_nav": {
+      "summary": "Resum",
+      "audits": "Auditories",
+      "projects": "Projectes",
+      "web": "Web",
+      "logout_short": "Sortir",
+      "coming_soon": "estarà disponible properament! 🚀"
+    }
   },
   "AuditIssues": {
     "is-on-https": {
@@ -229,13 +286,20 @@
     "platform": "Plataforma",
     "summary": "Resum",
     "audits": "Auditories",
-    "projects": "Projectes",
-    "settings": "Configuració",
-    "logout": "Tancar Sessió",
     "pro_badge": "Pla Pro",
     "pro_text": "Desbloqueja auditories il·limitades.",
     "pro_button": "Millorar",
-    "web": "Web"
+    "web": "Web",
+    "overview": "Resum General",
+    "projects": "Projectes",
+    "analytics": "Analítica Web",
+    "users": "Usuaris",
+    "settings": "Configuració",
+    "logout": "Tancar Sessió",
+    "logout_confirm_title": "Vols sortir?",
+    "logout_confirm_desc": "La teva sessió es tancarà i tornaràs a la pàgina principal.",
+    "cancel": "Cancel·lar",
+    "logout_action": "Sí, Tancar Sessió"
   },
   "DashboardHeader": {
     "search_placeholder": "Cercar...",
@@ -440,6 +504,26 @@
     "cta": "Veure Índex Complet"
   },
   "Solutions": {
+    "app_mockup": {
+      "app_name": "Gym App",
+      "app_category": "Gestió Esportiva",
+      "btn_install": "Instal·lar App",
+      "chat_header": "Assistent IA",
+      "chat_msg_bot": "Hola! Vols reservar pista? 🎾",
+      "chat_msg_user": "Sí, demà a les 18h.",
+      "notif_title": "WhatsApp API",
+      "notif_msg": "Missatge enviat automàticament",
+      "success_title": "Reserva Confirmada!",
+      "success_msg": "T'hem enviat el tiquet al WhatsApp."
+    },
+    "dashboard_mockup": {
+      "col_todo": "PENDENTS",
+      "col_progress": "EN PROGRÉS",
+      "col_done": "FET",
+      "card_date": "12 Des",
+      "label_you": "Tu",
+      "label_preview": "VISTA PRÈVIA EN VIU"
+    },
     "iot": {
       "title": "IoT i Espais Intel·ligents",
       "description": "Fusiona el món físic amb el digital. Controla accessos, il·luminació i sensors en temps real, tot des del palmell de la mà.",
@@ -467,7 +551,18 @@
       "chat_bot_1": "Tinc lliure divendres a les 18h 🎾",
       "chat_user_2": "Perfecte, adjudicat!",
       "booking_confirmed": "Reserva Confirmada",
-      "new_booking": "NOVA CITA"
+      "status_idle": "Esperant sol·licituds...",
+      "new_message_label": "Nou Missatge",
+      "mock_user_name": "Joan Garcia",
+      "agent_name": "DigitAI Agent",
+      "status_processing": "Buscant millor forat...",
+      "status_confirmed": "CONFIRMAT",
+      "tag_auto": "AUTO",
+      "month_short": "GEN",
+      "month_year": "Gener 2025",
+      "date_long": "Divendres, 15 - 10:00 AM",
+      "platform_whatsapp": "WhatsApp",
+      "new_booking": "Nova Reserva"
     },
     "tags": {
       "qr": "Accés QR",

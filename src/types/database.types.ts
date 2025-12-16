@@ -44,6 +44,7 @@ export type Database = {
           browser: string | null
           city: string | null
           country: string | null
+          country_code: string | null
           created_at: string | null
           device_type: string | null
           duration_seconds: number | null
@@ -53,12 +54,14 @@ export type Database = {
           os: string | null
           path: string | null
           referrer: string | null
+          region: string | null
           session_id: string
         }
         Insert: {
           browser?: string | null
           city?: string | null
           country?: string | null
+          country_code?: string | null
           created_at?: string | null
           device_type?: string | null
           duration_seconds?: number | null
@@ -68,12 +71,14 @@ export type Database = {
           os?: string | null
           path?: string | null
           referrer?: string | null
+          region?: string | null
           session_id: string
         }
         Update: {
           browser?: string | null
           city?: string | null
           country?: string | null
+          country_code?: string | null
           created_at?: string | null
           device_type?: string | null
           duration_seconds?: number | null
@@ -83,6 +88,7 @@ export type Database = {
           os?: string | null
           path?: string | null
           referrer?: string | null
+          region?: string | null
           session_id?: string
         }
         Relationships: []
@@ -1009,6 +1015,15 @@ export type Database = {
       }
     }
     Views: {
+      mv_analytics_top_pages: {
+        Row: {
+          last_visit: string | null
+          path: string | null
+          unique_visitors: number | null
+          visits: number | null
+        }
+        Relationships: []
+      }
       users_summary: {
         Row: {
           avatar_url: string | null
@@ -1036,9 +1051,44 @@ export type Database = {
         Args: { p_product_id: string; p_quantity: number }
         Returns: undefined
       }
-      get_my_org_id: { Args: never; Returns: string }
+      get_analytics_browsers: {
+        Args: { date_from: string }
+        Returns: {
+          name: string
+          value: number
+        }[]
+      }
+      get_analytics_countries: {
+        Args: { date_from: string }
+        Returns: {
+          name: string
+          value: number
+        }[]
+      }
+      get_analytics_devices: {
+        Args: { date_from: string }
+        Returns: {
+          name: string
+          value: number
+        }[]
+      }
+      get_analytics_os: {
+        Args: { date_from: string }
+        Returns: {
+          name: string
+          value: number
+        }[]
+      }
+      get_analytics_referrers: {
+        Args: { date_from: string }
+        Returns: {
+          name: string
+          value: number
+        }[]
+      }
       get_my_org_ids: { Args: never; Returns: string[] }
       is_admin: { Args: never; Returns: boolean }
+      refresh_analytics_views: { Args: never; Returns: undefined }
     }
     Enums: {
       audit_status: "processing" | "completed" | "failed"
