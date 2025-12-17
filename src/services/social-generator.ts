@@ -1,67 +1,75 @@
-import OpenAI from 'openai';
-import { SocialDraftsSchema, type SocialDrafts } from '@/lib/schemas/social-ai';
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+interface SocialContent {
+  linkedin: { content: string };
+  facebook: { content: string };
+  instagram: { content: string };
+}
 
 export class SocialGeneratorService {
-  /**
-   * Genera esborranys per xarxes socials basats en un post.
-   */
-  static async generateFromPost(
-    title: string, 
-    content: string, 
-    language: string = 'Catalan'
-  ): Promise<SocialDrafts> {
+  static async generateFromPost(title: string, postContent: string): Promise<SocialContent> {
     
-    const cleanContent = content.substring(0, 15000);
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) throw new Error("Manca la GEMINI_API_KEY al fitxer .env");
 
-    const systemPrompt = `
-      Ets un Expert Social Media Manager per a 'DigitAI Studios'.
-      Genera 3 peces de contingut (LinkedIn, Facebook, Instagram) basades en l'article proporcionat.
-      
-      IMPORTANT: Retorna NOMÉS un objecte JSON vàlid que compleixi aquesta estructura:
+    const genAI = new GoogleGenerativeAI(apiKey);
+    
+    const modelsToTry = [
+        
+        "gemini-flash-latest"        
+    ];
+
+    const prompt = `
+      Ets un Expert en Copywriting persuasiu.
+      Objectiu: Aconseguir CLICS cap al blog. No expliquis tot l'article, crea intriga.
+
+      TÍTOL: "${title}"
+      RESUM: "${postContent.substring(0, 4000)}"
+
+      🛑 REGLES D'OR (BREVETAT I MISTERI):
+      1. MÀXIM 3-4 FRASES per post. Sigues concís.
+      2. No donis la solució final, només planteja el problema i promet la solució al link.
+      3. Comença amb una pregunta o dada xocant.
+      4. Idioma: Català natiu.
+      5. NO posis el link (s'afegeix automàtic).
+
+      🎯 ESTRATÈGIA PER PLATAFORMA:
+      - LinkedIn: Professional però intrigant. "Estàs cometent aquest error?... T'expliquem com solucionar-ho."
+      - Facebook: Curiositat pura. "No us creureu el que hem descobert sobre..."
+      - Instagram: Frase curta i directa + Emojis + Hashtags.
+
+      Retorna NOMÉS JSON:
       {
-        "linkedin": { "content": "...", "suggested_hashtags": ["..."] },
+        "linkedin": { "content": "..." },
         "facebook": { "content": "..." },
-        "instagram": { "content": "...", "image_prompt": "..." }
+        "instagram": { "content": "..." }
       }
-      
-      L'idioma de sortida ha de ser: ${language}.
     `;
 
-    try {
-      // 1. Cridem l'API estàndard amb mode JSON
-      const completion = await openai.chat.completions.create({
-        model: "gpt-4-turbo", // O "gpt-4o"
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: `Títol: ${title}\n\nContingut:\n${cleanContent}` },
-        ],
-        response_format: { type: "json_object" }, // Forcem JSON
-        temperature: 0.7,
-      });
+    let lastError: unknown = null;
 
-      const rawContent = completion.choices[0].message.content;
+    for (const modelName of modelsToTry) {
+        try {
+            console.log(`🤖 Intentant generar amb model: ${modelName}...`);
+            const model = genAI.getGenerativeModel({ model: modelName });
+            const result = await model.generateContent(prompt);
+            const response = await result.response;
+            let text = response.text();
+            text = text.replace(/```json/g, '').replace(/```/g, '').trim();
+            const jsonResponse: SocialContent = JSON.parse(text);
+            return jsonResponse; 
 
-      if (!rawContent) {
-        throw new Error("La IA ha retornat un contingut buit.");
-      }
-
-      // 2. Parsejem el JSON string a objecte
-      const jsonObject = JSON.parse(rawContent);
-
-      // 3. Validem amb Zod (Això garanteix que l'estructura és correcta)
-      // Si la IA s'ha deixat algun camp, això llançarà un error controlat.
-      const result = SocialDraftsSchema.parse(jsonObject);
-
-      return result;
-
-    } catch (error) {
-      console.error("❌ Error al SocialGeneratorService:", error);
-      // Opcional: Podem rellançar l'error o retornar un null segons com vulguis gestionar-ho
-      throw error;
+        } catch (error: unknown) {
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            console.warn(`⚠️ Model ${modelName} fallit: ${errorMessage}`);
+            lastError = error;
+        }
     }
+
+    return {
+        linkedin: { content: `⚠️ Error IA. Article: ${title}.` },
+        facebook: { content: `⚠️ Error generació.` },
+        instagram: { content: `⚠️ Error IA.\n\n${title}` }
+    };
   }
 }
