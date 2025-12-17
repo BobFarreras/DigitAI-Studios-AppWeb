@@ -28,21 +28,29 @@ export interface IAuditRepository {
 }
 
 
-// 1. DTO (Data Transfer Object): Com la teva UI vol veure les dades (camelCase, net)
+// src/types/models.ts
+
 export type BlogPostDTO = {
-  id: string; // 👈 AFEGEIX AQUESTA LÍNIA
+  id: string;
   slug: string;
   title: string;
-  date: string | null;     // Mapejat des de published_at
+  date: string | null;
   description: string | null;
-  content: string | null;  // Mapejat des de content_mdx
+  content: string | null;
   tags: string[];
-  coverImage: string | null; // Mapejat des de cover_image
+  coverImage: string | null;
   published: boolean;
-  reviewed: boolean; // 👈 NOU CAMP
+  reviewed: boolean;
   totalReactions?: number;
+  
+  // 👇 Relació amb Socials
+  social_posts?: {
+    id: string;
+    platform: 'twitter' | 'linkedin' | 'instagram' | string; // O el teu enum
+    status: 'draft' | 'scheduled' | 'published' | 'failed' | string;
+    scheduledFor: string | null; // 👈 En JS li diem 'scheduledFor', encara que a la DB sigui 'scheduled_at'
+  }[];
 };
-
 
 
 // PROJECTE: digitAIStudios

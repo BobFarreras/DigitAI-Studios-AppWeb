@@ -10,9 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Image from 'next/image';
 import { PostStatusToggle } from '@/features/blog/ui/PostStatusToggle';
-
-// 🆕 IMPORTS NOUS PER LA FASE SOCIAL
-import { createClient } from '@/lib/supabase/server'; // Comprova la ruta del teu client
+import { createClient } from '@/lib/supabase/server';
 import { PostViewTabs } from '@/components/admin/posts/PostViewTabs';
 
 type Props = {
@@ -23,15 +21,9 @@ export default async function AdminPostDetailPage({ params }: Props) {
     await requireAdmin();
     const { slug } = await params;
 
-    // 1. Recuperem el Post (com feies abans)
     const post = await postRepository.getAdminPostBySlug(slug);
+    if (!post) return notFound();
 
-    if (!post) {
-        return notFound();
-    }
-
-    // 2. 🆕 Recuperem els Social Posts associats (en paral·lel si fos necessari, però aquí està bé)
-    // Necessitem l'ID del post, que ja tenim gràcies a la crida anterior
     const supabase = await createClient();
     const { data: socialPosts } = await supabase
         .from('social_posts')
@@ -39,143 +31,117 @@ export default async function AdminPostDetailPage({ params }: Props) {
         .eq('post_id', post.id);
 
     return (
-        <div className="p-4 md:p-8 max-w-6xl mx-auto space-y-8">
+        <div className="w-full max-w-7xl mx-auto p-4 md:p-8 space-y-8 pb-20">
             
-            {/* --- HEADER (INTACTE) --- */}
+            {/* --- CAPÇALERA RESPONSIVE UNIFICADA --- */}
+            {/* flex-col en mòbil (un sota l'altre), flex-row en PC (al costat) */}
             <div className="flex flex-col md:flex-row justify-between items-start gap-6 border-b border-border pb-6">
-                {/* BLOC ESQUERRA */}
-                <div className="flex items-start gap-4 flex-1 min-w-0">
-                    <Link href="/admin/blog">
-                        <Button variant="outline" size="icon" className="shrink-0 rounded-full border-muted-foreground/20 text-muted-foreground hover:text-foreground">
-                            <ArrowLeft className="w-5 h-5" />
+                
+                {/* 1. BLOC TÍTOL I INFO */}
+                <div className="flex items-start gap-3 w-full md:w-auto">
+                    <Link href="/admin/blog" className="shrink-0 mt-1">
+                        <Button variant="outline" size="icon" className="h-9 w-9 rounded-full">
+                            <ArrowLeft className="w-4 h-4" />
                         </Button>
                     </Link>
                     
-                    <div className="space-y-1 min-w-0">
-                        <div className="flex items-center gap-3 flex-wrap">
-                            <h1 className="text-2xl md:text-3xl font-bold text-foreground truncate max-w-full leading-tight">
-                                {post.title}
-                            </h1>
-                            {post.reviewed && (
-                                <div className="flex items-center gap-1 text-green-600 dark:text-green-400 bg-green-500/10 px-2 py-0.5 rounded-full text-xs font-medium border border-green-500/20">
-                                    <CheckCircle2 className="w-3.5 h-3.5" />
-                                    <span>Revisat</span>
-                                </div>
-                            )}
-                        </div>
-                        <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                            <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-xs font-bold uppercase tracking-wider border ${
+                    <div className="space-y-2 min-w-0 flex-1">
+                        <h1 className="text-2xl md:text-3xl font-bold leading-tight break-words">
+                            {post.title}
+                        </h1>
+                        
+                        {/* Metadades petites */}
+                        <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+                            <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-bold border ${
                                 post.published 
-                                    ? 'bg-primary/10 text-primary border-primary/20' 
-                                    : 'bg-muted text-muted-foreground border-border'
+                                    ? 'bg-green-100 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-400' 
+                                    : 'bg-yellow-100 text-yellow-700 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400'
                             }`}>
-                                <div className={`w-1.5 h-1.5 rounded-full ${post.published ? 'bg-primary' : 'bg-muted-foreground'}`} />
-                                {post.published ? 'Publicat' : 'Esborrany'}
+                                <span className={`w-1.5 h-1.5 rounded-full ${post.published ? 'bg-green-600' : 'bg-yellow-600'}`} />
+                                {post.published ? 'PUBLICAT' : 'ESBORRANY'}
                             </span>
-                            <span className="font-mono text-xs opacity-60 hidden sm:inline-block">/ {post.slug}</span>
+                            <span className="font-mono text-xs opacity-50 truncate max-w-[200px]">
+                                / {post.slug}
+                            </span>
                         </div>
                     </div>
                 </div>
 
-                {/* BLOC DRETA */}
-                <div className="flex flex-wrap items-center gap-3 w-full md:w-auto justify-end">
-                    <div className="flex items-center gap-2">
-                        <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive hover:bg-destructive/10">
-                            <Trash2 className="w-5 h-5" />
-                        </Button>
-                        {post.published && (
-                            <Link href={`/blog/${post.slug}`} target="_blank">
-                                <Button variant="outline" size="icon">
-                                    <ExternalLink className="w-5 h-5" />
-                                </Button>
-                            </Link>
-                        )}
+                {/* 2. BLOC BOTONS (La part que es tallava) */}
+                {/* flex-wrap: Si no hi caben, baixen de línia. NO es tallen. */}
+                <div className="flex flex-wrap items-center gap-2 w-full md:w-auto justify-start md:justify-end">
+                    
+                    <Button variant="ghost" size="icon" className="text-destructive shrink-0">
+                        <Trash2 className="w-5 h-5"/>
+                    </Button>
+                    
+                    {post.published && (
+                        <Link href={`/blog/${post.slug}`} target="_blank">
+                            <Button variant="outline" size="icon" className="shrink-0">
+                                <ExternalLink className="w-5 h-5"/>
+                            </Button>
+                        </Link>
+                    )}
+                    
+                    {/* Separador vertical (només estètic) */}
+                    <div className="h-6 w-px bg-border mx-1 hidden sm:block" />
+                    
+                    {/* Toggle d'estat */}
+                    <div className="shrink-0">
+                        <PostStatusToggle postId={post.id || ''} isPublished={post.published} />
                     </div>
-                    <div className="h-8 w-px bg-border hidden md:block mx-1" />
-                    <PostStatusToggle postId={post.id || ''} isPublished={post.published} />
+                    
+                    {/* Botó Editar */}
                     <Link href={`/admin/blog/${post.slug}/edit`}>
-                        <Button className="bg-foreground text-background hover:bg-foreground/90 shadow-sm font-semibold px-6">
-                            <Save className="w-4 h-4 mr-2" /> Editar
+                        <Button className="font-semibold shadow-sm shrink-0">
+                            <Save className="w-4 h-4 mr-2"/> 
+                            Editar
                         </Button>
                     </Link>
                 </div>
             </div>
 
-            {/* --- 🆕 AQUÍ INTEGREM LES PESTANYES --- */}
-            {/* Passem les dades necessàries al client component */}
+            {/* --- CONTINGUT (TABS & GRID) --- */}
             <PostViewTabs postId={post.id} socialPosts={socialPosts || []}>
-                
-                {/* AQUEST ÉS EL TEU GRID ORIGINAL (Es renderitza dins la pestanya 'content') */}
-                <div className="grid lg:grid-cols-3 gap-8">
-                    {/* COLUMNA PRINCIPAL */}
-                    <div className="lg:col-span-2 space-y-8">
-                        {/* Imatge de Portada */}
-                        <div className="relative aspect-video rounded-2xl overflow-hidden bg-muted border border-border shadow-sm group">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 mt-6">
+                    
+                    {/* COLUMNA ESQUERRA (Contingut) */}
+                    <div className="lg:col-span-2 space-y-6">
+                        <div className="relative aspect-video rounded-xl overflow-hidden bg-muted border border-border">
                             {post.coverImage ? (
-                                <>
-                                    <Image
-                                        src={post.coverImage}
-                                        alt="Cover"
-                                        fill
-                                        sizes="(max-width: 768px) 100vw, 66vw"
-                                        className="object-cover transition-transform duration-700 group-hover:scale-105"
-                                    />
-                                    <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent pointer-events-none" />
-                                </>
+                                <Image src={post.coverImage} alt="Cover" fill className="object-cover" />
                             ) : (
-                                <div className="flex flex-col items-center justify-center h-full text-muted-foreground space-y-2">
-                                    <span className="text-sm font-medium">Sense imatge de portada</span>
-                                </div>
+                                <div className="flex items-center justify-center h-full text-muted-foreground/50 text-sm">Sense Imatge</div>
                             )}
                         </div>
 
-                        {/* Contingut MDX */}
-                        <Card className="border-border shadow-sm overflow-hidden">
-                            <CardHeader className="bg-muted/30 border-b border-border py-4">
-                                <CardTitle className="text-sm font-semibold flex items-center gap-2">
-                                    Contingut de l'Article
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent className="p-8 prose prose-slate dark:prose-invert max-w-none">
+                        <Card>
+                            <CardHeader className="py-3 bg-muted/10 border-b"><CardTitle className="text-sm">Contingut del Post</CardTitle></CardHeader>
+                            <CardContent className="p-4 md:p-6 prose dark:prose-invert max-w-none prose-sm md:prose-base">
                                 <MDXContent source={post.content || ''} />
                             </CardContent>
                         </Card>
                     </div>
 
-                    {/* SIDEBAR DRET */}
+                    {/* COLUMNA DRETA (Info) */}
                     <div className="space-y-6">
-                        <Card className="border-border shadow-sm sticky top-6">
-                            <CardHeader className="pb-3 border-b border-border bg-muted/10">
-                                <CardTitle className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                                    Metadades SEO
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent className="p-5 space-y-6">
+                        <Card>
+                            <CardHeader className="py-3 bg-muted/10 border-b"><CardTitle className="text-xs font-bold uppercase text-muted-foreground">Detalls SEO</CardTitle></CardHeader>
+                            <CardContent className="p-4 space-y-4 text-sm">
                                 <div>
-                                    <label className="text-xs font-bold text-muted-foreground block mb-2">Slug URL</label>
-                                    <div className="bg-muted/50 p-2.5 rounded-lg border border-border flex items-center gap-2">
-                                        <span className="text-muted-foreground text-xs select-none">/blog/</span>
-                                        <code className="text-sm text-foreground font-mono truncate">{post.slug}</code>
-                                    </div>
+                                    <label className="font-bold text-muted-foreground text-xs block mb-1">URL Slug</label>
+                                    <code className="bg-muted p-1.5 rounded text-xs block truncate">{post.slug}</code>
                                 </div>
                                 <div>
-                                    <label className="text-xs font-bold text-muted-foreground block mb-2">Meta Descripció</label>
-                                    <div className="bg-muted/30 p-3 rounded-lg border border-border text-sm text-muted-foreground leading-relaxed italic">
-                                        {post.description || "Sense descripció definida."}
-                                    </div>
+                                    <label className="font-bold text-muted-foreground text-xs block mb-1">Descripció</label>
+                                    <p className="text-muted-foreground italic text-xs leading-relaxed">{post.description || 'Sense descripció'}</p>
                                 </div>
                                 <div>
-                                    <label className="text-xs font-bold text-muted-foreground block mb-2">Etiquetes</label>
+                                    <label className="font-bold text-muted-foreground text-xs block mb-2">Tags</label>
                                     <div className="flex flex-wrap gap-2">
-                                        {post.tags.length > 0 ? (
-                                            post.tags.map(tag => (
-                                                <span key={tag} className="text-xs font-medium bg-background border border-border px-2.5 py-1 rounded-md text-foreground shadow-sm">
-                                                    #{tag}
-                                                </span>
-                                            ))
-                                        ) : (
-                                            <span className="text-xs text-muted-foreground italic">Sense tags</span>
-                                        )}
+                                        {post.tags.map(t => (
+                                            <span key={t} className="bg-muted border px-2 py-1 rounded text-[10px] font-medium">#{t}</span>
+                                        ))}
                                     </div>
                                 </div>
                             </CardContent>
