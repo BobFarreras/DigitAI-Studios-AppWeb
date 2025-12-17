@@ -11,23 +11,42 @@ type PublishPayload = {
 
 export class SocialPublisherService {
     static async publish(payload: PublishPayload) {
-        console.log(`🚀 Publicant a ${payload.platform} via OAuth...`);
+        console.log(`🚀 SocialService: Enrutant cap a ${payload.platform}...`);
+        console.log(`📦 Payload Media: ${payload.mediaUrl ? payload.mediaUrl : 'CAP'}`);
 
         let externalId = '';
 
         try {
             switch (payload.platform) {
                 case 'linkedin':
-                    externalId = await LinkedInPublisher.publish(payload.content, payload.link);
+                    // ⚠️ CORRECCIÓ: Passem el 3r argument (mediaUrl)
+                    externalId = await LinkedInPublisher.publish(
+                        payload.content,
+                        payload.link,
+                        payload.mediaUrl || undefined
+                    );
                     break;
 
                 case 'facebook':
-                    externalId = await FacebookPublisher.publish(payload.content, payload.link);
+                    // ⚠️ CORRECCIÓ CRÍTICA: Aquí faltava passar payload.mediaUrl !!
+                    externalId = await FacebookPublisher.publish(
+                        payload.content,
+                        payload.link,
+                        payload.mediaUrl || undefined // <--- AQUESTA ERA LA PEÇA QUE FALTAVA
+                    );
                     break;
 
                 case 'instagram':
-                    // Ara sí que tenim mediaUrl gràcies a l'upload
-                    externalId = await InstagramPublisher.publish(payload.content, payload.mediaUrl!);
+                    if (!payload.mediaUrl) throw new Error("Instagram requereix imatge.");
+
+                    // ABANS: externalId = await InstagramPublisher.publish(payload.content, payload.mediaUrl);
+
+                    // ARA: Li passem també el link
+                    externalId = await InstagramPublisher.publish(
+                        payload.content,
+                        payload.link,
+                        payload.mediaUrl
+                    );
                     break;
 
                 default:
@@ -37,8 +56,7 @@ export class SocialPublisherService {
             return { success: true, externalId };
 
         } catch (error: unknown) {
-            console.error(`❌ Error publicant a ${payload.platform}:`, error);
-            // Rellancem l'error perquè la Server Action el guardi a la DB com a 'failed'
+            console.error(`❌ Error al servei ${payload.platform}:`, error);
             throw error;
         }
     }

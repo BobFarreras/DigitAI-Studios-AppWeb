@@ -1,39 +1,26 @@
 import { createClient } from '@/lib/supabase/server';
 import { getMediaType } from '@/lib/utils/media';
 
-// --- DEFINICIÓ DE TIPUS PER A L'API DE LINKEDIN ---
-
-interface LinkedInVisibility {
-  'com.linkedin.ugc.MemberNetworkVisibility': 'PUBLIC' | 'CONNECTIONS';
-}
-
-interface LinkedInMediaItem {
-  status: 'READY';
-  description?: { text: string };
-  originalUrl: string;
-  title?: { text: string };
-}
-
-interface LinkedInShareContent {
-  shareCommentary: {
-    text: string;
+// Tipus interns per evitar 'any'
+interface LinkedInRegisterRequest {
+  registerUploadRequest: {
+    recipes: string[];
+    owner: string;
+    serviceRelationships: { relationshipType: "OWNER"; identifier: "urn:li:userGeneratedContent" }[];
   };
-  shareMediaCategory: 'NONE' | 'ARTICLE' | 'IMAGE' | 'VIDEO';
-  media?: LinkedInMediaItem[];
 }
 
-interface LinkedInSpecificContent {
-  'com.linkedin.ugc.ShareContent': LinkedInShareContent;
+interface LinkedInRegisterResponse {
+  value: {
+    asset: string;
+    uploadMechanism: {
+      "com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest": {
+        uploadUrl: string;
+        headers: Record<string, string>;
+      };
+    };
+  };
 }
-
-interface LinkedInRequestBody {
-  author: string;
-  lifecycleState: 'PUBLISHED' | 'DRAFT';
-  specificContent: LinkedInSpecificContent;
-  visibility: LinkedInVisibility;
-}
-
-// --------------------------------------------------
 
 export class LinkedInPublisher {
   static async publish(content: string, link?: string, mediaUrl?: string) {
@@ -53,69 +40,108 @@ export class LinkedInPublisher {
 
     if (!creds) throw new Error("LinkedIn no està connectat.");
 
-    // 1. Preparem el text: L'enllaç passa a ser part del text per evitar Link Preview cards
-    const finalContent = link ? `${content}\n\n👇 Llegeix més aquí:\n${link}` : content;
-
-    // 2. Determinem l'URN de l'autor
-    // Si l'ID és numèric, assumim que és Organization, si no, Person.
+    const accessToken = creds.access_token;
     const isOrg = creds.provider_page_id && !isNaN(Number(creds.provider_page_id));
     const authorUrn = `urn:li:${isOrg ? 'organization' : 'person'}:${creds.provider_page_id || creds.provider_account_id}`;
+    
+    // ✅ LINK INCLÒS: S'afegeix al final del text
+    const finalContent = link ? `${content}\n\n—\n🚀 Vols saber-ne més? Llegeix l'article complet aquí:\n👉 ${link}` : content;
 
-    // 3. Configurem el cos de la petició amb els tipus correctes
-    const requestBody: LinkedInRequestBody = {
+    console.log("🚀 Iniciant LinkedIn...");
+
+    let assetUrn: string | undefined = undefined;
+
+    // --- PAS 1: PUJADA D'IMATGE (ASSET) ---
+    if (mediaUrl && getMediaType(mediaUrl) === 'IMAGE') {
+        console.log("📥 Descarregant imatge...");
+        const imageRes = await fetch(mediaUrl);
+        if (!imageRes.ok) throw new Error("Error baixant imatge");
+        const imageBlob = await imageRes.blob();
+
+        // 1. Registrar
+        console.log("1️⃣ Registrant...");
+        const registerBody: LinkedInRegisterRequest = {
+            registerUploadRequest: {
+                recipes: ["urn:li:digitalmediaRecipe:feedshare-image"],
+                owner: authorUrn,
+                serviceRelationships: [{ relationshipType: "OWNER", identifier: "urn:li:userGeneratedContent" }]
+            }
+        };
+
+        const regRes = await fetch('https://api.linkedin.com/v2/assets?action=registerUpload', {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify(registerBody)
+        });
+
+        const regData: LinkedInRegisterResponse = await regRes.json();
+        const uploadUrl = regData.value.uploadMechanism['com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest'].uploadUrl;
+        assetUrn = regData.value.asset;
+
+        // 2. Pujar Binari
+        console.log("2️⃣ Pujant bytes...");
+        await fetch(uploadUrl, {
+            method: 'PUT',
+            headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/octet-stream' },
+            body: imageBlob
+        });
+
+        // 3. ESPERAR QUE ESTIGUI LLESTA (POLLING)
+        let isReady = false;
+        let attempts = 0;
+        console.log("⏳ Esperant processament de LinkedIn...");
+        
+        while (!isReady && attempts < 10) { 
+            await new Promise(r => setTimeout(r, 2000));
+            attempts++;
+            
+            const statusRes = await fetch(`https://api.linkedin.com/v2/assets/${assetUrn}`, {
+                headers: { 'Authorization': `Bearer ${accessToken}` }
+            });
+            const statusData = await statusRes.json();
+            
+            if (statusData.recipes?.[0]?.status === 'AVAILABLE') {
+                isReady = true;
+                console.log("✅ Imatge processada i llesta!");
+            }
+        }
+    }
+
+    // --- PAS 2: CREAR POST ---
+    console.log("3️⃣ Publicant Post...");
+
+    const requestBody = {
       author: authorUrn,
       lifecycleState: 'PUBLISHED',
       specificContent: {
         'com.linkedin.ugc.ShareContent': {
-          shareCommentary: {
-            text: finalContent,
-          },
-          shareMediaCategory: 'NONE', // Valor inicial
-          media: undefined
+          shareCommentary: { text: finalContent },
+          shareMediaCategory: assetUrn ? 'IMAGE' : 'NONE',
+          media: assetUrn ? [{
+            status: 'READY',
+            description: { text: 'Image' },
+            media: assetUrn, 
+            title: { text: 'Image' }
+          }] : undefined
         },
       },
-      visibility: {
-        'com.linkedin.ugc.MemberNetworkVisibility': 'PUBLIC',
-      },
+      visibility: { 'com.linkedin.ugc.MemberNetworkVisibility': 'PUBLIC' },
     };
-
-    // 4. SI HI HA FOTO -> Canviem l'estratègia a 'IMAGE'
-    if (mediaUrl) {
-        // Obtenim el tipus (per si en el futur volem suportar vídeo natiu)
-        const mediaType = getMediaType(mediaUrl);
-        
-        // Només si és IMATGE ho pugem com a natiu. 
-        // Si és vídeo, de moment ho tractem com a text+link perquè l'API de vídeo de LinkedIn és molt complexa (3 passos).
-        if (mediaType === 'IMAGE') {
-            requestBody.specificContent['com.linkedin.ugc.ShareContent'].shareMediaCategory = 'IMAGE';
-            requestBody.specificContent['com.linkedin.ugc.ShareContent'].media = [
-                {
-                    status: 'READY',
-                    description: { text: 'Imatge del post' },
-                    originalUrl: mediaUrl,
-                }
-            ];
-        } else {
-             console.warn("⚠️ Vídeo a LinkedIn: Es publicarà com a text amb enllaç per evitar errors de format.");
-        }
-    }
-
-    console.log("🚀 Publicant a LinkedIn...");
 
     const response = await fetch('https://api.linkedin.com/v2/ugcPosts', {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${creds.access_token}`,
-        'Content-Type': 'application/json',
-        'X-Restli-Protocol-Version': '2.0.0',
-      },
+      headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json', 'X-Restli-Protocol-Version': '2.0.0' },
       body: JSON.stringify(requestBody),
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      console.error('LinkedIn API Error:', errorData);
-      throw new Error(`Error LinkedIn: ${errorData.message}`);
+        const err = await response.json();
+        // Si és duplicat, no petis, retorna l'ID original si pots o un placeholder
+        if (response.status === 400 && JSON.stringify(err).includes("duplicate")) {
+            console.warn("⚠️ Post duplicat, ignorant error.");
+            return "DUPLICATE_IGNORED";
+        }
+        throw new Error(`LinkedIn Error: ${err.message}`);
     }
 
     const data = await response.json();

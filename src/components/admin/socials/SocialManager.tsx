@@ -74,7 +74,7 @@ export function SocialsManager({ postId, existingPosts }: SocialsManagerProps) {
                 </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 {/* Ordenem per tenir sempre el mateix ordre visual */}
                 {existingPosts
                     .sort((a, b) => a.platform.localeCompare(b.platform))

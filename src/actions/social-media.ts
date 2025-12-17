@@ -121,83 +121,75 @@ export async function updateSocialPostContent(
   return { success: true };
 }
 
-// 👇 AQUÍ ESTAVA L'ERROR
-export async function publishSocialPost(socialId: string) {
+// 1. Canvia la definició de la funció per acceptar mediaUrlOverride
+export async function publishSocialPost(socialId: string, mediaUrlOverride?: string) {
   const supabase = await createClient();
 
-  // 1. Auth Check
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error("Unauthorized");
 
-  // 2. Recuperar dades
   const { data: socialPost, error } = await supabase
     .from('social_posts')
     .select(`*, posts ( slug )`)
     .eq('id', socialId)
     .single();
 
-  if (error || !socialPost) throw new Error("No s'ha trobat el post social.");
-  if (socialPost.status === 'published') throw new Error("Aquest post ja està publicat!");
+  if (error || !socialPost) throw new Error("No s'ha trobat el post.");
+  if (socialPost.status === 'published') throw new Error("Ja està publicat!");
 
   try {
-    // 3. RECUPERAT: Construir la URL del post original (Això faltava!)
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-    
 
     const postSlug = socialPost.posts?.slug;
-    
     const publicUrl = postSlug ? `${baseUrl}/blog/${postSlug}` : baseUrl;
 
-    // 4. PUBLICAR
+    // 🔥 CLAU MÀGICA: Si li passem una URL "en mà", utilitza aquesta. Si no, la de la DB.
+    const finalMediaUrl = mediaUrlOverride || socialPost.media_url;
+
+    console.log("📢 PUBLICANT AMB MEDIA:", finalMediaUrl ? finalMediaUrl : "CAP (Text Only)");
+
     const result = await SocialPublisherService.publish({
       platform: socialPost.platform,
       content: socialPost.content,
-      mediaUrl: socialPost.media_url,
-      link: publicUrl // Ara 'publicUrl' ja existeix
+      mediaUrl: finalMediaUrl, // Usem la variable decidida
+      link: publicUrl
     });
 
-    // 5. ACTUALITZAR DB
+    // Actualitzar DB
     await supabase.from('social_posts')
       .update({
         status: 'published',
         published_at: new Date().toISOString(),
         external_id: result.externalId,
+        media_url: null // Netejem referència
       })
       .eq('id', socialId);
 
-    // 6. NETEJA DE STORAGE
-    if (socialPost.media_url) {
+    // Neteja Storage (Si n'hi havia)
+    if (finalMediaUrl) {
       try {
-        const urlParts = socialPost.media_url.split('/social-media/');
+        const urlParts = finalMediaUrl.split('/social-media/');
         if (urlParts.length > 1) {
-          const filePath = urlParts[1];
-          await supabase.storage.from('social-media').remove([filePath]);
+          await supabase.storage.from('social-media').remove([urlParts[1]]);
         }
-      } catch (cleanupError) {
-        console.error("Cleanup error:", cleanupError);
-      }
+      } catch (e) { console.error(e); }
     }
 
     revalidatePath('/admin/blog');
-    return { success: true, message: "Publicat correctament!" };
+    return { success: true, message: "Publicat!" };
 
   } catch (error: unknown) {
-    const msg = error instanceof Error ? error.message : "Error publicant";
-    
-    await supabase
-      .from('social_posts')
-      .update({ error_message: msg, status: 'failed' })
-      .eq('id', socialId);
-
+    // ... gestió errors igual ...
+    const msg = error instanceof Error ? error.message : "Error";
+    await supabase.from('social_posts').update({ error_message: msg, status: 'failed' }).eq('id', socialId);
     return { success: false, message: msg };
   }
 }
-
 // A src/actions/social-media.ts
 
 export async function changeSocialStatus(socialId: string, newStatus: 'draft' | 'approved' | 'published' | 'failed') {
   const supabase = await createClient();
-  
+
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error("Unauthorized");
 

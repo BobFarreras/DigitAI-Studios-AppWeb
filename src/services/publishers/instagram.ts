@@ -1,7 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { getMediaType } from '@/lib/utils/media';
 
-// Interfície pel contenidor d'Instagram
 interface InstaContainerPayload {
   access_token: string;
   caption: string;
@@ -11,7 +10,10 @@ interface InstaContainerPayload {
 }
 
 export class InstagramPublisher {
-  static async publish(content: string, mediaUrl: string) {
+  // 1. AFEGIT paràmetre 'link' (opcional) perquè coincideixi amb els altres publishers
+  static async publish(content: string, link?: string, mediaUrl?: string) {
+    
+    // Check de seguretat (Instagram sempre vol media)
     if (!mediaUrl) throw new Error("Instagram necessita obligatòriament una imatge o vídeo.");
 
     const supabase = await createClient();
@@ -21,7 +23,7 @@ export class InstagramPublisher {
     const { data: profile } = await supabase.from('profiles').select('organization_id').eq('id', user.id).single();
     if (!profile) throw new Error("Perfil no trobat");
     
-    const orgId = profile.organization_id; // Check estricte
+    const orgId = profile.organization_id;
 
     const { data: creds } = await supabase
       .from('social_connections')
@@ -42,11 +44,17 @@ export class InstagramPublisher {
     const mediaType = getMediaType(mediaUrl);
     console.log(`📸 Preparant Instagram (${mediaType})...`);
 
+    // --- PREPARAR TEXT FINAL ---
+    // Instagram no permet links clicables, però el podem escriure o indicar la BIO.
+    const finalCaption = link 
+      ? `${content}\n\n🔗 Link a la Bio o copia aquí:\n${link}` 
+      : content;
+
     // --- PAS 1: Crear Contenidor ---
     const createMediaUrl = `https://graph.facebook.com/v19.0/${instagramUserId}/media`;
     
     const containerBody: InstaContainerPayload = {
-      caption: content,
+      caption: finalCaption, // Usem el text amb l'enllaç afegit
       access_token: creds.access_token,
       media_type: mediaType 
     };
