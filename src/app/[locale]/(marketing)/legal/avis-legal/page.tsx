@@ -36,17 +36,17 @@ export default async function AvisLegalPage() {
            <InfoCard 
               icon={Building2} 
               label={t('data_card_company_label')} 
-              value="[EL TEU NOM EMPRESA]" 
+              value="DigitAI Studios" 
            />
            <InfoCard 
               icon={Fingerprint} 
               label={t('data_card_nif_label')} 
-              value="[EL TEU NIF]" 
+              value="444555666Y" 
            />
            <InfoCard 
               icon={MapPin} 
               label={t('data_card_address_label')} 
-              value={t('data_card_address_value')} 
+              value={"El Morro 54"} 
            />
            <InfoCard 
               icon={Mail} 

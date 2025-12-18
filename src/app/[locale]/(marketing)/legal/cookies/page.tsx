@@ -1,7 +1,6 @@
 import LegalLayout from '@/components/layout/LegalLayout';
 import { Cookie, Settings, BarChart3, XCircle } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
-import { Link } from '@/routing'; // Necessari per Link
 
 export const metadata = {
   title: 'Política de Cookies | DigitAI Studios',

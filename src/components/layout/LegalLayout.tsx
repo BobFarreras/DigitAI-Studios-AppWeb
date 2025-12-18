@@ -1,7 +1,6 @@
 'use client';
 
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -32,7 +31,7 @@ export default function LegalLayout({ children }: { children: React.ReactNode })
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
-      <Navbar user={user} />
+      
       
       <main className="flex-1 container mx-auto px-4 py-32">
         <div className="grid lg:grid-cols-4 gap-10">
@@ -109,7 +108,7 @@ export default function LegalLayout({ children }: { children: React.ReactNode })
 
         </div>
       </main>
-      <Footer />
+   
     </div>
   );
 }

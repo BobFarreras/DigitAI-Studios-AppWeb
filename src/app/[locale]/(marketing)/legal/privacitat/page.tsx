@@ -1,7 +1,6 @@
 import LegalLayout from '@/components/layout/LegalLayout';
 import { ShieldCheck, Server, Lock } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
-import { Link } from '@/routing'; // Assegurem l'import de Link
 
 export const metadata = {
   title: 'Política de Privacitat | DigitAI Studios',
@@ -9,8 +8,6 @@ export const metadata = {
 
 export default async function PrivacitatPage() {
   const t = await getTranslations('Legal.privacitat');
-  const tLegal = await getTranslations('Legal.avis_legal'); // Per l'Avís Legal
-
   return (
     <LegalLayout>
       <div className="border-b border-border pb-8 mb-8">
