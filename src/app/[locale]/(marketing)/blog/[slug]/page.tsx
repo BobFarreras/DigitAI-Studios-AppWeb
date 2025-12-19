@@ -5,7 +5,7 @@ import { Link } from '@/routing';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Calendar, User } from 'lucide-react';
 import { Metadata } from 'next';
-import { getTranslations, getLocale } from 'next-intl/server'; // 👈
+import { getTranslations} from 'next-intl/server'; // 👈
 import { ReactionDock } from '@/features/blog/ui/ReactionDock';
 import { postRepository } from '@/services/container'; // Importem el repo directament per carregar dades inicials
 
@@ -15,26 +15,52 @@ type Props = {
 
 export const revalidate = 3600;
 
+// Afegeix aquesta constant a dalt de tot o importa-la des del teu config
+const SITE_URL = 'https://digitaistudios.com'; 
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  // Necessitem el slug per buscar el post, però no tenim accés a 't' aquí fàcilment
-  // pel títol, així que usem les dades del post directament.
-  const { slug } = await params;
+  const { slug, locale } = await params;
   const post = await postService.getPost(slug);
 
   if (!post) {
     return { title: '404 - Article no trobat' };
   }
 
+  // 👇 AQUESTA ÉS LA MÀGIA QUE ET FALTA
+  // Construïm les URLs per als diferents idiomes
+  const urlEs = `${SITE_URL}/es/blog/${slug}`;
+  const urlEn = `${SITE_URL}/en/blog/${slug}`;
+  // Si el català és l'idioma per defecte (sense prefix), seria així:
+  // const urlCa = `${SITE_URL}/blog/${slug}`; 
+  // O si també té prefix:
+  const urlCa = `${SITE_URL}/ca/blog/${slug}`; // Ajusta això segons la teva configuració de next-intl
+
   return {
     title: post.title,
     description: post.description,
+    
+    // 1. CANONICAL I HREFLANG (SOLUCIÓ AL PROBLEMA DE GSC)
+    alternates: {
+      // Canonical: "Jo soc la versió original d'aquest idioma"
+      canonical: `${SITE_URL}/${locale}/blog/${slug}`,
+      
+      // Languages: "Aquí tens les meves germanes en altres idiomes"
+      languages: {
+        'es': urlEs,
+        'en': urlEn,
+        'ca': urlCa, // Assegura't que coincideix amb com tens les rutes
+      },
+    },
+
     openGraph: {
       title: post.title,
       description: post.description || '',
       type: 'article',
+      url: `${SITE_URL}/${locale}/blog/${slug}`, // Important afegir la URL també aquí
       publishedTime: post.date || undefined,
       tags: post.tags,
       images: post.coverImage ? [{ url: post.coverImage }] : undefined,
+      locale: locale, // Important per a xarxes socials
     },
     twitter: {
       card: 'summary_large_image',
@@ -63,6 +89,10 @@ export default async function BlogPostPage({ params }: Props) {
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
+    mainEntityOfPage: {  // AFEGEIX AIXÒ
+        "@type": "WebPage",
+        "@id": `https://digitaistudios.com/${locale}/blog/${slug}`
+    },
     headline: post.title,
     description: post.description,
     image: post.coverImage ? [post.coverImage] : [],

@@ -1,85 +1,46 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { PlayCircle, Volume2, VolumeX, Pause, Play } from 'lucide-react';
+import { PlayCircle } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-// 👇 1. IMPORTAR HOOK DE TRADUCCIÓ
 import { useTranslations } from 'next-intl';
 
 export function HeroSection() {
-  // 👇 2. INICIALITZAR HOOK (Namespace 'Hero' del json)
   const t = useTranslations('Hero');
-  const [showVideo, setShowVideo] = useState(true);
-  const [isMuted, setIsMuted] = useState(true);
-  const [isPlaying, setIsPlaying] = useState(true);
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isVideoLoaded, setIsVideoLoaded] = useState(false);
+  // Estat per controlar si la imatge falla
+  const [imageError, setImageError] = useState(false); 
 
-  // Control de reproducció en canviar de pestanya
-  useEffect(() => {
-    const videoElement = videoRef.current;
-    if (!videoElement) return;
-
-    const handleVisibilityChange = () => {
-      if (document.hidden && !videoElement.paused) {
-        videoElement.pause();
-      } else if (!document.hidden && isPlaying) {
-        videoElement.play();
-      }
-    };
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
-  }, [isPlaying]);
-
-  const togglePlay = () => {
-    if (!videoRef.current) return;
-    if (videoRef.current.paused) {
-      videoRef.current.play();
-      setIsPlaying(true);
-    } else {
-      videoRef.current.pause();
-      setIsPlaying(false);
-    }
-  }
+  const YOUTUBE_VIDEO_ID = "yjhoVKwSpA4";
 
   return (
     <section id="inici" className="pt-32 pb-20 min-h-screen flex items-center hero-pattern overflow-hidden relative">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-200 h-200 bg-primary/5 rounded-full blur-[120px] -z-10" />
 
-      {/* Element de fons (opcional) */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[120px] -z-10" />
-
-      {/* ✅ CORRECCIÓ APLICADA AQUÍ: Padding responsiu */}
       <div className="container mx-auto px-6 md:px-10 lg:px-14 grid lg:grid-cols-2 gap-16 items-center">
 
-        {/* COLUMNA ESQUERRA: Text */}
+        {/* COLUMNA ESQUERRA (IGUAL) */}
         <motion.div
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8 }}
         >
-
-
-          {/* 👇 3. SUBSTITUIR TEXT PLA PER CLAUS t('...') */}
           <h1 className="text-5xl lg:text-7xl font-bold mb-6 leading-tight">
             {t('title_start')} <span className="gradient-text">{t('title_highlight_1')}</span>.<br />
             {t('title_middle')} <span className="text-foreground">{t('title_highlight_2')}</span>.
           </h1>
-
           <p className="text-xl text-muted-foreground mb-8 leading-relaxed max-w-lg">
             {t('subtitle')}
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <Link href="#contacte">
-              <Button size="lg" className="...">
-                {t('cta_primary')}
-              </Button>
+              <Button size="lg">{t('cta_primary')}</Button>
             </Link>
             <Link href="#audit">
-              <Button variant="outline" size="lg" className="...">
-                {t('cta_secondary')}
-              </Button>
+              <Button variant="outline" size="lg">{t('cta_secondary')}</Button>
             </Link>
           </div>
         </motion.div>
@@ -91,80 +52,68 @@ export function HeroSection() {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="relative"
         >
-          {/* 🛠️ FIX: Ús de variables semàntiques (bg-card, border-border) */}
-          <div className={`relative w-full aspect-video bg-card rounded-xl border border-border shadow-2xl overflow-hidden group transition-colors duration-300 ${!showVideo ? 'animate-floating' : ''}`}>
+          {/* CANVI CLAU: Hem tret 'aspect-video' d'aquí. 
+            Ara deixem que el contingut dicti l'alçada.
+          */}
+          <div className="relative w-full bg-card rounded-xl border border-border shadow-2xl overflow-hidden group flex flex-col">
 
-            {/* Barra superior estil navegador */}
-            <div className="h-8 border-b border-border bg-muted/50 flex items-center px-4 gap-2 z-20 relative transition-colors">
+            {/* BARRA SUPERIOR */}
+            <div className="h-8 shrink-0 border-b border-border bg-muted/50 flex items-center px-4 gap-2 z-20 relative select-none">
               <div className="w-2.5 h-2.5 rounded-full bg-red-500/50"></div>
               <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/50"></div>
               <div className="w-2.5 h-2.5 rounded-full bg-green-500/50"></div>
-              {/* URL Bar */}
-              <div className="ml-4 px-3 py-0.5 rounded bg-background/50 text-[10px] text-muted-foreground font-mono border border-border hidden sm:block">
-                digitai-studios.app
-              </div>
+            
             </div>
 
-            {/* Contingut del Vídeo */}
-            <div className="relative w-full h-[calc(100%-2rem)] bg-black"> {/* El fons del vídeo sempre negre */}
-              {showVideo ? (
-                <div className="relative w-full h-full">
-                  <video
-                    ref={videoRef}
-                    className="w-full h-full object-cover"
-                    autoPlay
-                    muted={isMuted}
-                    loop
-                    playsInline
-                    // 👇 Això ens ajudarà a saber si falla
-                    onError={(e) => console.error("Error carregant vídeo:", e)}
-                  >
-                    <source src="/videos/hero-video.mp4" type="video/mp4" />
-                    {/* Fallback si el format falla */}
-                    El teu navegador no suporta vídeos.
-                  </video>
+            {/* CANVI CLAU 2: Posem 'aspect-video' AQUÍ.
+               Això força que l'àrea visual sigui exactament 16:9, perfecte per YouTube i fotos.
+            */}
+            <div className="relative w-full aspect-video bg-black">
+              
+              {!isVideoLoaded ? (
+                <button 
+                  onClick={() => setIsVideoLoaded(true)}
+                  className="relative w-full h-full group cursor-pointer block focus:outline-none"
+                  aria-label="Reproduir vídeo"
+                >
+                  {/* Si la imatge falla (imageError = true), mostrem un degradat bonic */}
+                  {imageError ? (
+                    <div className="absolute inset-0 bg-linear-to-br from-indigo-900 via-slate-900 to-black flex items-center justify-center">
+                       <span className="text-white/20 font-bold text-4xl tracking-widest">DIGITAI</span>
+                    </div>
+                  ) : (
+                    <Image
+                      src="/images/hero.webp"
+                      alt="Equip divers col·laborant"
+                      fill
+                      className="object-cover"
+                      priority
+                      // 👇 Això captura l'error si la imatge no existeix
+                      onError={() => setImageError(true)}
+                    />
+                  )}
 
-                  {/* Controls Overlay */}
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4 backdrop-blur-[2px]">
-                    <button onClick={togglePlay} className="text-white hover:scale-110 transition-transform p-4 bg-white/10 rounded-full border border-white/20">
-                      {isPlaying ? <Pause size={32} fill="currentColor" /> : <Play size={32} fill="currentColor" />}
-                    </button>
-                    <button onClick={() => setIsMuted(!isMuted)} className="absolute bottom-4 right-4 text-white p-2 bg-black/50 rounded-full hover:bg-black/70 transition-colors">
-                      {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
-                    </button>
+                  {/* Overlay del botó Play */}
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/10 transition-colors z-10">
+                    <PlayCircle className="w-20 h-20 text-white/90 drop-shadow-2xl scale-100 group-hover:scale-110 transition-transform duration-300" />
                   </div>
-                </div>
+                </button>
               ) : (
-                <div className="relative w-full h-full cursor-pointer group-hover:opacity-90 transition-opacity" onClick={() => setShowVideo(true)}>
-                  <Image
-                    src="/images/hero.webp"
-                    alt="Equip divers col·laborant"
-                    fill
-                    className="object-cover"
-                    priority
-                  />
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/30">
-                    <PlayCircle className="w-20 h-20 text-white/80 drop-shadow-lg" />
-                  </div>
-                </div>
+                <iframe
+                  src={`https://www.youtube-nocookie.com/embed/${YOUTUBE_VIDEO_ID}?autoplay=1&mute=0&rel=0&modestbranding=1&controls=1`}
+                  title="DigitAI Hero Video"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="absolute inset-0 w-full h-full"
+                />
               )}
             </div>
           </div>
 
-          {/* Floating Cards (Decoratives) */}
-          <div className="absolute -bottom-6 -left-6 bg-card/90 backdrop-blur-md border border-border p-4 rounded-xl flex items-center gap-3 animate-pulse-glow shadow-xl z-30 transition-colors">
-            <div className="relative">
-              <div className="w-3 h-3 bg-green-500 rounded-full animate-ping absolute opacity-75"></div>
-              <div className="w-3 h-3 bg-green-500 rounded-full relative"></div>
-            </div>
-            <div>
-              <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">ESTAT</div>
-              <span className="font-medium text-sm text-foreground">Sistemes Operatius</span>
-            </div>
-          </div>
+    
 
         </motion.div>
-
       </div>
     </section>
   );

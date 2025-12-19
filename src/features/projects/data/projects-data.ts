@@ -1,33 +1,23 @@
-import { StaticImageData } from 'next/image';
-// Importa les teves imatges reals aquí
-import ribotFlowImg from '@/assets/images/pantalla-ribotflow.jpg'; 
-import salutFlowImg from '@/assets/images/pantalla-salutflow.jpg';
+import { Project } from '@/types/models';
 
-export interface Project {
-  id: string;
-  title: string;
-  tagline: string;
-  description: string;
-  stats: string[];
-  tags: string[];
-  color: string;
-  image: StaticImageData | null;
-  link: string;
-  imageAlt: string; // 👈 NOU CAMP AFEGIT
-}
+// Importa les teves imatges reals aquí
+import ribotFlowImg from '@/assets/images/ribotflowPresentacio.jpg';
+import salutFlowImgDark from '@/assets/images/getsalutflowIntroDark.jpg';
+import salutFlowImgLight from '@/assets/images/getsalutflowIntroLight.jpg';
+import salutFlowImgDarkCA from '@/assets/images/getsalutflowDarkCA.jpg';
+import salutFlowImgLightCA from '@/assets/images/getsalutflowLightCA.jpg';
 
 export const PROJECTS: Project[] = [
   {
     id: 'ribotflow',
     title: 'RibotFlow',
     tagline: 'El Sistema Operatiu Integral',
-    description: '...',
+    description: '...', // Recorda que els textos reals venen del JSON de traducció
     stats: ['CRM + Facturació', 'Automatització IA', 'Control Financer'],
     tags: ['ERP', 'Business', 'IA', 'Supabase'],
     color: 'from-purple-500 to-pink-500',
     image: ribotFlowImg,
-    // 👇 DESCRIU LA IMATGE REALMENT
-    imageAlt: "Panell de control fosc de RibotFlow mostrant gràfiques de rendiment i llistat de clients", 
+    imageAlt: "Panell de control fosc de RibotFlow",
     link: 'https://ribotflow.com'
   },
   {
@@ -35,12 +25,27 @@ export const PROJECTS: Project[] = [
     title: 'SalutFlow',
     tagline: 'El teu Centre Esportiu, Digitalitzat',
     description: '...',
-    stats: ['App PWA', 'Pagaments Stripe', 'Llistes d\'Espera'],
+    stats: ['App PWA', 'Pagaments Stripe', "Llistes d'Espera"],
     tags: ['SaaS', 'Sport', 'PWA', 'Stripe'],
     color: 'from-cyan-400 to-blue-600',
-    image: salutFlowImg,
-    // 👇 DESCRIU LA IMATGE REALMENT
-    imageAlt: "Captura de l'aplicació mòbil SalutFlow amb el calendari de reserves de classes",
-    link: 'https://getsalutflow.com'
+    link: 'https://getsalutflow.com',
+    imageAlt: "App mòbil SalutFlow",
+    
+    // Imatge Fallback (per si falla alguna cosa)
+    image: salutFlowImgDark,
+
+    // Lògica Adaptativa
+    adaptiveImages: {
+      // Si l'usuari està en Català
+      ca: {
+        light: salutFlowImgDarkCA,
+        dark: salutFlowImgLightCA
+      },
+      // Per qualsevol altre idioma (en, es, fr...)
+      default: {
+        light: salutFlowImgDark,
+        dark: salutFlowImgLight
+      }
+    }
   }
 ];

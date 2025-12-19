@@ -1,7 +1,7 @@
 import { getAdminUsersList } from '@/app/actions/get-users';
 import { Mail, Download, User, Calendar, ShieldCheck, UserCheck, UserPlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-
+import { UserDeleteButton } from '@/components/admin/UserDeleteButton';
 
 
 export default async function AdminUsersPage() {
@@ -23,7 +23,7 @@ export default async function AdminUsersPage() {
         </Button>
       </div>
 
-   
+
 
       {/* TAULA CARD */}
       <div className="border border-border rounded-xl overflow-hidden bg-card shadow-sm">
@@ -42,13 +42,13 @@ export default async function AdminUsersPage() {
             {/* BODY */}
             <tbody className="divide-y divide-border">
               {users.map((user) => (
-                <tr 
+                <tr
                   // ✅ FIX CLAU: Combinem ID i Org ID per fer-la única
                   // Si un usuari està a 2 organitzacions teves, sortirà 2 cops, però la clau serà diferent.
-                  key={`${user.id}_${user.organization_id}`} 
+                  key={`${user.id}_${user.organization_id}`}
                   className="hover:bg-muted/30 transition-colors group"
                 >
-                  
+
                   {/* COLUMNA 1: IDENTITAT */}
                   <td className="px-4 py-3 pl-6">
                     <div className="flex items-center gap-3">
@@ -91,16 +91,22 @@ export default async function AdminUsersPage() {
                       <span className="text-muted-foreground">-</span>
                     )}
                   </td>
-
                   {/* COLUMNA 4: ACCIONS */}
                   <td className="px-4 py-3 text-right pr-6">
-                    <a
-                      href={`mailto:${user.email}`}
-                      className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all"
-                      title="Enviar correu"
-                    >
-                      <Mail className="w-4 h-4" />
-                    </a>
+                    <div className="flex items-center justify-end gap-2">
+                      {/* Botó Email existent */}
+                      <a
+                        href={`mailto:${user.email}`}
+                        className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all"
+                        title="Enviar correu"
+                      >
+                        <Mail className="w-4 h-4" />
+                      </a>
+
+                      {/* NOU Botó Eliminar */}
+                      {/* Passem l'ID per eliminar */}
+                      <UserDeleteButton userId={user.id} />
+                    </div>
                   </td>
                 </tr>
               ))}

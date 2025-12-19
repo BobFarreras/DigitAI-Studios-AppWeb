@@ -164,3 +164,30 @@ export type AnalyticsEventDTO = {
     os: string;      // 'iOS', 'Windows'
   };
 };
+
+import { StaticImageData } from 'next/image';
+
+// 1. Definim tipus per a les variants
+export type ThemeImageSet = {
+  light: StaticImageData;
+  dark: StaticImageData;
+};
+
+// 2. Modifiquem la interfície
+export interface Project {
+  id: string;
+  title: string;
+  tagline: string;
+  description: string;
+  stats: string[];
+  tags: string[];
+  color: string;
+  link: string;
+  imageAlt: string;
+  
+  // Camp principal (Fallback i SEO)
+  image: StaticImageData;
+  
+  // Camp opcional per lògica avançada (Idioma -> Tema -> Imatge)
+  adaptiveImages?: Record<string, ThemeImageSet>; 
+}
