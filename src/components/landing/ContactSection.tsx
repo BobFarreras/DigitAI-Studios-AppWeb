@@ -6,26 +6,30 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Link } from '@/routing';
-import { Loader2, Send, Bot, Code2, Rocket, Shield, Users } from 'lucide-react';
+import { Loader2, Send, Bot, Code2, Rocket, Shield, Users, AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 
+// Definim l'estat inicial complet per evitar errors de "undefined"
+const initialState = {
+  success: false,
+  message: '',
+  errors: {}
+};
+
 export function ContactSection() {
   const t = useTranslations('ContactSection');
-  const [state, action, isPending] = useActionState(submitContactForm, { success: false });
+  // Passem l'initialState complet
+  const [state, action, isPending] = useActionState(submitContactForm, initialState);
   const [serviceType, setServiceType] = useState('ia'); // 'ia' o 'web'
-  
-  // Estat del checkbox
   const [termsAccepted, setTermsAccepted] = useState(false);
 
   return (
-    // ✅ CORRECCIÓ: Padding responsiu (tret de la secció, aplicat al container)
     <section id="contacte" className="py-24 bg-background relative overflow-hidden transition-colors duration-300">
       
       {/* Fons decoratiu */}
       <div className="absolute top-0 left-0 w-full h-full bg-linear-to-b from-transparent via-primary/5 to-transparent pointer-events-none" />
 
-      {/* ✅ CORRECCIÓ APLICADA AQUÍ */}
       <div className="container mx-auto px-6 md:px-10 lg:px-14 grid lg:grid-cols-2 gap-16 items-start relative z-10">
         
         {/* COLUMNA ESQUERRA: Text i Punts */}
@@ -45,21 +49,21 @@ export function ContactSection() {
            </div>
 
            <div className="space-y-8">
-              {[
-                { icon: Rocket, title: t('features.agile.title'), desc: t('features.agile.desc') },
-                { icon: Shield, title: t('features.tech.title'), desc: t('features.tech.desc') },
-                { icon: Users, title: t('features.partners.title'), desc: t('features.partners.desc') }
-              ].map((item, i) => (
-                <div key={i} className="flex gap-5 items-start group">
-                  <div className="mt-1 w-12 h-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                    <item.icon className="w-6 h-6 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-foreground text-xl mb-1">{item.title}</h3>
-                    <p className="text-muted-foreground leading-relaxed">{item.desc}</p>
-                  </div>
-                </div>
-              ))}
+             {[
+               { icon: Rocket, title: t('features.agile.title'), desc: t('features.agile.desc') },
+               { icon: Shield, title: t('features.tech.title'), desc: t('features.tech.desc') },
+               { icon: Users, title: t('features.partners.title'), desc: t('features.partners.desc') }
+             ].map((item, i) => (
+               <div key={i} className="flex gap-5 items-start group">
+                 <div className="mt-1 w-12 h-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                   <item.icon className="w-6 h-6 text-primary" />
+                 </div>
+                 <div>
+                   <h3 className="font-bold text-foreground text-xl mb-1">{item.title}</h3>
+                   <p className="text-muted-foreground leading-relaxed">{item.desc}</p>
+                 </div>
+               </div>
+             ))}
            </div>
         </motion.div>
 
@@ -112,8 +116,10 @@ export function ContactSection() {
                   name="fullName" 
                   placeholder={t('form.name_placeholder')} 
                   required 
+                  minLength={2} // 🛡️ Protecció bàsica
                   className="bg-background border-input focus:border-primary h-12 text-foreground placeholder:text-muted-foreground/50" 
                 />
+                <ErrorMessage errors={state.errors?.fullName} />
               </div>
               
               <div className="space-y-2">
@@ -125,6 +131,7 @@ export function ContactSection() {
                    required 
                    className="bg-background border-input focus:border-primary h-12 text-foreground placeholder:text-muted-foreground/50" 
                  />
+                 <ErrorMessage errors={state.errors?.email} />
               </div>
 
               <div className="space-y-2">
@@ -133,64 +140,83 @@ export function ContactSection() {
                    name="message" 
                    rows={4} 
                    placeholder={t('form.message_placeholder')}
+                   required
+                   minLength={10} // 🛡️ PROTECCIÓ CRÍTICA CONTRA CRASH
                    className="w-full rounded-lg border border-input bg-background px-4 py-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all resize-none placeholder:text-muted-foreground/50"
                  />
+                 <div className="flex justify-between items-start">
+                    <ErrorMessage errors={state.errors?.message} />
+                    <span className="text-[10px] text-muted-foreground ml-auto pt-1">Mín. 10 caràcters</span>
+                 </div>
               </div>
             </div>
 
             {/* CHECKBOX LEGAL CONTROLAT */}
-            <div className="flex items-start space-x-3 pt-2">
-              <Checkbox 
-                id="privacy-contact" 
-                name="privacy" 
-                value="on" 
-                checked={termsAccepted}
-                onCheckedChange={(checked) => setTermsAccepted(checked as boolean)}
-                required 
-                className="mt-1 border-muted-foreground/30 data-[state=checked]:bg-primary data-[state=checked]:border-primary" 
-              />
-              <label htmlFor="privacy-contact" className="text-sm text-muted-foreground leading-snug cursor-pointer select-none">
-                {t.rich('privacy_text', {
-                  link: (chunks) => <Link href="/legal/privacitat" target="_blank" className="underline hover:text-primary transition-colors">{chunks}</Link>
-                })}
-              </label>
+            <div className="space-y-2">
+                <div className="flex items-start space-x-3 pt-2">
+                <Checkbox 
+                    id="privacy-contact" 
+                    name="privacy" 
+                    value="on" 
+                    checked={termsAccepted}
+                    onCheckedChange={(checked) => setTermsAccepted(checked as boolean)}
+                    required 
+                    className="mt-1 border-muted-foreground/30 data-[state=checked]:bg-primary data-[state=checked]:border-primary" 
+                />
+                <label htmlFor="privacy-contact" className="text-sm text-muted-foreground leading-snug cursor-pointer select-none">
+                    {t.rich('privacy_text', {
+                    link: (chunks) => <Link href="/legal/privacitat" target="_blank" className="underline hover:text-primary transition-colors">{chunks}</Link>
+                    })}
+                </label>
+                </div>
+                <ErrorMessage errors={state.errors?.privacy} />
             </div>
 
             {/* BOTÓ AMB ESTAT DISABLED I TOOLTIP */}
             <div className="relative group">
                 <Button 
                   type="submit" 
-                  // Desactivem si està enviant (isPending) O si NO ha acceptat termes
-                  disabled={isPending || !termsAccepted} 
+                  disabled={isPending || !termsAccepted || state.success} // Bloquegem també si és success
                   className={`w-full h-14 text-lg font-bold rounded-xl transition-all shadow-lg shadow-primary/25 flex items-center justify-center ${
-                     termsAccepted 
+                     termsAccepted && !state.success
                      ? 'gradient-bg text-white hover:opacity-90' 
                      : 'bg-muted text-muted-foreground cursor-not-allowed opacity-60'
                   }`}
                 >
-                  {isPending ? <Loader2 className="animate-spin mr-2" /> : <Send className="mr-2 w-5 h-5" />}
-                  {t('form.submit_button')}
+                  {isPending ? (
+                      <>
+                        <Loader2 className="animate-spin mr-2" /> Enviant...
+                      </>
+                  ) : state.success ? (
+                      "Enviat Correctament!"
+                  ) : (
+                      <>
+                        <Send className="mr-2 w-5 h-5" /> {t('form.submit_button')}
+                      </>
+                  )}
                 </Button>
                 
-                {/* Tooltip flotant si intenten passar per sobre sense acceptar */}
-                {!termsAccepted && (
+                {/* Tooltip */}
+                {!termsAccepted && !state.success && (
                     <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-foreground text-background text-xs px-3 py-1.5 rounded-md shadow-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap font-medium z-20">
-                        {t('tooltip_privacy',)}
+                        {t('tooltip_privacy')}
                         <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-foreground rotate-45"></div>
                     </div>
                 )}
             </div>
 
+            {/* MISSATGE GLOBAL */}
             {state?.message && (
                 <motion.div 
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className={`text-center text-sm font-medium mt-4 p-3 rounded-lg border ${
+                    className={`text-center text-sm font-medium mt-4 p-3 rounded-lg border flex items-center justify-center gap-2 ${
                         state.success 
                         ? 'bg-green-500/10 border-green-500/20 text-green-600 dark:text-green-400' 
                         : 'bg-red-500/10 border-red-500/20 text-red-600 dark:text-red-400'
                     }`}
                 >
+                    {state.success ? null : <AlertCircle className="w-4 h-4" />}
                     {state.message}
                 </motion.div>
             )}
@@ -200,5 +226,15 @@ export function ContactSection() {
 
       </div>
     </section>
+  );
+}
+
+// 👇 COMPONENT AUXILIAR PER MOSTRAR ERRORS
+function ErrorMessage({ errors }: { errors?: string[] }) {
+  if (!errors || errors.length === 0) return null;
+  return (
+    <p className="text-xs font-medium text-red-500 mt-1 animate-in slide-in-from-top-1 fade-in">
+      {errors[0]}
+    </p>
   );
 }
