@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { PlayCircle } from 'lucide-react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 
@@ -12,7 +11,6 @@ export function HeroSection() {
   const t = useTranslations('Hero');
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
   // Estat per controlar si la imatge falla
-  const [imageError, setImageError] = useState(false); 
 
   const YOUTUBE_VIDEO_ID = "yjhoVKwSpA4";
 
@@ -62,36 +60,25 @@ export function HeroSection() {
               <div className="w-2.5 h-2.5 rounded-full bg-red-500/50"></div>
               <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/50"></div>
               <div className="w-2.5 h-2.5 rounded-full bg-green-500/50"></div>
-            
+
             </div>
 
             {/* CANVI CLAU 2: Posem 'aspect-video' AQUÍ.
                Això força que l'àrea visual sigui exactament 16:9, perfecte per YouTube i fotos.
             */}
             <div className="relative w-full aspect-video bg-black">
-              
+
               {!isVideoLoaded ? (
-                <button 
+                <button
                   onClick={() => setIsVideoLoaded(true)}
                   className="relative w-full h-full group cursor-pointer block focus:outline-none"
                   aria-label="Reproduir vídeo"
                 >
-                  {/* Si la imatge falla (imageError = true), mostrem un degradat bonic */}
-                  {imageError ? (
-                    <div className="absolute inset-0 bg-linear-to-br from-indigo-900 via-slate-900 to-black flex items-center justify-center">
-                       <span className="text-white/20 font-bold text-4xl tracking-widest">DIGITAI</span>
-                    </div>
-                  ) : (
-                    <Image
-                      src="/images/hero.webp"
-                      alt="Equip divers col·laborant"
-                      fill
-                      className="object-cover"
-                      priority
-                      // 👇 Això captura l'error si la imatge no existeix
-                      onError={() => setImageError(true)}
-                    />
-                  )}
+
+                  <div className="absolute inset-0 bg-linear-to-br from-indigo-900 via-slate-900 to-black flex items-center justify-center">
+                    <span className="text-white/20 font-bold text-4xl tracking-widest">DIGITAI STUDIOS</span>
+                  </div>
+
 
                   {/* Overlay del botó Play */}
                   <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/10 transition-colors z-10">
@@ -111,7 +98,7 @@ export function HeroSection() {
             </div>
           </div>
 
-    
+
 
         </motion.div>
       </div>

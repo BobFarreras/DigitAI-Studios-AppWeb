@@ -1,18 +1,14 @@
 'use client';
 
 import { Link, usePathname } from '@/routing';
-import { LayoutDashboard, BarChart3, Users, Home , BookOpenCheck, FlaskConical} from 'lucide-react';
+import { LayoutDashboard, BarChart3, Users, Home , BookOpenCheck, FlaskConical, Inbox} from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export function AdminBottomNav() {
   const pathname = usePathname();
 
   const navLinks = [
-    {
-      href: '/admin',
-      label: 'Inici',
-      icon: LayoutDashboard
-    },
+
     {
       href: '/admin/analytics',
       label: 'Mètriques',
@@ -33,6 +29,7 @@ export function AdminBottomNav() {
       label: 'Tests',
       icon: FlaskConical // Icona de laboratori
     },
+    { label: 'Missatges', href: '/admin/missatges', icon: Inbox},
   ];
 
   return (

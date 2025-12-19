@@ -4,15 +4,16 @@
 import { Link, usePathname } from '@/routing';
 import { cn } from '@/lib/utils';
 import { ThemeToggle } from '@/components/ui/theme-toggle'; // 👈 Importem el Toggle
-import { 
-  ShieldAlert, 
-  BarChart3, 
-  Users, 
-  BookOpenCheck, 
-  FlaskConical, 
+import {
+  ShieldAlert,
+  BarChart3,
+  Users,
+  BookOpenCheck,
+  FlaskConical,
   Home,
   Briefcase,
-  Settings
+  Settings,
+  Inbox
 } from 'lucide-react';
 
 export function AdminSidebar() {
@@ -24,12 +25,13 @@ export function AdminSidebar() {
     { label: 'Projectes', href: '/admin/projects', icon: Briefcase },
     { label: 'QA / Tests', href: '/admin/tests', icon: FlaskConical },
     { label: 'Blog', href: '/admin/blog', icon: BookOpenCheck },
-    { label: 'Configuració', href: '/admin/settings', icon: Settings   }
+    { label: 'Configuració', href: '/admin/settings', icon: Settings },
+    { label: 'Missatges', href: '/admin/missatges', icon: Inbox},
   ];
 
   return (
     <aside className="hidden md:flex w-64 border-r border-border p-6 flex-col bg-card/50 backdrop-blur-xl h-full sticky top-0">
-      
+
       {/* CAPÇALERA */}
       <div className="flex items-center gap-2 font-bold text-foreground mb-10 text-xl px-2">
         <ShieldAlert className="text-primary w-6 h-6" /> {/* Usem primary en lloc de red-500 fix */}
@@ -40,15 +42,15 @@ export function AdminSidebar() {
       <nav className="flex flex-col gap-2 flex-1">
         {NAV_ITEMS.map((item) => {
           const isActive = pathname.startsWith(item.href);
-          
+
           return (
-            <Link 
-              key={item.href} 
-              href={item.href} 
+            <Link
+              key={item.href}
+              href={item.href}
               className={cn(
                 "flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200 text-sm font-medium",
-                isActive 
-                  ? "bg-primary/10 text-primary border border-primary/10 shadow-sm" 
+                isActive
+                  ? "bg-primary/10 text-primary border border-primary/10 shadow-sm"
                   : "text-muted-foreground hover:bg-muted hover:text-foreground"
               )}
             >
@@ -61,15 +63,15 @@ export function AdminSidebar() {
 
       {/* FOOTER AMB TOGGLE I RETORN */}
       <div className="mt-auto pt-6 border-t border-border space-y-4">
-        
+
         {/* Selector de Tema */}
         <div className="flex items-center justify-between px-2">
-            <span className="text-xs font-medium text-muted-foreground">Tema</span>
-            <ThemeToggle />
+          <span className="text-xs font-medium text-muted-foreground">Tema</span>
+          <ThemeToggle />
         </div>
 
-        <Link 
-          href="/" 
+        <Link
+          href="/"
           className="flex items-center gap-3 px-4 py-2.5 rounded-lg transition-colors text-muted-foreground hover:bg-muted hover:text-foreground text-sm"
         >
           <Home className="w-4 h-4 opacity-70" />

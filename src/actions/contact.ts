@@ -1,75 +1,50 @@
 'use server';
 
-import { z } from 'zod';
-import { createClient } from '@/lib/supabase/server';
-// 1. Definim el tipus per al 'prevState' per evitar l'error d'ESLint
+import { ContactFormSchema, FormState } from '@/lib/validations/contact';
+import { ContactService } from '@/services/ContactService';
+import { SupabaseContactRepository } from '@/repositories/supabase/SupabaseContactRepository';
+import { NodemailerAdapter } from '@/adapters/nodemailer/NodemailerAdapter';
 
 
-export type FormState = {
-  success: boolean;
-  message?: string;
-  errors?: {
-    fullName?: string[];
-    email?: string[];
-    service?: string[];
-    message?: string[];
-    privacy?: string[];
-  };
-};
 
-// 2. Corregim l'schema de Zod
-const ContactSchema = z.object({
-  fullName: z.string().min(2, "Nom massa curt"),
-  email: z.string().email("Email invàlid"),
-  service: z.string().min(1, "Selecciona un servei"),
-  message: z.string().min(10, "Explica'ns una mica més"),
-  // SOLUCIÓ ZOD: Usem errorMap aquí o simplement 'message'
-  privacy: z.literal("on", { 
-    message: "Has d'acceptar la política de privacitat" 
-  }),
-});
+// 2. Instanciem el servei (Dependency Injection)
+// Això es crea una vegada al servidor
+const repository = new SupabaseContactRepository();
+const mailer = new NodemailerAdapter();
+const contactService = new ContactService(repository, mailer);
 
 export async function submitContactForm(
-  prevState: FormState, // Tipatge correcte
+  prevState: FormState,
   formData: FormData
 ): Promise<FormState> {
+  // Convertim FormData a Objecte simple
   const rawData = Object.fromEntries(formData.entries());
-  
-  // Validar dades
-  const validated = ContactSchema.safeParse(rawData);
+
+  // 👇 CORRECCIÓ: Fem servir "ContactFormSchema"
+  const validated = ContactFormSchema.safeParse(rawData);
+
   if (!validated.success) {
-    return { 
-      success: false, 
-      errors: validated.error.flatten().fieldErrors 
+    return {
+      success: false,
+      errors: validated.error.flatten().fieldErrors,
     };
   }
 
   try {
-   // 1. Creem el client tipat
-  const supabase = await createClient(); 
-  
-  // 2. Inserció TIPADA i CORRECTA
-  // NO facis: .from('contact_leads' as ContactLead) <- Això dóna l'error que tenies
-  // Has de fer servir l'string literal tal qual:
-  const { error } = await supabase
-    .from('contact_leads') 
-    .insert({
-      full_name: validated.data.fullName,
-      email: validated.data.email,
-      service: validated.data.service,
-      message: validated.data.message,
-      source: 'landing_contact_form'
-    });
+    // 4. Deleguem tota la feina "bruta" al servei
+    await contactService.processContactForm(validated.data);
 
-  if (error) {
-    console.error("Error saving lead:", error);
-    return { success: false, message: "Error tècnic. Torna-ho a provar." };
+    return {
+      success: true,
+      message: "Missatge enviat correctament! Et contactarem aviat."
+    };
+
+  } catch (error) {
+    // Si el Repositori llança error, el capturem aquí
+    console.error("Error en processar contacte:", error);
+    return {
+      success: false,
+      message: "Hi ha hagut un error tècnic. Torna-ho a provar."
+    };
   }
-
-  return { success: true, message: "Missatge enviat! Et contactarem aviat." };
 }
-catch (err) {
-    console.error("Unexpected error:", err);
-    return { success: false, message: "Error inesperat. Torna-ho a provar." };
-    }
-  }
