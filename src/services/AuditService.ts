@@ -18,7 +18,16 @@ export class AuditService {
   async performUserAudit(url: string, userId: string, userEmail: string, locale: string) {
     return this.performFullAudit(url, { userId, email: userEmail }, locale);
   }
+  async getDashboardAudits() {
+    // ⚠️ CORRECCIÓ: 'this.repository' -> 'this.auditRepo'
+    return await this.auditRepo.getAllLight();
+  }
 
+  async getAuditDetails(id: string) {
+    // ⚠️ CORRECCIÓ: 'this.repository' -> 'this.auditRepo'
+    // I utilitzem el mètode de la interfície getAuditById (que retorna DTO) o getById si l'afegeixes
+    return await this.auditRepo.getAuditById(id);
+  }
   // Lògica Central - Afegim locale
   private async performFullAudit(url: string, user: { userId?: string, email: string }, locale: string) {
     console.log(`🚀 [AuditService] Iniciant auditoria per: ${url}`);

@@ -1,5 +1,5 @@
 import { createClient, createAdminClient } from '@/lib/supabase/server';
-import { IAuditRepository } from '../interfaces/IAuditRepository';
+import { IAuditRepository, AuditSummary } from '../interfaces/IAuditRepository';
 import { AuditDTO } from '@/types/models';
 import { Database } from '@/types/database.types';
 
@@ -66,10 +66,10 @@ export class SupabaseAuditRepository implements IAuditRepository {
   async updateStatus(
     id: string,
     status: AuditDTO['status'],
-    results?: { 
-      seoScore?: number; 
-      performanceScore?: number; 
-      reportData?: Record<string, unknown> 
+    results?: {
+      seoScore?: number;
+      performanceScore?: number;
+      reportData?: Record<string, unknown>
     }
   ): Promise<void> {
     const supabaseAdmin = createAdminClient();
@@ -81,7 +81,7 @@ export class SupabaseAuditRepository implements IAuditRepository {
     if (results) {
       if (results.seoScore !== undefined) updatePayload.seo_score = results.seoScore;
       if (results.performanceScore !== undefined) updatePayload.performance_score = results.performanceScore;
-      
+
       if (results.reportData !== undefined) {
         // ✅ CORRECCIÓ CLAU:
         // En lloc de 'as any', fem un cast al tipus específic que Supabase espera per aquesta columna.
@@ -98,15 +98,15 @@ export class SupabaseAuditRepository implements IAuditRepository {
     if (error) throw new Error(error.message);
   }
   async getAuditsByUserId(userId: string): Promise<AuditDTO[]> {
-      const supabase = await createClient();
-      const { data, error } = await supabase
-        .from('web_audits')
-        .select('*')
-        .eq('user_id', userId) // 👈 Filtrem per ID, molt més robust
-        .order('created_at', { ascending: false });
-      
-      if (error) throw new Error(error.message);
-      return data.map(this.mapToDTO);
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from('web_audits')
+      .select('*')
+      .eq('user_id', userId) // 👈 Filtrem per ID, molt més robust
+      .order('created_at', { ascending: false });
+
+    if (error) throw new Error(error.message);
+    return data.map(this.mapToDTO);
   }
 
   // CAS 1: Des del Dashboard (Tenim ID segur)
@@ -130,13 +130,13 @@ export class SupabaseAuditRepository implements IAuditRepository {
   // CAS 2: Des de la Landing (Només tenim Email)
   async createPublicAudit(url: string, email: string): Promise<AuditDTO> {
     const supabaseAdmin = createAdminClient();
-    
+
     // Opcional: Buscar si ja existeix un usuari amb aquest email per lligar-ho?
     // Per ara, ho guardem sense user_id (o amb un user_id temporal si la taula ho requereix)
     // NOTA: Si la taula 'web_audits' té 'user_id' com NOT NULL, necessitem una estratègia aquí.
     // L'estratègia habitual és crear un usuari "fantasma" o deixar el camp nullable.
     // Assumint que user_id pot ser null o gestionem el registre després.
-    
+
     const { data, error } = await supabaseAdmin
       .from('web_audits')
       .insert({
@@ -150,5 +150,48 @@ export class SupabaseAuditRepository implements IAuditRepository {
 
     if (error) throw new Error(error.message);
     return this.mapToDTO(data);
+  }
+  async getAllLight(): Promise<AuditSummary[]> {
+    // ❌ ABANS: const supabase = await createClient();
+    // Aquest client respecta RLS, per això només veus les teves.
+
+    // ✅ ARA: Fem servir el client Admin (Service Role)
+    // Aquest client té "superpoders" i ho veu tot.
+    // És segur fer-ho aquí perquè l'Action 'getAdminAudits' ja ha verificat el login.
+    const supabase = createAdminClient();
+
+    const { data, error } = await supabase
+      .from('web_audits')
+      .select('id, created_at, url, email, seo_score, performance_score, status')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('❌ [AUDIT REPO] Error:', error);
+      return [];
+    }
+
+    return data.map(row => ({
+      id: row.id,
+      url: row.url,
+      email: row.email,
+      status: row.status as AuditDTO['status'],
+      seoScore: row.seo_score,
+      performanceScore: row.performance_score,
+      createdAt: row.created_at ? new Date(row.created_at) : new Date()
+    }));
+  }
+
+
+  // Per al detall (més endavant), sí que voldrem el report_data
+  async getById(id: string) {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from('web_audits')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error) return null;
+    return data;
   }
 }
