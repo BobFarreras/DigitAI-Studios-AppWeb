@@ -264,5 +264,57 @@ export class SupabasePostRepository implements IPostRepository {
       posts,
       total: count || 0
     };
+
   }
+
+
+  // 👇 NOU MÈTODE PER AL BLOG PÚBLIC (Paginat + Només Publicats)
+  async getPublishedPostsPaginated(page: number, pageSize: number): Promise<{ posts: BlogPostDTO[]; total: number }> {
+    const supabase = await createClient();
+
+    const start = (page - 1) * pageSize;
+    const end = start + pageSize - 1;
+
+    // 1. Obtenim els posts filtrats
+    const { data, count, error } = await supabase
+      .from('posts')
+      .select('*', { count: 'exact' })
+      .eq('status', 'published')
+      .eq('published', true)
+      .eq('organization_id', process.env.NEXT_PUBLIC_MAIN_ORG_ID!)
+      .order('published_at', { ascending: false })
+      .range(start, end);
+
+    if (error) throw new Error(error.message);
+
+    // 2. Obtenim les reaccions
+    const slugs = data?.map(p => p.slug) || [];
+    const reactionCounts = new Map<string, number>();
+
+    if (slugs.length > 0) {
+      const { data: reactions } = await supabase
+        .from('post_reactions')
+        .select('post_slug')
+        .in('post_slug', slugs);
+
+      reactions?.forEach(r => {
+        reactionCounts.set(r.post_slug, (reactionCounts.get(r.post_slug) || 0) + 1);
+      });
+    }
+
+    // 3. Mapegem a DTO
+    const posts = (data || []).map(row => ({
+      // ✅ CORRECCIÓ: Canviem 'any' per 'PostRowWithRelations'
+      // Com que li estem afegint manualment 'social_posts: []', TypeScript
+      // acceptarà que això ara compleix amb el tipus PostRowWithRelations.
+      ...this.mapToDTO({ ...row, social_posts: [] } as unknown as PostRowWithRelations),
+      totalReactions: reactionCounts.get(row.slug) || 0
+    }));
+
+    return {
+      posts,
+      total: count || 0
+    };
+  }
+
 }

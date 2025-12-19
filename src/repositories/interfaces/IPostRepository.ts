@@ -9,4 +9,6 @@ export interface IPostRepository {
   updatePost(slug: string, data: Partial<BlogPostDTO>): Promise<void>;
   deletePost(slug: string): Promise<void>;
   getAdminPostBySlug(slug: string): Promise<BlogPostDTO | null>;
+  getPublishedPostsPaginated(page: number, pageSize: number): Promise<{ posts: BlogPostDTO[]; total: number }>;
+
 }
