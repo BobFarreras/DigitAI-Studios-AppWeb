@@ -12,7 +12,7 @@ export function HeroSection() {
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
   // Estat per controlar si la imatge falla
 
-  const YOUTUBE_VIDEO_ID = "yjhoVKwSpA4";
+  const YOUTUBE_VIDEO_ID = "tqMcdP_WiyA";
 
   return (
     <section id="inici" className="pt-32 pb-20 min-h-screen flex items-center hero-pattern overflow-hidden relative">
