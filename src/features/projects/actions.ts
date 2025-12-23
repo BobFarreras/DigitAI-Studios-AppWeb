@@ -14,28 +14,28 @@ const ai = new AIService();
 
 // ✅ 1. DEFINICIÓ DEL TIPUS PER A LA INVITACIÓ
 export interface InviteState {
-  success: boolean;
-  error: string | null;
-  message: string | null;
+    success: boolean;
+    error: string | null;
+    message: string | null;
 }
 
 // ✅ 2. ACCIÓ PER CONVIDAR CLIENTS (Recuperada)
 export async function inviteClientAction(prevState: InviteState, formData: FormData): Promise<InviteState> {
-  const email = formData.get('email') as string;
-  const orgId = formData.get('orgId') as string;
-  const projectId = formData.get('projectId') as string;
+    const email = formData.get('email') as string;
+    const orgId = formData.get('orgId') as string;
+    const projectId = formData.get('projectId') as string;
 
-  if (!email || !orgId || !projectId) {
-    return { success: false, error: "Falten dades.", message: null };
-  }
+    if (!email || !orgId || !projectId) {
+        return { success: false, error: "Falten dades.", message: null };
+    }
 
-  try {
-    await tenant.inviteOrLinkUser(email, orgId, projectId);
-    return { success: true, error: null, message: `Invitació enviada a ${email}` };
-  } catch (error: unknown) {
-    const msg = error instanceof Error ? error.message : "Error desconegut";
-    return { success: false, error: msg, message: null };
-  }
+    try {
+        await tenant.inviteOrLinkUser(email, orgId, projectId);
+        return { success: true, error: null, message: `Invitació enviada a ${email}` };
+    } catch (error: unknown) {
+        const msg = error instanceof Error ? error.message : "Error desconegut";
+        return { success: false, error: msg, message: null };
+    }
 }
 
 // ✅ 3. ACCIÓ PER CREAR PROJECTES (La principal)
@@ -46,7 +46,7 @@ export async function createProjectAction(prevState: unknown, formData: FormData
     const description = formData.get('description') as string;
     const primaryColor = formData.get('primaryColor') as string;
     const logoFile = formData.get('logo') as File;
-    
+
     // Recuperem els camps complexos
     const layoutVariant = (formData.get('layoutVariant') as 'modern' | 'shop') || 'modern';
     const landingSections = formData.getAll('landing_sections') as string[];
@@ -82,7 +82,7 @@ export async function createProjectAction(prevState: unknown, formData: FormData
         // Filtrem 'about' si no has actualitzat el Master encara (Opció B d'abans), 
         // o deixem-ho tal qual si has fet l'Opció A (Recomanat).
         const repoData = await infra.createRepository(slug, description);
-        
+
         const isReady = await infra.waitForRepoReady(slug);
         if (!isReady) throw new Error("GitHub Timeout: El repo no s'ha creat a temps.");
 
@@ -99,7 +99,7 @@ export async function createProjectAction(prevState: unknown, formData: FormData
             creatorUserId: user.id,
             creatorEmail: user.email
         });
-
+        const enableChatbot = formData.get('module_chatbot') === 'on';
         // ⚙️ CONFIGURACIÓ
         const config: MasterConfig = {
             organizationId: org.id,
@@ -111,11 +111,11 @@ export async function createProjectAction(prevState: unknown, formData: FormData
                 contactEmail: user.email
             },
             branding: {
-                colors: { 
-                    primary: primaryColor, 
-                    secondary: "#10b981", 
-                    background: "#ffffff", 
-                    foreground: "#0f172a" 
+                colors: {
+                    primary: primaryColor,
+                    secondary: "#10b981",
+                    background: "#ffffff",
+                    foreground: "#0f172a"
                 },
                 radius: 0.5
             },
@@ -140,7 +140,9 @@ export async function createProjectAction(prevState: unknown, formData: FormData
                 blog: formData.get('module_blog') === 'on',
                 inventory: formData.get('module_inventory') === 'on',
                 ecommerce: false,
-                accessControl: true
+                accessControl: true,
+                // 👇 AFEGEIX AIXÒ
+                chatbot: enableChatbot,
             },
             i18n: { locales: ['ca', 'es'], defaultLocale: 'ca' },
             footer: {
@@ -160,7 +162,7 @@ export async function createProjectAction(prevState: unknown, formData: FormData
         console.error("❌ Action Error:", error);
         let errorMessage = 'Error desconegut';
         if (error instanceof Error) errorMessage = error.message;
-        
+
         return {
             success: false,
             error: errorMessage,

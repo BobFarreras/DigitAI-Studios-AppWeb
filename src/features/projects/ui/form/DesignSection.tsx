@@ -12,6 +12,7 @@ const MODULES = [
   { id: 'blog', label: 'Blog', icon: BookOpen, desc: 'Notícies i SEO' },
   { id: 'inventory', label: 'Inventari', icon: Layers, desc: 'Gestió d\'estoc' },
   { id: 'accessControl', label: 'Zona Privada', icon: Lock, desc: 'Login clients' },
+  { id: 'chatbot', label: 'Assistent IA', icon: MessageCircle, desc: 'Atenció 24/7' },
 ];
 
 // ✅ MILLORA: Configurem cada secció amb una icona representativa
@@ -74,7 +75,7 @@ export function DesignSection({ defaultColor }: { defaultColor?: string }) {
 
         {/* --- SECCIONS DE LA LANDING (ARA VISUALS) --- */}
         <div className="pt-6 border-t border-slate-100 dark:border-slate-800">
-            <label className="block text-sm font-medium mb-4 text-slate-700 dark:text-slate-300 flex items-center gap-2">
+            <label className="block text-sm font-medium mb-4 text-slate-700 dark:text-slate-300 items-center gap-2">
                 <LayoutDashboard className="w-4 h-4" /> Seccions de la Pàgina d'Inici
             </label>
             

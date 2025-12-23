@@ -85,6 +85,8 @@ export interface SiteModules {
   blog: ModuleStatus;
   inventory: ModuleStatus;
   accessControl: ModuleStatus;
+    // 👇 AFEGEIX AIXÒ
+  chatbot: ModuleStatus;
 }
 
 export interface I18nConfig {
