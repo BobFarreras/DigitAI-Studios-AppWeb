@@ -22,7 +22,7 @@ export class TenantService {
         // PAS 1: ORGANITZACIÓ
         // ---------------------------------------------------------
         let org;
-        
+
         const orgPayload: TableInsert<'organizations'> = {
             name: data.businessName,
             slug: data.slug,
@@ -35,14 +35,14 @@ export class TenantService {
             .single();
 
         if (orgError) {
-            if (orgError.code === '23505') { 
+            if (orgError.code === '23505') {
                 console.warn(`⚠️ [Tenant] L'Org ja existeix. Recuperant...`);
                 const { data: existingOrg } = await this.supabase
                     .from('organizations')
                     .select('*')
                     .eq('slug', data.slug)
                     .single();
-                
+
                 if (!existingOrg) throw new Error("No s'ha pogut recuperar l'org existent.");
                 org = existingOrg;
             } else {
@@ -57,9 +57,9 @@ export class TenantService {
         // PAS 2: PERFIL (Imprescindible abans del projecte)
         // ---------------------------------------------------------
         console.log(`🏗️ [Tenant] 2. Assegurant Perfil...`);
-        
+
         // Assegura't que 'admin' existeix al teu enum SQL. Si no, posa 'lead'.
-        const role: UserRole = 'admin'; 
+        const role: UserRole = 'admin';
 
         const profilePayload: TableInsert<'profiles'> = {
             id: data.creatorUserId,
@@ -87,7 +87,7 @@ export class TenantService {
             .from('projects')
             .select('*')
             .eq('organization_id', org.id)
-            .eq('domain', data.slug) 
+            .eq('domain', data.slug)
             .maybeSingle();
 
         let project;
@@ -107,12 +107,12 @@ export class TenantService {
                 repository_url: data.repoUrl,
                 organization_id: org.id,
                 status: 'pending',
-                
+
                 // Utilitzem la variable amb el cast correcte
-                branding_config: brandingJson, 
-                
+                branding_config: brandingJson,
+
                 // Cast manual per a objectes literals
-                features_config: { blog: true, booking: false, ecommerce: false } as unknown as Json 
+                features_config: { blog: true, booking: false, ecommerce: false } as unknown as Json
             };
 
             const { data: newProj, error: projError } = await this.supabase
@@ -127,5 +127,50 @@ export class TenantService {
         }
 
         return { org, project };
+    }
+    async inviteOrLinkUser(email: string, orgId: string, projectId: string) {
+        console.log(`🔍 [Tenant] Gestionant usuari: ${email}`);
+
+        // 1. Busquem si ja té perfil
+        const { data: existingProfile } = await this.supabase
+            .from('profiles')
+            .select('id')
+            .eq('email', email)
+            .eq('organization_id', orgId) // Important filtrar per org
+            .maybeSingle();
+
+        let userId = existingProfile?.id;
+
+        if (!userId) {
+            // 2. Si no té perfil, mirem si l'usuari d'Auth existeix (Global)
+            const { data: { users } } = await this.supabase.auth.admin.listUsers();
+            const existingAuthUser = users.find(u => u.email === email);
+
+            if (existingAuthUser) {
+                userId = existingAuthUser.id;
+            } else {
+                // 3. Si no existeix a Auth, l'invitem
+                const { data: invite, error } = await this.supabase.auth.admin.inviteUserByEmail(email, {
+                    data: { org_id: orgId, role: 'client' } // Metadades
+                });
+                if (error) throw error;
+                userId = invite.user.id;
+            }
+
+            // 4. Creem el perfil
+            await this.supabase.from('profiles').insert({
+                id: userId,
+                email: email,
+                organization_id: orgId,
+                role: 'client', // o el rol que toqui
+                full_name: email.split('@')[0]
+            });
+        }
+
+        // 5. Vinculem al Projecte (si el projecte guarda clients)
+        // Nota: Si el projecte només té 'client_id' (owner), potser no cal fer això si és un usuari secundari.
+        // Si és per convidar l'owner, ja ho fem al createTenantStructure.
+
+        return userId;
     }
 }

@@ -1,19 +1,44 @@
 'use server';
 
-
-import { InfrastructureService } from '@/services/InfrastrocutreService'; // Assegura't que el path sigui correcte (minúscules?)
+import { InfrastructureService } from '@/services/InfrastrocutreService';
 import { TenantService } from '@/services/TenantService';
 import { AIService, AIContentResult } from '@/services/AIService';
 import { createClient } from '@/lib/supabase/server';
 import { ActionResult } from '@/types/actions';
 import { MasterConfig } from '@/types/config';
 
-
 // Instanciem els serveis
 const infra = new InfrastructureService();
 const tenant = new TenantService();
 const ai = new AIService();
 
+// ✅ 1. DEFINICIÓ DEL TIPUS PER A LA INVITACIÓ
+export interface InviteState {
+  success: boolean;
+  error: string | null;
+  message: string | null;
+}
+
+// ✅ 2. ACCIÓ PER CONVIDAR CLIENTS (Recuperada)
+export async function inviteClientAction(prevState: InviteState, formData: FormData): Promise<InviteState> {
+  const email = formData.get('email') as string;
+  const orgId = formData.get('orgId') as string;
+  const projectId = formData.get('projectId') as string;
+
+  if (!email || !orgId || !projectId) {
+    return { success: false, error: "Falten dades.", message: null };
+  }
+
+  try {
+    await tenant.inviteOrLinkUser(email, orgId, projectId);
+    return { success: true, error: null, message: `Invitació enviada a ${email}` };
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : "Error desconegut";
+    return { success: false, error: msg, message: null };
+  }
+}
+
+// ✅ 3. ACCIÓ PER CREAR PROJECTES (La principal)
 export async function createProjectAction(prevState: unknown, formData: FormData): Promise<ActionResult> {
     // 1. Extracció de Dades
     const businessName = formData.get('businessName') as string;
@@ -32,23 +57,16 @@ export async function createProjectAction(prevState: unknown, formData: FormData
     }
 
     try {
-        // ---------------------------------------------------------
-        // 🔐 0. SEGURETAT (Autenticació Obligatòria)
-        // ---------------------------------------------------------
-        // Això soluciona l'error de TypeScript i protegeix l'acció
+        // 🔐 SEGURETAT
         const supabase = await createClient();
         const { data: { user } } = await supabase.auth.getUser();
 
-        // Si no hi ha usuari o no té email, no podem continuar
         if (!user || !user.email) {
-            return { success: false, error: "Accés denegat: Has d'iniciar sessió per crear projectes." };
+            return { success: false, error: "Accés denegat: Has d'iniciar sessió." };
         }
 
-        // ---------------------------------------------------------
-        // 🧠 1. INTEL·LIGÈNCIA ARTIFICIAL
-        // ---------------------------------------------------------
+        // 🧠 INTEL·LIGÈNCIA ARTIFICIAL
         let aiContent: AIContentResult;
-
         try {
             aiContent = await ai.generateSiteContent(businessName, description);
         } catch (e) {
@@ -60,9 +78,9 @@ export async function createProjectAction(prevState: unknown, formData: FormData
             };
         }
 
-        // ---------------------------------------------------------
-        // 🏗️ 2. INFRAESTRUCTURA (GitHub)
-        // ---------------------------------------------------------
+        // 🏗️ INFRAESTRUCTURA (GitHub)
+        // Filtrem 'about' si no has actualitzat el Master encara (Opció B d'abans), 
+        // o deixem-ho tal qual si has fet l'Opció A (Recomanat).
         const repoData = await infra.createRepository(slug, description);
         
         const isReady = await infra.waitForRepoReady(slug);
@@ -72,28 +90,17 @@ export async function createProjectAction(prevState: unknown, formData: FormData
             await infra.uploadLogo(slug, logoFile);
         }
 
-        // ---------------------------------------------------------
-        // 🗄️ 3. DATABASE (Supabase Org & Project)
-        // ---------------------------------------------------------
-        /* ARA PODEM PASSAR ELS CAMPS SENSE POR.
-           TypeScript ja sap que 'user.id' i 'user.email' són strings perquè 
-           hem fet la comprovació al pas 0.
-        */
+        // 🗄️ DATABASE
         const { org } = await tenant.createTenantStructure({
             businessName,
             slug,
             repoUrl: repoData.html_url,
             branding: { colors: { primary: primaryColor } },
-            creatorUserId: user.id,   // ✅ Ara és segur (string)
-            creatorEmail: user.email  // ✅ Ara és segur (string)
+            creatorUserId: user.id,
+            creatorEmail: user.email
         });
 
-        // ---------------------------------------------------------
-        // ⚙️ 4. CONFIGURACIÓ (Injectar codi)
-        // ---------------------------------------------------------
-        // Usem l'email de l'usuari real per al contacte, o un genèric si ho prefereixes
-        const contactEmail = user.email; 
-
+        // ⚙️ CONFIGURACIÓ
         const config: MasterConfig = {
             organizationId: org.id,
             identity: {
@@ -101,7 +108,7 @@ export async function createProjectAction(prevState: unknown, formData: FormData
                 description: aiContent.hero.subtitle || description,
                 logoUrl: "/branding/logo.png",
                 faviconUrl: "/favicon.ico",
-                contactEmail: contactEmail
+                contactEmail: user.email
             },
             branding: {
                 colors: { 
@@ -144,23 +151,16 @@ export async function createProjectAction(prevState: unknown, formData: FormData
 
         await infra.injectConfig(slug, config);
 
-        // ---------------------------------------------------------
-        // 🚀 5. VERCEL (Deploy)
-        // ---------------------------------------------------------
+        // 🚀 VERCEL
         await infra.deployToVercel(slug, org.id, repoData.id);
 
         return { success: true, repoUrl: repoData.html_url };
 
     } catch (error: unknown) {
         console.error("❌ Action Error:", error);
-
         let errorMessage = 'Error desconegut';
-        if (error instanceof Error) {
-            errorMessage = error.message;
-        } else if (typeof error === 'object' && error !== null && 'message' in error) {
-            errorMessage = String((error as { message: unknown }).message);
-        }
-
+        if (error instanceof Error) errorMessage = error.message;
+        
         return {
             success: false,
             error: errorMessage,
