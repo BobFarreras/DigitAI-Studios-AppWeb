@@ -1,4 +1,4 @@
-import { NewProjectForm } from '@/features/projects/ui/NewProjectForm';
+import { NewProjectForm } from '@/features/projects/ui/form/NewProjectForm';
 import { requireAdmin } from '@/lib/auth/admin-guard'; // La teva protecció d'admin
 
 export default async function CreateProjectPage() {
