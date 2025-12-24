@@ -1,13 +1,16 @@
 import { MasterConfig } from '@/types/config';
 
 export function generateConfigFileContent(config: MasterConfig): string {
-  // Convertim l'objecte a JSON bonic amb indentació de 2 espais
+  // 1. Convertim l'objecte a JSON bonic
+  // Això inclourà automàticament les noves seccions i el contingut 'about'
   const jsonString = JSON.stringify(config, null, 2);
 
-  // Retornem el contingut exacte del fitxer .ts
+  // 2. Retornem el codi font TypeScript
+  // Important: Importem els tipus correctes (incloent ConfigLandingSection si calgués, 
+  // però MasterConfig ja ho engloba)
   return `
-import { MasterConfig } from "@/types/config";
+import { MasterConfig, ConfigLandingSection } from "@/types/config";
 
-export const CONFIG: MasterConfig = ${jsonString};
+export const CONFIG: MasterConfig = ${jsonString} as unknown as MasterConfig;
 `;
 }

@@ -1,4 +1,4 @@
-import { createClient, createAdminClient } from '@/lib/supabase/server';
+import {  createAdminClient } from '@/lib/supabase/server';
 
 export type ProjectMember = {
     user_id: string;
@@ -9,17 +9,7 @@ export type ProjectMember = {
         avatar_url: string | null;
     };
 };
-// 1. Definim el tipus exacte que esperem de la consulta SQL
-type ProjectMemberRow = {
-    user_id: string;
-    role: string;
-    // Supabase retorna l'objecte relacionat aquí
-    profiles: {
-        full_name: string | null;
-        email: string;
-        avatar_url: string | null;
-    } | null; // Pot ser null si l'usuari s'ha esborrat però la relació encara existeix (rar, però possible)
-};
+
 export class SupabaseProjectRepository {
 
     // A. Afegir membre al projecte

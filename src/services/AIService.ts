@@ -1,103 +1,99 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import OpenAI from "openai";
+// 👇 IMPORTEM ELS TIPUS OFICIALS (Single Source of Truth)
+import { AboutConfigInput, ServicesIntroConfigInput, HeroConfigInput } from "@/types/config";
 
-// Interfície exportada perquè la pugui fer servir actions.ts
+// Definim la interfície de resultat utilitzant els tipus del Config
 export interface AIContentResult {
-  hero: { title: string; subtitle: string; cta: string };
-  about: { title: string; description: string };
-  services_intro: { title: string; subtitle: string };
+  hero: HeroConfigInput;
+  about: AboutConfigInput; 
+  services_intro: ServicesIntroConfigInput; 
 }
 
 export class AIService {
-  private geminiClient: GoogleGenerativeAI;
-  private openAIClient: OpenAI | null = null;
+  private genAI: GoogleGenerativeAI;
 
   constructor() {
-    const googleKey = process.env.GEMINI_API_KEY;
-    if (!googleKey) console.warn("⚠️ [AIService] Manca GEMINI_API_KEY");
-    this.geminiClient = new GoogleGenerativeAI(googleKey || "");
-
-    const openAIKey = process.env.OPENAI_API_KEY;
-    if (openAIKey) {
-      this.openAIClient = new OpenAI({ apiKey: openAIKey });
-    } else {
-      console.warn("⚠️ [AIService] Manca OPENAI_API_KEY. El fallback no funcionarà.");
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      console.warn("⚠️ GEMINI_API_KEY no trobada. La IA no funcionarà (Mode Fallback).");
     }
+    this.genAI = new GoogleGenerativeAI(apiKey || "dummy");
   }
 
-  async generateSiteContent(businessName: string, description: string, language: string = 'ca'): Promise<AIContentResult> {
-    console.log(`🤖 [AIService] Generant contingut per: ${businessName}...`);
+  async generateSiteContent(businessName: string, description: string, sector: string): Promise<AIContentResult> {
+    // Mode Fallback si no hi ha API Key
+    if (!process.env.GEMINI_API_KEY) {
+      return this.getFallbackContent(businessName, description);
+    }
 
     try {
-      // INTENT 1: Gemini
-      return await this.generateWithGemini(businessName, description, language);
-    } catch (error: unknown) {
-      const errorMsg = error instanceof Error ? error.message : String(error);
-      console.error(`⚠️ [AIService] Gemini ha fallat (${errorMsg}). Commutant a OpenAI...`);
+      const model = this.genAI.getGenerativeModel({ model: "gemini-pro" });
 
-      if (this.openAIClient) {
-        try {
-          // INTENT 2: OpenAI
-          return await this.generateWithOpenAI(businessName, description, language);
-        } catch (openaiError: unknown) {
-          const openaiMsg = openaiError instanceof Error ? openaiError.message : String(openaiError);
-          console.error(`⚠️ [AIService] OpenAI també ha fallat (${openaiMsg}).`);
+      const prompt = `
+        Ets un expert en màrqueting digital i copywriting web.
+        Genera el contingut per a una Landing Page d'un negoci amb aquestes dades:
+        
+        NOM: "${businessName}"
+        DESCRIPCIÓ: "${description}"
+        SECTOR: "${sector}"
+
+        Retorna EXCLUSIVAMENT un objecte JSON (sense markdown) amb aquesta estructura exacta i en Català:
+
+        {
+          "hero": {
+            "title": "Títol curt i impactant (màx 6 paraules)",
+            "subtitle": "Subtítol persuasiu (màx 20 paraules)",
+            "cta": "Text del botó (ex: Reservar)"
+          },
+          "about": {
+            "title": "Títol creatiu per 'Nosaltres'",
+            "description": "Història breu (màx 40 paraules)",
+            "stats": [
+              { "label": "Dada 1 (ex: Anys)", "value": "Valor 1" },
+              { "label": "Dada 2 (ex: Clients)", "value": "Valor 2" }
+            ]
+          },
+          "services_intro": {
+            "title": "Títol per Serveis",
+            "subtitle": "Subtítol introductori",
+            "items": [
+              { "title": "Servei 1", "description": "Breu descripció" },
+              { "title": "Servei 2", "description": "Breu descripció" },
+              { "title": "Servei 3", "description": "Breu descripció" }
+            ]
+          }
         }
-      }
-    }
+      `;
 
-    // INTENT 3: Fallback Estàtic
-    console.error("🚨 [AIService] TOTS els serveis d'IA han fallat. Usant dades estàtiques.");
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      let text = response.text();
+
+      // Neteja per si Gemini retorna blocs de codi
+      text = text.replace(/```json/g, '').replace(/```/g, '').trim();
+
+      const json = JSON.parse(text) as AIContentResult;
+      return json;
+
+    } catch (error) {
+      console.error("❌ Error generant contingut IA:", error);
+      return this.getFallbackContent(businessName, description);
+    }
+  }
+
+  private getFallbackContent(name: string, desc: string): AIContentResult {
     return {
-      hero: { title: businessName, subtitle: description || "Benvinguts al nostre web", cta: "Contactar" },
-      about: { title: "Sobre Nosaltres", description: "Som una empresa dedicada a oferir el millor servei." },
-      services_intro: { title: "Serveis", subtitle: "Descobreix què podem fer per tu." }
+      hero: { title: name, subtitle: desc, cta: "Saber-ne més" },
+      about: { 
+          title: "Sobre Nosaltres", 
+          description: desc,
+          stats: [{ label: "Experiència", value: "100%" }] 
+      },
+      services_intro: { 
+          title: "Els nostres serveis", 
+          subtitle: "Descobreix el que podem fer per tu.",
+          items: [] // Array buit per complir amb el tipus
+      }
     };
   }
-
-  private async generateWithGemini(name: string, desc: string, lang: string): Promise<AIContentResult> {
-    const model = this.geminiClient.getGenerativeModel({ model: "gemini-2.0-flash" });
-    const prompt = this.buildPrompt(name, desc, lang);
-    
-    const result = await model.generateContent(prompt);
-    const text = result.response.text();
-    return this.parseJSON(text);
-  }
-
-  private async generateWithOpenAI(name: string, desc: string, lang: string): Promise<AIContentResult> {
-    if (!this.openAIClient) throw new Error("OpenAI no configurat");
-
-    const completion = await this.openAIClient.chat.completions.create({
-      model: "gpt-4o-mini",
-      response_format: { type: "json_object" },
-      messages: [
-        { role: "system", content: "Ets un expert en copywriting i JSON." },
-        { role: "user", content: this.buildPrompt(name, desc, lang) }
-      ],
-    });
-
-    const content = completion.choices[0].message.content;
-    if (!content) throw new Error("Resposta buida d'OpenAI");
-    return JSON.parse(content);
-  }
-
-  private buildPrompt(name: string, desc: string, lang: string): string {
-    return `
-      Genera contingut per a una Landing Page.
-      Negoci: "${name}". Descripció: "${desc}". Idioma: "${lang}".
-      Retorna EXCLUSIVAMENT un objecte JSON amb aquesta estructura exacta:
-      {
-        "hero": { "title": "...", "subtitle": "...", "cta": "..." },
-        "about": { "title": "...", "description": "..." },
-        "services_intro": { "title": "...", "subtitle": "..." }
-      }
-    `;
-  }
-
-  private parseJSON(text: string): AIContentResult {
-    const cleanJson = text.replace(/```json|```/g, '').trim();
-    return JSON.parse(cleanJson);
-  }
 }
-
-export const aiService = new AIService();

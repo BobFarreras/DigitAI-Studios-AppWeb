@@ -1,107 +1,31 @@
-// 1. DTO - Així és com la nostra UI vol veure una auditoria (Tipatge net)
+// PROJECTE: DIGITAI FACTORY
+// FITXER: src/types/models.ts
+
+import { StaticImageData } from 'next/image';
+
+// ######################################################################
+// BLOC A: MODEL INTERN DE LA FACTORY (Eines pròpies)
+// ######################################################################
+
+// 1. Auditoria SEO/Performance
 export type AuditDTO = {
   id: string;
   url: string;
   status: 'processing' | 'completed' | 'failed';
-  seoScore: number | null; // CamelCase per JS
+  seoScore: number | null;
   performanceScore: number | null;
-  createdAt: Date; // Objecte Date real, no string
+  createdAt: Date;
   reportData: Record<string, unknown> | null;
 };
-
 
 export interface IAuditRepository {
   getAuditsByUserEmail(email: string): Promise<AuditDTO[]>;
   getAuditById(id: string): Promise<AuditDTO | null>;
   createAudit(url: string, email: string): Promise<AuditDTO>;
-  
-  updateStatus(
-    id: string, 
-    status: AuditDTO['status'], 
-    results?: { 
-      seoScore?: number; 
-      performanceScore?: number; 
-      // ✅ Coherència de tipus
-      reportData?: Record<string, unknown> 
-    }
-  ): Promise<void>;
+  updateStatus(id: string, status: AuditDTO['status'], results?: { seoScore?: number; performanceScore?: number; reportData?: Record<string, unknown> }): Promise<void>;
 }
 
-
-// src/types/models.ts
-
-export type BlogPostDTO = {
-  id: string;
-  slug: string;
-  title: string;
-  date: string | null;
-  description: string | null;
-  content: string | null;
-  tags: string[];
-  coverImage: string | null;
-  published: boolean;
-  reviewed: boolean;
-  totalReactions?: number;
-  
-  // 👇 Relació amb Socials
-  social_posts?: {
-    id: string;
-    platform: 'twitter' | 'linkedin' | 'instagram' | string; // O el teu enum
-    status: 'draft' | 'scheduled' | 'published' | 'failed' | string;
-    scheduledFor: string | null; // 👈 En JS li diem 'scheduledFor', encara que a la DB sigui 'scheduled_at'
-  }[];
-};
-
-
-// PROJECTE: digitAIStudios
-// FITXER: src/types/config.ts
-
-export type ModuleStatus = boolean;
-
-export interface SiteIdentity {
-  name: string;
-  description: string;
-  logoUrl: string;
-  faviconUrl: string;
-  contactEmail: string;
-}
-
-export interface SiteBranding {
-  colors: {
-    primary: string;
-    secondary: string;
-    background: string;
-    foreground: string;
-  };
-  radius: number;
-}
-
-export interface SiteModules {
-  landing: {
-    active: boolean;
-    sections: ('hero' | 'features' | 'services' | 'contact' | 'testimonials')[];
-  };
-  auth: ModuleStatus;
-  dashboard: ModuleStatus;
-  booking: ModuleStatus;
-  ecommerce: ModuleStatus;
-  blog: ModuleStatus;
-  inventory: ModuleStatus;
-  accessControl: ModuleStatus;
-}
-
-export interface I18nConfig {
-  locales: string[];
-  defaultLocale: string;
-}
-
-export interface MasterConfig {
-  identity: SiteIdentity;
-  branding: SiteBranding;
-  modules: SiteModules;
-  i18n: I18nConfig;
-}
-
+// 2. Testing Campaigns (Per a QA intern)
 export type TestCampaignDTO = {
   id: string;
   projectId: string;
@@ -129,7 +53,6 @@ export type TestResultDTO = {
   updatedAt: Date;
 };
 
-// Tipus per al retorn combinat del repositori
 export type CampaignContext = {
   campaign: TestCampaignDTO | null;
   tasks: TestTaskDTO[];
@@ -143,37 +66,24 @@ export type TesterProfile = {
   avatar_url: string | null;
 };
 
+// 3. Analytics Intern
 export type AnalyticsEventDTO = {
   event_name: string;
   path: string;
   session_id: string;
   duration?: number;
   referrer?: string;
-  
-  // Metadades tècniques (JSON pur)
   meta?: Record<string, unknown>;
-  
-  // Dades processades (Columnes reals a DB)
-  geo?: {
-    country: string | null;
-    city: string | null;
-  };
-  device?: {
-    type: string;    // 'mobile', 'tablet', 'desktop'
-    browser: string; // 'Chrome', 'Safari'
-    os: string;      // 'iOS', 'Windows'
-  };
+  geo?: { country: string | null; city: string | null };
+  device?: { type: string; browser: string; os: string };
 };
 
-import { StaticImageData } from 'next/image';
-
-// 1. Definim tipus per a les variants
+// 4. Portfolio de la Factory (Projectes fets)
 export type ThemeImageSet = {
   light: StaticImageData;
   dark: StaticImageData;
 };
 
-// 2. Modifiquem la interfície
 export interface Project {
   id: string;
   title: string;
@@ -184,10 +94,96 @@ export interface Project {
   color: string;
   link: string;
   imageAlt: string;
-  
-  // Camp principal (Fallback i SEO)
   image: StaticImageData;
-  
-  // Camp opcional per lògica avançada (Idioma -> Tema -> Imatge)
   adaptiveImages?: Record<string, ThemeImageSet>; 
 }
+
+
+// ######################################################################
+// BLOC B: MODELS DEL MASTER TEMPLATE (Còpia per compatibilitat)
+// ######################################################################
+// Aquests tipus són necessaris si la Factory ha de manipular dades
+// de les webs dels clients (seeds, previews, CMS).
+
+// 1. Landing Sections
+export type SectionType = 
+  | 'hero' | 'services' | 'contact' | 'stats' | 'testimonials' 
+  | 'map' | 'faq' | 'cta_banner' | 'featured_products' | 'about';
+
+export interface ServiceContent {
+  title: string;
+  subtitle: string;
+  headlinePrefix?: string;
+  headlineHighlight?: string;
+  emptyState?: { title: string; text: string };
+  items?: unknown[];      
+}
+
+export interface AboutContent {
+  badge?: string;
+  title: string;
+  description: string;
+  imageUrl?: string; 
+  features?: string[];
+  stats?: Array<{ label: string; value: string }>;
+  card?: { title: string; subtitle: string };
+}
+
+// 2. E-commerce (Client)
+export interface Product {
+  id: string;
+  organization_id: string;
+  slug: string;
+  name: string;
+  description: string | null;
+  price: number;
+  stock: number;
+  active: boolean;
+  images: string[];
+  category_id?: string;
+  created_at?: Date;
+}
+
+export interface CartItem {
+  id: string;
+  organization_id: string;
+  name: string;
+  price: number;
+  stock: number;
+  slug: string;
+  image?: string;
+  quantity: number;
+}
+
+// 3. Booking (Client)
+export interface Service {
+  id: string;
+  organization_id: string;
+  title: string;
+  description: string | null;
+  duration_minutes: number;
+  price: number;
+  active: boolean;
+  created_at: Date;
+}
+
+export interface Booking {
+  id: string;
+  organization_id: string;
+  service_id: string;
+  user_id: string | null;
+  start_time: Date;
+  end_time: Date;
+  status: 'pending' | 'confirmed' | 'cancelled';
+  services?: { title: string; duration_minutes?: number } | null;
+}
+
+// 4. Blog (Client)
+export type BlogPostDTO = {
+  id: string;
+  slug: string;
+  title: string;
+  content: string | null;
+  published: boolean;
+  // ... altres camps necessaris per al CMS
+};

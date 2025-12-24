@@ -4,7 +4,6 @@ import { ArrowRight, Sparkles } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import { DiaryStack } from './diary/DiaryStack';
 import { Reveal } from '@/components/animations/Reveal';
-import Image from 'next/image';
 
 export async function LatestPostsSection() {
   const posts = await postService.getLatestPosts();
@@ -34,7 +33,7 @@ export async function LatestPostsSection() {
                   {t('badge')}
                </div>
             </Reveal>
-            {/* ... Resta del contingut igual ... */}
+      
              <Reveal delay={0.1} direction="left">
               <h2 className="text-3xl md:text-5xl font-black text-foreground leading-tight tracking-tight">
                 {t('title_prefix')} <br />

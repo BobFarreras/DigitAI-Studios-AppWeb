@@ -1,25 +1,23 @@
 'use server';
 
-import { InfrastructureService } from '@/services/InfrastrocutreService';
+import { InfrastructureService } from '@/services/factory/InfrastrocutreService'; // Corregit typo
 import { TenantService } from '@/services/TenantService';
 import { AIService, AIContentResult } from '@/services/AIService';
 import { createClient } from '@/lib/supabase/server';
 import { ActionResult } from '@/types/actions';
-import { MasterConfig } from '@/types/config';
+import { MasterConfig, ConfigLandingSection } from '@/types/config'; 
 
-// Instanciem els serveis
+// Instanciem els serveis (Singleton pattern implícit per mòdul)
 const infra = new InfrastructureService();
 const tenant = new TenantService();
 const ai = new AIService();
 
-// ✅ 1. DEFINICIÓ DEL TIPUS PER A LA INVITACIÓ
 export interface InviteState {
     success: boolean;
     error: string | null;
     message: string | null;
 }
 
-// ✅ 2. ACCIÓ PER CONVIDAR CLIENTS (Recuperada)
 export async function inviteClientAction(prevState: InviteState, formData: FormData): Promise<InviteState> {
     const email = formData.get('email') as string;
     const orgId = formData.get('orgId') as string;
@@ -38,26 +36,35 @@ export async function inviteClientAction(prevState: InviteState, formData: FormD
     }
 }
 
-// ✅ 3. ACCIÓ PER CREAR PROJECTES (La principal)
-export async function createProjectAction(prevState: unknown, formData: FormData): Promise<ActionResult> {
-    // 1. Extracció de Dades
+export async function createProjectAction(prevState: ActionResult | unknown, formData: FormData): Promise<ActionResult> {
+    // 1. EXTRACCIÓ DE DADES DEL FORMULARI
     const businessName = formData.get('businessName') as string;
     const slug = formData.get('slug') as string;
     const description = formData.get('description') as string;
     const primaryColor = formData.get('primaryColor') as string;
     const logoFile = formData.get('logo') as File;
-
-    // Recuperem els camps complexos
     const layoutVariant = (formData.get('layoutVariant') as 'modern' | 'shop') || 'modern';
-    const landingSections = formData.getAll('landing_sections') as string[];
+    const sector = formData.get('sector') as string || "General"; // FASE 3
 
-    // Validació bàsica de formulari
+    // Dades de Contacte (FASE 1)
+    const publicEmail = formData.get('publicEmail') as string;
+    const phone = formData.get('phone') as string;
+    const address = formData.get('address') as string;
+    const instagram = formData.get('instagram') as string;
+    const linkedin = formData.get('linkedin') as string;
+    const twitter = formData.get('twitter') as string;
+
+    // Gestió de Seccions amb Casting Segur
+    const landingSectionsRaw = formData.getAll('landing_sections') as string[];
+    const landingSections = landingSectionsRaw as ConfigLandingSection[];
+
+    // Validació bàsica
     if (!businessName || !slug) {
         return { success: false, error: "Falten dades obligatòries (Nom o Slug)." };
     }
 
     try {
-        // 🔐 SEGURETAT
+        // 🔐 AUTH CHECK
         const supabase = await createClient();
         const { data: { user } } = await supabase.auth.getUser();
 
@@ -65,32 +72,33 @@ export async function createProjectAction(prevState: unknown, formData: FormData
             return { success: false, error: "Accés denegat: Has d'iniciar sessió." };
         }
 
-        // 🧠 INTEL·LIGÈNCIA ARTIFICIAL
+        // 🧠 FASE 3: GENERACIÓ DE CONTINGUT (IA)
         let aiContent: AIContentResult;
         try {
-            aiContent = await ai.generateSiteContent(businessName, description);
+            aiContent = await ai.generateSiteContent(businessName, description, sector);
         } catch (e) {
             console.error("⚠️ AI Fallback activat:", e);
+            // Fallback manual si falla la IA
             aiContent = {
                 hero: { title: businessName, subtitle: description, cta: 'Contactar' },
-                about: { title: 'Sobre Nosaltres', description: '' },
-                services_intro: { title: 'Els nostres serveis', subtitle: '' }
+                about: { title: 'Sobre Nosaltres', description: description, stats: [] },
+                services_intro: { title: 'Els nostres serveis', subtitle: '', items: [] }
             };
         }
 
         // 🏗️ INFRAESTRUCTURA (GitHub)
-        // Filtrem 'about' si no has actualitzat el Master encara (Opció B d'abans), 
-        // o deixem-ho tal qual si has fet l'Opció A (Recomanat).
         const repoData = await infra.createRepository(slug, description);
-
+        
+        // Esperem fins que el repo estigui llest (retry logic dins del servei)
         const isReady = await infra.waitForRepoReady(slug);
         if (!isReady) throw new Error("GitHub Timeout: El repo no s'ha creat a temps.");
 
+        // FASE 2: Upload Logo
         if (logoFile && logoFile.size > 0) {
             await infra.uploadLogo(slug, logoFile);
         }
 
-        // 🗄️ DATABASE
+        // 🗄️ DATABASE (Tenant)
         const { org } = await tenant.createTenantStructure({
             businessName,
             slug,
@@ -99,16 +107,42 @@ export async function createProjectAction(prevState: unknown, formData: FormData
             creatorUserId: user.id,
             creatorEmail: user.email
         });
-        const enableChatbot = formData.get('module_chatbot') === 'on';
-        // ⚙️ CONFIGURACIÓ
+
+        // 📝 CONSTRUCCIÓ DE L'OBJECTE CONFIG (Dades Reals)
+        
+        // Preparem el Footer dinàmic
+        const footerLinks = [];
+        if (publicEmail) footerLinks.push({ label: publicEmail, href: `mailto:${publicEmail}` });
+        if (phone) footerLinks.push({ label: phone, href: `tel:${phone}` });
+        if (address) footerLinks.push({ label: "Ubicació", href: "/#map" });
+
+        const footerColumns = [];
+        if (footerLinks.length > 0) footerColumns.push({ title: "Contacte", links: footerLinks });
+        
+        footerColumns.push({
+            title: "Empresa",
+            links: [
+                { label: "Sobre Nosaltres", href: "/#about" },
+                { label: "Serveis", href: "/#services" },
+                { label: "Avís Legal", href: "/legal" }
+            ]
+        });
+
+        const socialsMap: Record<string, string> = {};
+        if (instagram) socialsMap['instagram'] = instagram;
+        if (linkedin) socialsMap['linkedin'] = linkedin;
+        if (twitter) socialsMap['twitter'] = twitter;
+
+        // Construïm la configuració final
         const config: MasterConfig = {
             organizationId: org.id,
             identity: {
                 name: businessName,
                 description: aiContent.hero.subtitle || description,
-                logoUrl: "/branding/logo.png",
+                logoUrl: "/branding/logo.png", // FASE 2: Ruta fixa estàndard
                 faviconUrl: "/favicon.ico",
-                contactEmail: user.email
+                contactEmail: publicEmail || user.email,
+                address: address || undefined
             },
             branding: {
                 colors: {
@@ -119,6 +153,7 @@ export async function createProjectAction(prevState: unknown, formData: FormData
                 },
                 radius: 0.5
             },
+            // FASE 3: Injectem contingut IA
             content: {
                 hero: aiContent.hero,
                 about: aiContent.about,
@@ -139,21 +174,22 @@ export async function createProjectAction(prevState: unknown, formData: FormData
                 booking: formData.get('module_booking') === 'on',
                 blog: formData.get('module_blog') === 'on',
                 inventory: formData.get('module_inventory') === 'on',
-                ecommerce: false,
+                ecommerce: formData.get('module_ecommerce') === 'on',
                 accessControl: true,
-                // 👇 AFEGEIX AIXÒ
-                chatbot: enableChatbot,
+                chatbot: formData.get('module_chatbot') === 'on',
             },
             i18n: { locales: ['ca', 'es'], defaultLocale: 'ca' },
             footer: {
-                columns: [],
-                bottomText: `© ${new Date().getFullYear()} ${businessName}`
+                columns: footerColumns,
+                socials: Object.keys(socialsMap).length > 0 ? socialsMap : undefined,
+                bottomText: `© ${new Date().getFullYear()} ${businessName}. Tots els drets reservats.`
             }
         };
 
+        // 💉 INJECCIÓ DE CONFIGURACIÓ AL REPO
         await infra.injectConfig(slug, config);
 
-        // 🚀 VERCEL
+        // 🚀 DESPLEGAMENT A VERCEL
         await infra.deployToVercel(slug, org.id, repoData.id);
 
         return { success: true, repoUrl: repoData.html_url };

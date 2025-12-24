@@ -1,26 +1,65 @@
-// src/types/config.ts
+// PROJECTE: Master Template
+// FITXER: src/types/config.ts
 
-// 1. Tipus bàsics
-export type ModuleStatus = boolean;
+// ==========================================
+// 1. Definicions de Seccions Permeses
+// ==========================================
 
-// 🆕 1.1 DEFINICIÓ DE CONTINGUT (Això és el que et faltava)
-export interface SiteContent {
-  hero: {
-    title: string;
-    subtitle: string;
-    cta: string;
-  };
-  about: {
-    title: string;
-    description: string;
-  };
-  services_intro: {
-    title: string;
-    subtitle: string;
-  };
+// 👇 AQUEST ÉS EL TIPUS CLAU QUE NECESSITES EXPORTAR
+export type ConfigLandingSection = 
+  | 'hero' 
+  | 'features' 
+  | 'services' 
+  | 'contact' 
+  | 'testimonials' 
+  | 'map' 
+  | 'stats' 
+  | 'faq' 
+  | 'cta_banner' 
+  | 'featured_products' 
+  | 'about';
+
+// ==========================================
+// 2. Configuració de Contingut Estàtic (Inputs del Config)
+// ==========================================
+
+export interface AboutConfigInput {
+  title?: string;
+  description?: string;
+  image_url?: string;
+  stats?: Array<{ label: string; value: string }>;
 }
 
-// 2. Sub-interfícies (Footer)
+export interface HeroConfigInput {
+  title?: string;
+  subtitle?: string;
+  cta?: string;
+}
+// 👇 AFEGIM AIXÒ: Estructura per guardar items generats per IA
+export interface AIItem {
+  title: string;
+  description: string;
+  icon?: string; // Opcional, per si la IA suggereix icona
+}
+// 👇 AFEGEIX AIXÒ (Recuperem l'estructura perduda)
+export interface ServicesIntroConfigInput {
+  title: string;
+  subtitle: string;
+  items?: AIItem[]; // 👈 Llista de serveis generats
+}
+
+export interface StaticContentConfig {
+  hero?: HeroConfigInput;
+  about?: AboutConfigInput;
+  // 👇 AFEGIT DE NOU
+  services_intro?: ServicesIntroConfigInput;
+}
+
+// ==========================================
+// 3. Estructures Auxiliars
+// ==========================================
+export type ModuleStatus = boolean;
+
 export interface FooterLink {
   label: string;
   href: string;
@@ -37,7 +76,6 @@ export interface SiteFooterConfig {
   bottomText: string;
 }
 
-// 3. Identitat
 export interface SiteIdentity {
   name: string;
   description: string;
@@ -47,7 +85,6 @@ export interface SiteIdentity {
   address?: string;
 }
 
-// 4. Branding
 export interface SiteBranding {
   colors: {
     primary: string;
@@ -58,7 +95,9 @@ export interface SiteBranding {
   radius: number;
 }
 
-// 5. Mòduls
+// ==========================================
+// 4. Configuració de Mòduls
+// ==========================================
 export interface SiteModules {
   layout: {
     variant: 'modern' | 'shop';
@@ -67,7 +106,8 @@ export interface SiteModules {
 
   landing: {
     active: boolean;
-    sections: string[]; 
+    // 👇 AQUI UTILITZEM EL TIPUS STRICTE
+    sections: ConfigLandingSection[];
   };
 
   auth: {
@@ -85,7 +125,6 @@ export interface SiteModules {
   blog: ModuleStatus;
   inventory: ModuleStatus;
   accessControl: ModuleStatus;
-    // 👇 AFEGEIX AIXÒ
   chatbot: ModuleStatus;
 }
 
@@ -94,16 +133,17 @@ export interface I18nConfig {
   defaultLocale: string;
 }
 
-// 🧠 CONFIGURACIÓ MESTRA
+// ==========================================
+// 🧠 CONFIGURACIÓ MESTRA (MASTER CONFIG)
+// ==========================================
 export interface MasterConfig {
-  organizationId?: string; // Vital per multitenancy
+  organizationId?: string;
   identity: SiteIdentity;
   branding: SiteBranding;
-  
-  // ✅ Ara TypeScript ja sabrà què és SiteContent perquè està definit a dalt
-  content?: SiteContent; 
-  
   modules: SiteModules;
   i18n: I18nConfig;
   footer: SiteFooterConfig;
+  
+  // Contingut opcional definit al config
+  content?: StaticContentConfig;
 }
