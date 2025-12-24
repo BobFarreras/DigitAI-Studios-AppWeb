@@ -22,7 +22,7 @@ export function SolutionsShowcase() {
       />
       
       {/* Pattern lleuger per a mòbil en lloc del blob */}
-      <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] bg-[size:40px_40px] opacity-[0.03] pointer-events-none" />
+      <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] bg-size-[40px_40px] opacity-[0.03] pointer-events-none" />
 
       <div className="container mx-auto px-6 md:px-10 lg:px-14 relative z-10">
         
@@ -53,7 +53,7 @@ export function SolutionsShowcase() {
             />
             
             {/* 2. VISUALITZACIÓ */}
-            <div className="lg:col-span-8 flex flex-col h-[500px] md:h-162.5 lg:h-auto relative z-10">
+            <div className="lg:col-span-8 flex flex-col h-125 md:h-162.5 lg:h-auto relative z-10">
                <SolutionsDisplay solution={activeSolution} />
                
                {/* 3. DOCK MÒBIL - Dins el mateix bloc per context */}
