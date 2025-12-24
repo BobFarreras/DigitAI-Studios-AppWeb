@@ -5,7 +5,7 @@ import { TenantService } from '@/services/TenantService';
 import { AIService, AIContentResult } from '@/services/AIService';
 import { createClient } from '@/lib/supabase/server';
 import { ActionResult } from '@/types/actions';
-import { MasterConfig, ConfigLandingSection } from '@/types/config'; 
+import { MasterConfig, ConfigLandingSection } from '@/types/config';
 
 // Instanciem els serveis (Singleton pattern implícit per mòdul)
 const infra = new InfrastructureService();
@@ -75,20 +75,26 @@ export async function createProjectAction(prevState: ActionResult | unknown, for
         // 🧠 FASE 3: GENERACIÓ DE CONTINGUT (IA)
         let aiContent: AIContentResult;
         try {
+            console.log("🚀 [ACTION] Cridant AIService...");
             aiContent = await ai.generateSiteContent(businessName, description, sector);
+
+            // LOG DE DEBUG 5: Què tenim abans d'injectar?
+            console.log("📦 [ACTION] Resultat final IA:", JSON.stringify(aiContent, null, 2));
+
         } catch (e) {
-            console.error("⚠️ AI Fallback activat:", e);
-            // Fallback manual si falla la IA
+            console.error("⚠️ [ACTION] Error inesperat cridant AI:", e);
+            // Fallback d'emergència
             aiContent = {
                 hero: { title: businessName, subtitle: description, cta: 'Contactar' },
                 about: { title: 'Sobre Nosaltres', description: description, stats: [] },
-                services_intro: { title: 'Els nostres serveis', subtitle: '', items: [] }
+                services_intro: { title: 'Els nostres serveis', subtitle: '', items: [] },
+                testimonials: { title: "Opinions", subtitle: "", items: [] }
             };
         }
 
         // 🏗️ INFRAESTRUCTURA (GitHub)
         const repoData = await infra.createRepository(slug, description);
-        
+
         // Esperem fins que el repo estigui llest (retry logic dins del servei)
         const isReady = await infra.waitForRepoReady(slug);
         if (!isReady) throw new Error("GitHub Timeout: El repo no s'ha creat a temps.");
@@ -109,7 +115,7 @@ export async function createProjectAction(prevState: ActionResult | unknown, for
         });
 
         // 📝 CONSTRUCCIÓ DE L'OBJECTE CONFIG (Dades Reals)
-        
+
         // Preparem el Footer dinàmic
         const footerLinks = [];
         if (publicEmail) footerLinks.push({ label: publicEmail, href: `mailto:${publicEmail}` });
@@ -118,7 +124,7 @@ export async function createProjectAction(prevState: ActionResult | unknown, for
 
         const footerColumns = [];
         if (footerLinks.length > 0) footerColumns.push({ title: "Contacte", links: footerLinks });
-        
+
         footerColumns.push({
             title: "Empresa",
             links: [
@@ -138,7 +144,7 @@ export async function createProjectAction(prevState: ActionResult | unknown, for
             organizationId: org.id,
             identity: {
                 name: businessName,
-                description: aiContent.hero.subtitle || description,
+                description: aiContent.hero!.subtitle || description,
                 logoUrl: "/branding/logo.png", // FASE 2: Ruta fixa estàndard
                 faviconUrl: "/favicon.ico",
                 contactEmail: publicEmail || user.email,
@@ -157,7 +163,8 @@ export async function createProjectAction(prevState: ActionResult | unknown, for
             content: {
                 hero: aiContent.hero,
                 about: aiContent.about,
-                services_intro: aiContent.services_intro
+                services_intro: aiContent.services_intro,
+                testimonials: aiContent.testimonials // ✅ AFEGIT: Injectem els testimonis
             },
             modules: {
                 layout: { variant: layoutVariant, stickyHeader: true },

@@ -48,13 +48,18 @@ export interface ServicesIntroConfigInput {
   items?: AIItem[]; // 👈 Llista de serveis generats
 }
 
+// 👇 MODIFICA AIXÒ
 export interface StaticContentConfig {
   hero?: HeroConfigInput;
   about?: AboutConfigInput;
-  // 👇 AFEGIT DE NOU
   services_intro?: ServicesIntroConfigInput;
+  // ✅ NOU CAMP
+  testimonials?: {
+    title: string;
+    subtitle: string;
+    items: TestimonialItem[];
+  };
 }
-
 // ==========================================
 // 3. Estructures Auxiliars
 // ==========================================
@@ -132,7 +137,13 @@ export interface I18nConfig {
   locales: string[];
   defaultLocale: string;
 }
-
+// 👇 AFEGEIX AIXÒ
+export interface TestimonialItem {
+  text: string;
+  author: string;
+  role: string; // Ex: "Client habitual" o "Crític gastronòmic"
+  rating: number;
+}
 // ==========================================
 // 🧠 CONFIGURACIÓ MESTRA (MASTER CONFIG)
 // ==========================================

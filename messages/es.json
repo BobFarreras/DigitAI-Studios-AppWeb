@@ -22,14 +22,14 @@
     "subtitle": "Potenciado por el stack tecnológico del futuro"
   },
   "AuditSection": {
-    "title_prefix": "Tu web es un",
+    "title_prefix": "¿Tu web es un",
     "title_cost": "Gasto",
     "title_connector": "o una",
-    "title_investment": "Inversión",
+    "title_investment": "Inversión?",
     "description_stat": "El 94% de las primeras impresiones están relacionadas con el diseño y la velocidad.",
     "description_cta": "Descubre qué está fallando en menos de 30 segundos.",
-    "logged_title": "¡Hola, {name}! 👋",
-    "logged_desc": "Ya tienes acceso completo a las herramientas de auditoría avanzada. No necesitas usar este formulario público.",
+    "logged_title": "Hola, {name}! 👋",
+    "logged_desc": "Ya tienes acceso completo a las herramientas de auditoría avanzada. No es necesario que uses este formulario público.",
     "btn_dashboard": "Ir al Dashboard de Auditoría",
     "logged_footer": "Tu plan actual permite auditorías ilimitadas desde el panel."
   },
@@ -59,9 +59,9 @@
     "forgot_password": "¿Has olvidado la contraseña?",
     "cta_login": "Entrar",
     "cta_loading": "Entrando...",
-    "no_account_prefix": "¿Todavía no tienes cuenta?",
+    "no_account_prefix": "¿Aún no tienes cuenta?",
     "register_link": "Regístrate gratis",
-    "social_maintenance_error": "🚧 El login social está en mantenimiento. Usa tu email y contraseña.",
+    "social_maintenance_error": "🚧 El login social está en mantenimiento. Utiliza tu email y contraseña.",
     "register_title": "Crea tu cuenta",
     "register_subtitle": "Para ver tu informe completo de auditoría",
     "already_have_account": "¿Ya tienes cuenta?",
@@ -94,7 +94,7 @@
       "success_title": "¡Felicidades!",
       "success_msg": "Has completado todas las tareas de esta misión.",
       "motivation_start": "¡Empecemos la misión! 🚀",
-      "motivation_early": "¡Buen comienzo! Sigue así. 💪",
+      "motivation_early": "¡Buen comienzo! Continúa así. 💪",
       "motivation_late": "¡Ya has pasado la mitad! Eres un crack. 🔥",
       "motivation_done": "¡MISIÓN CUMPLIDA! 🎉 Gracias por tu tiempo."
     },
@@ -125,12 +125,12 @@
       "projects": "Proyectos",
       "web": "Web",
       "logout_short": "Salir",
-      "coming_soon": "estará disponible próximamente! 🚀"
+      "coming_soon": "¡estará disponible próximamente! 🚀"
     }
   },
   "AuditIssues": {
     "is-on-https": {
-      "title": "El sitio web no usa HTTPS seguro",
+      "title": "El sitio web no utiliza HTTPS seguro",
       "description": "Tu web no es segura. Esto asusta a los clientes y Google te penaliza gravemente."
     },
     "meta-description": {
@@ -159,17 +159,17 @@
     },
     "cumulative-layout-shift": {
       "title": "Movimientos inesperados (CLS)",
-      "description": "La web ‘se mueve’ mientras carga, causando clics erróneos."
+      "description": "La web se 'mueve' mientras carga, causando clics erróneos."
     }
   },
   "Common": {
     "loading": "Cargando...",
-    "error": "Ha ocurrido un error",
+    "error": "Ha habido un error",
     "languages": {
-      "ca": "Catalán",
+      "ca": "Català",
       "es": "Español",
       "en": "English",
-      "it": "Italiano"
+      "it": "Italia"
     }
   },
   "Services": {
@@ -199,10 +199,10 @@
   },
   "ProblemSolution": {
     "badge": "Más que una página web",
-    "title_prefix": "Tu web tiene que",
+    "title_prefix": "Tu web debe",
     "title_highlight": "Facturar",
-    "title_suffix": "no solo ‘estar’.",
-    "description_problem": "La mayoría de negocios tienen una ‘Tarjeta de Visita’ digital: bonita, pero inútil. No permite reservar, no vende y no fideliza.",
+    "title_suffix": "no solo 'estar'.",
+    "description_problem": "La mayoría de negocios tienen una 'Tarjeta de Visita' digital: bonita, pero inútil. No permite reservar, no vende y no fideliza.",
     "description_solution": "Nosotros transformamos tu web en una <strong>AppWeb (PWA)</strong>: una herramienta potente donde tus clientes pueden comprar, reservar hora e interactuar contigo desde su móvil, sin descargar nada.",
     "benefits": {
       "appointments": "Citas previas y reservas automáticas.",
@@ -211,7 +211,7 @@
     },
     "visual": {
       "problem_card": {
-        "title": "Web ‘Escaparate’",
+        "title": "Web 'Escaparate'",
         "item1": "Reservas Online",
         "item2": "Panel de Ventas",
         "item3": "App Móvil"
@@ -224,14 +224,14 @@
         "widget2_title": "+150% Conversión",
         "widget2_desc": "Analítica en tiempo real",
         "widget3_title": "App Instalable",
-        "widget3_desc": "Acceso directo en el móvil (PWA)"
+        "widget3_desc": "Acceso directo al móvil (PWA)"
       }
     }
   },
   "ContactSection": {
-    "title_prefix": "Empieza tu",
+    "title_prefix": "Comienza tu",
     "title_highlight": "transformación",
-    "description": "Toda gran empresa empieza con una decisión. Contacta con nosotros y descubre cómo la automatización puede revolucionar tu negocio.",
+    "description": "Toda gran empresa comienza con una decisión. Contacta con nosotros y descubre cómo la automatización puede revolucionar tu negocio.",
     "features": {
       "agile": {
         "title": "Implementación Ágil",
@@ -239,7 +239,7 @@
       },
       "tech": {
         "title": "Tecnología Sólida",
-        "desc": "Next.js, React Native y Supabase. Nada de Wordpress antiguo."
+        "desc": "Next.js, React Native y Supabase. Nada de Wordpress viejo."
       },
       "partners": {
         "title": "Partners, no Proveedores",
@@ -255,7 +255,7 @@
       "name_placeholder": "Juan García",
       "email_label": "Email corporativo",
       "email_placeholder": "juan@empresa.com",
-      "message_label": "Cuéntanos tu proyecto...",
+      "message_label": "Explícanos tu proyecto...",
       "message_placeholder": "Quiero automatizar las reservas o crear una app para...",
       "submit_button": "Enviar Mensaje"
     },
@@ -330,7 +330,7 @@
       "processing": "PROCESANDO"
     },
     "empty_title": "No tienes ninguna auditoría registrada",
-    "empty_description": "Comienza analizando tu primera página web para obtener métricas de SEO y rendimiento.",
+    "empty_description": "Empieza analizando tu primera página web para obtener métricas de SEO y rendimiento.",
     "create_first_audit": "Crear primera auditoría"
   },
   "AuditDetails": {
@@ -360,7 +360,7 @@
     "title_prefix": "¿Tienes una idea para el próximo",
     "title_highlight": "Gran Producto",
     "title_suffix": "?",
-    "description": "Hemos convertido nuestras ideas en negocios rentables. Ahora deja que te ayudemos a hacer lo mismo con el tuyo.",
+    "description": "Hemos convertido nuestras ideas en negocios rentables. Ahora deja que te ayudemos a hacer lo mismo con la tuya.",
     "button": "Hablemos de tu Proyecto"
   },
   "ProjectCard": {
@@ -441,21 +441,21 @@
       "data_card_address_value": "[Calle Ejemplo 123], Girona, España",
       "section2_title": "2. Condiciones de Uso",
       "section2_p1": "El acceso a este sitio web es libre y gratuito. El simple acceso no implica el establecimiento de ninguna relación comercial entre <strong>DigitAI Studios</strong> y el usuario.",
-      "section2_p2": "El usuario se compromete a utilizar el sitio web de conformidad con la ley y el presente Aviso Legal, absteniéndose de usarlo con fines ilícitos o que puedan dañar los intereses de terceros.",
+      "section2_p2": "El usuario se compromete a utilizar el sitio web de conformidad con la ley y el presente Aviso Legal, absteniéndose de utilizarlo con fines ilícitos o que puedan dañar los intereses de terceros.",
       "section3_title": "3. Propiedad Intelectual e Industrial",
       "section3_quote": "Todos los contenidos (marcas, logotipos, textos, fotografías, iconos, imágenes, etc.), así como el diseño gráfico, código fuente y software, son propiedad exclusiva de <strong>DigitAI Studios</strong> o de terceros que han autorizado su uso, estando protegidos por la legislación nacional e internacional.",
       "section4_title": "Exención de Responsabilidad",
       "section4_p1": "DigitAI Studios no se hace responsable de:",
-      "section4_list_1": "Posibles fallos de seguridad ni de los daños al sistema informático del usuario (virus, malware, etc.).",
-      "section4_list_2": "La información y contenidos almacenados en foros, redes sociales u otros medios que permitan a terceros publicar contenido de forma independiente.",
+      "section4_list_1": "Los posibles fallos de seguridad que se puedan producir ni de los posibles daños al sistema informático del usuario (virus, malware, etc.).",
+      "section4_list_2": "La información y contenidos almacenados en foros, redes sociales o cualquier otro medio que permita a terceros publicar contenidos de forma independiente.",
       "section4_list_3": "La precisión exacta de las auditorías automáticas, que son orientativas y basadas en la API de Google Lighthouse.",
       "section5_title": "Ley Aplicable y Jurisdicción",
-      "section5_p1": "Para la resolución de todas las controversias relacionadas con este sitio web, será de aplicación la legislación española, a la que se someten expresamente las partes, siendo competentes los Juzgados y Tribunales de Girona.",
+      "section5_p1": "Para la resolución de todas las controversias relacionadas con el presente sitio web, será de aplicación la legislación española, a la cual se someten expresamente las partes, siendo competentes para la resolución de todos los conflictos los Juzgados y Tribunales de la ciudad de Girona.",
       "last_update_prefix": "Última actualización:"
     },
     "privacitat": {
       "title": "Política de Privacidad",
-      "subtitle": "Tu privacidad es sagrada. Aquí te explicamos claramente qué datos recogemos, por qué y cómo los protegemos.",
+      "subtitle": "Tu privacidad es sagrada. Aquí te explicamos claramente qué datos recogemos, por qué, y cómo los protegemos.",
       "section1_title": "1. ¿Quién es el responsable de tus datos?",
       "section1_text": "El responsable es <strong>DigitAI Studios</strong> (ver Aviso Legal para datos completos). Puedes contactar con nuestro Delegado de Protección de Datos en: <link>dpd@digitaistudios.com</link>.",
       "section2_title": "2. ¿Qué datos recogemos?",
@@ -479,9 +479,9 @@
     },
     "cookies": {
       "title": "Política de Cookies",
-      "subtitle": "Utilizamos cookies para asegurar que la web funcione correctamente y para entender cómo mejorarla. Aquí tienes todos los detalles.",
+      "subtitle": "Utilizamos galletas (cookies) para asegurar que la web funcione correctamente y para entender cómo podemos mejorarla. Aquí tienes todos los detalles.",
       "section1_title": "1. ¿Qué son las Cookies?",
-      "section1_quote": "Una cookie es un pequeño archivo de texto que se almacena en tu navegador cuando visitas casi cualquier página web. Su utilidad es permitir que la web recuerde tu visita, mantenga tu sesión abierta o registre tus preferencias.",
+      "section1_quote": "Una cookie es un pequeño archivo de texto que se almacena en tu navegador cuando visitas casi cualquier página web. Su utilidad es que la web sea capaz de recordar tu visita cuando vuelvas a navegar por esa página, o mantener tu sesión abierta.",
       "section2_title": "2. ¿Qué cookies utilizamos?",
       "section2_p1": "Esta web utiliza los siguientes tipos de cookies:",
       "tech_title": "Necesarias (Técnicas)",
@@ -489,10 +489,10 @@
       "tech_1": "Supabase Auth: Gestiona la sesión segura.",
       "tech_2": "Next-Intl: Recuerda el idioma preferido.",
       "analytics_title": "Analíticas",
-      "analytics_desc": "Nos permiten cuantificar el número de usuarios y analizar su uso del servicio para mejorarlo.",
+      "analytics_desc": "Nos permiten cuantificar el número de usuarios y analizar la utilización que hacen del servicio para mejorarlo.",
       "analytics_1": "Analytics Propio: Estadísticas anónimas respetuosas con la privacidad (sin rastreo invasivo de Google).",
       "section3_title": "3. ¿Cómo desactivarlas?",
-      "section3_p1": "Puedes permitir, bloquear o eliminar las cookies instaladas en tu equipo mediante la configuración del navegador:"
+      "section3_p1": "Puedes permitir, bloquear o eliminar las cookies instaladas en tu equipo mediante la configuración de las opciones del navegador:"
     }
   },
   "LatestPosts": {
@@ -538,7 +538,7 @@
     },
     "growth": {
       "title": "Business Intelligence & Growth",
-      "description": "Deja de adivinar y empieza a saber. Dashboards que transforman datos brutos en decisiones rentables.",
+      "description": "Deja de adivinar y empieza a saber. Cuadros de mando (Dashboards) que transforman datos brutos en decisiones rentables.",
       "active_users": "USUARIOS AHORA",
       "conversion_rate": "CONVERSIÓN",
       "monthly_revenue": "MRR (Ingresos)",
@@ -553,9 +553,9 @@
       "booking_confirmed": "Reserva Confirmada",
       "status_idle": "Esperando solicitudes...",
       "new_message_label": "Nuevo Mensaje",
-      "mock_user_name": "Joan Garcia",
+      "mock_user_name": "Juan García",
       "agent_name": "DigitAI Agent",
-      "status_processing": "Buscando el mejor hueco...",
+      "status_processing": "Buscando mejor hueco...",
       "status_confirmed": "CONFIRMADO",
       "tag_auto": "AUTO",
       "month_short": "ENE",

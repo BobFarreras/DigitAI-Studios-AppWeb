@@ -10,11 +10,11 @@
     "logout": "Log Out"
   },
   "Hero": {
-    "title_start": "We create your",
+    "title_start": "We build your",
     "title_highlight_1": "WebApp",
     "title_middle": "We automate your",
     "title_highlight_2": "day-to-day",
-    "subtitle": "Stop wasting time on manual tasks. We build custom platforms and teach you how to use AI to scale your business.",
+    "subtitle": "Stop wasting time on manual tasks. We develop custom platforms and teach you how to use AI to scale your business.",
     "cta_primary": "Let's Talk About Your Project",
     "cta_secondary": "Free Audit"
   },
@@ -22,16 +22,16 @@
     "subtitle": "Powered by the tech stack of the future"
   },
   "AuditSection": {
-    "title_prefix": "Is your site a",
-    "title_cost": "Cost",
+    "title_prefix": "Is your website an",
+    "title_cost": "Expense",
     "title_connector": "or an",
     "title_investment": "Investment",
-    "description_stat": "94% of first impressions are design and speed related.",
-    "description_cta": "Discover what's wrong in less than 30 seconds.",
-    "logged_title": "Hi, {name}! 👋",
-    "logged_desc": "You already have full access to advanced audit tools. You don't need to use this public form.",
+    "description_stat": "94% of first impressions are related to design and speed.",
+    "description_cta": "Discover what's failing in under 30 seconds.",
+    "logged_title": "Hello, {name}! 👋",
+    "logged_desc": "You already have full access to advanced audit tools. No need to use this public form.",
     "btn_dashboard": "Go to Audit Dashboard",
-    "logged_footer": "Your current plan allows unlimited audits from the panel."
+    "logged_footer": "Your current plan allows for unlimited audits from the panel."
   },
   "AuditForm": {
     "title": "Analyze your website in seconds",
@@ -39,10 +39,10 @@
     "placeholder_email": "your@email.com",
     "cta_button": "Get Free Report",
     "cta_loading": "Analyzing...",
-    "privacy_note": "We don’t share your data. 100% free report.",
-    "error_url": "URL must be valid",
-    "error_email": "Email is not correct",
-    "success_message": "Check the form data."
+    "privacy_note": "We don't share your data. 100% free report.",
+    "error_url": "The URL must be valid",
+    "error_email": "Invalid email address",
+    "success_message": "Please check the form data."
   },
   "HomePage": {
     "title": "Automate your web presence",
@@ -51,17 +51,17 @@
   },
   "Auth": {
     "login_title": "Welcome back",
-    "login_subtitle": "Access your digital control panel.",
+    "login_subtitle": "Enter your digital control panel.",
     "social_github": "Continue with GitHub",
     "or_email": "Or with email",
     "label_email": "Email",
     "label_password": "Password",
-    "forgot_password": "Forgot your password?",
+    "forgot_password": "Forgot password?",
     "cta_login": "Login",
     "cta_loading": "Logging in...",
     "no_account_prefix": "Don't have an account yet?",
     "register_link": "Sign up for free",
-    "social_maintenance_error": "🚧 Social login is under maintenance. Use your email and password.",
+    "social_maintenance_error": "🚧 Social login is under maintenance. Please use your email and password.",
     "register_title": "Create your account",
     "register_subtitle": "To view your full audit report",
     "already_have_account": "Already have an account?",
@@ -78,7 +78,7 @@
       "meta_title": "My Projects",
       "title": "My Projects",
       "subtitle": "Manage your applications and participate in testing phases.",
-      "empty_title": "No projects yet",
+      "empty_title": "You don't have projects yet",
       "empty_desc": "Contact us to start your first development.",
       "btn_request": "Request Project",
       "badge_beta": "BETA AVAILABLE",
@@ -94,8 +94,8 @@
       "success_title": "Congratulations!",
       "success_msg": "You have completed all tasks in this mission.",
       "motivation_start": "Let's start the mission! 🚀",
-      "motivation_early": "Good start! Keep it up. 💪",
-      "motivation_late": "You're past the halfway mark! You're on fire. 🔥",
+      "motivation_early": "Great start! Keep it up. 💪",
+      "motivation_late": "You're halfway there! You're crushing it. 🔥",
       "motivation_done": "MISSION ACCOMPLISHED! 🎉 Thanks for your time."
     },
     "project_detail": {
@@ -115,7 +115,7 @@
       "motivation_text": "Complete tasks to earn XP and rank up!",
       "active_missions_title": "Active Missions",
       "empty_state_title": "You don't have any assigned missions yet.",
-      "empty_state_desc": "Ask your Project Manager to assign you one!",
+      "empty_state_desc": "Ask your Project Manager to assign you!",
       "no_description": "No description...",
       "tasks_count": "{count} Tasks"
     },
@@ -125,29 +125,29 @@
       "projects": "Projects",
       "web": "Web",
       "logout_short": "Exit",
-      "coming_soon": "will be available soon! 🚀"
+      "coming_soon": "coming soon! 🚀"
     }
   },
   "AuditIssues": {
     "is-on-https": {
       "title": "The website does not use secure HTTPS",
-      "description": "Your site is not secure. This scares customers and Google heavily penalizes it."
+      "description": "Your website is insecure. This scares off clients and Google penalizes you heavily."
     },
     "meta-description": {
-      "title": "Missing Meta Description",
-      "description": "Google doesn’t know what your website is about. You need an attractive summary to appear in results."
+      "title": "Meta Description missing",
+      "description": "Google doesn't know what your site is about. You need a compelling summary to appear in results."
     },
     "document-title": {
-      "title": "The page has no title",
-      "description": "The title is the most important SEO element. Without it, you're invisible."
+      "title": "Page lacks a title",
+      "description": "The title is the most important element for SEO. Without it, you are invisible."
     },
     "server-response-time": {
-      "title": "The server is too slow",
-      "description": "The initial response time is high. Consider changing hosting or optimizing your backend."
+      "title": "Server is too slow",
+      "description": "Initial response time is high. Consider switching hosting or optimizing the backend."
     },
     "render-blocking-resources": {
       "title": "Render-blocking resources",
-      "description": "There are CSS or JS files preventing the page from loading quickly."
+      "description": "There is CSS or JS preventing the website from displaying quickly."
     },
     "uses-optimized-images": {
       "title": "Unoptimized images",
@@ -158,29 +158,29 @@
       "description": "The largest element takes too long to appear. This frustrates users."
     },
     "cumulative-layout-shift": {
-      "title": "Unexpected layout shifts (CLS)",
-      "description": "The page ‘moves’ while loading, causing wrong clicks."
+      "title": "Unexpected movement (CLS)",
+      "description": "The website 'shifts' while loading, causing erroneous clicks."
     }
   },
   "Common": {
     "loading": "Loading...",
-    "error": "An error has occurred",
+    "error": "There was an error",
     "languages": {
-      "ca": "Catalan",
-      "es": "Spanish",
+      "ca": "Català",
+      "es": "Español",
       "en": "English",
-      "it": "Italian"
+      "it": "Italia"
     }
   },
   "Services": {
     "badge": "360° SOLUTIONS",
     "title_prefix": "Everything to",
-    "title_highlight": "Master the Digital World",
+    "title_highlight": "Master Digital",
     "subtitle": "Development, Product, and Automation.",
     "cards": {
       "appwebs": {
-        "title": "WebApps & SaaS",
-        "description": "Custom client portals and CRMs. The operational core of your business."
+        "title": "WebApps & SAAS",
+        "description": "Client portals and custom CRMs. The operating core of your business."
       },
       "apps": {
         "title": "Native Apps",
@@ -193,33 +193,33 @@
       "training": {
         "title": "Training & Consulting",
         "description": "In-company training for your team on AI, n8n, and No-Code tools.",
-        "cta": "View syllabus"
+        "cta": "View Syllabus"
       }
     }
   },
   "ProblemSolution": {
-    "badge": "More than a website",
+    "badge": "More than just a website",
     "title_prefix": "Your website must",
     "title_highlight": "Generate Revenue",
-    "title_suffix": "not just ‘exist’.",
-    "description_problem": "Most businesses have a digital ‘Business Card’: pretty, but useless. It doesn’t allow bookings, doesn’t sell, and doesn’t retain customers.",
-    "description_solution": "We transform your site into a <strong>WebApp (PWA)</strong>: a powerful tool where your customers can buy, book appointments, and interact with you from their phone without installing anything.",
+    "title_suffix": "not just 'exist'.",
+    "description_problem": "Most businesses have a digital 'Business Card': pretty, but useless. It doesn't allow bookings, it doesn't sell, and it doesn't build loyalty.",
+    "description_solution": "We transform your website into a <strong>WebApp (PWA)</strong>: a powerful tool where your clients can buy, book appointments, and interact with you from their mobile, without downloading anything.",
     "benefits": {
-      "appointments": "Automatic bookings and appointments.",
-      "ecommerce": "Online store with integrated payments.",
+      "appointments": "Appointments and automatic bookings.",
+      "ecommerce": "Online store and integrated payments.",
       "pwa": "Installable on mobile (PWA) like a native App."
     },
     "visual": {
       "problem_card": {
-        "title": "Showcase Website",
+        "title": "'Showcase' Web",
         "item1": "Online Bookings",
-        "item2": "Sales Dashboard",
+        "item2": "Sales Panel",
         "item3": "Mobile App"
       },
       "solution_card": {
         "title": "DigitAI Ecosystem",
         "subtitle": "Everything connected, everything automatic.",
-        "widget1_title": "Full Agenda",
+        "widget1_title": "Full Schedule",
         "widget1_desc": "24/7 automatic bookings",
         "widget2_title": "+150% Conversion",
         "widget2_desc": "Real-time analytics",
@@ -231,7 +231,7 @@
   "ContactSection": {
     "title_prefix": "Start your",
     "title_highlight": "transformation",
-    "description": "Every great company begins with a decision. Contact us and discover how automation can revolutionize your business.",
+    "description": "Every great company starts with a decision. Contact us and discover how automation can revolutionize your business.",
     "features": {
       "agile": {
         "title": "Agile Implementation",
@@ -239,20 +239,20 @@
       },
       "tech": {
         "title": "Solid Technology",
-        "desc": "Next.js, React Native and Supabase. No outdated Wordpress."
+        "desc": "Next.js, React Native, and Supabase. No old Wordpress."
       },
       "partners": {
-        "title": "Partners, not Vendors",
-        "desc": "We guide you strategically, not just in code."
+        "title": "Partners, not Providers",
+        "desc": "We accompany you in strategy, not just in code."
       }
     },
     "options": {
       "ia": "AI & Automation",
-      "web": "Websites & Apps"
+      "web": "Webs & Apps"
     },
     "form": {
       "name_label": "Full Name",
-      "name_placeholder": "John Smith",
+      "name_placeholder": "John Doe",
       "email_label": "Corporate Email",
       "email_placeholder": "john@company.com",
       "message_label": "Tell us about your project...",
@@ -265,7 +265,7 @@
   "ProductTeaser": {
     "badge": "INNOVATION LAB",
     "title_prefix": "We don't just sell software.",
-    "title_highlight": "We Build Products.",
+    "title_highlight": "We Create Products.",
     "description": "Discover <strong>SalutFlow</strong> and <strong>RibotFlow</strong>, our own SaaS platforms.<br /><br />We use the same cutting-edge technology for your projects.",
     "cta": "Explore Products"
   },
@@ -292,12 +292,12 @@
     "web": "Web",
     "overview": "Overview",
     "projects": "Projects",
-    "analytics": "Analytics",
+    "analytics": "Web Analytics",
     "users": "Users",
     "settings": "Settings",
     "logout": "Log Out",
-    "logout_confirm_title": "Signing out?",
-    "logout_confirm_desc": "Your session will be closed and you will be returned to the home page.",
+    "logout_confirm_title": "Do you want to leave?",
+    "logout_confirm_desc": "Your session will close and you will return to the main page.",
     "cancel": "Cancel",
     "logout_action": "Yes, Log Out"
   },
@@ -309,19 +309,19 @@
     "welcome": "Hello, {name} 👋",
     "subtitle": "Here is the summary of your digital ecosystem.",
     "new_audit": "New Audit",
-    "kpi_audits": "Audits Completed",
+    "kpi_audits": "Audits Performed",
     "kpi_seo": "Average SEO",
     "kpi_system": "System Status",
     "system_status": "Operational",
     "recent_projects": "Recent Projects",
     "view_all": "View all",
-    "empty_title": "You have no projects yet",
-    "empty_desc": "Analyze your first website to discover SEO and performance issues.",
+    "empty_title": "You don't have projects yet",
+    "empty_desc": "Analyze your first website to discover SEO and performance errors.",
     "empty_button": "Start Audit"
   },
   "AuditList": {
     "title": "My Audits",
-    "subtitle": "Complete history and performance analysis.",
+    "subtitle": "Full history and performance analysis.",
     "new_audit_button": "New Audit",
     "performance": "Performance",
     "status": {
@@ -329,7 +329,7 @@
       "failed": "ERROR",
       "processing": "PROCESSING"
     },
-    "empty_title": "You don’t have any audits registered",
+    "empty_title": "You have no registered audits",
     "empty_description": "Start by analyzing your first website to get SEO and performance metrics.",
     "create_first_audit": "Create first audit"
   },
@@ -339,7 +339,7 @@
   "NewAudit": {
     "back_to_list": "Back to list",
     "title": "New Web Audit",
-    "description": "Enter the URL of the website you want to analyze. Our AI will scan SEO, performance and accessibility in real time."
+    "description": "Enter the URL of the website you want to analyze. Our AI will scan for SEO, performance, and accessibility in real-time."
   },
   "LegalLayout": {
     "sidebar_title": "Legal Center",
@@ -354,20 +354,20 @@
     "badge": "DigitAI Innovation Lab",
     "title_prefix": "We don't just sell code.",
     "title_highlight": "We Build Companies.",
-    "description": "These are our own products. We use the same technology and methodology for your projects that we use to scale our businesses."
+    "description": "These are our own products. We use the same technology and methodology for your projects as we use to scale our own businesses."
   },
   "ProjectsCTA": {
     "title_prefix": "Do you have an idea for the next",
-    "title_highlight": "Big Product",
+    "title_highlight": "Great Product",
     "title_suffix": "?",
-    "description": "We’ve turned our ideas into profitable businesses. Now let us help you do the same with yours.",
+    "description": "We have turned our ideas into profitable businesses. Now let us help you do the same with yours.",
     "button": "Let's Talk About Your Project"
   },
   "ProjectCard": {
-    "view_web": "View Website",
+    "view_web": "View Web",
     "ribotflow": {
       "tagline": "The All-in-One Operating System",
-      "description": "An all-in-one management platform that unifies CRM, invoicing, and social media. Eliminate the chaos of scattered information and use AI to write emails and manage opportunities.",
+      "description": "\"All-in-One\" management platform unifying CRM, invoicing, and social media. Eliminates the chaos of scattered information and uses AI to draft emails and manage opportunities.",
       "stats": {
         "0": "CRM + Invoicing",
         "1": "AI Automation",
@@ -386,7 +386,7 @@
   },
   "BlogIndex": {
     "title": "Blog & Resources",
-    "subtitle": "Learn how to optimize your digital presence with our guides.",
+    "subtitle": "Learn to optimize your digital presence with our guides.",
     "no_posts": "No articles published yet.",
     "read_more": "Read more",
     "published_recently": "Recently",
@@ -395,7 +395,7 @@
   "BlogPost": {
     "back_button": "Other Articles",
     "cta_audit": "Audit my website",
-    "share_title": "Was this helpful?",
+    "share_title": "Was this useful?",
     "share_subtitle": "Share this article or discover how we can help you.",
     "by_author": "DigitAI Team",
     "published_prefix": "Published on"
@@ -405,7 +405,7 @@
       "marketing_title": "Manage your digital ecosystem from one place.",
       "marketing_subtitle": "Access your audits, manage your web projects, and control your automations.",
       "footer": "© DigitAI Studios. All rights reserved.",
-      "back_home": "Back to home"
+      "back_home": "Back to Home"
     },
     "register": {
       "marketing_badge": "JOIN THE REVOLUTION",
@@ -416,9 +416,9 @@
       "back_home": "Home"
     },
     "forgot_password": {
-      "title": "Recover account",
-      "subtitle": "Enter your email and we’ll send instructions.",
-      "back_login": "Back to login"
+      "title": "Recover Account",
+      "subtitle": "Enter your email and we'll send you instructions.",
+      "back_login": "Back to Login"
     },
     "reset_password": {
       "title": "New Password",
@@ -428,78 +428,78 @@
   "Legal": {
     "last_update_prefix": "Last update:",
     "common": {
-      "transparency_desc": "Transparency is our priority. Here you have all the legal information about who we are and the rules of this website."
+      "transparency_desc": "Transparency is our priority. Here is all the legal information about who we are and the rules of this website."
     },
     "avis_legal": {
       "title": "Legal Notice",
       "section1_title": "1. Identification Data",
-      "section1_desc": "In compliance with Law 34/2002 (LSSI-CE), we inform that the owner of the website is:",
+      "section1_desc": "In compliance with Law 34/2002 (LSSI-CE), we inform you that the owner of the website is:",
       "data_card_company_label": "Company Name",
-      "data_card_nif_label": "Tax ID",
-      "data_card_address_label": "Registered Address",
+      "data_card_nif_label": "Tax ID / VAT ID",
+      "data_card_address_label": "Registered Office",
       "data_card_contact_label": "Contact",
-      "data_card_address_value": "[Example Street 123], Girona, Spain",
-      "section2_title": "2. Conditions of Use",
-      "section2_p1": "Access to this website is free. Simple access does not imply any commercial relationship between <strong>DigitAI Studios</strong> and the user.",
-      "section2_p2": "The user agrees to use the website in accordance with the law and this Legal Notice, refraining from using it for illegal purposes or those that may harm third-party interests.",
+      "data_card_address_value": "[Street Example 123], Girona, Spain",
+      "section2_title": "2. Terms of Use",
+      "section2_p1": "Access to this website is free and open. Simple access does not imply the establishment of any commercial relationship between <strong>DigitAI Studios</strong> and the user.",
+      "section2_p2": "The user agrees to use the website in accordance with the law and this Legal Notice, abstaining from using it for illicit purposes or purposes that may damage the interests of third parties.",
       "section3_title": "3. Intellectual and Industrial Property",
-      "section3_quote": "All content (brands, logos, texts, photos, icons, images, etc.), as well as graphic design, source code, and software, are the exclusive property of <strong>DigitAI Studios</strong> or third parties that have authorized its use, protected by national and international legislation.",
-      "section4_title": "Liability Disclaimer",
+      "section3_quote": "All contents (brands, logos, texts, photographs, icons, images, etc.), as well as the graphic design, source code, and software, are the exclusive property of <strong>DigitAI Studios</strong> or third parties who have authorized their use, being protected by national and international legislation.",
+      "section4_title": "Disclaimer",
       "section4_p1": "DigitAI Studios is not responsible for:",
-      "section4_list_1": "Possible security failures or damages to the user’s computer system (viruses, malware, etc.).",
-      "section4_list_2": "Information and content stored in forums, social networks, or other platforms allowing third-party content.",
+      "section4_list_1": "Possible security failures that may occur or possible damage to the user's computer system (viruses, malware, etc.).",
+      "section4_list_2": "Information and content stored in forums, social networks, or any other medium that allows third parties to publish content independently.",
       "section4_list_3": "The exact accuracy of automatic audits, which are indicative and based on the Google Lighthouse API.",
       "section5_title": "Applicable Law and Jurisdiction",
-      "section5_p1": "Spanish law applies. Both parties expressly submit to the Courts of Girona.",
+      "section5_p1": "For the resolution of all disputes related to this website, Spanish legislation will apply, to which the parties expressly submit, with the Courts and Tribunals of the city of Girona being competent for the resolution of all conflicts.",
       "last_update_prefix": "Last update:"
     },
     "privacitat": {
       "title": "Privacy Policy",
       "subtitle": "Your privacy is sacred. Here we clearly explain what data we collect, why, and how we protect it.",
       "section1_title": "1. Who is responsible for your data?",
-      "section1_text": "The controller is <strong>DigitAI Studios</strong> (see Legal Notice for full info). You can contact our Data Protection Officer at: <link>dpd@digitaistudios.com</link>.",
+      "section1_text": "The responsible party is <strong>DigitAI Studios</strong> (see Legal Notice for full details). You can contact our Data Protection Officer at: <link>dpd@digitaistudios.com</link>.",
       "section2_title": "2. What data do we collect?",
-      "section2_desc": "We only collect the data strictly necessary to offer our services:",
+      "section2_desc": "We only collect data strictly necessary to offer our services:",
       "data_audit_title": "Web Audit",
-      "data_audit_desc": "The URL you want to analyze and your email to send the report.",
+      "data_audit_desc": "The URL of the website you want to analyze and your email to send you the report.",
       "data_account_title": "User Account",
-      "data_account_desc": "Your name, email, and encrypted password when registering.",
-      "section3_title": "3. Who do we share the data with?",
-      "section3_desc": "We do not sell your data. We only share it with essential technological providers:",
-      "provider_supabase": "Supabase: Database & authentication (Hosted in EU/AWS).",
-      "provider_resend": "Resend: Transactional email service.",
+      "data_account_desc": "Your name, email, and encrypted password when you register on the Dashboard.",
+      "section3_title": "3. Who do we share data with?",
+      "section3_desc": "We do not sell your data to anyone. We only share it with technological providers necessary for the service operation:",
+      "provider_supabase": "Supabase: Database and authentication (Hosted in the EU/AWS).",
+      "provider_resend": "Resend: Sending transactional emails.",
       "provider_google": "Google Cloud: API to process web audits.",
       "section4_title": "4. Your rights",
-      "section4_p1": "You have complete control over your data. You can:",
+      "section4_p1": "You have full control over your data. At any time you can:",
       "rights_list_1": "Access, rectify, or delete your data.",
       "rights_list_2": "Limit its processing.",
-      "rights_list_3": "Opt out of communications.",
+      "rights_list_3": "Object to receiving communications.",
       "rights_list_4": "Request data portability.",
-      "rights_contact": "To exercise your rights, email <strong>info@digitaistudios.com</strong>."
+      "rights_contact": "To exercise them, send an email to <strong>info@digitaistudios.com</strong>."
     },
     "cookies": {
       "title": "Cookie Policy",
-      "subtitle": "We use cookies to ensure correct website operation and understand how to improve it. Here are the details.",
+      "subtitle": "We use cookies to ensure the website works correctly and to understand how we can improve it. Here are all the details.",
       "section1_title": "1. What are Cookies?",
-      "section1_quote": "A cookie is a small text file stored in your browser when you visit most websites. Its purpose is to remember your visit, keep your session open, or save your preferences.",
+      "section1_quote": "A cookie is a small text file stored in your browser when you visit almost any website. Its utility is for the website to remember your visit when you return to browse that page, or keep your session open.",
       "section2_title": "2. What cookies do we use?",
-      "section2_p1": "This site uses the following types of cookies:",
+      "section2_p1": "This website uses the following types of cookies:",
       "tech_title": "Necessary (Technical)",
-      "tech_desc": "Essential for the site to work. Without them, you cannot log in or browse correctly.",
+      "tech_desc": "They are essential for the website's functioning. Without them, you could not log in or browse correctly.",
       "tech_1": "Supabase Auth: Manages secure session.",
-      "tech_2": "Next-Intl: Remembers language preference.",
+      "tech_2": "Next-Intl: Remembers preferred language.",
       "analytics_title": "Analytics",
-      "analytics_desc": "Allow us to measure user count and analyze usage to improve the service.",
-      "analytics_1": "In-house Analytics: Anonymous stats respecting privacy (no invasive Google tracking).",
+      "analytics_desc": "They allow us to quantify the number of users and analyze their use of the service to improve it.",
+      "analytics_1": "Proprietary Analytics: Anonymous statistics respectful of privacy (without invasive Google tracking).",
       "section3_title": "3. How to disable them?",
-      "section3_p1": "You can allow, block, or delete cookies via your browser settings:"
+      "section3_p1": "You can allow, block, or delete cookies installed on your computer by configuring your browser options:"
     }
   },
   "LatestPosts": {
     "badge": "Logbook",
     "title_prefix": "Digital",
     "title_highlight": "Thoughts.",
-    "description": "Explore our learnings, technical tutorials, and reflections about the future of technology. Swipe the cards to discover more.",
+    "description": "Explore our learnings, technical tutorials, and reflections on the future of technology. Swipe the cards to discover more.",
     "read_by": "Read by <strong>2k+ developers</strong>",
     "cta": "View Full Index"
   },
@@ -517,7 +517,7 @@
       "success_msg": "We sent the ticket to your WhatsApp."
     },
     "dashboard_mockup": {
-      "col_todo": "TO DO",
+      "col_todo": "PENDING",
       "col_progress": "IN PROGRESS",
       "col_done": "DONE",
       "card_date": "Dec 12",
@@ -526,47 +526,47 @@
     },
     "iot": {
       "title": "IoT & Smart Spaces",
-      "description": "Merge the physical and digital worlds. Control access, lighting, and sensors in real time from your hand.",
+      "description": "Merge the physical world with the digital. Control access, lighting, and sensors in real-time, all from the palm of your hand.",
       "scanning_text": "VERIFYING ACCESS...",
       "access_granted": "DOOR OPEN"
     },
     "finance": {
-      "title": "Finance on Autopilot",
-      "description": "Eliminate human error. We automate invoicing, bank reconciliation, and recurring payments so money flows on its own.",
+      "title": "Finances on Autopilot",
+      "description": "Eliminate human error. We automate invoicing, bank reconciliation, and recurring collections so money flows on its own.",
       "total_balance": "Current Balance",
       "card_holder": "Account Holder"
     },
     "growth": {
       "title": "Business Intelligence & Growth",
-      "description": "Stop guessing and start knowing. Dashboards that turn raw data into profitable decisions.",
+      "description": "Stop guessing and start knowing. Dashboards that transform raw data into profitable decisions.",
       "active_users": "USERS NOW",
       "conversion_rate": "CONVERSION",
       "monthly_revenue": "MRR (Revenue)",
       "live_sales": "LIVE SALES"
     },
     "booking": {
-      "title": "Bookings & Clients 24/7",
-      "description": "Your virtual front desk that never sleeps. Appointment booking, WhatsApp reminders, and a CRM that automatically retains your clients.",
-      "chat_user_1": "Hi, I’d like to book a court.",
-      "chat_bot_1": "I have availability on Friday at 6 PM 🎾",
-      "chat_user_2": "Perfect, booked!",
-      "booking_confirmed": "Booking Confirmed",
+      "title": "Reservations & Clients 24/7",
+      "description": "Your virtual reception that never sleeps. Appointment system, WhatsApp reminders, and CRM that builds client loyalty automatically.",
+      "chat_user_1": "Hi, I want to book a court.",
+      "chat_bot_1": "I have a slot Friday at 6 PM 🎾",
+      "chat_user_2": "Perfect, taken!",
+      "booking_confirmed": "Reservation Confirmed",
       "status_idle": "Waiting for requests...",
       "new_message_label": "New Message",
-      "mock_user_name": "Joan Garcia",
+      "mock_user_name": "John Doe",
       "agent_name": "DigitAI Agent",
-      "status_processing": "Finding the best slot...",
+      "status_processing": "Finding best slot...",
       "status_confirmed": "CONFIRMED",
       "tag_auto": "AUTO",
       "month_short": "JAN",
       "month_year": "January 2025",
       "date_long": "Friday, 15 - 10:00 AM",
       "platform_whatsapp": "WhatsApp",
-      "new_booking": "New booking"
+      "new_booking": "New Reservation"
     },
     "tags": {
       "qr": "QR Access",
-      "domotics": "Home Automation",
+      "domotics": "Domotics",
       "sensors": "IoT Sensors",
       "remote": "Remote Control",
       "stripe": "Stripe Gateway",
@@ -579,21 +579,21 @@
       "crm": "Integrated CRM",
       "social": "Auto-Posting",
       "bi": "Business Intelligence",
-      "kpis": "Real-Time KPIs",
+      "kpis": "Real-time KPIs",
       "leads": "Lead Capture"
     }
   },
   "SolutionsSection": {
     "title_prefix": "Beyond a",
     "title_highlight": "Simple Website",
-    "description": "We build digital ecosystems that connect software, hardware, and artificial intelligence."
+    "description": "We create digital ecosystems that connect software, hardware, and artificial intelligence."
   },
   "Testimonials": {
-    "title_prefix": "Don’t take our word for it. Look at what we’ve",
+    "title_prefix": "Don't take our word for it. Look at what we've",
     "title_highlight": "Built",
-    "project_label": "Completed Project",
+    "project_label": "Project Realized",
     "mockups": {
-      "visit_web": "Visit Website",
+      "visit_web": "Visit Web",
       "view_app": "View App",
       "view_flow": "View Flow"
     }
@@ -601,7 +601,7 @@
   "Diary": {
     "empty_state": {
       "title": "You're all caught up!",
-      "description": "You've seen our featured articles. Want to see more content?",
+      "description": "You've seen our featured articles. Want to view more content?",
       "btn_reset": "Start over",
       "btn_view_all": "View All"
     }
