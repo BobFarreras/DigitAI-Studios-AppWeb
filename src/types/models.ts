@@ -178,12 +178,43 @@ export interface Booking {
   services?: { title: string; duration_minutes?: number } | null;
 }
 
-// 4. Blog (Client)
-export type BlogPostDTO = {
+
+export type PostStatus = 'draft' | 'published' | 'archived';
+
+export interface BlogPostDTO {
   id: string;
   slug: string;
   title: string;
+  description: string | null;
   content: string | null;
+  coverImage: string | null;
+  tags: string[];
+  date: string | null;
+  
+  // ✅ AFEGITS PERQUÈ EL REPOSITORI NO PETI
   published: boolean;
-  // ... altres camps necessaris per al CMS
-};
+  reviewed: boolean;
+  status?: PostStatus; 
+  
+  // Opcional: per social media
+  social_posts?: {
+    id: string;
+    platform: string;
+    status: string;
+    scheduledFor: string | null;
+  }[];
+
+  totalReactions?: number;
+}
+
+// Aquest és el model de Base de Dades (si el necessites per separat)
+export interface BlogPostDB {
+  id: string;
+  slug: string;
+  title: string;
+  description: string | null;
+  content_mdx: string | null;
+  cover_image: string | null; // 👈 A la DB es diu així
+  published_at: Date | null;
+  tags: string[];
+}
