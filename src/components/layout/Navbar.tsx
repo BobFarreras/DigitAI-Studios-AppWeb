@@ -84,12 +84,11 @@ export function Navbar({ user }: Props) {
                 - hover:drop-shadow-[...]: Crea la brillantor lila (#a855f7) al voltant de la silueta.
             */}
             <div className="relative h-8 w-32 transition-all duration-300 ease-in-out hover:scale-110 hover:drop-shadow-[0_0_15px_rgba(168,85,247,0.7)]">
-              <Image
+              {/* Utilitzem img normal per saltar-nos el processament de Next.js */}
+              <img
                 src="/images/logo.png"
                 alt="DigitAI Studios Logo"
-                fill
-                className="object-contain object-left"
-                priority
+                className="h-full w-auto object-contain object-left"
               />
             </div>
           </Link>
