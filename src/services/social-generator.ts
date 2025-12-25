@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 
 interface SocialContent {
   linkedin: { content: string };
@@ -12,12 +12,11 @@ export class SocialGeneratorService {
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) throw new Error("Manca la GEMINI_API_KEY al fitxer .env");
 
-    const genAI = new GoogleGenerativeAI(apiKey);
+    // 1. Inicialitzem amb la NOVA llibreria (igual que AIService)
+    const genAI = new GoogleGenAI({ apiKey });
     
-    const modelsToTry = [
-        
-        "gemini-flash-latest"        
-    ];
+    // Model que sabem que funciona bé amb JSON
+    const modelName = "gemini-2.5-flash"; 
 
     const prompt = `
       Ets un Expert en Copywriting persuasiu.
@@ -30,46 +29,58 @@ export class SocialGeneratorService {
       1. MÀXIM 3-4 FRASES per post. Sigues concís.
       2. No donis la solució final, només planteja el problema i promet la solució al link.
       3. Comença amb una pregunta o dada xocant.
-      4. Idioma: Català natiu.
-      5. NO posis el link (s'afegeix automàtic).
+      4. Idioma: CATALÀ.
+      5. NO posis el link (s'afegeix automàticament després).
 
       🎯 ESTRATÈGIA PER PLATAFORMA:
-      - LinkedIn: Professional però intrigant. "Estàs cometent aquest error?... T'expliquem com solucionar-ho."
-      - Facebook: Curiositat pura. "No us creureu el que hem descobert sobre..."
-      - Instagram: Frase curta i directa + Emojis + Hashtags.
+      - LinkedIn: Professional però intrigant.
+      - Facebook: Curiositat pura.
+      - Instagram: Frase curta + Emojis + Hashtags.
 
-      Retorna NOMÉS JSON:
-      {
-        "linkedin": { "content": "..." },
-        "facebook": { "content": "..." },
-        "instagram": { "content": "..." }
-      }
+      OUTPUT: Retorna JSON pur seguint l'esquema.
     `;
 
-    let lastError: unknown = null;
-
-    for (const modelName of modelsToTry) {
-        try {
-            console.log(`🤖 Intentant generar amb model: ${modelName}...`);
-            const model = genAI.getGenerativeModel({ model: modelName });
-            const result = await model.generateContent(prompt);
-            const response = await result.response;
-            let text = response.text();
-            text = text.replace(/```json/g, '').replace(/```/g, '').trim();
-            const jsonResponse: SocialContent = JSON.parse(text);
-            return jsonResponse; 
-
-        } catch (error: unknown) {
-            const errorMessage = error instanceof Error ? error.message : String(error);
-            console.warn(`⚠️ Model ${modelName} fallit: ${errorMessage}`);
-            lastError = error;
-        }
-    }
-
-    return {
-        linkedin: { content: `⚠️ Error IA. Article: ${title}.` },
-        facebook: { content: `⚠️ Error generació.` },
-        instagram: { content: `⚠️ Error IA.\n\n${title}` }
+    // 2. Definim l'esquema estricte (Així evitem errors de parseig)
+    const schema = {
+        type: "OBJECT",
+        properties: {
+            linkedin: { type: "OBJECT", properties: { content: { type: "STRING" } } },
+            facebook: { type: "OBJECT", properties: { content: { type: "STRING" } } },
+            instagram: { type: "OBJECT", properties: { content: { type: "STRING" } } }
+        },
+        required: ["linkedin", "facebook", "instagram"]
     };
+
+    try {
+        console.log(`🤖 Generant Social Media amb ${modelName}...`);
+
+        // 3. Crida a l'API amb la sintaxi nova
+        const response = await genAI.models.generateContent({
+            model: modelName,
+            contents: [{ role: "user", parts: [{ text: prompt }] }],
+            config: {
+                responseMimeType: "application/json",
+                responseSchema: schema,
+                temperature: 0.7
+            }
+        });
+
+        const text = response.text;
+        if (!text) throw new Error("Resposta buida de Gemini");
+
+        // 4. Retornem el JSON parsejat (ja validat per l'esquema)
+        return JSON.parse(text) as SocialContent;
+
+    } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        console.error(`⚠️ Error generant Social Content: ${errorMessage}`);
+        
+        // Fallback d'emergència
+        return {
+            linkedin: { content: `Nou article disponible: ${title}. Llegeix-lo ara!` },
+            facebook: { content: `No us perdeu el nostre nou post: ${title}.` },
+            instagram: { content: `Nou post! 🚀 ${title} #blog #novetat` }
+        };
+    }
   }
 }

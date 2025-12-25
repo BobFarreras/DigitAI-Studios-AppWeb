@@ -4,10 +4,10 @@ export interface I18nSchema {
     subtitle: string;
     cta: string;
     image_prompt: string;
-    image?: string; // Opcional perquè l'afegim després amb ImageService
+    image?: string;
   };
   about: {
-    badge: string; // 👈 Això arregla l'error 1
+    badge: string;
     title: string;
     description: string;
     image_prompt: string;
@@ -16,7 +16,7 @@ export interface I18nSchema {
       label1: string; value1: string;
       label2: string; value2: string;
       label3: string; value3: string;
-    } | Array<{ label: string; value: string }>; // Acceptem els dos formats
+    } | Array<{ label: string; value: string }>;
   };
   services: {
     badge: string;
@@ -26,6 +26,17 @@ export interface I18nSchema {
       title: string;
       description: string;
       icon_name?: string;
+    }>;
+  };
+  // 👇 AFEGEIX AIXÒ NOU
+  products?: {
+    badge: string;
+    title: string;
+    subtitle: string;
+    items: Array<{
+       name: string; // O title
+       price?: string;
+       image?: string;
     }>;
   };
   testimonials: {
@@ -40,12 +51,14 @@ export interface I18nSchema {
       avatar?: string;
     }>;
   };
+  // 👇 Assegura't que el generador crea això, o fes-ho opcional (?)
   cta_banner: {
     heading: string;
     subheading: string;
     buttonText: string;
     buttonLink?: string;
   };
+  // 👇 Idem amb FAQ
   faq: {
     title: string;
     subtitle: string;
@@ -56,7 +69,7 @@ export interface I18nSchema {
   };
   contact: {
     title: string;
-    description: string; // 👈 Això arregla l'error 2 (abans potser tenies subtitle)
+    description: string;
     button: string;
   };
 }

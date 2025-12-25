@@ -1,4 +1,5 @@
 // FITXER: scripts/test-factory-integration.ts
+// ESTAT: FASE 1 - SIMULACIÓ TOTAL
 // EXECUCIÓ: npx tsx scripts/test-factory-integration.ts
 
 import { InfrastructureService } from '../src/services/factory/InfrastrocutreService';
@@ -9,27 +10,95 @@ import { getSectorConfig } from '../src/types/sectors';
 import { createClient } from '@supabase/supabase-js';
 import dotenv from 'dotenv';
 
-// 1. Carreguem entorn
+// 1. Configuració d'Entorn
 dotenv.config({ path: '.env.local' });
 
-// 2. Client Supabase ADMIN
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
-// ✅ DEFINIM UN TIPUS PER ALS ERRORS D'API (GitHub/Vercel)
-// Això ens permet llegir 'response.data' sense usar 'any'
-interface ApiError {
-  message?: string;
-  response?: {
-    data?: unknown;
-    status?: number;
-  };
+if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+  throw new Error("❌ Falten les variables d'entorn de Supabase.");
 }
 
+const supabaseAdmin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_ROLE_KEY
+);
+
+// 2. Dades Estàtiques Estructurals (Skeleton)
+// Aquestes són les claus que el codi del Template NECESSITA sí o sí per funcionar.
+// La IA omplirà la resta (Hero, About, Services, etc.)
+const BASE_TRANSLATION_SKELETON = {
+    Navbar: {
+        links: {
+            home: "Inici",
+            services: "Serveis",
+            blog: "Blog",
+            shop: "Botiga",
+            contact: "Contacte",
+            about: "Nosaltres"
+        },
+        cta: "Accés Clients",
+        actions: {
+            login: "Entrar",
+            cart: "Cistella",
+            menu: "Menú"
+        }
+    },
+    Footer: {
+        description: "Transformem idees en realitats digitals.",
+        rights_reserved: "Tots els drets reservats.",
+        legal: {
+            privacy: "Privacitat",
+            cookies: "Cookies",
+            terms: "Termes i Condicions"
+        }
+    },
+    Booking: {
+        title: "Reserva la teva cita",
+        subtitle: "Selecciona el servei i l'hora que millor et vagi.",
+        steps: {
+            services: { title: "Serveis", select: "Seleccionar", duration: "min" },
+            datetime: { 
+                select_day_title: "Tria un dia", 
+                select_time_title: "Hores disponibles", 
+                loading: "Cercant disponibilitat...", 
+                back: "Enrere",
+                empty_state_day: "Selecciona un dia del calendari.",
+                empty_state_slots: "No hi ha hores per aquest dia."
+            },
+            form: { 
+                title: "Les teves dades", 
+                subtitle: "Gairebé ho tenim.", 
+                personal_info: "Informació Personal",
+                labels: { name: "Nom", email: "Email", phone: "Telèfon" }, 
+                submit: "Confirmar Reserva",
+                submitting: "Processant..."
+            },
+            success: { 
+                title: "Reserva Confirmada!", 
+                message: "T'hem enviat un correu amb els detalls.", 
+                home_button: "Tornar a l'inici" 
+            }
+        },
+        errors: { 
+            load_slots: "Error carregant horaris.", 
+            required_field: "Aquest camp és obligatori." 
+        }
+    },
+    Shop: {
+        featuredTitle: "Productes Destacats",
+        featuredSubtitle: "La nostra selecció exclusiva per a tu.",
+        addToCart: "Afegir",
+        outOfStock: "Esgotat"
+    },
+    Blog: {
+        title: "El Nostre Blog",
+        subtitle: "Notícies, consells i actualitzacions.",
+        readMore: "Llegir més",
+        empty: "No hi ha articles encara."
+    }
+};
+
 async function runIntegrationTest() {
-  console.log("🏭 INICIANT TEST D'INTEGRACIÓ REAL (E2E)");
+  console.log("🏭 [FASE 1] INICIANT SIMULACIÓ TOTAL DE LA FACTORY");
   console.log("------------------------------------------------");
 
   const infra = new InfrastructureService();
@@ -37,119 +106,113 @@ async function runIntegrationTest() {
   const ai = new AIService();
   const imageService = new ImageService();
 
-  // Dades de Prova
-  const TEST_DATA = {
+  // --- CONFIGURACIÓ DE L'ESCENARI DE TEST ---
+  const TEST_SCENARIO = {
     businessName: "Bistrot del Port",
-    description: "Cuina marinera fresca amb vistes al port de Palamós. Especialitat en arròs caldós.",
-    sector: "restaurant",
-    primaryColor: "#0ea5e9",
-    publicEmail: "hola@bistrotdelport.test",
+    description: "Restaurant de cuina marinera amb vistes al port de Palamós. Especialitat en arrossos i peix fresc.",
+    sector: "restaurant", // Això dispararà la IA per generar contingut de restaurant
+    primaryColor: "#0ea5e9", // Blau marí
+    publicEmail: "info@bistrotdelport.cat",
     layoutVariant: "modern" as const
   };
 
-  const slug = `test-bistrot-${Math.floor(Math.random() * 10000)}`;
+  // Generem un slug únic per no xocar amb tests anteriors
+  const slug = `test-bistrot-full-${Math.floor(Math.random() * 1000)}`;
 
   try {
-    // 0. OBTENIR UN USUARI REAL
+    // 1. Validar Usuari (Necessitem un owner per al tenant)
     const { data: users } = await supabaseAdmin.auth.admin.listUsers();
-    // Agafem el primer usuari que trobem o llancem error
     const testUser = users.users?.[0];
+    if (!testUser) throw new Error("❌ Error crític: No hi ha usuaris a Supabase.");
+    console.log(`👤 Owner del projecte: ${testUser.email}`);
 
-    if (!testUser) {
-      throw new Error("❌ No hi ha usuaris a Supabase. Crea'n un primer per fer el test.");
-    }
-    console.log(`👤 Simulant usuari: ${testUser.email} (${testUser.id})`);
+    // 2. Infraestructura (GitHub)
+    console.log(`\n🏗️ [1/5] Creant Repo GitHub: ${slug}...`);
+    const repoData = await infra.createRepository(slug, TEST_SCENARIO.description);
+    await infra.waitForRepoReady(slug);
+    console.log("   ✅ Repositori llest.");
 
-    // 1. INFRAESTRUCTURA
-    console.log(`\n🏗️ [1/5] Creant Repositori GitHub: ${slug}...`);
-    const repoData = await infra.createRepository(slug, TEST_DATA.description);
+    // 3. Generació de Contingut (IA + Fusionat)
+    console.log(`\n🧠 [2/5] Generant Contingut Intel·ligent...`);
+    // La IA genera Hero, About, Services, FAQ, CTA, Testimonials
+    const aiContent = await ai.generateTranslationFile(TEST_SCENARIO.businessName, TEST_SCENARIO.description, TEST_SCENARIO.sector);
+    
+    // FUSIÓ: Contingut IA + L'esquelet estructural (Navbar, Booking, etc.)
+    const finalContent = {
+        ...aiContent,          // Contingut creatiu (variable)
+        ...BASE_TRANSLATION_SKELETON // Contingut estructural (fix)
+    };
 
-    console.log("   ⏳ Esperant que el repo estigui llest...");
-    const isReady = await infra.waitForRepoReady(slug);
-    if (!isReady) throw new Error("GitHub Timeout");
-    console.log("   ✅ Repo actiu.");
+    // Enriquim amb imatges reals d'Unsplash
+    const enrichedContent = imageService.enrichWithImages(finalContent);
+    console.log("   ✅ Contingut generat, fusionat i amb imatges.");
 
-    // 2. INTEL·LIGÈNCIA ARTIFICIAL
-    console.log(`\n🧠 [2/5] Generant Contingut (Gemini + Unsplash)...`);
-    console.time("   ⏱️ Temps IA");
-    const rawContent = await ai.generateTranslationFile(TEST_DATA.businessName, TEST_DATA.description, TEST_DATA.sector);
-    const finalContent = imageService.enrichWithImages(rawContent);
-    console.timeEnd("   ⏱️ Temps IA");
-    console.log("   ✅ Contingut generat.");
+    // 4. Configuració del Lloc (Site Config)
+    console.log(`\n⚙️ [3/5] Configurant Mòduls...`);
+    const sectorConfig = getSectorConfig(TEST_SCENARIO.sector);
+    
+    // 🔥 FORCEM TOTS ELS MÒDULS A TRUE PER AL TEST COMPLET
+    const featuresForTest = {
+        booking: true,
+        ecommerce: true,
+        blog: true,
+        gallery: true,
+        faq: true
+    };
+    console.log("   ✅ Features actives:", JSON.stringify(featuresForTest));
 
-    // 3. LÒGICA DE NEGOCI
-    console.log(`\n⚙️ [3/5] Aplicant configuració de sector: ${TEST_DATA.sector}...`);
-    const sectorConfig = getSectorConfig(TEST_DATA.sector);
-    console.log(`   ✅ Features actives: ${JSON.stringify(sectorConfig.features)}`);
-
-    // 4. DATABASE
+    // 5. Base de Dades (Supabase Tenant)
     console.log(`\n🗄️ [4/5] Creant Tenant a Supabase...`);
     const { org } = await tenant.createTenantStructure({
-      businessName: TEST_DATA.businessName,
+      businessName: TEST_SCENARIO.businessName,
       slug: slug,
       repoUrl: repoData.html_url,
-      branding: { colors: { primary: TEST_DATA.primaryColor } },
+      branding: { colors: { primary: TEST_SCENARIO.primaryColor } },
       creatorUserId: testUser.id,
       creatorEmail: testUser.email!
     });
-    console.log(`   ✅ Organització creada: ${org.id}`);
 
-    // 5. INJECCIÓ DE CODI
+    // 6. Injecció de Fitxers (El moment de la veritat)
     console.log(`\n📦 [5/5] Injectant fitxers al Repositori...`);
 
     const filesToInject = {
-      // ✅ 1. Si al Template tens src/messages, aquí has de posar la ruta completa:
-      'src/messages/ca.json': JSON.stringify(finalContent, null, 2),
+      // 1. TRADUCCIONS: A src/messages (perquè el Template usa @/messages)
+      'src/messages/ca.json': JSON.stringify(enrichedContent, null, 2),
 
-      // ✅ 2. Aquest fitxer NO existeix al Template, però el creem ara mateix
-      // perquè el teu codi (lib/site-config.ts) l'espera dins de src/config.
+      // 2. CONFIGURACIÓ: A src/config (perquè el Template usa @/config)
       'src/config/site-config.json': JSON.stringify({
-        name: TEST_DATA.businessName,
-        description: finalContent.hero.subtitle,
+        name: TEST_SCENARIO.businessName, // 👈 AQUEST ÉS EL NOM QUE HA DE SORTIR AL NAVBAR
+        description: enrichedContent.hero.subtitle,
         sector: sectorConfig.key,
-        features: sectorConfig.features,
+        features: featuresForTest,
         theme: {
-          primary: TEST_DATA.primaryColor,
-          layout: TEST_DATA.layoutVariant
+          primary: TEST_SCENARIO.primaryColor,
+          layout: TEST_SCENARIO.layoutVariant
         },
         contact: {
-          email: TEST_DATA.publicEmail,
-          phone: "600 000 000",
-          address: "Port de Palamós, s/n"
+          email: TEST_SCENARIO.publicEmail,
+          phone: "+34 600 000 000",
+          address: "Palamós, Girona"
         }
       }, null, 2)
     };
 
     await infra.commitFiles(slug, filesToInject);
-    console.log("   ✅ Fitxers injectats correctament.");
+    console.log("   ✅ Injecció completada.");
 
-    // 6. DEPLOY
+    // 7. Deploy
     console.log(`\n🚀 [FINAL] Desplegant a Vercel...`);
     await infra.deployToVercel(slug, org.id, repoData.id);
 
     console.log("\n------------------------------------------------");
-    console.log("🎉 TEST D'INTEGRACIÓ COMPLETAT AMB ÈXIT!");
-    console.log(`🌍 Repo URL: ${repoData.html_url}`);
-    console.log(`🌐 Vercel URL: https://${slug}.vercel.app`);
+    console.log(`🌍 Repo: ${repoData.html_url}`);
+    console.log(`🌐 URL: https://${slug}.vercel.app`);
     console.log("------------------------------------------------\n");
 
-  } catch (error: unknown) {
-    // 🛠️ GESTIÓ D'ERRORS STRICT MODE (Sense 'any')
-    console.error("\n❌ ERROR EN EL TEST:");
-
-    // 1. Si és un error estàndard JS
-    if (error instanceof Error) {
-      console.error(`   Missatge: ${error.message}`);
-    }
-
-    // 2. Si és un error d'API (Octokit/Axios) amb resposta
-    const apiError = error as ApiError;
-    if (apiError.response?.data) {
-      console.error("   Detalls API:", JSON.stringify(apiError.response.data, null, 2));
-    } else if (!(error instanceof Error)) {
-      // Fallback per errors estranys (strings, objectes sense tipar)
-      console.error("   Detall desconegut:", String(error));
-    }
+  } catch (error) {
+    console.error("\n❌ ERROR FATAL DURANT EL TEST:");
+    if (error instanceof Error) console.error(error.message);
+    else console.error(error);
   }
 }
 

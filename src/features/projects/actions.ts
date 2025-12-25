@@ -2,12 +2,12 @@
 
 import { InfrastructureService } from '@/services/factory/InfrastrocutreService';
 import { TenantService } from '@/services/TenantService';
-import { AIService } from '@/services/AIService';       // ✅ Nou Servei IA
-import { ImageService } from '@/services/ImageService'; // ✅ Nou Servei Imatges
+import { AIService } from '@/services/AIService';
+import { ImageService } from '@/services/ImageService';
 import { createClient } from '@/lib/supabase/server';
 import { ActionResult } from '@/types/actions';
-import { getSectorConfig } from '@/types/sectors';      // ✅ Lògica de Sectors
-import { I18nSchema } from '@/types/i18n';              // ✅ Tipus Strict
+import { getSectorConfig } from '@/types/sectors';
+import { I18nSchema } from '@/types/i18n';
 
 // Instanciem els serveis
 const infra = new InfrastructureService();
@@ -21,6 +21,7 @@ export interface InviteState {
     message: string | null;
 }
 
+// --- ACCIÓ 1: INVITAR CLIENT ---
 export async function inviteClientAction(prevState: InviteState, formData: FormData): Promise<InviteState> {
     const email = formData.get('email') as string;
     const orgId = formData.get('orgId') as string;
@@ -39,18 +40,16 @@ export async function inviteClientAction(prevState: InviteState, formData: FormD
     }
 }
 
-
-
+// --- ACCIÓ 2: CREAR PROJECTE ---
 export async function createProjectAction(prevState: ActionResult | unknown, formData: FormData): Promise<ActionResult> {
-    // 1. EXTRACCIÓ DE DADES (Igual que tenies)
+    // 1. EXTRACCIÓ DE DADES
     const businessName = formData.get('businessName') as string;
     const slug = formData.get('slug') as string;
     const description = formData.get('description') as string;
     const primaryColor = formData.get('primaryColor') as string;
     const logoFile = formData.get('logo') as File;
     const layoutVariant = (formData.get('layoutVariant') as 'modern' | 'shop') || 'modern';
-    // Recuperem el sector (o 'General' per defecte)
-    const sector = (formData.get('sector') as string) || "General"; 
+    const sector = (formData.get('sector') as string) || "General";
 
     // Dades de contacte
     const publicEmail = formData.get('publicEmail') as string;
@@ -72,66 +71,113 @@ export async function createProjectAction(prevState: ActionResult | unknown, for
 
         if (!user || !user.email) return { success: false, error: "Sessió caducada." };
 
-        // 🏗️ 1. CREAR REPO (Això no canvia)
+        // 🏗️ 1. CREAR REPO
         const repoData = await infra.createRepository(slug, description);
         const isReady = await infra.waitForRepoReady(slug);
         if (!isReady) throw new Error("GitHub Timeout.");
 
-        // 🧠 2. GENERACIÓ DE CONTINGUT (NOVA LÒGICA)
+        // 🧠 2. GENERACIÓ DE CONTINGUT (AI + IMATGES)
         let finalContent: I18nSchema;
+
         try {
             console.log("🚀 [ACTION] Generant AI + Imatges...");
             // A. Textos (Gemini)
             const rawContent = await ai.generateTranslationFile(businessName, description, sector);
             // B. Imatges (Pollinations/Unsplash)
             finalContent = imageService.enrichWithImages(rawContent);
+
         } catch (e) {
-            console.error("⚠️ Error IA, usant fallback.", e);
-            // Fallback d'emergència per no aturar el procés
+            console.error("⚠️ Error IA, usant fallback complet.", e);
+            
+            // 🛡️ FALLBACK D'EMERGÈNCIA (Ha de complir TOTA la interfície I18nSchema)
             finalContent = {
-                hero: { title: businessName, subtitle: description, cta: "Contactar", image_prompt: "" },
-                about: { badge: "Info", title: "Sobre nosaltres", description: description, image_prompt: "", stats: { label1: "Exp", value1: "+1", label2: "", value2: "", label3: "", value3: "" } },
-                services: { badge: "Serveis", title: "Serveis", subtitle: "", items: [] },
-                testimonials: { badge: "Opinions", title: "Opinions", subtitle: "", reviews: [] },
-                contact: { title: "Contacte", subtitle: "", button: "Enviar" }
+                hero: {
+                    title: businessName,
+                    subtitle: description,
+                    cta: "Contactar",
+                    image_prompt: ""
+                },
+                about: {
+                    badge: "Info",
+                    title: "Sobre nosaltres",
+                    description: description,
+                    image_prompt: "",
+                    stats: { label1: "Exp", value1: "+1", label2: "Clients", value2: "+10", label3: "Servei", value3: "24/7" }
+                },
+                services: {
+                    badge: "Serveis",
+                    title: "Serveis",
+                    subtitle: "El que oferim",
+                    items: []
+                },
+                // ✅ Obligatori si tens 'shop' layout o està a l'Schema
+                products: {
+                    badge: "Botiga",
+                    title: "Productes Destacats",
+                    subtitle: "La nostra selecció",
+                    items: []
+                },
+                testimonials: {
+                    badge: "Opinions",
+                    title: "Opinions",
+                    subtitle: "El que diuen els clients",
+                    reviews: []
+                },
+                // ✅ Obligatori per complir Schema
+                cta_banner: {
+                    heading: "Impulsa el teu negoci",
+                    subheading: "Estem aquí per ajudar-te",
+                    buttonText: "Contactar"
+                },
+                // ✅ Obligatori per complir Schema
+                faq: {
+                    title: "Preguntes Freqüents",
+                    subtitle: "Dubtes habituals",
+                    items: []
+                },
+                contact: {
+                    title: "Contacte",
+                    // ✅ CORRECCIÓ: 'description' en comptes de 'subtitle'
+                    description: "Parlem-ne i impulsem el teu negoci.",
+                    button: "Enviar"
+                }
             };
         }
 
-        // 🧠 3. CONFIGURACIÓ DE SECTOR (NOVA LÒGICA)
+        // 🧠 3. CONFIGURACIÓ DE SECTOR
         const sectorConfig = getSectorConfig(sector);
 
-        // 🗄️ 4. DATABASE (Igual que tenies)
+        // 🗄️ 4. DATABASE (Tenant)
         const { org } = await tenant.createTenantStructure({
             businessName, slug, repoUrl: repoData.html_url,
             branding: { colors: { primary: primaryColor } },
             creatorUserId: user.id, creatorEmail: user.email
         });
 
-        // 📦 5. INJECCIÓ DE FITXERS (EL CANVI CLAU)
-        // En lloc d'injectConfig, preparem els fitxers físics
+        // 📦 5. INJECCIÓ DE FITXERS (JSONs)
         const filesToInject: Record<string, string> = {
             // Fitxer de traduccions
             'messages/ca.json': JSON.stringify(finalContent, null, 2),
-            
+
             // Fitxer de configuració
             'config/site-config.json': JSON.stringify({
                 name: businessName,
                 description: finalContent.hero.subtitle,
                 sector: sectorConfig.key,
-                features: sectorConfig.features, // ✅ Activa mòduls (booking, blog...) sol
+                features: sectorConfig.features,
                 theme: { primary: primaryColor, layout: layoutVariant },
                 contact: { email: publicEmail || user.email, phone, address, socials }
             }, null, 2)
         };
 
-        // Cridem al nou mètode que hem creat al Pas 1
+        // Commit a GitHub
         await infra.commitFiles(slug, filesToInject);
 
-        // 🚀 6. DEPLOY & ASSETS (Igual que tenies)
+        // 🚀 6. DEPLOY & ASSETS
         if (logoFile && logoFile.size > 0) {
             await infra.uploadLogo(slug, logoFile);
         }
-        
+
         await infra.deployToVercel(slug, org.id, repoData.id);
 
         return { success: true, repoUrl: repoData.html_url };
