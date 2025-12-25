@@ -1,11 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-// Ja no necessitem useRouter ni router.push!
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Loader2, Search, Globe } from 'lucide-react';
-import { createAuditAction } from '../../actions';
+import { Loader2, Search } from 'lucide-react'; // Treiem 'Globe' perquè posarem text
+import { createAuditAction } from '@/actions/audit'; 
 
 export function CreateAuditForm() {
   const [url, setUrl] = useState('');
@@ -17,38 +16,56 @@ export function CreateAuditForm() {
     setIsLoading(true);
     setError('');
 
-    // Cridem a l'acció.
-    // Si té èxit, l'acció farà redirect i aquesta funció s'aturarà aquí.
-    // Si falla, ens retornarà l'objecte amb l'error.
-    const result = await createAuditAction(url);
-    
-    // Si arribem a aquesta línia, vol dir que NO ha redirigit (per tant, hi ha hagut error)
-    if (result && !result.success) {
-        setError(result.message || 'Error desconegut');
-        setIsLoading(false); // Només parem loading si hi ha error
+    try {
+        const result = await createAuditAction(url);
+        
+        if (result && !result.success) {
+            setError(result.message || 'Error desconegut durant l\'auditoria.');
+            setIsLoading(false);
+        }
+    } catch (err) {
+        console.error("Error al formulari:", err);
+        setError("Error de connexió. Torna-ho a provar.");
+        setIsLoading(false);
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-2">
-         <label className="text-sm font-medium text-slate-300 ml-1">URL del Lloc Web</label>
-         <div className="relative">
-            <Globe className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
+         <label className="text-sm font-medium text-slate-700 dark:text-slate-300 ml-1">
+            URL del Lloc Web
+         </label>
+         
+         <div className="relative flex items-center">
+            {/* 1. PREFIX VISUAL (Igual que a la Landing) */}
+            <div className="absolute left-3 pointer-events-none select-none z-10 flex items-center">
+               <span className="text-sm font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-white/10 px-2 py-0.5 rounded border border-slate-200 dark:border-white/10">
+                 https://
+               </span>
+            </div>
+            
+            {/* 2. INPUT ADAPTAT */}
             <Input 
-               type="url" 
-               placeholder="https://exemple.com" 
+               type="text" // Canviem a 'text' perquè 'url' obligaria a escriure http://
+               placeholder="exemple.com" // Placeholder sense protocol
                value={url}
                onChange={(e) => setUrl(e.target.value)}
                required
-               disabled={isLoading} // Desactivem mentre carrega
-               className="pl-10 bg-white/5 border-white/10 text-white h-12 focus:border-primary focus:ring-primary placeholder:text-slate-600"
+               disabled={isLoading} 
+               // Padding esquerre gran (pl-24) per deixar lloc al prefix "https://"
+               className="pl-24 h-12 transition-colors
+                          bg-white dark:bg-white/5 
+                          border-slate-200 dark:border-white/10 
+                          text-slate-900 dark:text-white 
+                          placeholder:text-slate-400 dark:placeholder:text-slate-600
+                          focus:border-primary focus:ring-primary"
             />
          </div>
       </div>
 
       {error && (
-         <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm">
+         <div className="p-3 bg-red-50 border border-red-200 dark:bg-red-500/10 dark:border-red-500/20 rounded-lg text-red-600 dark:text-red-400 text-sm animate-in fade-in slide-in-from-top-1">
             {error}
          </div>
       )}
@@ -66,7 +83,7 @@ export function CreateAuditForm() {
       </Button>
       
       <p className="text-xs text-center text-slate-500">
-         L'anàlisi pot trigar entre 10 i 30 segons. Si us plau, no tanquis la pàgina.
+         L'anàlisi pot trigar entre 10 i 30 segons depenent de la velocitat de Google.
       </p>
     </form>
   );

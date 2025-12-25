@@ -1,22 +1,31 @@
 import { z } from 'zod';
 
-// 1. Canviem el nom a ContactFormSchema perquè coincideixi amb l'import
+// Definim els valors com a constants per evitar errors de tipus
+const SERVICE_VALUES = ['ia_automation', 'web_app'] as const;
+
 export const ContactFormSchema = z.object({
-  fullName: z.string().min(2, "Nom massa curt"),
-  email: z.string().email("Email invàlid"),
-  service: z.string().min(1, "Selecciona un servei"),
-  message: z.string().min(10, "Explica'ns una mica més"),
+  fullName: z.string().min(2, { message: "El nom és obligatori i ha de tenir almenys 2 lletres." }),
   
-  // 2. SOLUCIÓ ZOD: En lloc de z.literal amb params, usem refine
-  // Això accepta l'string "on" i dóna el missatge correcte si falla
-  privacy: z.string().refine((val) => val === "on", {
-    message: "Has d'acceptar la política de privacitat"
+  email: z.string().email({ message: "L'email no sembla vàlid." }),
+  
+  // Fem servir 'message' directe, que és el que demanava el teu TypeScript
+  service: z.enum(SERVICE_VALUES, {
+    message: "Has de seleccionar un servei de la llista."
+  }),
+  
+  message: z.string().min(10, { message: "Explica'ns una mica més (mínim 10 caràcters)." }),
+  
+  privacy: z.literal('on', {
+    message: "Has d'acceptar la política de privacitat."
   }),
 });
-// 1. Definició del tipus d'estat (UI)
+
+// Tipus inferits
+export type ContactFormData = z.infer<typeof ContactFormSchema>;
+
 export type FormState = {
   success: boolean;
-  message?: string;
+  message: string;
   errors?: {
     fullName?: string[];
     email?: string[];
@@ -25,4 +34,3 @@ export type FormState = {
     privacy?: string[];
   };
 };
-export type ContactFormData = z.infer<typeof ContactFormSchema>;

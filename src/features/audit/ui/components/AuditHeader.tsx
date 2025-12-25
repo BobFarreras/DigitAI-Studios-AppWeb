@@ -28,7 +28,7 @@ export function AuditHeader({ url, date, pdfData }: Props) {
           <ArrowLeft className="w-3 h-3" /> Tornar al Dashboard
         </Link>
         <h1 className="text-3xl md:text-4xl font-bold text-white tracking-tight truncate max-w-2xl">
-          Informe: <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-primary">{url}</span>
+          Informe: <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-400 to-primary">{url}</span>
         </h1>
         <p className="text-sm text-slate-500 mt-2 font-mono">
           ID: {date.getTime().toString(36).toUpperCase()} • Generat el {date.toLocaleDateString()}

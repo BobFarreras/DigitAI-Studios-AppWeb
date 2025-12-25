@@ -11,7 +11,7 @@ import {
   DropdownMenuItem, 
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu'; 
-import { Globe } from 'lucide-react';
+import { Languages } from 'lucide-react';
 import { startTransition } from 'react';
 
 // --- COMPONENTS SVG FLAGS (Disseny consistent 36x24) ---
@@ -102,7 +102,7 @@ export function LanguageSwitcher() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="rounded-full hover:bg-muted w-9 h-9">
-          <Globe className="w-5 h-5 text-muted-foreground" />
+          <Languages className="w-5 h-5 text-muted-foreground" />
           <span className="sr-only">Canviar idioma</span>
         </Button>
       </DropdownMenuTrigger>

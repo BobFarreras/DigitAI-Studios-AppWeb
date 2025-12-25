@@ -1,0 +1,83 @@
+{
+  "hero": {
+    "title": "Descobreixi l'Elegància de Viure a l'Eixample",
+    "subtitle": "A Finques Gaudí, seleccionem propietats que transcendeixen l'ordinari, oferint un estil de vida on la llum, l'espai i el disseny es fusionen en la seva llar ideal.",
+    "cta": "Veure Propietats Exclusives",
+    "image_prompt": "Luxury Eixample apartment living room, bright, high ceilings, large windows, modern classic interior design",
+    "image": "https://image.pollinations.ai/prompt/Luxury%20Eixample%20apartment%20living%20room%2C%20bright%2C%20high%20ceilings%2C%20large%20windows%2C%20modern%20classic%20interior%20design?width=1920&height=1080&nologo=true&model=flux"
+  },
+  "about": {
+    "title": "Finques Gaudí: La Seva Porta a l'Exclusivitat",
+    "description": "Amb una trajectòria consolidada en la gestió immobiliària de luxe a l'Eixample de Barcelona, Finques Gaudí es distingeix per una atenció personalitzada i un profund coneixement del mercat. No només gestionem propietats; creem connexions amb llars que inspiren, on cada detall reflecteix la sofisticació i el confort que vostè mereix. Els nostres espais oberts i la llum natural redefineixen el concepte de viure amb distinció.",
+    "image_prompt": "Elegant real estate office interior, modern, professional, warm lighting, architectural details",
+    "stats": {
+      "label1": "Anys d'Experiència",
+      "value1": "15+",
+      "label2": "Propietats Gestionades",
+      "value2": "500+",
+      "value3": "98%"
+    },
+    "badge": "La Nostra Essència",
+    "image": "https://image.pollinations.ai/prompt/Elegant%20real%20estate%20office%20interior%2C%20modern%2C%20professional%2C%20warm%20lighting%2C%20architectural%20details?width=800&height=600&nologo=true&model=flux"
+  },
+  "services": {
+    "items": [
+      {
+        "title": "Compra i Venda de Luxe",
+        "description": "Assessorem en la selecció i transacció de propietats d'alt standing, garantint discreció i excel·lència en cada pas.",
+        "icon_name": "home"
+      },
+      {
+        "title": "Lloguer de Propietats Exclusives",
+        "description": "Descobreixi la nostra acurada selecció d'apartaments i pisos de lloguer que defineixen el luxe i el confort a l'Eixample.",
+        "icon_name": "key"
+      },
+      {
+        "title": "Taxacions Precises i Professionals",
+        "description": "Oferim valoracions immobiliàries objectives i detallades, essencials per a decisions informades en el mercat de luxe.",
+        "icon_name": "chart-line"
+      },
+      {
+        "title": "Gestió Patrimonial Integral",
+        "description": "Optimitzem i protegim el seu patrimoni immobiliari amb solucions personalitzades i una gestió sense preocupacions.",
+        "icon_name": "wallet"
+      }
+    ],
+    "badge": "Els Nostres Serveis",
+    "subtitle": "Un Portfoli Dissenyat per a Vostè",
+    "title": "Experiències Immobiliàries Exclusives"
+  },
+  "testimonials": {
+    "reviews": [
+      {
+        "author": "Sra. Montserrat Puig",
+        "text": "Finques Gaudí va trobar la llar dels nostres somnis a l'Eixample. La seva atenció als detalls i la comprensió de les nostres necessitats van ser excepcionals. Recomano el seu servei exclusiu a qualsevol que busqui el millor.",
+        "avatar_gender": "female",
+        "role": "Inversora",
+        "avatar": "https://randomuser.me/api/portraits/women/20.jpg"
+      },
+      {
+        "author": "Sr. Jordi Vidal",
+        "text": "La gestió de la venda del nostre àtic va ser impecable. Professionalitat, discreció i un resultat que va superar les nostres expectatives. Finques Gaudí realment entén el mercat de luxe.",
+        "avatar_gender": "male",
+        "role": "Propietari",
+        "avatar": "https://randomuser.me/api/portraits/men/21.jpg"
+      },
+      {
+        "author": "Sra. Clara Soler",
+        "text": "Trobar un lloguer de luxe amb tanta facilitat i un servei tan personalitzat va ser una grata sorpresa. Gràcies a Finques Gaudí per fer el procés tan fluid i agradable.",
+        "avatar_gender": "female",
+        "role": "Inquilina de Luxe",
+        "avatar": "https://randomuser.me/api/portraits/women/22.jpg"
+      }
+    ],
+    "badge": "Opinions Exclusives",
+    "subtitle": "La Confiança dels Nostres Clients És la Nostra Millor Recomanació",
+    "title": "El Que Diuen Els Nostres Clients"
+  },
+  "contact": {
+    "title": "Comencem el Seu Pròxim Capítol de Luxe",
+    "button": "Contacti'ns Avui",
+    "subtitle": "Permeti'ns ajudar-lo a descobrir la seva propietat ideal o gestionar el seu patrimoni amb la màxima discreció i professionalitat. Un consultor personal l'espera."
+  }
+}

@@ -1,11 +1,12 @@
 'use client';
 
-import { useActionState } from 'react';
-import { processWebAudit } from '../actions';
+import { useActionState } from 'react'; // Next.js 15+ (si uses 14, canvia a useFormState)
+import { processWebAudit } from '@/actions/audit'; 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Search, Loader2, AlertCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { cn } from '@/lib/utils';
 
 export function AuditForm() {
   const [state, action, isPending] = useActionState(processWebAudit, { message: '', errors: {} });
@@ -21,14 +22,31 @@ export function AuditForm() {
         </h3>
         
         <form action={action} className="space-y-4">
+          
           <div className="space-y-1">
-            <Input 
-              name="url" 
-              placeholder={t('placeholder_url')} 
-              className="bg-white dark:bg-white/5 border-slate-200 dark:border-white/10 text-foreground h-12 focus:border-primary/50 placeholder:text-muted-foreground transition-all"
-            />
+            <div className="relative flex items-center group">
+              
+              {/* PREFIX VISUAL (No s'envia, només decora) */}
+              <div className="absolute left-3 flex items-center pointer-events-none select-none z-10">
+                <span className="text-muted-foreground text-sm font-medium bg-slate-100 dark:bg-white/10 px-2 py-1 rounded border border-border/50">
+                  https://
+                </span>
+              </div>
+
+              {/* INPUT REAL */}
+              <Input 
+                name="url" 
+                placeholder="digitaistudios.com" 
+                className={cn(
+                  "pl-20 bg-white dark:bg-white/5 border-slate-200 dark:border-white/10 text-foreground h-12 transition-all",
+                  "focus:border-primary/50 placeholder:text-muted-foreground",
+                  state.errors?.url && "border-red-500 focus:border-red-500"
+                )}
+              />
+            </div>
+
             {state.errors?.url && (
-              <p className="text-red-500 text-xs flex items-center gap-1 mt-1 ml-1">
+              <p className="text-red-500 text-xs flex items-center gap-1 mt-1 ml-1 animate-in slide-in-from-top-1">
                 <AlertCircle className="w-3 h-3" /> {state.errors.url[0]}
               </p>
             )}
@@ -38,10 +56,14 @@ export function AuditForm() {
             <Input 
               name="email" 
               placeholder={t('placeholder_email')} 
-              className="bg-white dark:bg-white/5 border-slate-200 dark:border-white/10 text-foreground h-12 focus:border-primary/50 placeholder:text-muted-foreground transition-all"
+              className={cn(
+                "bg-white dark:bg-white/5 border-slate-200 dark:border-white/10 text-foreground h-12 transition-all",
+                "focus:border-primary/50 placeholder:text-muted-foreground",
+                state.errors?.email && "border-red-500 focus:border-red-500"
+              )}
             />
             {state.errors?.email && (
-              <p className="text-red-500 text-xs flex items-center gap-1 mt-1 ml-1">
+              <p className="text-red-500 text-xs flex items-center gap-1 mt-1 ml-1 animate-in slide-in-from-top-1">
                 <AlertCircle className="w-3 h-3" /> {state.errors.email[0]}
               </p>
             )}
@@ -60,7 +82,10 @@ export function AuditForm() {
           </Button>
           
           {state.message && (
-            <p className="text-center text-muted-foreground text-sm mt-4 bg-muted/50 p-2 rounded-lg border border-border/50">
+            <p className={cn(
+              "text-center text-sm mt-4 p-2 rounded-lg border border-border/50",
+              state.errors && Object.keys(state.errors).length > 0 ? "bg-red-500/10 text-red-500" : "bg-green-500/10 text-green-500"
+            )}>
               {state.message}
             </p>
           )}

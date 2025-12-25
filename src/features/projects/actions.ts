@@ -1,16 +1,19 @@
 'use server';
 
-import { InfrastructureService } from '@/services/factory/InfrastrocutreService'; // Corregit typo
+import { InfrastructureService } from '@/services/factory/InfrastrocutreService';
 import { TenantService } from '@/services/TenantService';
-import { AIService, AIContentResult } from '@/services/AIService';
+import { AIService } from '@/services/AIService';       // ✅ Nou Servei IA
+import { ImageService } from '@/services/ImageService'; // ✅ Nou Servei Imatges
 import { createClient } from '@/lib/supabase/server';
 import { ActionResult } from '@/types/actions';
-import { MasterConfig, ConfigLandingSection } from '@/types/config';
+import { getSectorConfig } from '@/types/sectors';      // ✅ Lògica de Sectors
+import { I18nSchema } from '@/types/i18n';              // ✅ Tipus Strict
 
-// Instanciem els serveis (Singleton pattern implícit per mòdul)
+// Instanciem els serveis
 const infra = new InfrastructureService();
 const tenant = new TenantService();
 const ai = new AIService();
+const imageService = new ImageService();
 
 export interface InviteState {
     success: boolean;
@@ -36,180 +39,105 @@ export async function inviteClientAction(prevState: InviteState, formData: FormD
     }
 }
 
+
+
 export async function createProjectAction(prevState: ActionResult | unknown, formData: FormData): Promise<ActionResult> {
-    // 1. EXTRACCIÓ DE DADES DEL FORMULARI
+    // 1. EXTRACCIÓ DE DADES (Igual que tenies)
     const businessName = formData.get('businessName') as string;
     const slug = formData.get('slug') as string;
     const description = formData.get('description') as string;
     const primaryColor = formData.get('primaryColor') as string;
     const logoFile = formData.get('logo') as File;
     const layoutVariant = (formData.get('layoutVariant') as 'modern' | 'shop') || 'modern';
-    const sector = formData.get('sector') as string || "General"; // FASE 3
+    // Recuperem el sector (o 'General' per defecte)
+    const sector = (formData.get('sector') as string) || "General"; 
 
-    // Dades de Contacte (FASE 1)
+    // Dades de contacte
     const publicEmail = formData.get('publicEmail') as string;
     const phone = formData.get('phone') as string;
     const address = formData.get('address') as string;
-    const instagram = formData.get('instagram') as string;
-    const linkedin = formData.get('linkedin') as string;
-    const twitter = formData.get('twitter') as string;
+    const socials = {
+        instagram: formData.get('instagram') as string,
+        linkedin: formData.get('linkedin') as string,
+        twitter: formData.get('twitter') as string
+    };
 
-    // Gestió de Seccions amb Casting Segur
-    const landingSectionsRaw = formData.getAll('landing_sections') as string[];
-    const landingSections = landingSectionsRaw as ConfigLandingSection[];
-
-    // Validació bàsica
     if (!businessName || !slug) {
-        return { success: false, error: "Falten dades obligatòries (Nom o Slug)." };
+        return { success: false, error: "Falten dades obligatòries." };
     }
 
     try {
-        // 🔐 AUTH CHECK
         const supabase = await createClient();
         const { data: { user } } = await supabase.auth.getUser();
 
-        if (!user || !user.email) {
-            return { success: false, error: "Accés denegat: Has d'iniciar sessió." };
-        }
+        if (!user || !user.email) return { success: false, error: "Sessió caducada." };
 
-        // 🧠 FASE 3: GENERACIÓ DE CONTINGUT (IA)
-        let aiContent: AIContentResult;
+        // 🏗️ 1. CREAR REPO (Això no canvia)
+        const repoData = await infra.createRepository(slug, description);
+        const isReady = await infra.waitForRepoReady(slug);
+        if (!isReady) throw new Error("GitHub Timeout.");
+
+        // 🧠 2. GENERACIÓ DE CONTINGUT (NOVA LÒGICA)
+        let finalContent: I18nSchema;
         try {
-            console.log("🚀 [ACTION] Cridant AIService...");
-            aiContent = await ai.generateSiteContent(businessName, description, sector);
-
-            // LOG DE DEBUG 5: Què tenim abans d'injectar?
-            console.log("📦 [ACTION] Resultat final IA:", JSON.stringify(aiContent, null, 2));
-
+            console.log("🚀 [ACTION] Generant AI + Imatges...");
+            // A. Textos (Gemini)
+            const rawContent = await ai.generateTranslationFile(businessName, description, sector);
+            // B. Imatges (Pollinations/Unsplash)
+            finalContent = imageService.enrichWithImages(rawContent);
         } catch (e) {
-            console.error("⚠️ [ACTION] Error inesperat cridant AI:", e);
-            // Fallback d'emergència
-            aiContent = {
-                hero: { title: businessName, subtitle: description, cta: 'Contactar' },
-                about: { title: 'Sobre Nosaltres', description: description, stats: [] },
-                services_intro: { title: 'Els nostres serveis', subtitle: '', items: [] },
-                testimonials: { title: "Opinions", subtitle: "", items: [] }
+            console.error("⚠️ Error IA, usant fallback.", e);
+            // Fallback d'emergència per no aturar el procés
+            finalContent = {
+                hero: { title: businessName, subtitle: description, cta: "Contactar", image_prompt: "" },
+                about: { badge: "Info", title: "Sobre nosaltres", description: description, image_prompt: "", stats: { label1: "Exp", value1: "+1", label2: "", value2: "", label3: "", value3: "" } },
+                services: { badge: "Serveis", title: "Serveis", subtitle: "", items: [] },
+                testimonials: { badge: "Opinions", title: "Opinions", subtitle: "", reviews: [] },
+                contact: { title: "Contacte", subtitle: "", button: "Enviar" }
             };
         }
 
-        // 🏗️ INFRAESTRUCTURA (GitHub)
-        const repoData = await infra.createRepository(slug, description);
+        // 🧠 3. CONFIGURACIÓ DE SECTOR (NOVA LÒGICA)
+        const sectorConfig = getSectorConfig(sector);
 
-        // Esperem fins que el repo estigui llest (retry logic dins del servei)
-        const isReady = await infra.waitForRepoReady(slug);
-        if (!isReady) throw new Error("GitHub Timeout: El repo no s'ha creat a temps.");
+        // 🗄️ 4. DATABASE (Igual que tenies)
+        const { org } = await tenant.createTenantStructure({
+            businessName, slug, repoUrl: repoData.html_url,
+            branding: { colors: { primary: primaryColor } },
+            creatorUserId: user.id, creatorEmail: user.email
+        });
 
-        // FASE 2: Upload Logo
+        // 📦 5. INJECCIÓ DE FITXERS (EL CANVI CLAU)
+        // En lloc d'injectConfig, preparem els fitxers físics
+        const filesToInject: Record<string, string> = {
+            // Fitxer de traduccions
+            'messages/ca.json': JSON.stringify(finalContent, null, 2),
+            
+            // Fitxer de configuració
+            'config/site-config.json': JSON.stringify({
+                name: businessName,
+                description: finalContent.hero.subtitle,
+                sector: sectorConfig.key,
+                features: sectorConfig.features, // ✅ Activa mòduls (booking, blog...) sol
+                theme: { primary: primaryColor, layout: layoutVariant },
+                contact: { email: publicEmail || user.email, phone, address, socials }
+            }, null, 2)
+        };
+
+        // Cridem al nou mètode que hem creat al Pas 1
+        await infra.commitFiles(slug, filesToInject);
+
+        // 🚀 6. DEPLOY & ASSETS (Igual que tenies)
         if (logoFile && logoFile.size > 0) {
             await infra.uploadLogo(slug, logoFile);
         }
-
-        // 🗄️ DATABASE (Tenant)
-        const { org } = await tenant.createTenantStructure({
-            businessName,
-            slug,
-            repoUrl: repoData.html_url,
-            branding: { colors: { primary: primaryColor } },
-            creatorUserId: user.id,
-            creatorEmail: user.email
-        });
-
-        // 📝 CONSTRUCCIÓ DE L'OBJECTE CONFIG (Dades Reals)
-
-        // Preparem el Footer dinàmic
-        const footerLinks = [];
-        if (publicEmail) footerLinks.push({ label: publicEmail, href: `mailto:${publicEmail}` });
-        if (phone) footerLinks.push({ label: phone, href: `tel:${phone}` });
-        if (address) footerLinks.push({ label: "Ubicació", href: "/#map" });
-
-        const footerColumns = [];
-        if (footerLinks.length > 0) footerColumns.push({ title: "Contacte", links: footerLinks });
-
-        footerColumns.push({
-            title: "Empresa",
-            links: [
-                { label: "Sobre Nosaltres", href: "/#about" },
-                { label: "Serveis", href: "/#services" },
-                { label: "Avís Legal", href: "/legal" }
-            ]
-        });
-
-        const socialsMap: Record<string, string> = {};
-        if (instagram) socialsMap['instagram'] = instagram;
-        if (linkedin) socialsMap['linkedin'] = linkedin;
-        if (twitter) socialsMap['twitter'] = twitter;
-
-        // Construïm la configuració final
-        const config: MasterConfig = {
-            organizationId: org.id,
-            identity: {
-                name: businessName,
-                description: aiContent.hero!.subtitle || description,
-                logoUrl: "/branding/logo.png", // FASE 2: Ruta fixa estàndard
-                faviconUrl: "/favicon.ico",
-                contactEmail: publicEmail || user.email,
-                address: address || undefined
-            },
-            branding: {
-                colors: {
-                    primary: primaryColor,
-                    secondary: "#10b981",
-                    background: "#ffffff",
-                    foreground: "#0f172a"
-                },
-                radius: 0.5
-            },
-            // FASE 3: Injectem contingut IA
-            content: {
-                hero: aiContent.hero,
-                about: aiContent.about,
-                services_intro: aiContent.services_intro,
-                testimonials: aiContent.testimonials // ✅ AFEGIT: Injectem els testimonis
-            },
-            modules: {
-                layout: { variant: layoutVariant, stickyHeader: true },
-                landing: {
-                    active: true,
-                    sections: landingSections.length > 0 ? landingSections : ['hero', 'services', 'contact']
-                },
-                auth: {
-                    active: true,
-                    allowPublicRegistration: false,
-                    redirects: { admin: '/dashboard', client: '/my-account' }
-                },
-                dashboard: true,
-                booking: formData.get('module_booking') === 'on',
-                blog: formData.get('module_blog') === 'on',
-                inventory: formData.get('module_inventory') === 'on',
-                ecommerce: formData.get('module_ecommerce') === 'on',
-                accessControl: true,
-                chatbot: formData.get('module_chatbot') === 'on',
-            },
-            i18n: { locales: ['ca', 'es'], defaultLocale: 'ca' },
-            footer: {
-                columns: footerColumns,
-                socials: Object.keys(socialsMap).length > 0 ? socialsMap : undefined,
-                bottomText: `© ${new Date().getFullYear()} ${businessName}. Tots els drets reservats.`
-            }
-        };
-
-        // 💉 INJECCIÓ DE CONFIGURACIÓ AL REPO
-        await infra.injectConfig(slug, config);
-
-        // 🚀 DESPLEGAMENT A VERCEL
+        
         await infra.deployToVercel(slug, org.id, repoData.id);
 
         return { success: true, repoUrl: repoData.html_url };
 
     } catch (error: unknown) {
         console.error("❌ Action Error:", error);
-        let errorMessage = 'Error desconegut';
-        if (error instanceof Error) errorMessage = error.message;
-
-        return {
-            success: false,
-            error: errorMessage,
-            fields: { businessName, slug, description, primaryColor }
-        };
+        return { success: false, error: error instanceof Error ? error.message : "Error desconegut" };
     }
 }
