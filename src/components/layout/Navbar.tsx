@@ -4,15 +4,16 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { Zap, ChevronDown } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
+import Image from 'next/image';
 
 // COMPONENTS
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { LanguageSwitcher } from './LanguageSwitcher';
-import { UserNav } from './UserNav'; // 👈 El nou component
-import { PublicMobileNav } from './PublicMobilNav'; // 👈 El nou component
+import { UserNav } from './UserNav';
+import { PublicMobileNav } from './PublicMobilNav';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,7 +24,8 @@ import {
 type Props = {
   user: SupabaseUser | null;
 };
-// Definim els links del Dropdown (Pots moure això fora del component o dins)
+
+// Definim els links del Dropdown
 const DROPDOWN_LINKS = [
   { href: '/#solutions', label: 'Solucions Tecnològiques' },
   { href: '/#services', label: 'Serveis & Packs' },
@@ -32,6 +34,7 @@ const DROPDOWN_LINKS = [
   { href: '/#testimonials', label: "Casos d'Èxit" },
   { href: '/#contact', label: 'Contacte' }
 ];
+
 export function Navbar({ user }: Props) {
   const t = useTranslations('Navbar');
   const [isScrolled, setIsScrolled] = useState(false);
@@ -44,10 +47,8 @@ export function Navbar({ user }: Props) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-
   const handleScrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    // Només intervenim si estem a la home i és un enllaç amb àncora
-    const isHomePage = pathname === '/' || pathname === '/ca' || pathname === '/es' || pathname === '/en' || pathname === '/it';
+    const isHomePage = ['/', '/ca', '/es', '/en', '/it'].includes(pathname);
 
     if (isHomePage && href.includes('#')) {
       e.preventDefault();
@@ -58,12 +59,11 @@ export function Navbar({ user }: Props) {
         const elementPosition = element.getBoundingClientRect().top;
         const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
         window.scrollTo({ top: offsetPosition, behavior: "smooth" });
-
-        // Actualitzem la URL sense recarregar per si l'usuari fa refresh
         window.history.pushState(null, '', href);
       }
     }
   };
+
   return (
     <>
       <header
@@ -76,12 +76,22 @@ export function Navbar({ user }: Props) {
       >
         <div className="container mx-auto px-4 flex items-center justify-between">
 
-          {/* 1. LOGO DE MARCA */}
-          <Link href="/" className="text-xl md:text-2xl font-bold tracking-tight z-50 flex items-center gap-2 group">
-            <span className="bg-primary/10 p-1.5 rounded-lg md:hidden group-hover:bg-primary/20 transition-colors">
-              <Zap className="w-5 h-5 text-primary" />
-            </span>
-            <span>DigitAI <span className="gradient-text">Studios</span></span>
+          {/* 1. LOGO DE MARCA - AMB EFECTE "VIU" */}
+          <Link href="/" className="flex items-center space-x-2">
+            {/* MODIFICACIÓ AQUÍ:
+                - transition-all duration-300: Suavitat en l'animació.
+                - hover:scale-110: Es fa un 10% més gran.
+                - hover:drop-shadow-[...]: Crea la brillantor lila (#a855f7) al voltant de la silueta.
+            */}
+            <div className="relative h-8 w-32 transition-all duration-300 ease-in-out hover:scale-110 hover:drop-shadow-[0_0_15px_rgba(168,85,247,0.7)]">
+              <Image
+                src="/images/logo.png"
+                alt="DigitAI Studios Logo"
+                fill
+                className="object-contain object-left"
+                priority
+              />
+            </div>
           </Link>
 
           {/* 2. MENU ESCRIPTORI CENTRAL */}
@@ -102,7 +112,6 @@ export function Navbar({ user }: Props) {
                   <DropdownMenuItem key={link.href} asChild>
                     <Link
                       href={link.href}
-                      // Afegim l'event onClick per fer scroll suau si ja estem a la home
                       onClick={(e) => handleScrollToSection(e, link.href)}
                       className="cursor-pointer font-medium text-sm py-2.5 px-3 rounded-md hover:bg-primary/10 hover:text-primary transition-colors block w-full"
                     >
@@ -143,7 +152,7 @@ export function Navbar({ user }: Props) {
         </div>
       </header>
 
-      {/* 4. BARRA DE NAVEGACIÓ MÒBIL (Component Separat) */}
+      {/* 4. BARRA DE NAVEGACIÓ MÒBIL */}
       <PublicMobileNav user={user} />
     </>
   );

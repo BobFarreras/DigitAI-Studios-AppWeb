@@ -1,5 +1,5 @@
 
-\restrict B3iEwaYtcnLAmChn0d85XCpKeDSoaWAn3fnHIkjVoqlPjb7oKcvy6XdEMj3xNLq
+\restrict 2hnPJ96BeW9kUXNt7prp3avMiWhnxVRqjcFQXjrfl6Ii1Uwb0m3LZZEuegEWzoL
 
 
 SET statement_timeout = 0;
@@ -64,6 +64,28 @@ CREATE TYPE "public"."project_status" AS ENUM (
 
 
 ALTER TYPE "public"."project_status" OWNER TO "postgres";
+
+
+CREATE TYPE "public"."social_platform" AS ENUM (
+    'linkedin',
+    'facebook',
+    'instagram'
+);
+
+
+ALTER TYPE "public"."social_platform" OWNER TO "postgres";
+
+
+CREATE TYPE "public"."social_status" AS ENUM (
+    'draft',
+    'approved',
+    'scheduled',
+    'published',
+    'failed'
+);
+
+
+ALTER TYPE "public"."social_status" OWNER TO "postgres";
 
 
 CREATE TYPE "public"."user_role" AS ENUM (
@@ -174,6 +196,16 @@ $$;
 
 
 ALTER FUNCTION "public"."get_analytics_referrers"("date_from" timestamp without time zone) OWNER TO "postgres";
+
+
+CREATE OR REPLACE FUNCTION "public"."get_auth_org_id"() RETURNS "uuid"
+    LANGUAGE "sql" STABLE SECURITY DEFINER
+    AS $$
+  SELECT organization_id FROM public.profiles WHERE id = auth.uid();
+$$;
+
+
+ALTER FUNCTION "public"."get_auth_org_id"() OWNER TO "postgres";
 
 
 CREATE OR REPLACE FUNCTION "public"."get_my_org_ids"() RETURNS SETOF "uuid"
@@ -586,6 +618,45 @@ CREATE TABLE IF NOT EXISTS "public"."services" (
 ALTER TABLE "public"."services" OWNER TO "postgres";
 
 
+CREATE TABLE IF NOT EXISTS "public"."social_connections" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "organization_id" "uuid",
+    "user_id" "uuid",
+    "provider" "text" NOT NULL,
+    "access_token" "text" NOT NULL,
+    "refresh_token" "text",
+    "expires_at" bigint,
+    "provider_account_id" "text",
+    "provider_page_id" "text",
+    "provider_page_name" "text",
+    "provider_avatar_url" "text",
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL
+);
+
+
+ALTER TABLE "public"."social_connections" OWNER TO "postgres";
+
+
+CREATE TABLE IF NOT EXISTS "public"."social_posts" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "post_id" "uuid" NOT NULL,
+    "platform" "public"."social_platform" NOT NULL,
+    "content" "text" NOT NULL,
+    "media_url" "text",
+    "external_id" "text",
+    "error_message" "text",
+    "scheduled_at" timestamp with time zone,
+    "published_at" timestamp with time zone,
+    "status" "public"."social_status" DEFAULT 'draft'::"public"."social_status" NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL
+);
+
+
+ALTER TABLE "public"."social_posts" OWNER TO "postgres";
+
+
 CREATE TABLE IF NOT EXISTS "public"."test_assignments" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "campaign_id" "uuid" NOT NULL,
@@ -778,6 +849,21 @@ ALTER TABLE ONLY "public"."services"
 
 
 
+ALTER TABLE ONLY "public"."social_connections"
+    ADD CONSTRAINT "social_connections_organization_id_provider_provider_page_i_key" UNIQUE ("organization_id", "provider", "provider_page_id");
+
+
+
+ALTER TABLE ONLY "public"."social_connections"
+    ADD CONSTRAINT "social_connections_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."social_posts"
+    ADD CONSTRAINT "social_posts_pkey" PRIMARY KEY ("id");
+
+
+
 ALTER TABLE ONLY "public"."test_assignments"
     ADD CONSTRAINT "test_assignments_campaign_id_user_id_key" UNIQUE ("campaign_id", "user_id");
 
@@ -849,11 +935,31 @@ CREATE UNIQUE INDEX "idx_mv_top_pages" ON "public"."mv_analytics_top_pages" USIN
 
 
 
+CREATE INDEX "idx_posts_created_at" ON "public"."posts" USING "btree" ("created_at" DESC);
+
+
+
 CREATE INDEX "idx_posts_org" ON "public"."posts" USING "btree" ("organization_id");
 
 
 
+CREATE INDEX "idx_posts_org_id" ON "public"."posts" USING "btree" ("organization_id");
+
+
+
+CREATE INDEX "idx_posts_published_at" ON "public"."posts" USING "btree" ("published_at" DESC);
+
+
+
+CREATE INDEX "idx_posts_slug" ON "public"."posts" USING "btree" ("slug");
+
+
+
 CREATE INDEX "idx_services_org" ON "public"."services" USING "btree" ("organization_id");
+
+
+
+CREATE INDEX "idx_social_connections_org" ON "public"."social_connections" USING "btree" ("organization_id");
 
 
 
@@ -862,6 +968,14 @@ CREATE INDEX "idx_web_audits_email" ON "public"."web_audits" USING "btree" ("ema
 
 
 CREATE INDEX "idx_web_audits_user_id" ON "public"."web_audits" USING "btree" ("user_id");
+
+
+
+CREATE INDEX "social_posts_post_id_idx" ON "public"."social_posts" USING "btree" ("post_id");
+
+
+
+CREATE INDEX "social_posts_status_idx" ON "public"."social_posts" USING "btree" ("status");
 
 
 
@@ -970,6 +1084,21 @@ ALTER TABLE ONLY "public"."services"
 
 
 
+ALTER TABLE ONLY "public"."social_connections"
+    ADD CONSTRAINT "social_connections_organization_id_fkey" FOREIGN KEY ("organization_id") REFERENCES "public"."organizations"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."social_connections"
+    ADD CONSTRAINT "social_connections_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "auth"."users"("id");
+
+
+
+ALTER TABLE ONLY "public"."social_posts"
+    ADD CONSTRAINT "social_posts_post_id_fkey" FOREIGN KEY ("post_id") REFERENCES "public"."posts"("id") ON DELETE CASCADE;
+
+
+
 ALTER TABLE ONLY "public"."test_assignments"
     ADD CONSTRAINT "test_assignments_campaign_id_fkey" FOREIGN KEY ("campaign_id") REFERENCES "public"."test_campaigns"("id") ON DELETE CASCADE;
 
@@ -1030,6 +1159,10 @@ CREATE POLICY "Admins can manage all projects" ON "public"."projects" USING (("p
 
 
 
+CREATE POLICY "Admins can manage social posts" ON "public"."social_posts" TO "authenticated" USING (("public"."is_admin"() = true));
+
+
+
 CREATE POLICY "Admins can update products" ON "public"."products" FOR UPDATE USING ((EXISTS ( SELECT 1
    FROM "public"."profiles"
   WHERE (("profiles"."id" = "auth"."uid"()) AND ("profiles"."role" = 'admin'::"public"."user_role") AND ("profiles"."organization_id" = "products"."organization_id")))));
@@ -1048,6 +1181,10 @@ CREATE POLICY "Admins manage assignments" ON "public"."test_assignments" USING (
 
 
 
+CREATE POLICY "Admins manage connections" ON "public"."social_connections" USING (("public"."is_admin"() = true));
+
+
+
 CREATE POLICY "Admins manage project members" ON "public"."project_members" USING ("public"."is_admin"());
 
 
@@ -1056,11 +1193,23 @@ CREATE POLICY "Delete own reaction" ON "public"."post_reactions" FOR DELETE USIN
 
 
 
+CREATE POLICY "Enable delete for authenticated users only" ON "public"."contact_leads" FOR DELETE TO "authenticated" USING (true);
+
+
+
 CREATE POLICY "Enable insert for everyone" ON "public"."contact_leads" FOR INSERT WITH CHECK (true);
 
 
 
 CREATE POLICY "Enable insert for visitors" ON "public"."analytics_visitors" FOR INSERT WITH CHECK (true);
+
+
+
+CREATE POLICY "Enable read access for ADMIN only" ON "public"."contact_leads" FOR SELECT TO "authenticated" USING (("auth"."email"() = 'info@digitaistudios.com'::"text"));
+
+
+
+CREATE POLICY "Enable read access for authenticated users only" ON "public"."contact_leads" FOR SELECT TO "authenticated" USING (true);
 
 
 
@@ -1073,6 +1222,10 @@ CREATE POLICY "Enable select for admins only" ON "public"."analytics_events" FOR
 
 
 CREATE POLICY "Manage own results" ON "public"."test_results" USING (("auth"."uid"() = "user_id"));
+
+
+
+CREATE POLICY "Org members can view colleagues" ON "public"."profiles" FOR SELECT USING (("organization_id" = "public"."get_auth_org_id"()));
 
 
 
@@ -1138,21 +1291,15 @@ CREATE POLICY "RLS: Org admins view bookings" ON "public"."bookings" FOR SELECT 
 
 
 
-CREATE POLICY "RLS: Org members can view their organization profiles" ON "public"."profiles" FOR SELECT USING ((("auth"."uid"() = "id") OR ("organization_id" IN ( SELECT "profiles_1"."organization_id"
-   FROM "public"."profiles" "profiles_1"
-  WHERE ("profiles_1"."id" = "auth"."uid"())))));
-
-
-
-CREATE POLICY "RLS: Users can update own profile" ON "public"."profiles" FOR UPDATE USING (("auth"."uid"() = "id")) WITH CHECK (("auth"."uid"() = "id"));
-
-
-
 CREATE POLICY "Read tasks" ON "public"."test_tasks" FOR SELECT USING (true);
 
 
 
 CREATE POLICY "Users can insert their own audits" ON "public"."web_audits" FOR INSERT WITH CHECK (("auth"."uid"() = "user_id"));
+
+
+
+CREATE POLICY "Users can manage own profile" ON "public"."profiles" USING (("auth"."uid"() = "id"));
 
 
 
@@ -1256,6 +1403,12 @@ ALTER TABLE "public"."schedules" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "public"."services" ENABLE ROW LEVEL SECURITY;
 
 
+ALTER TABLE "public"."social_connections" ENABLE ROW LEVEL SECURITY;
+
+
+ALTER TABLE "public"."social_posts" ENABLE ROW LEVEL SECURITY;
+
+
 ALTER TABLE "public"."test_assignments" ENABLE ROW LEVEL SECURITY;
 
 
@@ -1311,6 +1464,12 @@ GRANT ALL ON FUNCTION "public"."get_analytics_os"("date_from" timestamp without 
 GRANT ALL ON FUNCTION "public"."get_analytics_referrers"("date_from" timestamp without time zone) TO "anon";
 GRANT ALL ON FUNCTION "public"."get_analytics_referrers"("date_from" timestamp without time zone) TO "authenticated";
 GRANT ALL ON FUNCTION "public"."get_analytics_referrers"("date_from" timestamp without time zone) TO "service_role";
+
+
+
+GRANT ALL ON FUNCTION "public"."get_auth_org_id"() TO "anon";
+GRANT ALL ON FUNCTION "public"."get_auth_org_id"() TO "authenticated";
+GRANT ALL ON FUNCTION "public"."get_auth_org_id"() TO "service_role";
 
 
 
@@ -1452,6 +1611,18 @@ GRANT ALL ON TABLE "public"."services" TO "service_role";
 
 
 
+GRANT ALL ON TABLE "public"."social_connections" TO "anon";
+GRANT ALL ON TABLE "public"."social_connections" TO "authenticated";
+GRANT ALL ON TABLE "public"."social_connections" TO "service_role";
+
+
+
+GRANT ALL ON TABLE "public"."social_posts" TO "anon";
+GRANT ALL ON TABLE "public"."social_posts" TO "authenticated";
+GRANT ALL ON TABLE "public"."social_posts" TO "service_role";
+
+
+
 GRANT ALL ON TABLE "public"."test_assignments" TO "anon";
 GRANT ALL ON TABLE "public"."test_assignments" TO "authenticated";
 GRANT ALL ON TABLE "public"."test_assignments" TO "service_role";
@@ -1518,6 +1689,6 @@ ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public" GRANT ALL ON TAB
 
 
 
-\unrestrict B3iEwaYtcnLAmChn0d85XCpKeDSoaWAn3fnHIkjVoqlPjb7oKcvy6XdEMj3xNLq
+\unrestrict 2hnPJ96BeW9kUXNt7prp3avMiWhnxVRqjcFQXjrfl6Ii1Uwb0m3LZZEuegEWzoL
 
 RESET ALL;
