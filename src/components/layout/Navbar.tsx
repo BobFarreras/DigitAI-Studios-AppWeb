@@ -8,6 +8,7 @@ import { ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
 import Image from 'next/image';
+import logo from '@/assets/images/digitai-logo.png';
 
 // COMPONENTS
 import { ThemeToggle } from "@/components/ui/theme-toggle";
@@ -84,11 +85,12 @@ export function Navbar({ user }: Props) {
                 - hover:drop-shadow-[...]: Crea la brillantor lila (#a855f7) al voltant de la silueta.
             */}
             <div className="relative h-8 w-32 transition-all duration-300 ease-in-out hover:scale-110 hover:drop-shadow-[0_0_15px_rgba(168,85,247,0.7)]">
-              {/* Utilitzem img normal per saltar-nos el processament de Next.js */}
-              <img
-                src="/images/logo.png"
+              <Image
+                src={logo}
                 alt="DigitAI Studios Logo"
-                className="h-full w-auto object-contain object-left"
+                fill
+                className="object-contain object-left"
+                priority
               />
             </div>
           </Link>
