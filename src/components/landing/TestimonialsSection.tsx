@@ -52,7 +52,7 @@ export function TestimonialsSection({ testimonials }: Props) {
            <div className="max-w-2xl">
               <h2 className="text-3xl lg:text-5xl font-bold text-foreground leading-tight">
                 {t('title_prefix')} <br/>
-                <span className="gradient-text">{t('title_highlight')}</span>.
+               <span className="text-transparent bg-clip-text bg-linear-to-r from-primary to-purple-500 pb-2">{t('title_highlight')}</span>.
               </h2>
            </div>
 
@@ -76,7 +76,7 @@ export function TestimonialsSection({ testimonials }: Props) {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -50 }}
                 transition={{ duration: 0.4, ease: "easeInOut" }}
-                className="h-[450px] perspective-1000"
+                className="h-112.5 perspective-1000"
               >
                  <TestimonialCard item={item} />
               </motion.div>
@@ -104,7 +104,7 @@ function TestimonialCard({ item }: { item: Testimonial }) {
             </div>
          </div>
 
-         <div className="absolute bottom-0 left-0 right-0 h-[280px] bg-card border border-border rounded-2xl p-8 shadow-xl z-10 transition-transform duration-500 group-hover:translate-y-6 flex flex-col">
+         <div className="absolute bottom-0 left-0 right-0 h-70 bg-card border border-border rounded-2xl p-8 shadow-xl z-10 transition-transform duration-500 group-hover:translate-y-6 flex flex-col">
             <Quote className="absolute top-6 right-6 text-primary/10 w-12 h-12 rotate-180" />
 
             <div className="flex items-center gap-3 mb-4">

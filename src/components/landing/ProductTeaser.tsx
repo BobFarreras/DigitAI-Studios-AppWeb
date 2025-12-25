@@ -19,15 +19,13 @@ export function ProductTeaser() {
 
             <div className="rounded-3xl bg-linear-to-br from-slate-50 via-white to-blue-50 dark:from-primary/10 dark:via-background dark:to-background border border-slate-200 dark:border-primary/20 p-8 md:p-12 overflow-hidden relative transition-colors duration-300 shadow-2xl shadow-slate-200/50 dark:shadow-none">
 
-                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-400/20 dark:bg-primary/20 blur-[100px] rounded-full opacity-40 pointer-events-none"></div>
+                <div className="absolute top-0 right-0 w-125 h-125 bg-blue-400/20 dark:bg-primary/20 blur-[100px] rounded-full opacity-40 pointer-events-none"></div>
 
                 <div className="grid lg:grid-cols-2 gap-16 items-center relative z-10">
 
                     {/* TEXT CONTENT */}
                     <div>
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100 dark:bg-primary/10 border border-blue-200 dark:border-primary/20 text-blue-700 dark:text-primary text-xs font-bold mb-6">
-                            🚀 {t('badge')}
-                        </div>
+                     
 
                         <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-6 leading-tight">
                             {t('title_prefix')} <br />
@@ -37,7 +35,7 @@ export function ProductTeaser() {
                         <p className="text-slate-600 dark:text-slate-400 text-lg mb-8 leading-relaxed">
                             {t.rich('description', {
                                 strong: (chunks) => <strong>{chunks}</strong>,
-                                br: (chunks) => <br />
+                                br: () => <br />
                             })}
                         </p>
 
@@ -48,7 +46,7 @@ export function ProductTeaser() {
                     </div>
 
                     {/* MOCKUP VISUAL */}
-                    <div className="relative h-[400px] w-full flex items-center justify-center perspective-1000">
+                    <div className="relative h-100 w-full flex items-center justify-center perspective-1000">
 
                         {/* CARD 1: RIBOTFLOW */}
                         <motion.div

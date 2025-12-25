@@ -34,7 +34,7 @@ export function AuditSection({ currentUser }: Props) {
             viewport={{ once: true }}
           >
             <h2 className="text-3xl lg:text-5xl font-bold mb-6 text-foreground leading-tight">
-              {t('title_prefix')} <span className="text-red-500/80 line-through decoration-2">{t('title_cost')}</span> {t('title_connector')} <span className="gradient-text">{t('title_investment')}</span>?
+              {t('title_prefix')} <span className="text-red-500/80 line-through decoration-2">{t('title_cost')}</span> {t('title_connector')} <span className="text-transparent bg-clip-text bg-linear-to-r from-primary to-purple-500 pb-2">{t('title_investment')}</span>?
             </h2>
             
             <p className="text-lg text-muted-foreground leading-relaxed">

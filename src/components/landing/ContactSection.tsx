@@ -41,7 +41,7 @@ export function ContactSection() {
         >
            <div>
              <h2 className="text-4xl lg:text-5xl font-bold mb-6 text-foreground leading-tight">
-               {t('title_prefix')} <span className="gradient-text">{t('title_highlight')}</span>
+               {t('title_prefix')} <span className="text-transparent bg-clip-text bg-linear-to-r from-primary to-purple-500 pb-2">{t('title_highlight')}</span>
              </h2>
              <p className="text-muted-foreground text-lg leading-relaxed max-w-lg">
                {t('description')}

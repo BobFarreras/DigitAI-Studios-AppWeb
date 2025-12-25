@@ -27,12 +27,7 @@ export async function LatestPostsSection() {
           
           {/* COLUMNA ESQUERRA */}
           <div className="text-left space-y-6">
-            <Reveal delay={0} direction="left">
-               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/30 bg-primary/5 text-primary text-xs font-bold uppercase tracking-widest">
-                  <Sparkles className="w-3 h-3" />
-                  {t('badge')}
-               </div>
-            </Reveal>
+          
       
              <Reveal delay={0.1} direction="left">
               <h2 className="text-3xl md:text-5xl font-black text-foreground leading-tight tracking-tight">
