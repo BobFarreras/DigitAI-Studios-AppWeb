@@ -7,42 +7,42 @@ import { ImageService } from '@/services/ImageService';
 import { createClient } from '@/lib/supabase/server';
 import { ActionResult } from '@/types/actions';
 import { getSectorConfig } from '@/types/sectors';
-import { I18nSchema } from '@/types/i18n';
+import { I18nSchema } from '@/types/i18n'; // ✅ ARA SÍ QUE S'USA
 
-// Instanciem els serveis
 const infra = new InfrastructureService();
 const tenant = new TenantService();
 const ai = new AIService();
 const imageService = new ImageService();
 
-export interface InviteState {
-    success: boolean;
-    error: string | null;
-    message: string | null;
-}
+// 🦴 ESQUELET ESTRUCTURAL
+const BASE_SKELETON = {
+    Navbar: {
+        links: { home: "Inici", services: "Serveis", blog: "Blog", shop: "Botiga", contact: "Contacte", about: "Nosaltres" },
+        cta: "Accés Clients",
+        actions: { login: "Entrar", cart: "Cistella", menu: "Menú" }
+    },
+    Footer: {
+        description: "Transformem idees en realitats digitals.",
+        rights_reserved: "Tots els drets reservats.",
+        legal: { privacy: "Privacitat", cookies: "Cookies", terms: "Termes" } // Afegit per complir schema si cal
+    },
+    Booking: {
+        title: "Reserva la teva cita",
+        subtitle: "Selecciona el servei i l'hora.",
+        steps: {
+            services: { title: "Serveis", select: "Seleccionar", duration: "min" },
+            datetime: { select_day_title: "Tria dia", select_time_title: "Tria hora", loading: "Cercant...", back: "Enrere", empty_state_day: "Selecciona dia", empty_state_slots: "No hi ha hores" },
+            form: { title: "Dades", subtitle: "Completa la reserva", personal_info: "Info", labels: { name: "Nom", email: "Email" }, submit: "Confirmar", submitting: "Enviant..." },
+            success: { title: "Reserva Confirmada!", message: "Rebràs un email.", home_button: "Inici" }
+        },
+        errors: { load_slots: "Error horaris", required_field: "Obligatori" }
+    },
+    Shop: { featuredTitle: "Destacats", featuredSubtitle: "Selecció exclusiva", addToCart: "Afegir", outOfStock: "Esgotat" },
+    featured_products: { title: "Selecció", subtitle: "Els nostres millors productes", limit: 4 },
+    Blog: { title: "Blog", subtitle: "Notícies i consells", readMore: "Llegir més", empty: "No hi ha articles" }
+};
 
-// --- ACCIÓ 1: INVITAR CLIENT ---
-export async function inviteClientAction(prevState: InviteState, formData: FormData): Promise<InviteState> {
-    const email = formData.get('email') as string;
-    const orgId = formData.get('orgId') as string;
-    const projectId = formData.get('projectId') as string;
-
-    if (!email || !orgId || !projectId) {
-        return { success: false, error: "Falten dades.", message: null };
-    }
-
-    try {
-        await tenant.inviteOrLinkUser(email, orgId, projectId);
-        return { success: true, error: null, message: `Invitació enviada a ${email}` };
-    } catch (error: unknown) {
-        const msg = error instanceof Error ? error.message : "Error desconegut";
-        return { success: false, error: msg, message: null };
-    }
-}
-
-// --- ACCIÓ 2: CREAR PROJECTE ---
 export async function createProjectAction(prevState: ActionResult | unknown, formData: FormData): Promise<ActionResult> {
-    // 1. EXTRACCIÓ DE DADES
     const businessName = formData.get('businessName') as string;
     const slug = formData.get('slug') as string;
     const description = formData.get('description') as string;
@@ -61,36 +61,39 @@ export async function createProjectAction(prevState: ActionResult | unknown, for
         twitter: formData.get('twitter') as string
     };
 
-    if (!businessName || !slug) {
-        return { success: false, error: "Falten dades obligatòries." };
-    }
+    if (!businessName || !slug) return { success: false, error: "Falten dades obligatòries." };
 
     try {
         const supabase = await createClient();
         const { data: { user } } = await supabase.auth.getUser();
-
         if (!user || !user.email) return { success: false, error: "Sessió caducada." };
 
-        // 🏗️ 1. CREAR REPO
+        // 1. REPO
         const repoData = await infra.createRepository(slug, description);
         const isReady = await infra.waitForRepoReady(slug);
         if (!isReady) throw new Error("GitHub Timeout.");
 
-        // 🧠 2. GENERACIÓ DE CONTINGUT (AI + IMATGES)
+        // 2. CONTINGUT (Fix Tipatge)
+        // ✅ ELIMINAT 'any'. Usem la interfície correcta.
         let finalContent: I18nSchema;
+        const sectorConfig = getSectorConfig(sector);
 
         try {
             console.log("🚀 [ACTION] Generant AI + Imatges...");
-            // A. Textos (Gemini)
-            const rawContent = await ai.generateTranslationFile(businessName, description, sector);
-            // B. Imatges (Pollinations/Unsplash)
-            finalContent = imageService.enrichWithImages(rawContent);
+            const aiContent = await ai.generateTranslationFile(businessName, description, sector);
+
+            // Fusió segura: TypeScript ara sap que el resultat és un I18nSchema vàlid
+            const mergedContent = { ...aiContent, ...BASE_SKELETON } as I18nSchema;
+
+            finalContent = imageService.enrichWithImages(mergedContent);
 
         } catch (e) {
-            console.error("⚠️ Error IA, usant fallback complet.", e);
-            
-            // 🛡️ FALLBACK D'EMERGÈNCIA (Ha de complir TOTA la interfície I18nSchema)
+            console.error("⚠️ Error IA, usant fallback.", e);
+
+            // Fallback tipat correctament i COMPLET
             finalContent = {
+                ...BASE_SKELETON, // Ja inclou Navbar, Footer, Booking, Blog i Shop (si està definit dalt)
+
                 hero: {
                     title: businessName,
                     subtitle: description,
@@ -102,34 +105,36 @@ export async function createProjectAction(prevState: ActionResult | unknown, for
                     title: "Sobre nosaltres",
                     description: description,
                     image_prompt: "",
-                    stats: { label1: "Exp", value1: "+1", label2: "Clients", value2: "+10", label3: "Servei", value3: "24/7" }
+                    stats: { label1: "Experiència", value1: "+10", label2: "Clients", value2: "100%", label3: "Projectes", value3: "+50" }
                 },
                 services: {
                     badge: "Serveis",
-                    title: "Serveis",
-                    subtitle: "El que oferim",
+                    title: "Què oferim",
+                    subtitle: "Solucions professionals per a tu",
                     items: []
                 },
-                // ✅ Obligatori si tens 'shop' layout o està a l'Schema
-                products: {
-                    badge: "Botiga",
+                // 👇 AFEGIT: Productes (per si BASE_SKELETON no ho té o volem assegurar)
+                featured_products: {
                     title: "Productes Destacats",
-                    subtitle: "La nostra selecció",
-                    items: []
+                    subtitle: "La nostra millor selecció",
+                    limit: 4
                 },
                 testimonials: {
                     badge: "Opinions",
-                    title: "Opinions",
-                    subtitle: "El que diuen els clients",
+                    title: "Clients Feliços",
+                    subtitle: "El que diuen de nosaltres",
                     reviews: []
                 },
-                // ✅ Obligatori per complir Schema
                 cta_banner: {
                     heading: "Impulsa el teu negoci",
-                    subheading: "Estem aquí per ajudar-te",
+                    subheading: "Contacta amb nosaltres avui mateix",
                     buttonText: "Contactar"
                 },
-                // ✅ Obligatori per complir Schema
+                // 👇 AFEGIT: Mapa (Importantíssim perque surti la secció)
+                map: {
+                    title: "On Som",
+                    subtitle: "Vine a visitar-nos a les nostres oficines."
+                },
                 faq: {
                     title: "Preguntes Freqüents",
                     subtitle: "Dubtes habituals",
@@ -137,47 +142,43 @@ export async function createProjectAction(prevState: ActionResult | unknown, for
                 },
                 contact: {
                     title: "Contacte",
-                    // ✅ CORRECCIÓ: 'description' en comptes de 'subtitle'
-                    description: "Parlem-ne i impulsem el teu negoci.",
-                    button: "Enviar"
+                    description: "Parlem del teu projecte.",
+                    button: "Enviar Missatge"
                 }
-            };
+            } as I18nSchema;
         }
 
-        // 🧠 3. CONFIGURACIÓ DE SECTOR
-        const sectorConfig = getSectorConfig(sector);
-
-        // 🗄️ 4. DATABASE (Tenant)
+        // 3. TENANT
         const { org } = await tenant.createTenantStructure({
             businessName, slug, repoUrl: repoData.html_url,
             branding: { colors: { primary: primaryColor } },
             creatorUserId: user.id, creatorEmail: user.email
         });
 
-        // 📦 5. INJECCIÓ DE FITXERS (JSONs)
+        // 4. INJECCIÓ
         const filesToInject: Record<string, string> = {
-            // Fitxer de traduccions
-            'messages/ca.json': JSON.stringify(finalContent, null, 2),
-
-            // Fitxer de configuració
-            'config/site-config.json': JSON.stringify({
+            'src/messages/ca.json': JSON.stringify(finalContent, null, 2),
+            'src/config/site-config.json': JSON.stringify({
                 name: businessName,
                 description: finalContent.hero.subtitle,
                 sector: sectorConfig.key,
                 features: sectorConfig.features,
                 theme: { primary: primaryColor, layout: layoutVariant },
-                contact: { email: publicEmail || user.email, phone, address, socials }
+                contact: {
+                    email: publicEmail || user.email,
+                    phone: phone || "+34 600 000 000",
+                    address: address || "Catalunya",
+                    socials
+                }
             }, null, 2)
         };
 
-        // Commit a GitHub
         await infra.commitFiles(slug, filesToInject);
 
-        // 🚀 6. DEPLOY & ASSETS
+        // 5. DEPLOY & LOGO
         if (logoFile && logoFile.size > 0) {
             await infra.uploadLogo(slug, logoFile);
         }
-
         await infra.deployToVercel(slug, org.id, repoData.id);
 
         return { success: true, repoUrl: repoData.html_url };

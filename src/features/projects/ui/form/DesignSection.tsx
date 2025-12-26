@@ -7,12 +7,12 @@ import {
 } from 'lucide-react';
 import { FormSection } from './FormSection';
 import { motion } from 'framer-motion';
+import { useState } from 'react';
 
 // 1. MÒDULS FUNCIONALS (Feature Flags)
-// Hem afegit 'ecommerce' que faltava
 const MODULES = [
   { id: 'booking', label: 'Reserves', icon: Calendar, desc: 'Sistema de cites' },
-  { id: 'ecommerce', label: 'Botiga Online', icon: Store, desc: 'Venda de productes' }, // 👈 AFEGIT
+  { id: 'ecommerce', label: 'Botiga Online', icon: Store, desc: 'Venda de productes' },
   { id: 'blog', label: 'Blog', icon: BookOpen, desc: 'Notícies i SEO' },
   { id: 'inventory', label: 'Inventari', icon: Layers, desc: "Gestió d'estoc" },
   { id: 'accessControl', label: 'Zona Privada', icon: Lock, desc: 'Login clients' },
@@ -20,21 +20,39 @@ const MODULES = [
 ];
 
 // 2. SECCIONS DE LA LANDING (Visuals)
-// Sincronitzat amb ConfigLandingSection del Master Template
 const SECTIONS_CONFIG = [
-    { id: 'hero', label: 'Hero / Intro', icon: Layout },
-    { id: 'stats', label: 'Estadístiques', icon: BarChart3 },      // 👈 AFEGIT
-    { id: 'services', label: 'Serveis', icon: Wrench },
-    { id: 'about', label: 'Nosaltres', icon: Users },              // 👈 AFEGIT (Ja el tenies, però renomenat)
-    { id: 'featured_products', label: 'Top Vendes', icon: Tag },   // 👈 AFEGIT
-    { id: 'cta_banner', label: 'Crida Acció', icon: Rocket },      // 👈 AFEGIT
-    { id: 'testimonials', label: 'Ressenyes', icon: Star },
-    { id: 'map', label: 'Ubicació', icon: MapPin },                // 👈 AFEGIT
-    { id: 'faq', label: 'Preguntes', icon: HelpCircle },
-    { id: 'contact', label: 'Contacte', icon: Mail },
+    { id: 'hero', label: 'Hero / Intro', icon: Layout, required: true },
+    { id: 'about', label: 'Nosaltres', icon: Users, default: true }, // Inclou Stats
+    { id: 'services', label: 'Serveis', icon: Wrench, default: true },
+    { id: 'featured_products', label: 'Top Vendes', icon: Tag, default: false },
+    { id: 'cta_banner', label: 'Crida Acció', icon: Rocket, default: true },
+    { id: 'testimonials', label: 'Ressenyes', icon: Star, default: true },
+    { id: 'map', label: 'Ubicació', icon: MapPin, default: true },
+    { id: 'faq', label: 'Preguntes', icon: HelpCircle, default: false },
+    { id: 'contact', label: 'Contacte', icon: Mail, required: true },
+];
+
+// 3. COLORS RÀPIDS (Opcional, si vols mantenir el teu input lliure, pots esborrar això)
+const PRESET_COLORS = [
+  "#6366f1", "#0ea5e9", "#22c55e", "#ef4444", "#f97316", "#a855f7", "#0f172a"
 ];
 
 export function DesignSection({ defaultColor }: { defaultColor?: string }) {
+  
+  // Estat per gestionar les seccions activades (per defecte: required + default)
+  const [selectedSections, setSelectedSections] = useState<string[]>(
+    SECTIONS_CONFIG.filter(s => s.required || s.default).map(s => s.id)
+  );
+
+  const [color, setColor] = useState(defaultColor || "#6366f1");
+
+  const toggleSection = (id: string, required?: boolean) => {
+    if (required) return;
+    setSelectedSections(prev => 
+      prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+    );
+  };
+
   return (
     <FormSection 
       title="Disseny i Funcionalitat" 
@@ -42,19 +60,38 @@ export function DesignSection({ defaultColor }: { defaultColor?: string }) {
       icon={<Palette className="w-5 h-5" />}
       delay={0.3}
     >
+        {/* INPUT HIDDEN PER ENVIAR L'ARRAY AL SERVIDOR */}
+        <input type="hidden" name="enabledSections" value={JSON.stringify(selectedSections)} />
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            
             {/* Color */}
             <div>
                 <label className="block text-sm font-medium mb-3 text-slate-700 dark:text-slate-300">Color Primari</label>
-                <div className="flex items-center gap-4 p-3 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
-                    <input 
-                        type="color" 
-                        name="primaryColor" 
-                        defaultValue={defaultColor || "#6366f1"} 
-                        className="h-10 w-10 rounded-lg cursor-pointer border-0 bg-transparent" 
-                    />
-                    <div className="text-xs text-slate-500">
-                        Defineix la personalitat de la marca.
+                <div className="flex flex-col gap-3">
+                    {/* Input Color Lliure */}
+                    <div className="flex items-center gap-4 p-3 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
+                        <input 
+                            type="color" 
+                            name="primaryColor" 
+                            value={color}
+                            onChange={(e) => setColor(e.target.value)}
+                            className="h-10 w-10 rounded-lg cursor-pointer border-0 bg-transparent" 
+                        />
+                        <div className="text-xs text-slate-500">
+                            Tria el color de la teva marca.
+                        </div>
+                    </div>
+                    {/* Presets Ràpids */}
+                    <div className="flex gap-2">
+                        {PRESET_COLORS.map(c => (
+                            <button 
+                                key={c} type="button" 
+                                onClick={() => setColor(c)}
+                                className={`w-6 h-6 rounded-full border border-slate-200 transition-transform hover:scale-110 ${color === c ? 'ring-2 ring-offset-1 ring-slate-400' : ''}`}
+                                style={{ backgroundColor: c }}
+                            />
+                        ))}
                     </div>
                 </div>
             </div>
@@ -81,53 +118,51 @@ export function DesignSection({ defaultColor }: { defaultColor?: string }) {
             </div>
         </div>
 
-        {/* --- SECCIONS DE LA LANDING (ARA COMPLETES) --- */}
+        {/* --- SECCIONS DE LA LANDING (Amb State React) --- */}
         <div className="pt-8 border-t border-slate-100 dark:border-slate-800 mt-6">
             <div className="flex items-center justify-between mb-4">
                 <label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
                     <LayoutDashboard className="w-4 h-4 text-indigo-500" /> 
                     Blocs de la Pàgina d'Inici
                 </label>
-                <span className="text-[10px] uppercase tracking-wider text-slate-400 font-bold bg-slate-100 px-2 py-1 rounded-md">Drag & Drop (Coming Soon)</span>
+                <span className="text-[10px] uppercase tracking-wider text-slate-400 font-bold bg-slate-100 px-2 py-1 rounded-md">100% Configurable</span>
             </div>
             
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-                {SECTIONS_CONFIG.map((sec) => (
-                    <label key={sec.id} className="cursor-pointer group relative">
-                        <input 
-                            type="checkbox" 
-                            name="landing_sections" 
-                            value={sec.id}
-                            // Hero, Services i Contact marcats per defecte
-                            defaultChecked={['hero', 'services', 'contact', 'about'].includes(sec.id)} 
-                            className="peer hidden" 
-                        />
-                        
-                        <motion.div 
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            className={`
-                                flex flex-col items-center justify-center p-3 rounded-xl border-2 transition-all h-24
-                                border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800
-                                text-slate-500 dark:text-slate-400 shadow-sm
-                                
-                                peer-checked:border-indigo-500 peer-checked:bg-indigo-50 dark:peer-checked:bg-indigo-900/20
-                                peer-checked:text-indigo-700 dark:peer-checked:text-indigo-300
-                                peer-checked:shadow-md
-                            `}
+                {SECTIONS_CONFIG.map((sec) => {
+                    const isSelected = selectedSections.includes(sec.id);
+                    return (
+                        <div 
+                            key={sec.id} 
+                            onClick={() => toggleSection(sec.id, sec.required)}
+                            className={`cursor-pointer group relative`}
                         >
-                            <sec.icon className="w-6 h-6 mb-2" />
-                            <span className="text-[11px] font-bold capitalize text-center leading-tight">{sec.label}</span>
-                        </motion.div>
+                            <motion.div 
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                className={`
+                                    flex flex-col items-center justify-center p-3 rounded-xl border-2 transition-all h-24
+                                    ${isSelected 
+                                        ? 'border-indigo-500 bg-indigo-50 text-indigo-700 dark:bg-indigo-900/20 dark:text-indigo-300 shadow-sm' 
+                                        : 'border-slate-200 bg-white text-slate-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400'}
+                                    ${sec.required ? 'opacity-80 cursor-not-allowed' : ''}
+                                `}
+                            >
+                                <sec.icon className="w-6 h-6 mb-2" />
+                                <span className="text-[11px] font-bold capitalize text-center leading-tight">{sec.label}</span>
+                            </motion.div>
 
-                        {/* Indicador de selecció */}
-                        <div className="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-indigo-500 scale-0 peer-checked:scale-100 transition-transform shadow-sm" />
-                    </label>
-                ))}
+                            {/* Indicador */}
+                            {isSelected && (
+                                <div className="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-indigo-500 shadow-sm" />
+                            )}
+                        </div>
+                    );
+                })}
             </div>
         </div>
 
-        {/* Mòduls Funcionals */}
+        {/* Mòduls Funcionals (Backend) */}
         <div className="pt-8 border-t border-slate-100 dark:border-slate-800 mt-6">
             <label className="block text-sm font-medium mb-4 text-slate-700 dark:text-slate-300">
                 Mòduls de Gestió (Backend)

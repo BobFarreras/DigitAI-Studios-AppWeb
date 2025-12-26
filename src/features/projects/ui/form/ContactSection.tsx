@@ -1,7 +1,8 @@
 'use client';
 
 import { Mail, Phone, MapPin, Share2, Instagram, Linkedin, Twitter } from 'lucide-react';
-import { FormSection } from './FormSection';
+// Assegura't que FormSection existeix. Si no, fes-m'ho saber i et dono el codi.
+import { FormSection } from './FormSection'; 
 
 export function ContactSection() {
   return (

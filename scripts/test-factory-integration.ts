@@ -83,6 +83,12 @@ const BASE_TRANSLATION_SKELETON = {
             required_field: "Aquest camp és obligatori." 
         }
     },
+    // ✅ AFEGEIX AQUEST BLOC NOU:
+    featured_products: {
+        title: "Selecció Exclusiva",
+        subtitle: "Descobreix els productes més destacats de la nostra col·lecció.",
+        limit: 4
+    },
     Shop: {
         featuredTitle: "Productes Destacats",
         featuredSubtitle: "La nostra selecció exclusiva per a tu.",
