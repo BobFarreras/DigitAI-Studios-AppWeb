@@ -4,8 +4,8 @@ import { IAuditRepository } from '@/repositories/interfaces/IAuditRepository';
 import { IWebScanner } from '@/adapters/IWebScanner';
 import { ResendEmailService } from '@/services/email/ResendEmailService';
 // 👇 1. IMPORTS NOUS
-import { AIService, BusinessSuggestion } from '@/services/ai/AIService';
-
+import { AIService} from '@/services/ai/AIService';
+import { BusinessSuggestion } from "@/types/ai"; // 👈 IMPORTA D'AQUÍ
 export class AuditService {
   constructor(
     private auditRepo: IAuditRepository,

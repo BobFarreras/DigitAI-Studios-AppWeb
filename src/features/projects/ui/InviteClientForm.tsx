@@ -1,11 +1,10 @@
 'use client';
 
 import { useActionState } from 'react';
-// Importem l'acció i EL TIPUS que acabem de crear
-import { inviteClientAction, InviteState } from '@/features/projects/actions';
+// ✅ CANVI CLAU: Importem des de 'invite-actions', no de 'actions'
+import { inviteClientAction, InviteState } from '@/features/projects/actions/invite-actions'; 
 import { Mail, Send, Loader2 } from 'lucide-react';
 
-// ✅ L'estat inicial ha de coincidir EXACTAMENT amb InviteState
 const initialState: InviteState = { 
   success: false, 
   error: null, 
@@ -15,6 +14,7 @@ const initialState: InviteState = {
 export function InviteClientForm({ projectId, orgId }: { projectId: string, orgId: string }) {
   const [state, action, isPending] = useActionState(inviteClientAction, initialState);
 
+  // ... (la resta del component es queda IGUAL)
   if (state.success) {
       return (
           <div className="p-4 bg-green-50 border border-green-200 rounded-lg text-green-800 text-center animate-in zoom-in">
@@ -26,6 +26,7 @@ export function InviteClientForm({ projectId, orgId }: { projectId: string, orgI
 
   return (
     <form action={action} className="flex flex-col gap-3">
+        {/* ... inputs iguals ... */}
         <input type="hidden" name="projectId" value={projectId} />
         <input type="hidden" name="orgId" value={orgId} />
         

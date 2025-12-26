@@ -58,6 +58,12 @@ export const AuditReadyEmail = ({
   const seoColor = getColor(seoScore);
   const perfColor = getColor(perfScore);
 
+  // 🔧 FIX LOGO: Si estem en localhost, els correus no poden veure la imatge.
+  // Posa aquí la URL real del teu logo hostatjat a internet per fer proves
+  const logoUrl = baseUrl?.includes('localhost') 
+    ? 'https://via.placeholder.com/150x50?text=DigitAI+Logo' // Placeholder per local
+    : `${baseUrl}/images/digitai-logo.png`; // URL Producció
+
   return (
     <Html>
       <Head />
@@ -69,7 +75,7 @@ export const AuditReadyEmail = ({
           {/* HEADER */}
           <Section style={header}>
             <Img
-              src={`${baseUrl}/images/digitai-logo.png`} 
+              src={logoUrl} 
               width="150"
               alt="DigitAI Studios"
               style={logo}
@@ -112,30 +118,32 @@ export const AuditReadyEmail = ({
             </Row>
           </Section>
 
-          {/* 👇 SECCIÓ MILLORADA: OPORTUNITATS DE NEGOCI */}
+          {/* 👇 SECCIÓ MILLORADA VISUALMENT */}
           {suggestions.length > 0 && (
             <Section style={opportunityBox}>
               <Heading as="h3" style={opportunityTitle}>
                 🚀 Pla de Creixement
               </Heading>
-              {/* ✅ TEXT CANVIAT: Més humà i corporatiu */}
               <Text style={paragraph}>
                 Des de <strong>DigitAI Studios</strong> hem detectat punts clau que podrien augmentar la facturació del teu negoci:
               </Text>
               
+              {/* ITERACIÓ DE SUGGERIMENTS */}
               {suggestions.map((item, index) => (
                 <Section key={index} style={suggestionRow}>
                   <Row>
-                    {/* ✅ ÚS DE COLUMNES PER EVITAR TEXT TALLAT */}
+                    {/* COLUMNA ICONA (Fixa) */}
                     <Column width="40" style={{ verticalAlign: 'top', paddingTop: '4px' }}>
                       <div style={iconContainer}>
-                        {item.icon === 'calendar' ? '📅' : 
-                         item.icon === 'shop' ? '🛒' : 
-                         item.icon === 'user' ? '👥' : 
-                         item.icon === 'chart' ? '📈' : '💡'}
+                        {/* Mapeig d'icones més robust */}
+                        {item.icon?.includes('calendar') ? '📅' : 
+                         item.icon?.includes('shop') ? '🛒' : 
+                         item.icon?.includes('user') ? '👥' : 
+                         item.icon?.includes('chart') ? '📈' : '💡'}
                       </div>
                     </Column>
-                    <Column>
+                    {/* COLUMNA TEXT (Fluida) */}
+                    <Column style={{ paddingLeft: '10px' }}>
                       <Text style={suggestionTitle}>{item.title}</Text>
                       <Text style={suggestionDesc}>{item.description}</Text>
                     </Column>
@@ -143,8 +151,8 @@ export const AuditReadyEmail = ({
                 </Section>
               ))}
               
-              <Text style={{ ...paragraph, fontSize: '14px', marginTop: '15px', fontStyle: 'italic', color: '#166534' }}>
-                Podem implementar aquestes millores a la teva web en menys de 48h.
+              <Text style={{ ...paragraph, fontSize: '14px', marginTop: '15px', fontStyle: 'italic', color: '#166534', textAlign: 'center' }}>
+                Podem implementar aquestes millores en menys de 48h.
               </Text>
             </Section>
           )}
@@ -156,7 +164,7 @@ export const AuditReadyEmail = ({
             </Text>
             <Button
               style={button}
-              href={`${baseUrl}/contact`} // 👈 Ara porta a contacte directament o al dashboard si prefereixes
+              href={`${baseUrl}/contact`}
             >
               SOL·LICITAR IMPLEMENTACIÓ →
             </Button>
@@ -188,12 +196,12 @@ export const AuditReadyEmail = ({
 
 export default AuditReadyEmail;
 
-// --- ESTILS CSS (Actualitzats per evitar talls) ---
+// --- ESTILS CSS (AJUSTATS PER EVITAR TALLS) ---
 
 const main = { backgroundColor: '#f1f5f9', fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif' };
-const container = { margin: '0 auto', padding: '0', backgroundColor: '#ffffff', maxWidth: '600px', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)' };
+const container = { margin: '0 auto', padding: '0', backgroundColor: '#ffffff', maxWidth: '600px', width: '100%', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)' };
 const header = { padding: '30px 40px', backgroundColor: '#1e293b', textAlign: 'center' as const };
-const logo = { margin: '0 auto' };
+const logo = { margin: '0 auto', display: 'block' }; // display block ajuda a centrar
 const heroSection = { padding: '40px 40px 20px', textAlign: 'center' as const };
 const heroTitle = { fontSize: '24px', fontWeight: 'bold', color: '#0f172a', margin: '0 0 10px' };
 const heroText = { fontSize: '16px', color: '#64748b', lineHeight: '24px', margin: '0' };
@@ -212,31 +220,34 @@ const footer = { backgroundColor: '#f8fafc', padding: '24px 40px', textAlign: 'c
 const footerText = { fontSize: '12px', color: '#94a3b8', margin: '5px 0' };
 const link = { color: '#7c3aed', textDecoration: 'none' };
 
-// SECCIÓ VERDA MILLORADA
+// ESTILS OPORTUNITATS (REVISATS)
 const opportunityBox = {
   backgroundColor: '#f0fdf4', 
   border: '1px solid #bbf7d0',
   borderRadius: '8px',
   padding: '24px',
   margin: '0 40px 30px', 
+  width: 'auto', // Deixa que s'adapti
 };
 
 const opportunityTitle = {
   fontSize: '18px',
   color: '#166534', 
-  margin: '0 0 12px',
+  margin: '0 0 16px', // Més espai a sota
 };
 
 const suggestionRow = {
   marginBottom: '12px',
   backgroundColor: '#ffffff',
-  padding: '12px',
+  padding: '12px', // Padding intern per evitar que el text toqui les vores
   borderRadius: '6px',
-  border: '1px solid #e2e8f0', // Afegit vora suau
+  border: '1px solid #e2e8f0',
+  width: '100%', // Força l'amplada completa
 };
 
 const iconContainer = {
   fontSize: '24px',
+  textAlign: 'center' as const,
 };
 
 const suggestionTitle = {
@@ -244,11 +255,13 @@ const suggestionTitle = {
   color: '#1e293b',
   fontSize: '15px',
   margin: '0 0 4px',
+  display: 'block',
 };
 
 const suggestionDesc = {
   fontSize: '14px',
   color: '#64748b',
   margin: '0',
-  lineHeight: '20px', // Més espai per llegir
+  lineHeight: '20px',
+  display: 'block',
 };
