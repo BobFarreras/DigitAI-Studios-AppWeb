@@ -49,28 +49,7 @@
     "cta": "Auditoría Gratuita",
     "form_title": "Analiza tu web en segundos"
   },
-  "Auth": {
-    "login_title": "Bienvenido de nuevo",
-    "login_subtitle": "Entra a tu panel de control digital.",
-    "social_github": "Continuar con GitHub",
-    "or_email": "O con email",
-    "label_email": "Email",
-    "label_password": "Contraseña",
-    "forgot_password": "¿Has olvidado la contraseña?",
-    "cta_login": "Entrar",
-    "cta_loading": "Entrando...",
-    "no_account_prefix": "¿Aún no tienes cuenta?",
-    "register_link": "Regístrate gratis",
-    "social_maintenance_error": "🚧 El login social está en mantenimiento. Utiliza tu email y contraseña.",
-    "register_title": "Crea tu cuenta",
-    "register_subtitle": "Para ver tu informe completo de auditoría",
-    "already_have_account": "¿Ya tienes cuenta?",
-    "login_link": "Entrar",
-    "social_google": "Continuar con Google",
-    "social_google_register": "Regístrate con Google",
-    "social_facebook": "Continuar con Facebook",
-    "social_facebook_register": "Regístrate con Facebook"
-  },
+  
   "Dashboard": {
     "welcome": "Bienvenido, {name}",
     "my_audits": "Mis Auditorías",
@@ -605,5 +584,35 @@
       "btn_reset": "Volver a empezar",
       "btn_view_all": "Ver Todo"
     }
+  },
+  
+  "Auth": {
+    "login_title": "Bienvenido de nuevo",
+    "login_subtitle": "Introduce tus credenciales para acceder",
+    "label_email": "Correo electrónico",
+    "label_password": "Contraseña",
+    "cta_login": "Iniciar Sesión",
+    "register_title": "Crea tu cuenta",
+    "register_subtitle": "Empieza a automatizar tu negocio hoy.",
+    "social_google": "Continuar con Google",
+    "social_google_register": "Registrarse con Google",
+    "or_email": "O con email",
+    "forgot_password": "¿Olvidaste la contraseña?",
+    "no_account_prefix": "¿No tienes cuenta?",
+    "register_link": "Regístrate",
+    "already_have_account": "¿Ya tienes cuenta?",
+    "login_link": "Inicia sesión",
+
+    "error": {
+      "invalid_login": "El correo o la contraseña son incorrectos.",
+      "not_in_org": "Este usuario no pertenece a esta organización.",
+      "email_taken": "Este correo ya está registrado en esta organización.",
+      "technical": "Ha ocurrido un error técnico. Por favor, inténtalo de nuevo.",
+      "confirm_email": "Por favor, confirma tu correo electrónico antes de entrar."
+    },
+    "info": {
+      "account_exists_please_login": "Ya tienes una cuenta global en DigitAI. Por favor, inicia sesión para vincularte a esta nueva organización."
+    }
   }
+
 }

@@ -1,51 +1,36 @@
 'use client';
 
 import { useState } from 'react';
+// 👇 CANVIAT de 'react-dom' a 'react' i reanomenat
+import { useActionState } from 'react'; 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { createClient } from '@/lib/supabase/client';
-import { Loader2, LogIn } from 'lucide-react';
-import { useRouter } from '@/routing';
-import Link from 'next/link';
+import { Loader2, LogIn, Info } from 'lucide-react';
+import { Link } from '@/routing';
 import { useTranslations } from 'next-intl';
 import { GoogleIcon } from '@/components/icons/GoogleIcon';
 import { toast } from 'sonner';
 
-// Props tipats
+// Importem la Server Action que hem creat abans
+// ⚠️ Ajusta la ruta si el vas guardar a src/auth/actions/auth.ts
+import { loginAction } from '@/features/auth/actions/auth'; 
+
 interface LoginFormProps {
   prefilledEmail?: string;
 }
 
 export function LoginForm({ prefilledEmail }: LoginFormProps) {
   const t = useTranslations('Auth');
-  // Inicialitzem l'estat amb la prop si existeix
-  const [email, setEmail] = useState(prefilledEmail || '');
-  const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   
-  const router = useRouter();
+  // 👇 CANVIAT: useActionState ens dona isPending directament!
+  const [state, formAction, isPending] = useActionState(loginAction, { 
+    success: false, 
+    message: '' 
+  });
+
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const supabase = createClient();
-
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (error) {
-      toast.error(error.message);
-      setIsLoading(false);
-    } else {
-      router.refresh();
-      // Si venim d'una auditoria, potser voldríem anar al dashboard directament
-      // (Supabase gestionarà la sessió)
-      router.push('/dashboard');
-    }
-  };
 
   const handleGoogleLogin = async () => {
     setIsGoogleLoading(true);
@@ -69,76 +54,57 @@ export function LoginForm({ prefilledEmail }: LoginFormProps) {
         <p className="text-muted-foreground">{t('login_subtitle')}</p>
       </div>
 
-      {/* Social Login */}
       <div className="grid grid-cols-1 gap-4">
         <Button 
           variant="outline" 
           onClick={handleGoogleLogin} 
-          disabled={isGoogleLoading || isLoading}
+          disabled={isGoogleLoading || isPending}
           className="w-full h-12 border-border bg-card hover:bg-muted text-foreground gap-3 font-medium"
         >
           {isGoogleLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <GoogleIcon className="w-5 h-5" />}
-          {t('social_google', { defaultMessage: 'Continuar amb Google' })}
+          {t('social_google')}
         </Button>
       </div>
 
       <div className="relative">
-        <div className="absolute inset-0 flex items-center">
-          <span className="w-full border-t border-border" />
-        </div>
-        <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">{t('or_email')}</span>
-        </div>
+        <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-border" /></div>
+        <div className="relative flex justify-center text-xs uppercase"><span className="bg-background px-2 text-muted-foreground">{t('or_email')}</span></div>
       </div>
 
-      <form onSubmit={handleLogin} className="space-y-4">
+      <form action={formAction} className="space-y-4">
+        
+        {state?.message && (
+          <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 text-sm flex items-center gap-2">
+            <Info className="w-4 h-4 shrink-0" />
+            <span>{state.message}</span>
+          </div>
+        )}
+
         <div className="space-y-2">
           <label className="text-sm font-medium text-foreground ml-1">{t('label_email')}</label>
-          <Input
-            type="email"
-            name="email"
-            placeholder="nom@empresa.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="bg-card border-border text-foreground h-12 focus:border-primary"
-            required
-            // Si ja tenim email, no cal autofocus aquí
-            autoFocus={!prefilledEmail}
-          />
+          <Input type="email" name="email" defaultValue={prefilledEmail} required autoFocus={!prefilledEmail} />
         </div>
+        
         <div className="space-y-2">
           <div className="flex justify-between">
             <label className="text-sm font-medium text-foreground ml-1">{t('label_password')}</label>
-            <Link href="/auth/forgot-password" className="text-sm text-primary hover:underline">
-              {t('forgot_password')}
-            </Link>
+            <Link href="/auth/forgot-password" className="text-sm text-primary hover:underline">{t('forgot_password')}</Link>
           </div>
-          <Input
-            type="password"
-            name="password"
-            placeholder="••••••••"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="bg-card border-border text-foreground h-12 focus:border-primary"
-            required
-            // Si tenim email, posem el focus directament al password per escriure ràpid
-            autoFocus={!!prefilledEmail}
-          />
+          <Input type="password" name="password" required autoFocus={!!prefilledEmail} />
         </div>
 
-        <Button type="submit" disabled={isLoading || isGoogleLoading} className="w-full h-12 gradient-bg text-white font-bold rounded-lg hover:opacity-90 shadow-lg">
-          {isLoading 
-            ? <Loader2 className="animate-spin" /> 
-            : <><LogIn className="w-4 h-4 mr-2" /> {t('cta_login')}</>
-          }
+        <Button 
+          type="submit" 
+          disabled={isPending} 
+          className="w-full h-12 gradient-bg text-white font-bold"
+        >
+           {isPending ? <Loader2 className="animate-spin" /> : <><LogIn className="w-4 h-4 mr-2" /> {t('cta_login')}</>}
         </Button>
+
       </form>
 
       <p className="text-center text-sm text-muted-foreground">
-        {t('no_account_prefix')}{' '}
-        <Link href="/auth/register" className="text-primary hover:underline font-medium">
-          {t('register_link')}
-        </Link>
+        {t('no_account_prefix')} <Link href="/auth/register" className="text-primary hover:underline font-medium">{t('register_link')}</Link>
       </p>
     </div>
   );

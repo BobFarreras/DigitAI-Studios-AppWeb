@@ -49,28 +49,7 @@
     "cta": "Auditoria Gratuïta",
     "form_title": "Analitza la teva web en segons"
   },
-  "Auth": {
-    "login_title": "Benvingut de nou",
-    "login_subtitle": "Entra al teu panell de control digital.",
-    "social_github": "Continuar amb GitHub",
-    "or_email": "O amb email",
-    "label_email": "Email",
-    "label_password": "Contrasenya",
-    "forgot_password": "Has oblidat la contrasenya?",
-    "cta_login": "Entrar",
-    "cta_loading": "Entrant...",
-    "no_account_prefix": "Encara no tens compte?",
-    "register_link": "Registra't gratis",
-    "social_maintenance_error": "🚧 El login social està en manteniment. Utilitza el teu email i contrasenya.",
-    "register_title": "Crea el teu compte",
-    "register_subtitle": "Per veure el teu informe complet d'auditoria",
-    "already_have_account": "Ja tens compte?",
-    "login_link": "Entrar",
-    "social_google": "Continuar amb Google",
-    "social_google_register": "Registra't amb Google",
-    "social_facebook": "Continuar amb Facebook",
-    "social_facebook_register": "Registra't amb Facebook"
-  },
+
   "Dashboard": {
     "welcome": "Benvingut, {name}",
     "my_audits": "Les meves Auditories",
@@ -605,5 +584,35 @@
       "btn_reset": "Tornar a començar",
       "btn_view_all": "Veure Tot"
     }
+  },
+  
+  "Auth": {
+    "login_title": "Benvingut de nou",
+    "login_subtitle": "Introdueix les teves credencials per accedir",
+    "label_email": "Correu electrònic",
+    "label_password": "Contrasenya",
+    "cta_login": "Iniciar Sessió",
+    "register_title": "Crea el teu compte",
+    "register_subtitle": "Comença a automatitzar el teu negoci avui.",
+    "social_google": "Continuar amb Google",
+    "social_google_register": "Registrar-se amb Google",
+    "or_email": "O amb email",
+    "forgot_password": "Has oblidat la contrasenya?",
+    "no_account_prefix": "No tens compte?",
+    "register_link": "Registra't",
+    "already_have_account": "Ja tens compte?",
+    "login_link": "Inicia sessió",
+    
+    "error": {
+      "invalid_login": "El correu o la contrasenya són incorrectes.",
+      "not_in_org": "Aquest usuari no pertany a aquesta organització.",
+      "email_taken": "Aquest correu ja està registrat en aquesta organització.",
+      "technical": "Hi ha hagut un error tècnic. Torna-ho a provar.",
+      "confirm_email": "Si us plau, confirma el teu correu electrònic abans d'entrar."
+    },
+    "info": {
+      "account_exists_please_login": "Ja tens un compte global a DigitAI. Si us plau, inicia sessió per vincular-te a aquesta nova organització."
+    }
   }
+
 }

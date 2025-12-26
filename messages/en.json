@@ -49,28 +49,7 @@
     "cta": "Free Audit",
     "form_title": "Analyze your website in seconds"
   },
-  "Auth": {
-    "login_title": "Welcome back",
-    "login_subtitle": "Enter your digital control panel.",
-    "social_github": "Continue with GitHub",
-    "or_email": "Or with email",
-    "label_email": "Email",
-    "label_password": "Password",
-    "forgot_password": "Forgot password?",
-    "cta_login": "Login",
-    "cta_loading": "Logging in...",
-    "no_account_prefix": "Don't have an account yet?",
-    "register_link": "Sign up for free",
-    "social_maintenance_error": "🚧 Social login is under maintenance. Please use your email and password.",
-    "register_title": "Create your account",
-    "register_subtitle": "To view your full audit report",
-    "already_have_account": "Already have an account?",
-    "login_link": "Login",
-    "social_google": "Continue with Google",
-    "social_google_register": "Sign up with Google",
-    "social_facebook": "Continue with Facebook",
-    "social_facebook_register": "Sign up with Facebook"
-  },
+
   "Dashboard": {
     "welcome": "Welcome, {name}",
     "my_audits": "My Audits",
@@ -605,5 +584,36 @@
       "btn_reset": "Start over",
       "btn_view_all": "View All"
     }
+  },
+  
+  "Auth": {
+    "login_title": "Welcome back",
+    "login_subtitle": "Enter your credentials to access",
+    "label_email": "Email address",
+    "label_password": "Password",
+    "cta_login": "Sign in",
+    "register_title": "Create your account",
+    "register_subtitle": "Start automating your business today.",
+    "social_google": "Continue with Google",
+    "social_google_register": "Sign up with Google",
+    "or_email": "Or with email",
+    "forgot_password": "Forgot your password?",
+    "no_account_prefix": "Don't have an account?",
+    "register_link": "Sign up",
+    "already_have_account": "Already have an account?",
+    "login_link": "Sign in",
+
+    "error": {
+      "invalid_login": "The email or password is incorrect.",
+      "not_in_org": "This user does not belong to this organization.",
+      "email_taken": "This email is already registered in this organization.",
+      "technical": "A technical error occurred. Please try again.",
+      "confirm_email": "Please confirm your email address before signing in."
+    },
+    "info": {
+      "account_exists_please_login": "You already have a global DigitAI account. Please sign in to link it to this new organization."
+    }
   }
+
+
 }
