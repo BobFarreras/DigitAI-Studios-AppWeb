@@ -2,13 +2,21 @@
 
 import { InfrastructureService } from '@/services/factory/InfrastrocutreService';
 import { TenantService } from '@/services/TenantService';
-import { AIService } from '@/services/ai/AIService'; // Assegura't de la ruta (ai/AIService o AIService directe)
+import { AIService } from '@/services/ai/AIService'; 
 import { ImageService } from '@/services/ImageService';
 import { createClient } from '@/lib/supabase/server';
 import { ActionResult } from '@/types/actions';
 import { getSectorConfig } from '@/types/sectors';
 import { I18nSchema } from '@/types/i18n';
-
+import { randomUUID } from 'crypto'; // Necessari per generar slugs únics
+import { SupabaseClient } from '@supabase/supabase-js'; // 👈 1. IMPORT NECESSARI
+// 2. Definim la forma d'un item del catàleg base
+interface SeedItem {
+    name: string;
+    desc: string;
+    price: number;
+    img: string;
+}
 const infra = new InfrastructureService();
 const tenant = new TenantService();
 const ai = new AIService();
@@ -64,11 +72,8 @@ export async function createProjectAction(prevState: ActionResult | unknown, for
         twitter: formData.get('twitter') as string
     };
 
-    // 3. SECCIONS DINÀMIQUES (Nou DesignSection) 🌟 IMPORTANT
+    // 3. SECCIONS DINÀMIQUES
     const enabledSectionsRaw = formData.get('enabledSections') as string;
-    console.log(`📋 [ACTION] Seccions rebudes del formulari (Raw): ${enabledSectionsRaw}`);
-    
-    // Default mínim per seguretat
     let landingSections = [
         { id: 'hero', type: 'hero' },
         { id: 'services', type: 'services' },
@@ -78,12 +83,9 @@ export async function createProjectAction(prevState: ActionResult | unknown, for
     if (enabledSectionsRaw) {
         try {
             const sectionIds = JSON.parse(enabledSectionsRaw) as string[];
-            // Mapegem IDs a objectes { id, type } per complir amb el nou SiteConfig
             landingSections = sectionIds.map(id => ({ id, type: id }));
-            
-            console.log(`✅ [ACTION] Seccions processades correctament:`, JSON.stringify(landingSections));
         } catch (e) {
-            console.error("⚠️ [ACTION] Error parsejant enabledSections, usant default:", e);
+            console.error("⚠️ [ACTION] Error parsejant enabledSections:", e);
         }
     }
 
@@ -100,67 +102,57 @@ export async function createProjectAction(prevState: ActionResult | unknown, for
         const isReady = await infra.waitForRepoReady(slug);
         
         if (!isReady) throw new Error("GitHub Timeout.");
-        console.log(`✅ [ACTION] Repo creat i llest: ${repoData.html_url}`);
+        console.log(`✅ [ACTION] Repo creat: ${repoData.html_url}`);
 
         // 🧠 5. GENERAR CONTINGUT
         let finalContent: I18nSchema; 
         const sectorConfig = getSectorConfig(sector);
 
         try {
-            console.log("🚀 [ACTION] Cridant IA (Gemini/OpenAI) per generar textos...");
+            console.log("🚀 [ACTION] Cridant IA...");
             const aiContent = await ai.generateTranslationFile(businessName, description, sector);
-            
-            console.log("🔗 [ACTION] Fusionant contingut IA amb esquelet base...");
             const mergedContent = { ...aiContent, ...BASE_SKELETON } as I18nSchema;
-            
-            console.log("🎨 [ACTION] Enriquint amb imatges...");
             finalContent = imageService.enrichWithImages(mergedContent);
-
-            // LOG DE VERIFICACIÓ
-            console.log(`🔍 [ACTION] Verificació contingut: Té Mapa? ${!!finalContent.map}. Té Productes? ${!!finalContent.featured_products}`);
-
         } catch (e) {
-            console.error("⚠️ [ACTION] Error greu a la IA, usant FALLBACK manual.", e);
-            // Fallback robust amb MAPA i PRODUCTES assegurats
+            console.error("⚠️ [ACTION] Error IA, usant fallback.", e);
             finalContent = {
                 ...BASE_SKELETON,
                 hero: { title: businessName, subtitle: description, cta: "Contactar", image_prompt: "" },
                 about: { badge: "Info", title: "Sobre nosaltres", description: description, image_prompt: "", stats: { label1: "Exp", value1: "+1", label2: "Clients", value2: "+10", label3: "Servei", value3: "24/7" } },
                 services: { badge: "Serveis", title: "Serveis", subtitle: "El que oferim", items: [] },
                 testimonials: { badge: "Opinions", title: "Opinions", subtitle: "", reviews: [] },
-                
-                // ASSEGUREM ELS CAMPS NOUS
                 featured_products: { title: "Productes Destacats", subtitle: "La nostra millor selecció", limit: 4 },
                 map: { title: "On Som", subtitle: "Vine a visitar-nos." },
                 cta_banner: { heading: "Impulsa el teu negoci", subheading: "Contacta'ns", buttonText: "Contactar" },
-                
                 faq: { title: "FAQ", subtitle: "", items: [] },
                 contact: { title: "Contacte", description: "Parlem-ne.", button: "Enviar" }
             } as I18nSchema;
         }
 
         // 🗄️ 6. DATABASE (Tenant)
-        console.log("🗄️ [ACTION] Guardant Tenant a Supabase...");
+        console.log("🗄️ [ACTION] Guardant Tenant...");
         const { org } = await tenant.createTenantStructure({
             businessName, slug, repoUrl: repoData.html_url,
             branding: { colors: { primary: primaryColor } },
             creatorUserId: user.id, creatorEmail: user.email
         });
 
-        // 📦 7. INJECCIÓ DE FITXERS
-        console.log("📦 [ACTION] Preparant fitxers de configuració...");
-        
-        // Creem l'objecte de config per poder-lo loguejar abans d'enviar
+        // 🌱 6.5 SEEDING (NOU!)
+        // Si el projecte té la secció 'featured_products', creem productes
+        if (landingSections.some(s => s.id === 'featured_products')) {
+            console.log("🌱 [ACTION] Sembrant productes d'exemple...");
+            await seedProducts(supabase, org.id, sector);
+        }
+
+        // 📦 7. INJECCIÓ
+        console.log("📦 [ACTION] Injectant configuració...");
         const siteConfigData = {
             name: businessName,
             description: finalContent.hero.subtitle,
             sector: sectorConfig.key,
             features: sectorConfig.features,
-            
-            // 👇 AQUI ÉS ON ES DEFINEIX QUÈ ES VEU
             theme: { primary: primaryColor, layout: layoutVariant },
             landing: { sections: landingSections }, 
-            
             contact: { 
                 email: publicEmail || user.email, 
                 phone: phone || "+34 600 000 000", 
@@ -168,8 +160,6 @@ export async function createProjectAction(prevState: ActionResult | unknown, for
                 socials 
             }
         };
-
-        console.log(`📦 [ACTION] site-config.json a injectar (Landing Sections):`, JSON.stringify(siteConfigData.landing.sections));
 
         const filesToInject: Record<string, string> = {
             'src/messages/ca.json': JSON.stringify(finalContent, null, 2),
@@ -179,17 +169,77 @@ export async function createProjectAction(prevState: ActionResult | unknown, for
         await infra.commitFiles(slug, filesToInject);
 
         // 🚀 8. DEPLOY & LOGO
-        console.log("🚀 [ACTION] Desplegant a Vercel...");
+        console.log("🚀 [ACTION] Desplegant...");
         if (logoFile && logoFile.size > 0) {
             await infra.uploadLogo(slug, logoFile);
         }
         await infra.deployToVercel(slug, org.id, repoData.id);
 
-        console.log("🎉 [ACTION] PROJECET COMPLETAT AMB ÈXIT!");
+        console.log("🎉 [ACTION] COMPLETAT!");
         return { success: true, repoUrl: repoData.html_url };
 
     } catch (error: unknown) {
-        console.error("❌ [ACTION] ERROR FATAL:", error);
+        console.error("❌ [ACTION] ERROR:", error);
         return { success: false, error: error instanceof Error ? error.message : "Error desconegut" };
     }
+}
+
+// ------------------------------------------------------------------
+// 🛠️ HELPER: SEEDING DE PRODUCTES (Dinàmic per sector)
+// ------------------------------------------------------------------
+// 3. Tipem el client de Supabase correctament
+async function seedProducts(supabase: SupabaseClient, orgId: string, sector: string) {
+    const products = getProductsBySector(sector, orgId);
+
+    // Ara TypeScript sap que 'products' té l'estructura correcta per a la DB
+    const { error } = await supabase.from('products').insert(products);
+
+    if (error) {
+        console.error("⚠️ Error fent seeding:", error.message);
+    } else {
+        console.log(`✅ Seeding correcte: ${products.length} productes creats.`);
+    }
+}
+function getProductsBySector(sector: string, orgId: string) {
+    const common = { 
+        organization_id: orgId, 
+        currency: 'EUR', 
+        stock: 50, 
+        active: true 
+    };
+
+    // 4. Tipem el diccionari de catàlegs
+    const catalogs: Record<string, SeedItem[]> = {
+        restaurant: [
+            { name: "Menú Degustació", desc: "Experiència gastronòmica completa.", price: 45.00, img: "https://images.unsplash.com/photo-1544025162-d76690b67f11?auto=format&fit=crop&w=800" },
+            { name: "Vi de la Casa", desc: "Selecció del sommelier.", price: 18.50, img: "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=800" },
+            { name: "Postres Artesans", desc: "Fets al dia.", price: 8.00, img: "https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?auto=format&fit=crop&w=800" },
+            { name: "Còctel Especial", desc: "Per acabar la vetllada.", price: 12.00, img: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&w=800" }
+        ],
+        fashion: [
+            { name: "Jaqueta Premium", desc: "Disseny exclusiu.", price: 89.90, img: "https://images.unsplash.com/photo-1551028919-ac66e6a39d44?auto=format&fit=crop&w=800" },
+            { name: "Samarreta Cotó", desc: "100% orgànica.", price: 29.90, img: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=800" },
+            { name: "Bossa de Pell", desc: "Feta a mà.", price: 120.00, img: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=800" },
+            { name: "Ulleres de Sol", desc: "Protecció UV.", price: 45.00, img: "https://images.unsplash.com/photo-1572635196237-14b3f281503f?auto=format&fit=crop&w=800" }
+        ],
+        services: [
+            { name: "Consultoria 1h", desc: "Sessió estratègica.", price: 100.00, img: "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=800" },
+            { name: "Auditoria Web", desc: "Anàlisi complet.", price: 250.00, img: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800" },
+            { name: "Pack Inici", desc: "Tot per començar.", price: 500.00, img: "https://images.unsplash.com/photo-1434626881859-194d67b2b86f?auto=format&fit=crop&w=800" },
+            { name: "Suport Mensual", desc: "Manteniment inclòs.", price: 50.00, img: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800" }
+        ]
+    };
+
+    // Seleccionem el catàleg o el per defecte (services)
+    const selectedCatalog = catalogs[sector] || catalogs['services'];
+
+    // Mapegem a l'estructura de la DB
+    return selectedCatalog.map((item, index) => ({
+        ...common,
+        slug: `prod-${index}-${randomUUID().substring(0, 8)}`,
+        name: item.name,
+        description: item.desc,
+        price: item.price,
+        images: [item.img] // Array de text
+    }));
 }

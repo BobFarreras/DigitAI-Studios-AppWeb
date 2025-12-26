@@ -2,11 +2,11 @@
 // FITXER: src/types/config.ts
 
 // ==========================================
-// 1. Definicions de Seccions Permeses
+// 1. Definicions de Seccions
 // ==========================================
 
-// 👇 AQUEST ÉS EL TIPUS CLAU QUE NECESSITES EXPORTAR
-export type ConfigLandingSection = 
+// A. Els noms de les seccions disponibles
+export type SectionType = 
   | 'hero' 
   | 'features' 
   | 'services' 
@@ -19,8 +19,17 @@ export type ConfigLandingSection =
   | 'featured_products' 
   | 'about';
 
+// B. La definició d'objecte (necessària per la Factory)
+export interface SectionConfig {
+  id: string;
+  type: SectionType;
+}
+
+// C. El tipus híbrid (accepta String legacy o Objecte nou)
+export type ConfigLandingSection = SectionType | SectionConfig;
+
 // ==========================================
-// 2. Configuració de Contingut Estàtic (Inputs del Config)
+// 2. Configuració de Contingut Estàtic
 // ==========================================
 
 export interface AboutConfigInput {
@@ -35,31 +44,37 @@ export interface HeroConfigInput {
   subtitle?: string;
   cta?: string;
 }
-// 👇 AFEGIM AIXÒ: Estructura per guardar items generats per IA
+
 export interface AIItem {
   title: string;
   description: string;
-  icon?: string; // Opcional, per si la IA suggereix icona
+  icon?: string;
 }
-// 👇 AFEGEIX AIXÒ (Recuperem l'estructura perduda)
+
 export interface ServicesIntroConfigInput {
   title: string;
   subtitle: string;
-  items?: AIItem[]; // 👈 Llista de serveis generats
+  items?: AIItem[];
 }
 
-// 👇 MODIFICA AIXÒ
+export interface TestimonialItem {
+  text: string;
+  author: string;
+  role: string;
+  rating: number;
+}
+
 export interface StaticContentConfig {
   hero?: HeroConfigInput;
   about?: AboutConfigInput;
   services_intro?: ServicesIntroConfigInput;
-  // ✅ NOU CAMP
   testimonials?: {
     title: string;
     subtitle: string;
     items: TestimonialItem[];
   };
 }
+
 // ==========================================
 // 3. Estructures Auxiliars
 // ==========================================
@@ -111,7 +126,7 @@ export interface SiteModules {
 
   landing: {
     active: boolean;
-    // 👇 AQUI UTILITZEM EL TIPUS STRICTE
+    // Ara accepta tant strings com objectes
     sections: ConfigLandingSection[];
   };
 
@@ -137,15 +152,9 @@ export interface I18nConfig {
   locales: string[];
   defaultLocale: string;
 }
-// 👇 AFEGEIX AIXÒ
-export interface TestimonialItem {
-  text: string;
-  author: string;
-  role: string; // Ex: "Client habitual" o "Crític gastronòmic"
-  rating: number;
-}
+
 // ==========================================
-// 🧠 CONFIGURACIÓ MESTRA (MASTER CONFIG)
+// 🧠 CONFIGURACIÓ MESTRA
 // ==========================================
 export interface MasterConfig {
   organizationId?: string;
@@ -154,7 +163,5 @@ export interface MasterConfig {
   modules: SiteModules;
   i18n: I18nConfig;
   footer: SiteFooterConfig;
-  
-  // Contingut opcional definit al config
   content?: StaticContentConfig;
 }
