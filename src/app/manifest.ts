@@ -6,8 +6,8 @@ export default function manifest(): MetadataRoute.Manifest {
     short_name: 'DigitAI',
     description: 'Agència de desenvolupament web, apps i automatització IA.',
     start_url: '/',
-    display: 'standalone', // Fa que sembli una App real (sense barra de navegador)
-    background_color: '#020817', // El color "Midnight Indigo" del teu dark mode
+    display: 'standalone',
+    background_color: '#020817',
     theme_color: '#020817',
     orientation: 'portrait',
     icons: [
@@ -15,20 +15,21 @@ export default function manifest(): MetadataRoute.Manifest {
         "src": "/web-app-manifest-192x192.png",
         "sizes": "192x192",
         "type": "image/png",
-        "purpose": "maskable"
+        "purpose": "any" // 👈 CANVIAT: Abans era 'maskable'
       },
       {
         "src": "/web-app-manifest-512x512.png",
         "sizes": "512x512",
         "type": "image/png",
-        "purpose": "maskable"
+        "purpose": "any" // 👈 CANVIAT: Abans era 'maskable'
       },
+      // Pots mantenir una entrada extra per a maskable SI tens una imatge amb marges
       {
-        src: '/icons/apple-icon.png',
-        sizes: '180x180',
-        type: 'image/png',
-        purpose: 'maskable', // Important per a Android modern
-      },
+         "src": "/web-app-manifest-512x512.png",
+         "sizes": "512x512",
+         "type": "image/png",
+         "purpose": "maskable" // Només deixa això si la imatge té molt marge al voltant
+      }
     ],
   };
 }
