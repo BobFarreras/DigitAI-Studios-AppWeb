@@ -6,7 +6,8 @@ import { SupabaseAnalyticsRepository } from '@/repositories/supabase/SupabaseAna
 import { ResendEmailService } from '@/services/email/ResendEmailService';
 import { AuditService } from '@/services/AuditService';
 import { PostService } from '@/services/PostService';
-
+// 👇 1. IMPORT NOU
+import { AIService } from '@/services/ai/AIService';
 import { GooglePageSpeedAdapter } from '@/adapters/GooglePageSpeedAdapter'; // 👈 El nou adaptador
 // ---------------------------------------------------------------------------
 // 2. Instanciem els Repositoris (Capa de Dades)
@@ -24,6 +25,8 @@ const webScanner = new GooglePageSpeedAdapter(googleKey);
 // 👇 2. INSTANCIEM EL SERVEI D'EMAIL
 export const emailService = new ResendEmailService();
 // ---------------------------------------------------------------------------
+// 👇 2. INSTANCIEM EL SERVEI D'INTEL·LIGÈNCIA ARTIFICIAL
+export const aiService = new AIService();
 // 4. Instanciem els Serveis (Capa de Negoci)
 //    Aquí fem la Injecció de Dependències
 // ---------------------------------------------------------------------------
@@ -31,7 +34,8 @@ export const emailService = new ResendEmailService();
 export const auditService = new AuditService(
   auditRepository,
   webScanner,
-  emailService // <--- AQUEST ERA EL QUE FALTAVA
+  emailService, // <--- AQUEST ERA EL QUE FALTAVA
+  aiService // <--- AQUESTA ÉS LA PEÇA QUE FALTAVA
 );
 // El PostService necessita el postRepository per funcionar
 export const postService = new PostService(postRepository);

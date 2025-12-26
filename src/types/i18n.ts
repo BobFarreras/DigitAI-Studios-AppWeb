@@ -12,6 +12,7 @@ export interface I18nSchema {
     description: string;
     image_prompt: string;
     image?: string;
+    // Permetem flexibilitat en stats (objecte o array)
     stats: {
       label1: string; value1: string;
       label2: string; value2: string;
@@ -28,17 +29,16 @@ export interface I18nSchema {
       icon_name?: string;
     }>;
   };
-  // 👇 AFEGEIX AIXÒ NOU
-  products?: {
-    badge: string;
+  
+  // ✅ CORRECCIÓ 1: Renomenat a 'featured_products' per coincidir amb el config
+  // ✅ CORRECCIÓ 2: Afegit 'limit' (el component el fa servir per tallar l'array de DB)
+  featured_products?: {
+    badge?: string;
     title: string;
     subtitle: string;
-    items: Array<{
-       name: string; // O title
-       price?: string;
-       image?: string;
-    }>;
+    limit?: number; 
   };
+
   testimonials: {
     badge: string;
     title: string;
@@ -47,18 +47,24 @@ export interface I18nSchema {
       author: string;
       role: string;
       text: string;
-      avatar_gender: string;
+      avatar_gender?: string; // Opcional
       avatar?: string;
     }>;
   };
-  // 👇 Assegura't que el generador crea això, o fes-ho opcional (?)
+
   cta_banner: {
     heading: string;
     subheading: string;
     buttonText: string;
     buttonLink?: string;
   };
-  // 👇 Idem amb FAQ
+
+  // ✅ CORRECCIÓ 3: Afegit MAP (necessari pel fallback d'actions.ts)
+  map?: {
+    title: string;
+    subtitle: string;
+  };
+
   faq: {
     title: string;
     subtitle: string;
@@ -67,6 +73,7 @@ export interface I18nSchema {
       answer: string;
     }>;
   };
+  
   contact: {
     title: string;
     description: string;

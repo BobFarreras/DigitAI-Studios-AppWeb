@@ -1,7 +1,7 @@
 // FITXER: scripts/generate-translation.ts
 // EXECUCIÓ: npx tsx scripts/generate-translation.ts
 
-import { AIService } from "../src/services/AIService";
+import { AIService } from "../src/services/ai/AIService";
 import { ImageService } from "../src/services/ImageService";
 import dotenv from "dotenv";
 import fs from "fs";

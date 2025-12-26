@@ -4,7 +4,7 @@
 
 import { InfrastructureService } from '../src/services/factory/InfrastrocutreService';
 import { TenantService } from '../src/services/TenantService';
-import { AIService } from '../src/services/AIService';
+import { AIService } from '../src/services/ai/AIService';
 import { ImageService } from '../src/services/ImageService';
 import { getSectorConfig } from '../src/types/sectors';
 import { createClient } from '@supabase/supabase-js';

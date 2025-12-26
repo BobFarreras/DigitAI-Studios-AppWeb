@@ -3,7 +3,7 @@
 import { 
   Palette, Layout, Layers, ShoppingBag, Calendar, BookOpen, Lock, LayoutDashboard,
   Star, Wrench, Users, MessageCircle, Mail, HelpCircle,
-  MapPin, BarChart3, Rocket, Tag, Store
+  MapPin,  Rocket, Tag, Store
 } from 'lucide-react';
 import { FormSection } from './FormSection';
 import { motion } from 'framer-motion';

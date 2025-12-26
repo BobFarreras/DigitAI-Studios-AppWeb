@@ -24,7 +24,7 @@ export function RegisterForm({ prefilledEmail }: { prefilledEmail: string }) {
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const MAIN_ORG_ID = process.env.NEXT_PUBLIC_MAIN_ORG_ID;
-  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!termsAccepted) {
@@ -91,7 +91,8 @@ export function RegisterForm({ prefilledEmail }: { prefilledEmail: string }) {
       setIsGoogleLoading(false);
     }
   };
-
+  // Variable per saber si està bloquejat
+  const isEmailLocked = !!prefilledEmail;
   return (
     <div className="w-full max-w-md mx-auto space-y-6">
       <div className="text-center space-y-2">
@@ -143,6 +144,8 @@ export function RegisterForm({ prefilledEmail }: { prefilledEmail: string }) {
             type="email"
             placeholder="nom@empresa.com"
             value={email}
+            // 👇 AQUÍ ESTÀ LA MÀGIA: readOnly impedeix escriure, però permet enviar el form
+            readOnly={isEmailLocked}
             onChange={(e) => setEmail(e.target.value)}
             className="bg-card border-border text-foreground h-12 focus:border-primary"
             required
