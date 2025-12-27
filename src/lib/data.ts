@@ -6,6 +6,8 @@ import { StaticImageData } from 'next/image';
 import garatgeImg from '@/assets/images/testimoni-garatgeestacio.jpg';
 import salutFlowImg from '@/assets/images/salutflow.png';
 import dataflow from '@/assets/images/cap-dataflow.jpg';
+import jardineriaPons from '@/assets/images/jardinariapontsweb.jpg';
+
 
 
 
@@ -43,11 +45,12 @@ export const TESTIMONIALS: Testimonial[] = [
   },
   {
     id: 'inspira',
-    name: "Santi Serralvo",
-    company: "Inspira Esport i Salut",
-    text: "L'App Salut Flow ha professionalitzat la relació amb els nostres usuaris. Una eina intuïtiva que ens ajuda a créixer.",
+    name: "Santi Gomez",
+    company: "Inspira",
+    text: "L'App getSalutFlow ha professionalitzat la relació amb els nostres usuaris. Una eina intuïtiva que ens ajuda a créixer.",
     rating: 5,
     projectType: 'app',
+    projectUrl: 'https://getsalutflow.com',
     image: salutFlowImg
   },
   {
@@ -61,14 +64,14 @@ export const TESTIMONIALS: Testimonial[] = [
     image: salutFlowImg
   },
   {
-    id: 'rsc',
-    name: "Raul Solà",
-    company: "RSC Instal·lacions",
-    text: "Una web ràpida i directa. Ara els clients poden veure clarament els nostres serveis d'instal·lació i contactar-nos fàcilment.",
+    id: 'jardineria-pons',
+    name: "Mercel Pons",
+    company: "Jardineria Pons",
+    text: "Una web ràpida i directa. Ara els clients poden veure clarament els nostres serveis i contactar-nos fàcilment.",
     rating: 5,
     projectType: 'web',
-    projectUrl: 'https://rscinstallacions.com/',
-    image: salutFlowImg
+    projectUrl: 'https://www.jardineriapons.com/',
+    image: jardineriaPons
   },
   {
     id: 'analytic',

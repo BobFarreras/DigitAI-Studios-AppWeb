@@ -1,7 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { getMediaType } from '@/lib/utils/media';
 
-// Tipus interns per evitar 'any'
 interface LinkedInRegisterRequest {
   registerUploadRequest: {
     recipes: string[];
@@ -24,30 +23,45 @@ interface LinkedInRegisterResponse {
 
 export class LinkedInPublisher {
   static async publish(content: string, link?: string, mediaUrl?: string) {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error("No user");
+    console.log("🚀 Iniciant LinkedIn Publisher...");
 
-    const { data: profile } = await supabase.from('profiles').select('organization_id').eq('id', user.id).single();
-    if (!profile) throw new Error("Perfil no trobat");
+    // FIX: Variables d'entorn
+    let accessToken: string | undefined | null = process.env.LINKEDIN_ACCESS_TOKEN;
+    let authorUrn: string | undefined | null = process.env.LINKEDIN_PERSON_URN; // ex: urn:li:person:12345
 
-    const { data: creds } = await supabase
-      .from('social_connections')
-      .select('*')
-      .eq('organization_id', profile.organization_id)
-      .eq('provider', 'linkedin')
-      .single();
+    // 1️⃣ ESTRATÈGIA HÍBRIDA
+    if (!accessToken || !authorUrn) {
+        console.log("⚠️ No hi ha credencials LINKEDIN al .env, buscant a Supabase...");
+        
+        const supabase = await createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) throw new Error("No user");
 
-    if (!creds) throw new Error("LinkedIn no està connectat.");
+        const { data: profiles } = await supabase.from('profiles').select('organization_id').eq('id', user.id);
+        if (!profiles || profiles.length === 0) throw new Error("Perfil no trobat");
 
-    const accessToken = creds.access_token;
-    const isOrg = creds.provider_page_id && !isNaN(Number(creds.provider_page_id));
-    const authorUrn = `urn:li:${isOrg ? 'organization' : 'person'}:${creds.provider_page_id || creds.provider_account_id}`;
-    
-    // ✅ LINK INCLÒS: S'afegeix al final del text
+        const orgIds = profiles.map(p => p.organization_id);
+
+        const { data: creds } = await supabase
+            .from('social_connections')
+            .select('*')
+            .in('organization_id', orgIds)
+            .eq('provider', 'linkedin')
+            .maybeSingle();
+
+        if (!creds) throw new Error("LinkedIn no està connectat a la DB.");
+
+        accessToken = creds.access_token;
+        const isOrg = creds.provider_page_id && !isNaN(Number(creds.provider_page_id));
+        authorUrn = `urn:li:${isOrg ? 'organization' : 'person'}:${creds.provider_page_id || creds.provider_account_id}`;
+    }
+
+    if (!accessToken || !authorUrn) throw new Error("No s'ha pogut obtenir accés a LinkedIn.");
+
+    console.log(`✅ Publicant com a: ${authorUrn}`);
+
+    // --- CONTINGUT ---
     const finalContent = link ? `${content}\n\n—\n🚀 Vols saber-ne més? Llegeix l'article complet aquí:\n👉 ${link}` : content;
-
-    console.log("🚀 Iniciant LinkedIn...");
 
     let assetUrn: string | undefined = undefined;
 
@@ -59,7 +73,7 @@ export class LinkedInPublisher {
         const imageBlob = await imageRes.blob();
 
         // 1. Registrar
-        console.log("1️⃣ Registrant...");
+        console.log("1️⃣ Registrant Upload...");
         const registerBody: LinkedInRegisterRequest = {
             registerUploadRequest: {
                 recipes: ["urn:li:digitalmediaRecipe:feedshare-image"],
@@ -75,6 +89,8 @@ export class LinkedInPublisher {
         });
 
         const regData: LinkedInRegisterResponse = await regRes.json();
+        if (!regData.value) throw new Error("Error registrant asset a LinkedIn");
+        
         const uploadUrl = regData.value.uploadMechanism['com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest'].uploadUrl;
         assetUrn = regData.value.asset;
 
@@ -136,7 +152,6 @@ export class LinkedInPublisher {
 
     if (!response.ok) {
         const err = await response.json();
-        // Si és duplicat, no petis, retorna l'ID original si pots o un placeholder
         if (response.status === 400 && JSON.stringify(err).includes("duplicate")) {
             console.warn("⚠️ Post duplicat, ignorant error.");
             return "DUPLICATE_IGNORED";

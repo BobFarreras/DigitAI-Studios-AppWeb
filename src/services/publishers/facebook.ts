@@ -5,31 +5,69 @@ export class FacebookPublisher {
   static async publish(content: string, link?: string, mediaUrl?: string) {
     console.log("🔍 FACEBOOK PUBLISHER REBUT URL:", mediaUrl);
 
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error("No user");
+    let pageId: string | undefined | null = process.env.FACEBOOK_PAGE_ID;
+    let accessToken: string | undefined | null = process.env.FACEBOOK_ACCESS_TOKEN;
 
-    const { data: profile } = await supabase.from('profiles').select('organization_id').eq('id', user.id).single();
-    if (!profile) throw new Error("Perfil no trobat");
+    // 1️⃣ ESTRATÈGIA HÍBRIDA (BUSCAR A LA DB SI EL ENV FALLA)
+    if (!pageId || !accessToken) {
+        console.log("⚠️ No hi ha credencials al .env, buscant a Supabase...");
+        
+        const supabase = await createClient();
+        
+        // A. Obtenim l'usuari actual
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) throw new Error("❌ CRÍTIC: No hi ha usuari loguejat.");
 
-    const { data: creds } = await supabase.from('social_connections').select('*').eq('organization_id', profile.organization_id).eq('provider', 'facebook').single();
-    if (!creds) throw new Error("Facebook no està connectat.");
+        // B. 👇 CANVI CLAU: Obtenim TOTS els perfils (totes les teves organitzacions)
+        const { data: profiles } = await supabase.from('profiles')
+            .select('organization_id')
+            .eq('id', user.id); // Sense .single() perquè pots tenir-ne molts!
+        
+        if (!profiles || profiles.length === 0) {
+            throw new Error(`❌ L'usuari ${user.id} no pertany a cap organització.`);
+        }
 
-    const pageId = creds.provider_page_id;
-    const accessToken = creds.access_token;
+        // Extraiem la llista d'IDs (ex: ['org_1', 'org_2'])
+        const orgIds = profiles.map(p => p.organization_id);
+        console.log(`🏢 L'usuari pertany a ${orgIds.length} organitzacions. Buscant Facebook...`);
 
-    // ✅ RECUPEREM EL LINK: Ara que pugem la foto com a arxiu, podem posar el link al text sense por.
+        // C. 👇 Busquem quina d'aquestes organitzacions té Facebook connectat
+        const { data: creds } = await supabase.from('social_connections')
+            .select('*')
+            .in('organization_id', orgIds) // Busquem DINS de la llista d'orgs
+            .eq('provider', 'facebook')
+            .maybeSingle(); // Agafem la primera que trobem que tingui FB
+        
+        if (!creds) throw new Error("Cap de les teves organitzacions té Facebook connectat a la DB.");
+
+        console.log(`✅ Connexió trobada a l'organització: ${creds.organization_id}`);
+
+        pageId = creds.provider_page_id;
+        accessToken = creds.access_token;
+    } else {
+        console.log("✅ Usant credencials de FACEBOOK del fitxer .env");
+    }
+
+    // Comprovació final
+    if (!pageId || !accessToken) {
+        throw new Error("No s'han pogut resoldre les credencials de Facebook.");
+    }
+
+    // ---------------------------------------------------------
+    // 🚀 LÒGICA DE PUBLICACIÓ (Això es manté igual)
+    // ---------------------------------------------------------
     const finalMessage = link ? `${content}\n\n—\n🚀 Vols saber-ne més? Llegeix l'article complet aquí:\n👉 ${link}` : content;
 
     if (mediaUrl) {
-      console.log(`📥 Baixant imatge per Upload Binari...`);
-      const imgRes = await fetch(mediaUrl);
+      console.log(`📥 Baixant imatge...`);
+      const imgRes = await fetch(mediaUrl).catch(err => { throw new Error(`Error network: ${err.message}`) });
+      
       if (!imgRes.ok) throw new Error(`Error descarregant imatge (${imgRes.status})`);
       const imgBlob = await imgRes.blob();
       console.log(`⚖️ Mida imatge: ${imgBlob.size} bytes`);
 
       const formData = new FormData();
-      formData.append('access_token', accessToken);
+      formData.append('access_token', accessToken!); 
 
       const type = getMediaType(mediaUrl);
 
@@ -37,24 +75,21 @@ export class FacebookPublisher {
         const endpoint = `https://graph.facebook.com/v19.0/${pageId}/videos`;
         formData.append('description', finalMessage);
         formData.append('file', imgBlob, 'video.mp4');
-
-        console.log("📹 Pujant vídeo binari...");
+        
         const res = await fetch(endpoint, { method: 'POST', body: formData });
         return handleResponse(res);
 
       } else {
         const endpoint = `https://graph.facebook.com/v19.0/${pageId}/photos`;
-        formData.append('caption', finalMessage); // Aquí va el text + link
-        formData.append('source', imgBlob, 'image.jpg'); // CLAU CRÍTICA PER FOTOS
+        formData.append('caption', finalMessage);
+        formData.append('source', imgBlob, 'image.jpg');
         formData.append('published', 'true');
 
-        console.log("📸 Pujant foto binària...");
         const res = await fetch(endpoint, { method: 'POST', body: formData });
         return handleResponse(res);
       }
     } else {
-      // Cas només text
-      console.log("📝 Publicant només text (sense imatge)...");
+      console.log("📝 Publicant només text...");
       const endpoint = `https://graph.facebook.com/v19.0/${pageId}/feed`;
       const res = await fetch(endpoint, {
         method: 'POST',
