@@ -1,50 +1,32 @@
 'use client';
 
-import { useState } from 'react';
 import { usePathname } from 'next/navigation';
-import { useRouter, Link } from '@/routing'; 
+import { Link } from '@/routing'; 
 import { 
   LayoutDashboard, 
   FileText, 
   FolderKanban, 
   ShieldAlert, 
-  LogOut, 
-  Home, 
-  X
+  Home
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
-import { signOutAction } from '@/features/auth/actions/auth';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Button } from '@/components/ui/button';
+import { LogoutButton } from '@/components/dashboard/LogoutButton'; // ✅ IMPORTAT
 
 interface MobileBottomBarProps {
   userRole: 'admin' | 'client' | 'lead';
 }
 
 export function MobileBottomBar({ userRole }: MobileBottomBarProps) {
-  const t = useTranslations('Dashboard.mobile_nav'); // Namespace específic per mòbil (labels curts)
-  const tCommon = useTranslations('Dashboard.sidebar'); // Reutilitzem textos del sidebar/logout
+  const t = useTranslations('Dashboard.mobile_nav');
   const pathname = usePathname();
-  const router = useRouter();
+  // router no cal si utilitzem Link i el LogoutButton intern
   
-  const [showExitDialog, setShowExitDialog] = useState(false);
-  const [isSigningOut, setIsSigningOut] = useState(false);
-
   // Neteja del path per saber on som
   const cleanPath = pathname.replace(/^\/[a-z]{2}/, '') || '/';
 
-  const handleLogout = async () => {
-    setIsSigningOut(true);
-    await signOutAction();
-    // No cal router.push aquí perquè el server action ja fa redirect, 
-    // però per si de cas a client:
-    router.refresh(); 
-  };
-
   const MENU_ITEMS = [
     { icon: LayoutDashboard, label: t('summary'), href: '/dashboard' },
-    // Nota: Si '/dashboard/audits' no existeix encara, redirigeix o canvia-ho
     { icon: FileText, label: t('audits'), href: '/dashboard/audits' }, 
     { icon: FolderKanban, label: t('projects'), href: '/dashboard/projects' },
   ];
@@ -52,7 +34,6 @@ export function MobileBottomBar({ userRole }: MobileBottomBarProps) {
   const handleClick = (e: React.MouseEvent, href: string, label: string) => {
     if (href.startsWith('#')) {
       e.preventDefault();
-      // Opcional: Toast en lloc d'alert
       alert(`${label} ${t('coming_soon')}`); 
     }
   };
@@ -125,81 +106,15 @@ export function MobileBottomBar({ userRole }: MobileBottomBarProps) {
                   <span className="text-[10px] font-medium">{t('web')}</span>
               </Link>
 
-              {/* 4. BOTÓ LOGOUT (Obre Modal)  */}
-              <button
-                  onClick={() => setShowExitDialog(true)}
-                  className="flex flex-col items-center justify-center w-full h-full gap-1 active:scale-95 transition-transform text-red-400 hover:text-red-500"
-              >
-                  <LogOut className="w-5 h-5" strokeWidth={2} />
-                  <span className="text-[10px] font-medium">{t('logout_short')}</span>
-              </button>
+              {/* 4. BOTÓ LOGOUT (REUTILITZAT) */}
+              {/* Passem minimal={true} i les classes per alinear-ho com els altres items */}
+              <LogoutButton 
+                minimal={true} 
+                className="flex flex-col items-center justify-center w-full h-full gap-1 active:scale-95 transition-transform text-red-400 hover:text-red-500"
+              />
 
           </div>
       </div>
-
-      {/* --- MODAL DE CONFIRMACIÓ (LOGOUT) --- */}
-      <AnimatePresence>
-        {showExitDialog && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 md:hidden">
-            
-            {/* Backdrop fosc */}
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setShowExitDialog(false)}
-              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-            />
-
-            {/* Targeta del Diàleg */}
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              className="relative w-full max-w-sm bg-card border border-border rounded-2xl shadow-2xl p-6 overflow-hidden"
-            >
-              {/* Botó tancar */}
-              <button 
-                onClick={() => setShowExitDialog(false)}
-                className="absolute top-4 right-4 text-muted-foreground hover:text-foreground"
-              >
-                <X className="w-5 h-5" />
-              </button>
-
-              <div className="flex flex-col items-center text-center space-y-4">
-                <div className="w-12 h-12 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center text-red-500 mb-2">
-                  <LogOut className="w-6 h-6 ml-1" />
-                </div>
-                
-                <div>
-                  <h3 className="text-lg font-bold text-foreground">{tCommon('logout_confirm_title')}</h3>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {tCommon('logout_confirm_desc')}
-                  </p>
-                </div>
-
-                <div className="flex gap-3 w-full pt-2">
-                  <Button 
-                    variant="outline" 
-                    onClick={() => setShowExitDialog(false)}
-                    className="flex-1 rounded-xl h-11"
-                  >
-                    {tCommon('cancel')}
-                  </Button>
-                  <Button 
-                    variant="destructive" 
-                    onClick={handleLogout}
-                    disabled={isSigningOut}
-                    className="flex-1 rounded-xl h-11 bg-red-500 hover:bg-red-600 text-white shadow-lg shadow-red-500/20"
-                  >
-                    {isSigningOut ? '...' : tCommon('logout_action')}
-                  </Button>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
     </>
   );
 }

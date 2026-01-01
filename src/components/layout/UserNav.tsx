@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter, Link } from '@/routing';
 import { Button } from '@/components/ui/button';
-import { LayoutDashboard, LogOut, ShieldAlert, Loader2, LogIn } from 'lucide-react';
+import { LayoutDashboard, LogOut, ShieldAlert, Loader2 } from 'lucide-react';
 import { signOutAction } from '@/features/auth/actions/auth';
 import type { User } from '@supabase/supabase-js';
 import { useTranslations } from 'next-intl';

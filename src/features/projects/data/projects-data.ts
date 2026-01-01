@@ -62,7 +62,7 @@ export const PROJECTS: Project[] = [
     // Imatge per defecte (si falla la lògica d'idioma)
     image: triaTuImgEN, 
     imageAlt: "Interfície de l'assistent de cuina TriaTu",
-    link: 'https://triatu.com',
+    link: 'https://triatu.vercel.app',
 
     // ✅ Lògica d'imatges per idioma
     adaptiveImages: {
