@@ -14,9 +14,9 @@ export function ProductTeaser() {
     const t = useTranslations('ProductTeaser');
 
     return (
-        // ✅ CORRECCIÓ: Padding responsiu aplicat directament aquí
         <section className="py-24 container mx-auto px-6 md:px-10 lg:px-14">
 
+            {/* Fons del contenidor (Això ja ho tenies bé amb sintaxi v4 'bg-linear-to-br') */}
             <div className="rounded-3xl bg-linear-to-br from-slate-50 via-white to-blue-50 dark:from-primary/10 dark:via-background dark:to-background border border-slate-200 dark:border-primary/20 p-8 md:p-12 overflow-hidden relative transition-colors duration-300 shadow-2xl shadow-slate-200/50 dark:shadow-none">
 
                 <div className="absolute top-0 right-0 w-125 h-125 bg-blue-400/20 dark:bg-primary/20 blur-[100px] rounded-full opacity-40 pointer-events-none"></div>
@@ -25,11 +25,12 @@ export function ProductTeaser() {
 
                     {/* TEXT CONTENT */}
                     <div>
-                     
-
                         <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-6 leading-tight">
                             {t('title_prefix')} <br />
-                            <span className="gradient-text">{t('title_highlight')}</span>
+                            {/* 👇👇 CORRECCIÓ APLICADA AQUÍ 👇👇 */}
+                            <span className="text-transparent bg-clip-text bg-linear-to-r from-primary to-purple-400">
+                                {t('title_highlight')}
+                            </span>
                         </h2>
 
                         <p className="text-slate-600 dark:text-slate-400 text-lg mb-8 leading-relaxed">
@@ -45,7 +46,7 @@ export function ProductTeaser() {
                         </Link>
                     </div>
 
-                    {/* MOCKUP VISUAL */}
+                    {/* MOCKUP VISUAL (SENSE CANVIS, ESTAVA BÉ) */}
                     <div className="relative h-100 w-full flex items-center justify-center perspective-1000">
 
                         {/* CARD 1: RIBOTFLOW */}
