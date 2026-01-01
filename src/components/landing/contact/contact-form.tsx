@@ -129,7 +129,11 @@ function ServiceButton({ active, onClick, icon: Icon, label }: ServiceButtonProp
       className={cn(
         "relative flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all duration-200 group",
         active 
-          ? "border-primary bg-primary/5 dark:bg-zinc-900 text-primary shadow-sm ring-1 ring-primary/20" 
+          // 🔥 FIX LIGHT MODE:
+          // Abans: bg-primary/5 (Això feia la taca lila).
+          // Ara: bg-slate-50 (Gris molt net).
+          // El 'dark:bg-zinc-900' es manté perquè vas dir que en dark mode estava perfecte.
+          ? "border-primary bg-slate-50 dark:bg-zinc-900 text-primary shadow-sm ring-1 ring-primary/20" 
           : "border-border bg-transparent dark:bg-zinc-950 text-muted-foreground hover:bg-slate-50 dark:hover:bg-zinc-900 hover:border-primary/30"
       )}
     >
