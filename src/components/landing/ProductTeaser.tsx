@@ -6,7 +6,6 @@ import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 
-// ✅ IMPORTACIÓ ESTÀTICA
 import ribotFlowImg from '@/assets/images/ribotflow.png';
 import salutFlowImg from '@/assets/images/salutflow.png';
 
@@ -16,10 +15,15 @@ export function ProductTeaser() {
     return (
         <section className="py-24 container mx-auto px-6 md:px-10 lg:px-14">
 
-            {/* Fons del contenidor (Això ja ho tenies bé amb sintaxi v4 'bg-linear-to-br') */}
-            <div className="rounded-3xl bg-linear-to-br from-slate-50 via-white to-blue-50 dark:from-primary/10 dark:via-background dark:to-background border border-slate-200 dark:border-primary/20 p-8 md:p-12 overflow-hidden relative transition-colors duration-300 shadow-2xl shadow-slate-200/50 dark:shadow-none">
+            {/* FONS CARD:
+                1. Light: 'bg-linear-to-br from-slate-50 via-white to-slate-50' (Molt neutre, sense blau).
+                2. Dark: 'dark:from-zinc-900 dark:via-zinc-950 dark:to-zinc-900'. (Negre net, sense primary/10).
+                3. Borde: Més suau.
+            */}
+            <div className="rounded-3xl bg-linear-to-br from-slate-50 via-white to-slate-50 dark:from-zinc-900 dark:via-zinc-950 dark:to-zinc-900 border border-slate-200 dark:border-white/10 p-8 md:p-12 overflow-hidden relative transition-colors duration-300 shadow-2xl shadow-slate-200/50 dark:shadow-none">
 
-                <div className="absolute top-0 right-0 w-125 h-125 bg-blue-400/20 dark:bg-primary/20 blur-[100px] rounded-full opacity-40 pointer-events-none"></div>
+                {/* BLOB FIX: Reduït opacitat dràsticament (40% -> 10% en dark) */}
+                <div className="absolute top-0 right-0 w-125 h-125 bg-blue-400/5 dark:bg-primary/5 blur-[100px] rounded-full opacity-30 dark:opacity-10 pointer-events-none"></div>
 
                 <div className="grid lg:grid-cols-2 gap-16 items-center relative z-10">
 
@@ -27,7 +31,6 @@ export function ProductTeaser() {
                     <div>
                         <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-6 leading-tight">
                             {t('title_prefix')} <br />
-                            {/* 👇👇 CORRECCIÓ APLICADA AQUÍ 👇👇 */}
                             <span className="text-transparent bg-clip-text bg-linear-to-r from-primary to-purple-400">
                                 {t('title_highlight')}
                             </span>
@@ -46,7 +49,7 @@ export function ProductTeaser() {
                         </Link>
                     </div>
 
-                    {/* MOCKUP VISUAL (SENSE CANVIS, ESTAVA BÉ) */}
+                    {/* MOCKUP VISUAL (Sense canvis de lògica, només colors de fons ajustats per no ser liles) */}
                     <div className="relative h-100 w-full flex items-center justify-center perspective-1000">
 
                         {/* CARD 1: RIBOTFLOW */}
@@ -54,17 +57,12 @@ export function ProductTeaser() {
                             initial={{ opacity: 0, x: -20, rotate: -5 }}
                             whileInView={{ opacity: 1, x: 0, rotate: -6 }}
                             viewport={{ once: true }}
-                            className="absolute left-4 top-10 w-3/4 h-64 bg-white dark:bg-[#0f111a] rounded-xl border border-slate-200 dark:border-white/10 shadow-xl z-10 overflow-hidden"
+                            // Fons ajustat: dark:bg-[#0f111a] -> dark:bg-zinc-900
+                            className="absolute left-4 top-10 w-3/4 h-64 bg-white dark:bg-zinc-900 rounded-xl border border-slate-200 dark:border-white/10 shadow-xl z-10 overflow-hidden"
                         >
                             <div className="h-12 border-b border-slate-100 dark:border-white/5 flex items-center justify-between px-4 bg-slate-50/50 dark:bg-white/5">
                                 <div className="relative h-12 w-34">
-                                    <Image
-                                        src={ribotFlowImg}
-                                        alt="RibotFlow Logo"
-                                        fill
-                                        className="object-contain object-left"
-                                        placeholder="blur"
-                                    />
+                                    <Image src={ribotFlowImg} alt="RibotFlow Logo" fill className="object-contain object-left" placeholder="blur" />
                                 </div>
                                 <div className="flex gap-1.5">
                                     <div className="w-2 h-2 rounded-full bg-slate-300 dark:bg-white/20"></div>
@@ -86,17 +84,12 @@ export function ProductTeaser() {
                             whileInView={{ opacity: 1, x: 20, rotate: 3, y: 40 }}
                             viewport={{ once: true }}
                             transition={{ delay: 0.2 }}
-                            className="absolute right-4 top-24 w-3/4 h-64 bg-white dark:bg-[#0f111a] rounded-xl border border-slate-200 dark:border-white/10 shadow-2xl z-20 overflow-hidden backdrop-blur-sm"
+                            // Fons ajustat
+                            className="absolute right-4 top-24 w-3/4 h-64 bg-white dark:bg-zinc-900 rounded-xl border border-slate-200 dark:border-white/10 shadow-2xl z-20 overflow-hidden backdrop-blur-sm"
                         >
                             <div className="h-12 border-b border-slate-100 dark:border-white/5 flex items-center justify-between px-4 bg-slate-50/50 dark:bg-white/5">
                                 <div className="relative h-22 w-48">
-                                    <Image
-                                        src={salutFlowImg}
-                                        alt="SalutFlow Logo"
-                                        fill
-                                        className="object-contain object-left"
-                                        placeholder="blur"
-                                    />
+                                    <Image src={salutFlowImg} alt="SalutFlow Logo" fill className="object-contain object-left" placeholder="blur" />
                                 </div>
                                 <ExternalLink className="w-4 h-4 text-slate-400" />
                             </div>
