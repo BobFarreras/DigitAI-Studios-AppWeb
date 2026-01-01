@@ -7,7 +7,7 @@ import { NodemailerAdapter } from '@/adapters/nodemailer/NodemailerAdapter';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache'; // 👈 IMPORTANT
 // Definim el tipus de resposta específica per al detall
-type GetLeadDetailResponse = 
+type GetLeadDetailResponse =
   | { success: true; lead: Lead }
   | { success: false; error: string };
 // --- DEFINICIÓ DE TIPUS (Clean Architecture) ---
@@ -29,7 +29,7 @@ type Metadata = {
 };
 
 // Aquest és el tipus "discriminat". Si success és true, tenim dades. Si és false, tenim error.
-export type GetLeadsResponse = 
+export type GetLeadsResponse =
   | { success: true; leads: Lead[]; metadata: Metadata }
   | { success: false; error: string };
 
@@ -39,7 +39,7 @@ const repository = new SupabaseContactRepository();
 const mailer = new NodemailerAdapter();
 const contactService = new ContactService(repository, mailer);
 
-export async function getAdminLeads(page: number = 1): Promise<GetLeadsResponse> { 
+export async function getAdminLeads(page: number = 1): Promise<GetLeadsResponse> {
   const supabase = await createClient();
 
   // 1. SEGURETAT
@@ -49,12 +49,12 @@ export async function getAdminLeads(page: number = 1): Promise<GetLeadsResponse>
   // 2. RECUPERAR DADES
   try {
     const result = await contactService.getDashboardLeads(page);
-    
+
     // Retornem l'objecte complet marcat com a èxit
-    return { 
-      success: true, 
-      leads: result.leads, 
-      metadata: result.metadata 
+    return {
+      success: true,
+      leads: result.leads,
+      metadata: result.metadata
     };
 
   } catch (error) {
@@ -74,7 +74,7 @@ export async function getAdminLeadById(id: string): Promise<GetLeadDetailRespons
   // 2. Recuperar dades
   try {
     const lead = await contactService.getLeadDetails(id);
-    
+
     if (!lead) {
       return { success: false, error: "No s'ha trobat el missatge." };
     }
@@ -96,11 +96,11 @@ export async function deleteAdminLead(id: string) {
   try {
     // 2. Esborrar
     await contactService.deleteLead(id);
-
+    console.log(`✅ [ACTION] Eliminat a Supabase. Ara revalidant paths...`);
     // 3. Revalidar (Refrescar la UI del servidor)
     // Això fa que la llista s'actualitzi sola a '/admin/missatges'
     revalidatePath('/[locale]/admin/missatges', 'page');
-    
+
     return { success: true };
   } catch (error) {
     console.error('💥 [ACTION] Error eliminant:', error);

@@ -3,7 +3,7 @@ import { createClient as createAdminClient } from '@supabase/supabase-js'; // �
 import { ContactFormData } from '@/lib/validations/contact';
 
 export class SupabaseContactRepository {
-  
+
   // 1️⃣ MÈTODE CREATE: Utilitza la clau Mestra (Service Role)
   // Això permet que qualsevol (fins i tot si no està loguejat) pugui enviar el formulari
   // sense xocar amb les polítiques RLS.
@@ -22,7 +22,7 @@ export class SupabaseContactRepository {
         service: data.service,
         message: data.message,
         source: 'landing_contact_form',
-      
+
       })
       .select()
       .single();
@@ -37,7 +37,7 @@ export class SupabaseContactRepository {
 
   // 2️⃣ MÈTODES DE LECTURA: Utilitzen el client de sessió (Cookies)
   // Només funcionaran si estàs loguejat al Dashboard. Això és CORRECTE per seguretat.
-  
+
   async getAll() {
     console.log('🔍 [REPO] Iniciant lectura de contact_leads...');
     const supabase = await createClient(); // Client normal (cookies)
@@ -99,22 +99,27 @@ export class SupabaseContactRepository {
   }
 
   async delete(id: string) {
-    console.log(`🗑️ [REPO] Intentant eliminar lead: ${id}`);
+    console.log(`🗑️ [REPO] Intentant eliminar lead: ${id} de la taula contact_leads`);
     const supabase = await createClient();
 
-    const { error, status, statusText } = await supabase
-      .from('contact_leads')
-      .delete()
+    // Afegim { count: 'exact' } per saber si REALMENT s'ha esborrat
+    const { error, count } = await supabase
+      .from('contact_leads') // 👈 NOM CORRECTE
+      .delete({ count: 'exact' })
       .eq('id', id);
-
-    console.log(`🔍 [REPO] Resultat Supabase: Status ${status} (${statusText})`);
 
     if (error) {
       console.error(`❌ [REPO] Error eliminant lead ${id}:`, error.message);
       throw new Error('Error eliminant el missatge de la base de dades.');
     }
 
-    console.log(`✅ [REPO] Lead ${id} eliminat correctament.`);
+    // Si no hi ha error però count és 0, alguna cosa passa (ID incorrecte o permisos RLS)
+    if (count === 0) {
+      console.warn(`⚠️ [REPO] Alerta: Supabase ha retornat 0 files eliminades. Revisa RLS.`);
+      // Opcional: throw new Error("No tens permís per eliminar o el missatge ja no existeix.");
+    }
+
+    console.log(`✅ [REPO] Lead eliminat correctament.`);
     return true;
   }
 }

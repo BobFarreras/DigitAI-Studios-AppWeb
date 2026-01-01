@@ -15,11 +15,21 @@ export default async function AdminInboxPage({ searchParams }: PageProps) {
   const resolvedParams = await searchParams;
   const page = Number(resolvedParams.page) || 1;
 
-  // Cridem les dues accions en paral·lel
+  console.log(`👀 [PAGE] Renderitzant pàgina ${page}...`);
+
   const [leadsResult, auditsResult] = await Promise.all([
     getAdminLeads(page),
-    getAdminAudits() // De moment sense paginació per simplificar
+    getAdminAudits()
   ]);
+
+  // AFEGEIX AQUEST LOG:
+  if (leadsResult.success) {
+    const ids = leadsResult.leads.map(l => l.id.substring(0, 5) + '...');
+    console.log(`📦 [PAGE] Leads rebuts del servidor:`, ids);
+    console.log(`🔢 [PAGE] Total leads:`, leadsResult.metadata.total);
+  } else {
+    console.error(`❌ [PAGE] Error rebent leads:`, leadsResult.error);
+  }
 
   const totalLeads = leadsResult.success ? leadsResult.metadata.total : 0;
   // ✅ CORRECCIÓ: Fem servir l'operador '?' o un fallback '|| []'
@@ -32,7 +42,7 @@ export default async function AdminInboxPage({ searchParams }: PageProps) {
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-foreground">Bústia d'Entrada</h1>
           <p className="text-muted-foreground mt-1">
-             Gestiona totes les interaccions dels usuaris.
+            Gestiona totes les interaccions dels usuaris.
           </p>
         </div>
       </div>
@@ -54,7 +64,7 @@ export default async function AdminInboxPage({ searchParams }: PageProps) {
             <>
               <LeadsTable leads={leadsResult.leads} />
               {leadsResult.metadata.totalPages > 1 && (
-                 <PaginationControls metadata={leadsResult.metadata} />
+                <PaginationControls metadata={leadsResult.metadata} />
               )}
             </>
           ) : (
@@ -65,9 +75,9 @@ export default async function AdminInboxPage({ searchParams }: PageProps) {
         {/* --- PESTANYA 2: AUDITORIEs --- */}
         <TabsContent value="audits" className="space-y-4">
           {auditsResult.success && auditsResult.data ? (
-             <AuditsTable audits={auditsResult.data} />
+            <AuditsTable audits={auditsResult.data} />
           ) : (
-             <div className="text-red-500">Error carregant auditories</div>
+            <div className="text-red-500">Error carregant auditories</div>
           )}
         </TabsContent>
       </Tabs>
