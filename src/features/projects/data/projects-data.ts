@@ -1,18 +1,23 @@
 import { Project } from '@/types/models';
 
-// Importa les teves imatges reals aquí
+// --- IMATGES EXISTENTS ---
 import ribotFlowImg from '@/assets/images/ribotflowPresentacio.jpg';
 import salutFlowImgDark from '@/assets/images/getsalutflowIntroDark.jpg';
 import salutFlowImgLight from '@/assets/images/getsalutflowIntroLight.jpg';
 import salutFlowImgDarkCA from '@/assets/images/getsalutflowDarkCA.jpg';
 import salutFlowImgLightCA from '@/assets/images/getsalutflowLightCA.jpg';
 
+// --- ✅ NOVES IMATGES TRIATU (Assegura't que els fitxers existeixen) ---
+import triaTuImgCA from '@/assets/images/triatu_ca.jpg'; 
+import triaTuImgES from '@/assets/images/triatu_es.jpg'; 
+import triaTuImgEN from '@/assets/images/triatu_en.jpg'; 
+
 export const PROJECTS: Project[] = [
   {
     id: 'ribotflow',
     title: 'RibotFlow',
     tagline: 'El Sistema Operatiu Integral',
-    description: '...', // Recorda que els textos reals venen del JSON de traducció
+    description: '...', 
     stats: ['CRM + Facturació', 'Automatització IA', 'Control Financer'],
     tags: ['ERP', 'Business', 'IA', 'Supabase'],
     color: 'from-purple-500 to-pink-500',
@@ -31,20 +36,51 @@ export const PROJECTS: Project[] = [
     link: 'https://getsalutflow.com',
     imageAlt: "App mòbil SalutFlow",
     
-    // Imatge Fallback (per si falla alguna cosa)
     image: salutFlowImgDark,
 
-    // Lògica Adaptativa
     adaptiveImages: {
-      // Si l'usuari està en Català
       ca: {
-        light: salutFlowImgDarkCA,
-        dark: salutFlowImgLightCA
+        light: salutFlowImgLightCA,
+        dark: salutFlowImgDarkCA
       },
-      // Per qualsevol altre idioma (en, es, fr...)
+      default: { // Per defecte (EN/ES) si no hi ha específica
+        light: salutFlowImgLight,
+        dark: salutFlowImgDark
+      }
+    }
+  },
+  // ✨ NOU PROJECTE TRIATU
+  {
+    id: 'triatu',
+    title: 'TriaTu',
+    tagline: 'El teu Xef Personal amb IA', // Fallback, el real ve del JSON
+    description: '...', 
+    stats: ['Receptes Generatives', 'Gestió de Rebost', 'Cuina d\'Aprofitament'], // Fallback
+    tags: ['FoodTech', 'AI', 'Next.js', 'Gamification'],
+    color: 'from-emerald-500 to-teal-600', 
+    
+    // Imatge per defecte (si falla la lògica d'idioma)
+    image: triaTuImgEN, 
+    imageAlt: "Interfície de l'assistent de cuina TriaTu",
+    link: 'https://triatu.com',
+
+    // ✅ Lògica d'imatges per idioma
+    adaptiveImages: {
+      ca: {
+        light: triaTuImgCA,
+        dark: triaTuImgCA // Utilitzem la mateixa si no tens versió fosca específica
+      },
+      es: {
+        light: triaTuImgES,
+        dark: triaTuImgES
+      },
+      en: {
+        light: triaTuImgEN,
+        dark: triaTuImgEN
+      },
       default: {
-        light: salutFlowImgDark,
-        dark: salutFlowImgLight
+        light: triaTuImgEN,
+        dark: triaTuImgEN
       }
     }
   }

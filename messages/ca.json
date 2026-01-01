@@ -49,7 +49,6 @@
     "cta": "Auditoria Gratuïta",
     "form_title": "Analitza la teva web en segons"
   },
-
   "Dashboard": {
     "welcome": "Benvingut, {name}",
     "my_audits": "Les meves Auditories",
@@ -361,6 +360,15 @@
         "1": "Pagaments Stripe",
         "2": "Llistes d'Espera"
       }
+    },
+    "triatu": {
+      "tagline": "El teu Xef Personal amb IA",
+      "description": "Una aplicació intel·ligent que combat el desaprofitament alimentari generant receptes úniques basades en els ingredients que l'usuari ja té, utilitzant IA avançada i modes de decisió divertits.",
+      "stats": {
+        "0": "Receptes Generatives",
+        "1": "Gestió de Rebost",
+        "2": "Cuina d'Aprofitament"
+      }
     }
   },
   "BlogIndex": {
@@ -585,7 +593,6 @@
       "btn_view_all": "Veure Tot"
     }
   },
-  
   "Auth": {
     "login_title": "Benvingut de nou",
     "login_subtitle": "Introdueix les teves credencials per accedir",
@@ -602,7 +609,6 @@
     "register_link": "Registra't",
     "already_have_account": "Ja tens compte?",
     "login_link": "Inicia sessió",
-    
     "error": {
       "invalid_login": "El correu o la contrasenya són incorrectes.",
       "not_in_org": "Aquest usuari no pertany a aquesta organització.",
@@ -614,5 +620,4 @@
       "account_exists_please_login": "Ja tens un compte global a DigitAI. Si us plau, inicia sessió per vincular-te a aquesta nova organització."
     }
   }
-
 }

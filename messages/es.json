@@ -49,7 +49,6 @@
     "cta": "Auditoría Gratuita",
     "form_title": "Analiza tu web en segundos"
   },
-  
   "Dashboard": {
     "welcome": "Bienvenido, {name}",
     "my_audits": "Mis Auditorías",
@@ -361,6 +360,15 @@
         "1": "Pagos Stripe",
         "2": "Listas de Espera"
       }
+    },
+    "triatu": {
+      "tagline": "Tu Chef Personal con IA",
+      "description": "Una aplicación inteligente que combate el desperdicio alimentario generando recetas únicas basadas en los ingredientes que el usuario ya tiene, utilizando IA avanzada y modos de decisión divertidos.",
+      "stats": {
+        "0": "Recetas Generativas",
+        "1": "Gestión de Despensa",
+        "2": "Cocina de Aprovechamiento"
+      }
     }
   },
   "BlogIndex": {
@@ -585,7 +593,6 @@
       "btn_view_all": "Ver Todo"
     }
   },
-  
   "Auth": {
     "login_title": "Bienvenido de nuevo",
     "login_subtitle": "Introduce tus credenciales para acceder",
@@ -602,7 +609,6 @@
     "register_link": "Regístrate",
     "already_have_account": "¿Ya tienes cuenta?",
     "login_link": "Inicia sesión",
-
     "error": {
       "invalid_login": "El correo o la contraseña son incorrectos.",
       "not_in_org": "Este usuario no pertenece a esta organización.",
@@ -614,5 +620,4 @@
       "account_exists_please_login": "Ya tienes una cuenta global en DigitAI. Por favor, inicia sesión para vincularte a esta nueva organización."
     }
   }
-
 }

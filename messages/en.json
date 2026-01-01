@@ -49,7 +49,6 @@
     "cta": "Free Audit",
     "form_title": "Analyze your website in seconds"
   },
-
   "Dashboard": {
     "welcome": "Welcome, {name}",
     "my_audits": "My Audits",
@@ -361,6 +360,15 @@
         "1": "Stripe Payments",
         "2": "Waiting Lists"
       }
+    },
+    "triatu": {
+      "tagline": "Your AI Personal Chef",
+      "description": "A smart application that fights food waste by generating unique recipes based on the ingredients the user already has, using advanced AI and fun decision modes.",
+      "stats": {
+        "0": "Generative Recipes",
+        "1": "Pantry Management",
+        "2": "Zero-Waste Cooking"
+      }
     }
   },
   "BlogIndex": {
@@ -585,7 +593,6 @@
       "btn_view_all": "View All"
     }
   },
-  
   "Auth": {
     "login_title": "Welcome back",
     "login_subtitle": "Enter your credentials to access",
@@ -602,7 +609,6 @@
     "register_link": "Sign up",
     "already_have_account": "Already have an account?",
     "login_link": "Sign in",
-
     "error": {
       "invalid_login": "The email or password is incorrect.",
       "not_in_org": "This user does not belong to this organization.",
@@ -614,6 +620,4 @@
       "account_exists_please_login": "You already have a global DigitAI account. Please sign in to link it to this new organization."
     }
   }
-
-
 }
