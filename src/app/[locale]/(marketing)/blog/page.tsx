@@ -41,9 +41,9 @@ export default async function BlogIndexPage({ searchParams }: PageProps) {
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
         {posts.map((post) => (
           <Link key={post.slug} href={`/blog/${post.slug}`} className="block group h-full">
-             {/* ... (TOT EL CONTINGUT DE LA CARD ES MANTÉ EXACTAMENT IGUAL) ... */}
+         
              <Card className="h-full flex flex-col overflow-hidden border border-border bg-card dark:bg-[#0f111a] hover:border-primary/50 transition-all duration-300 shadow-sm hover:shadow-2xl hover:-translate-y-1">
-                {/* ... Codi de la Card ... */}
+               
                 <div className="relative h-56 w-full bg-muted dark:bg-slate-800 overflow-hidden">
                     {(post.totalReactions || 0) > 0 && (
                       <div className="absolute top-3 right-3 z-20 flex items-center gap-1.5 bg-slate-900/80 backdrop-blur-md px-3 py-1 rounded-full text-cyan-400 text-xs font-bold font-mono border border-cyan-500/30">

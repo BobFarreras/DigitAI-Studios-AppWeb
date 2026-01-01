@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Sparkles } from 'lucide-react';
+
 import { useTranslations } from 'next-intl';
 
 export function ProjectsHero() {
@@ -10,7 +10,7 @@ export function ProjectsHero() {
   return (
     <section className="pt-32 pb-16 md:pt-48 md:pb-24 relative overflow-hidden">
       {/* Fons decoratiu */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] md:w-[1000px] h-[300px] md:h-[500px] bg-primary/10 blur-[80px] md:blur-[120px] rounded-full pointer-events-none opacity-50" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-150 md:w-250 h-75 md:h-125 bg-primary/10 blur-[80px] md:blur-[120px] rounded-full pointer-events-none opacity-50" />
       
       {/* ✅ CORRECCIÓ: Padding responsiu */}
       <div className="container mx-auto px-6 md:px-10 lg:px-14 text-center relative z-10">
@@ -19,10 +19,7 @@ export function ProjectsHero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/20 bg-primary/5 text-primary text-[10px] md:text-xs font-bold mb-6 uppercase tracking-widest">
-            <Sparkles className="w-3 h-3" />
-            {t('badge')}
-          </div>
+  
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 text-foreground leading-tight">
             {t('title_prefix')} <br className="hidden md:block" />
             <span className="gradient-text">{t('title_highlight')}</span>

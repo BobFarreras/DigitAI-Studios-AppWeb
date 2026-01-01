@@ -5,9 +5,10 @@ import { Link } from '@/routing';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Calendar, User } from 'lucide-react';
 import { Metadata } from 'next';
-import { getTranslations} from 'next-intl/server'; // 👈
+import { getTranslations } from 'next-intl/server'; // 👈
 import { ReactionDock } from '@/features/blog/ui/ReactionDock';
 import { postRepository } from '@/services/container'; // Importem el repo directament per carregar dades inicials
+import { cn } from '@/lib/utils';
 
 type Props = {
   params: Promise<{ slug: string; locale: string }>;
@@ -16,7 +17,7 @@ type Props = {
 export const revalidate = 3600;
 
 // Afegeix aquesta constant a dalt de tot o importa-la des del teu config
-const SITE_URL = 'https://digitaistudios.com'; 
+const SITE_URL = 'https://digitaistudios.com';
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug, locale } = await params;
@@ -38,12 +39,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: post.title,
     description: post.description,
-    
+
     // 1. CANONICAL I HREFLANG (SOLUCIÓ AL PROBLEMA DE GSC)
     alternates: {
       // Canonical: "Jo soc la versió original d'aquest idioma"
       canonical: `${SITE_URL}/${locale}/blog/${slug}`,
-      
+
       // Languages: "Aquí tens les meves germanes en altres idiomes"
       languages: {
         'es': urlEs,
@@ -90,8 +91,8 @@ export default async function BlogPostPage({ params }: Props) {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
     mainEntityOfPage: {  // AFEGEIX AIXÒ
-        "@type": "WebPage",
-        "@id": `https://digitaistudios.com/${locale}/blog/${slug}`
+      "@type": "WebPage",
+      "@id": `https://digitaistudios.com/${locale}/blog/${slug}`
     },
     headline: post.title,
     description: post.description,
@@ -145,9 +146,23 @@ export default async function BlogPostPage({ params }: Props) {
 
           <div className="flex flex-wrap justify-center items-center gap-4 md:gap-8 text-muted-foreground font-medium text-sm md:text-base animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-100">
             {/* Tags */}
+            {/* Tags */}
             <div className="flex flex-wrap justify-center gap-2 mb-6 w-full animate-in fade-in slide-in-from-bottom-4 duration-700">
               {post.tags.map(tag => (
-                <span key={tag} className="px-3 py-1 rounded-full bg-foreground/10 text-foreground backdrop-blur-md border border-primary/30 text-[10px] md:text-xs font-bold uppercase tracking-wider">
+                <span key={tag} className={cn(
+                  "px-3 py-1 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-wider",
+
+                  // 🔥 FIX IPHONE VELL:
+                  // 1. Eliminem 'backdrop-blur-md' (el culpable de la pantalla negra/blanca).
+                  // 2. Eliminem 'bg-foreground/10' (transparència).
+                  // 3. Posem colors SÒLIDS que contrasten bé:
+
+                  // Light Mode: Fons gris molt claret, text fosc, vora subtil
+                  "bg-slate-100 text-slate-700 border border-slate-200",
+
+                  // Dark Mode: Fons gris fosc (però no negre pur), text clar, vora fosca
+                  "dark:bg-zinc-800 dark:text-slate-300 dark:border-zinc-700"
+                )}>
                   {tag}
                 </span>
               ))}
