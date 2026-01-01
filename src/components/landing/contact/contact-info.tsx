@@ -32,7 +32,12 @@ export function ContactInfo() {
       <div className="space-y-8">
         {features.map((item, i) => (
           <div key={i} className="flex gap-5 items-start group">
-            <div className="mt-1 w-12 h-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform backdrop-blur-sm">
+            {/* 🔥 FIX VISUAL:
+                1. Eliminat 'bg-primary/10' -> Ara és 'bg-slate-100 dark:bg-zinc-800' (Sòlid i net).
+                2. Eliminat 'backdrop-blur-sm' -> Millora rendiment i claredat.
+                3. La icona es manté 'text-primary' per donar el toc de color sobre el gris.
+            */}
+            <div className="mt-1 w-12 h-12 rounded-2xl bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform shadow-xs">
               <item.icon className="w-6 h-6 text-primary" />
             </div>
             <div>
