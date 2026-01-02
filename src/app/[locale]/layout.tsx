@@ -58,22 +58,7 @@ export async function generateMetadata({
         url: '/icons/apple-icon.png',
       },
     },
-    openGraph: {
-      type: 'website',
-      locale: locale === 'ca' ? 'ca_ES' : locale === 'es' ? 'es_ES' : 'en_US',
-      url: `${baseUrl}/${locale}`,
-      title: 'DigitAI Studios | Innovació Digital',
-      description: 'Apps, Webs i Automatització IA per a empreses modernes.',
-      siteName: 'DigitAI Studios',
-      images: [
-        {
-          url: '@/assets/images/og-image.png',
-          width: 1200,
-          height: 630,
-          alt: 'DigitAI Studios Cover',
-        },
-      ],
-    },
+
     // 👇 AQUESTA ÉS LA CLAU PER ARREGLAR GSC i IDIOMES:
     alternates: {
       canonical: `${baseUrl}/${locale}`,
