@@ -41,7 +41,7 @@ export default async function AvisLegalPage() {
            <InfoCard 
               icon={Fingerprint} 
               label={t('data_card_nif_label')} 
-              value="444555666Y" 
+              value="***********" 
            />
            <InfoCard 
               icon={MapPin} 

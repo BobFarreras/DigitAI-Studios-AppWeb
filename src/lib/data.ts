@@ -53,16 +53,7 @@ export const TESTIMONIALS: Testimonial[] = [
     projectUrl: 'https://getsalutflow.com',
     image: salutFlowImg
   },
-  {
-    id: 'aquabalance',
-    name: "Marta Puig",
-    company: "Aquabalance",
-    text: "Necessitàvem una web que transmetés pau i professionalitat. El resultat ha superat les expectatives amb una imatge neta i moderna.",
-    rating: 5,
-    projectType: 'web',
-    projectUrl: 'https://aquabalance.com',
-    image: salutFlowImg
-  },
+
   {
     id: 'jardineria-pons',
     name: "Mercel Pons",
