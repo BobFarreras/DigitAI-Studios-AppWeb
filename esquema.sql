@@ -1,5 +1,5 @@
 
-\restrict 2hnPJ96BeW9kUXNt7prp3avMiWhnxVRqjcFQXjrfl6Ii1Uwb0m3LZZEuegEWzoL
+\restrict PEuHJ2viaxGJo4KgymoSieKDiSshuvLeX8G47OCtCz362uCtUUHKBZGHeXpyQx3
 
 
 SET statement_timeout = 0;
@@ -955,6 +955,10 @@ CREATE INDEX "idx_posts_slug" ON "public"."posts" USING "btree" ("slug");
 
 
 
+CREATE INDEX "idx_profiles_email_org" ON "public"."profiles" USING "btree" ("email", "organization_id");
+
+
+
 CREATE INDEX "idx_services_org" ON "public"."services" USING "btree" ("organization_id");
 
 
@@ -1193,11 +1197,7 @@ CREATE POLICY "Delete own reaction" ON "public"."post_reactions" FOR DELETE USIN
 
 
 
-CREATE POLICY "Enable delete for authenticated users only" ON "public"."contact_leads" FOR DELETE TO "authenticated" USING (true);
-
-
-
-CREATE POLICY "Enable insert for everyone" ON "public"."contact_leads" FOR INSERT WITH CHECK (true);
+CREATE POLICY "Enable delete for authenticated users" ON "public"."contact_leads" FOR DELETE TO "authenticated" USING (true);
 
 
 
@@ -1205,11 +1205,7 @@ CREATE POLICY "Enable insert for visitors" ON "public"."analytics_visitors" FOR 
 
 
 
-CREATE POLICY "Enable read access for ADMIN only" ON "public"."contact_leads" FOR SELECT TO "authenticated" USING (("auth"."email"() = 'info@digitaistudios.com'::"text"));
-
-
-
-CREATE POLICY "Enable read access for authenticated users only" ON "public"."contact_leads" FOR SELECT TO "authenticated" USING (true);
+CREATE POLICY "Enable read access for authenticated users" ON "public"."contact_leads" FOR SELECT TO "authenticated" USING (true);
 
 
 
@@ -1222,6 +1218,10 @@ CREATE POLICY "Enable select for admins only" ON "public"."analytics_events" FOR
 
 
 CREATE POLICY "Manage own results" ON "public"."test_results" USING (("auth"."uid"() = "user_id"));
+
+
+
+CREATE POLICY "Només admin pot llegir" ON "public"."contact_leads" FOR SELECT TO "service_role" USING (true);
 
 
 
@@ -1292,6 +1292,10 @@ CREATE POLICY "RLS: Org admins view bookings" ON "public"."bookings" FOR SELECT 
 
 
 CREATE POLICY "Read tasks" ON "public"."test_tasks" FOR SELECT USING (true);
+
+
+
+CREATE POLICY "Tothom pot enviar contacte" ON "public"."contact_leads" FOR INSERT TO "authenticated", "anon" WITH CHECK (true);
 
 
 
@@ -1377,6 +1381,14 @@ ALTER TABLE "public"."orders" ENABLE ROW LEVEL SECURITY;
 
 
 ALTER TABLE "public"."organizations" ENABLE ROW LEVEL SECURITY;
+
+
+CREATE POLICY "policy_insert_leads_universal" ON "public"."contact_leads" FOR INSERT TO "authenticated", "anon", "service_role" WITH CHECK (true);
+
+
+
+CREATE POLICY "policy_select_leads_private" ON "public"."contact_leads" FOR SELECT TO "authenticated", "service_role" USING (true);
+
 
 
 ALTER TABLE "public"."post_reactions" ENABLE ROW LEVEL SECURITY;
@@ -1689,6 +1701,6 @@ ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public" GRANT ALL ON TAB
 
 
 
-\unrestrict 2hnPJ96BeW9kUXNt7prp3avMiWhnxVRqjcFQXjrfl6Ii1Uwb0m3LZZEuegEWzoL
+\unrestrict PEuHJ2viaxGJo4KgymoSieKDiSshuvLeX8G47OCtCz362uCtUUHKBZGHeXpyQx3
 
 RESET ALL;

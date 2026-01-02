@@ -18,14 +18,14 @@ export default function manifest(): MetadataRoute.Manifest {
         "purpose": "any" // 👈 CANVIAT: Abans era 'maskable'
       },
       {
-        "src": "/maskable_icon.png",
+        "src": "/maskable_icon-removebg-preview.png",
         "sizes": "512x512",
         "type": "image/png",
         "purpose": "any" // 👈 CANVIAT: Abans era 'maskable'
       },
       // Pots mantenir una entrada extra per a maskable SI tens una imatge amb marges
       {
-         "src": "/maskable_icon.png",
+         "src": "/maskable_icon-removebg-preview.png",
          "sizes": "512x512",
          "type": "image/png",
          "purpose": "maskable" // Només deixa això si la imatge té molt marge al voltant
