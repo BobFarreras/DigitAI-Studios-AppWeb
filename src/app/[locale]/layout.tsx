@@ -67,7 +67,7 @@ export async function generateMetadata({
       siteName: 'DigitAI Studios',
       images: [
         {
-          url: '/images/og-image.png',
+          url: '@/assets/images/og-image.png',
           width: 1200,
           height: 630,
           alt: 'DigitAI Studios Cover',
