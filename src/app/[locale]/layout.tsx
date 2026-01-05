@@ -27,6 +27,17 @@ export const viewport: Viewport = {
   maximumScale: 1,
 };
 
+// Funció helper per generar URLs segons la lògica 'as-needed'
+const getUrl = (locale: string, path: string = '') => {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://digitaistudios.com';
+  // Si és català (default), NO posem prefix
+  if (locale === 'ca') {
+    return `${baseUrl}${path}`;
+  }
+  // Per la resta, SÍ posem prefix
+  return `${baseUrl}/${locale}${path}`;
+};
+
 // 2. METADADES DINÀMIQUES (SEO + Hreflang + Canonical)
 export async function generateMetadata({
   params
@@ -34,12 +45,11 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  
-  // Defineix la URL base (Hardcoded com a fallback segur per evitar localhost en producció)
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://digitaistudios.com';
+  const currentUrl = getUrl(locale); // URL canònica actual
+
 
   return {
-    metadataBase: new URL(baseUrl),
+    metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://digitaistudios.com'),
     title: {
       default: 'DigitAI Studios | Desenvolupament Web & IA',
       template: '%s | DigitAI Studios'
@@ -61,12 +71,12 @@ export async function generateMetadata({
 
     // 👇 AQUESTA ÉS LA CLAU PER ARREGLAR GSC i IDIOMES:
     alternates: {
-      canonical: `${baseUrl}/${locale}`,
+      canonical: currentUrl,
       languages: {
-        'ca': `${baseUrl}/ca`,
-        'es': `${baseUrl}/es`,
-        'en': `${baseUrl}/en`,
-        // 'x-default': `${baseUrl}/ca` // Opcional: Si vols forçar el català com a default
+        'ca': getUrl('ca'), // Retornarà https://digitaistudios.com
+        'es': getUrl('es'), // Retornarà https://digitaistudios.com/es
+        'en': getUrl('en'),
+        'it': getUrl('it'),
       },
     },
   };

@@ -27,29 +27,28 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return { title: '404 - Article no trobat' };
   }
 
-  // 👇 AQUESTA ÉS LA MÀGIA QUE ET FALTA
-  // Construïm les URLs per als diferents idiomes
-  const urlEs = `${SITE_URL}/es/blog/${slug}`;
-  const urlEn = `${SITE_URL}/en/blog/${slug}`;
-  // Si el català és l'idioma per defecte (sense prefix), seria així:
-  // const urlCa = `${SITE_URL}/blog/${slug}`; 
-  // O si també té prefix:
-  const urlCa = `${SITE_URL}/ca/blog/${slug}`; // Ajusta això segons la teva configuració de next-intl
+  // 1. Funció Helper per gestionar prefixos 'as-needed'
+  const getPostUrl = (lang: string) => {
+    if (lang === 'ca') {
+      return `${SITE_URL}/blog/${slug}`; // ✅ CORRECTE: Sense prefix
+    }
+    return `${SITE_URL}/${lang}/blog/${slug}`; // ✅ CORRECTE: Amb prefix
+  };
 
   return {
     title: post.title,
     description: post.description,
 
-    // 1. CANONICAL I HREFLANG (SOLUCIÓ AL PROBLEMA DE GSC)
     alternates: {
-      // Canonical: "Jo soc la versió original d'aquest idioma"
-      canonical: `${SITE_URL}/${locale}/blog/${slug}`,
+      // 2. CORRECCIÓ CLAU AQUÍ 👇
+      // Fem servir la funció per assegurar que el canonical del català NO porta /ca/
+      canonical: getPostUrl(locale),
 
-      // Languages: "Aquí tens les meves germanes en altres idiomes"
       languages: {
-        'es': urlEs,
-        'en': urlEn,
-        'ca': urlCa, // Assegura't que coincideix amb com tens les rutes
+        'ca': getPostUrl('ca'),
+        'es': getPostUrl('es'),
+        'en': getPostUrl('en'),
+        'it': getPostUrl('it'),
       },
     },
 
@@ -57,11 +56,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: post.title,
       description: post.description || '',
       type: 'article',
-      url: `${SITE_URL}/${locale}/blog/${slug}`, // Important afegir la URL també aquí
+      url: getPostUrl(locale), // ✅ Perfecte
+      locale: locale,
       publishedTime: post.date || undefined,
       tags: post.tags,
       images: post.coverImage ? [{ url: post.coverImage }] : undefined,
-      locale: locale, // Important per a xarxes socials
     },
     twitter: {
       card: 'summary_large_image',
@@ -84,7 +83,12 @@ export default async function BlogPostPage({ params }: Props) {
   // 1. Carreguem les reaccions inicials des del servidor (Server Side Rendering)
   // Això fa que els números siguin correctes abans que el JS del client carregui
   const reactions = await postRepository.getPostReactions(slug);
-
+  
+  // CORRECCIÓ AL JSON-LD
+  // Assegura't de fer servir la mateixa lògica per la URL del JSON-LD
+  const currentUrl = locale === 'ca'
+    ? `${SITE_URL}/blog/${slug}`
+    : `${SITE_URL}/${locale}/blog/${slug}`;
 
   // 👇 CREEM L'OBJECTE JSON-LD
   const jsonLd = {
@@ -92,7 +96,7 @@ export default async function BlogPostPage({ params }: Props) {
     '@type': 'BlogPosting',
     mainEntityOfPage: {  // AFEGEIX AIXÒ
       "@type": "WebPage",
-      "@id": `https://digitaistudios.com/${locale}/blog/${slug}`
+      "@id": currentUrl // 👇 URL CORRECTA
     },
     headline: post.title,
     description: post.description,
