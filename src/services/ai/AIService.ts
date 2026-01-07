@@ -6,7 +6,8 @@ import { getSectorConfig, SectorConfig } from "@/types/sectors";
 import { BusinessSuggestion } from "@/types/ai";
 // ✅ NOU: Importem la lògica de prestigi
 import { isPrestigeUrl } from "../audit/AuditLogic";
-import { PRESTIGE_CONFIG } from "@/config/prestige-urls";
+
+import { WebsitePrompt } from "./prompts/WebsitePrompt"; // 👈 Importem la classe Prompt
 
 export class AIService {
   private gemini: GeminiProvider;
@@ -53,59 +54,54 @@ export class AIService {
   // ===========================================================================
   // 2️⃣ ANÀLISI D'OPORTUNITATS DE NEGOCI (PER AL CORREU)
   // ===========================================================================
+ // ===========================================================================
+  // 2️⃣ ANÀLISI D'OPORTUNITATS DE NEGOCI
+  // ===========================================================================
   async analyzeBusinessOpportunity(url: string, pageText: string): Promise<BusinessSuggestion[]> {
     console.log(`🕵️ [AIService] Analitzant oportunitats de negoci per: ${url}...`);
 
-    // ✅ DETECCIÓ VIP
+    // 1. Detectem si és VIP
     const isVip = isPrestigeUrl(url);
-    let contextInjection = "";
 
-    if (isVip) {
-      console.log("✨ [AIService] Mode VIP activat per a l'anàlisi.");
-      contextInjection = PRESTIGE_CONFIG.AI_CONTEXT;
-    }
-    // Passem el context extra als proveïdors
-    // (Nota: Caldrà actualitzar lleugerament els mètodes analyzeBusiness dels providers 
-    // per acceptar aquest string extra, o concatenar-lo al pageText aquí mateix).
-
-    // ESTRATÈGIA RÀPIDA: Injectar-ho al principi del text perquè la IA ho llegeix primer
-    const enrichedText = isVip
-      ? `[SYSTEM INSTRUCTION: ${contextInjection}]\n\nCONTINGUT WEB:\n${pageText}`
-      : pageText;
+    // 2. CONSTRUIM EL PROMPT INTEL·LIGENT (Aquí rau la màgia)
+    // Passem la URL, el text de la web i si és VIP. 
+    // La classe WebsitePrompt s'encarregarà de posar les regles anti-repetició.
+    const smartPrompt = WebsitePrompt.buildBusinessAnalysis(url, pageText, isVip);
 
     // Intent 1: Gemini
     try {
-      return await this.gemini.analyzeBusiness(url, enrichedText);
+      // Ara passem 'smartPrompt' que és un text llarg amb instruccions, no només el text de la web.
+      return await this.gemini.analyzeBusiness(url, smartPrompt);
     } catch (error) {
       console.warn("⚠️ Gemini Analysis failed. Trying OpenAI...", error);
     }
 
     // Intent 2: OpenAI
     try {
-      return await this.openai.analyzeBusiness(url, enrichedText);
+      return await this.openai.analyzeBusiness(url, smartPrompt);
     } catch (error) {
       console.error("❌ OpenAI Analysis failed.", error);
     }
 
-    // Fallback manual: Si tot falla, retornem aquests 3 suggeriments professionals
+    // Fallback manual
     console.log("🔥 Tots els models han fallat. Usant fallback manual.");
     return [
       {
         title: "Captació Automàtica de Clients",
-        description: "Implementar formularis intel·ligents per convertir visites en clients potencials sense esforç manual.",
+        description: "Implementar formularis intel·ligents per convertir visites en clients potencials.",
         icon: "user",
-        impact: "high"
-      },
-      {
-        title: "Sistema de Reserves / Cites",
-        description: "Permet als teus clients reservar els teus serveis 24/7 directament des del mòbil.",
-        icon: "calendar",
         impact: "high"
       },
       {
         title: "Analítica de Vendes",
         description: "Panell de control per saber exactament d'on venen els teus millors clients.",
         icon: "chart",
+        impact: "medium"
+      },
+      {
+        title: "Xat d'Atenció al Client",
+        description: "Respon dubtes freqüents automàticament per no perdre vendes.",
+        icon: "message", // Canviat a message
         impact: "medium"
       }
     ];

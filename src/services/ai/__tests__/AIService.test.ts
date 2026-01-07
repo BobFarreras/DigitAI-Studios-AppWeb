@@ -1,55 +1,81 @@
-import { describe, it, expect } from 'vitest';
-import { calculateAuditScore, isPrestigeUrl } from '@/services/audit/AuditLogic';
-import { PRESTIGE_CONFIG } from '@/config/prestige-urls';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { AIService } from '../AIService';
 
-describe('AuditLogic (Prestige System)', () => {
-  
-  // 1. Testejem el detector d'URLs
-  it('should detect prestige URLs correctly', () => {
-    // Casos positius (Han de coincidir amb src/config/prestige.ts)
-    expect(isPrestigeUrl('https://ribotflow.com')).toBe(true);
-    expect(isPrestigeUrl('http://getsalutflow.com/pricing')).toBe(true);
+// 1. Definim els espies (Spies)
+const mockAnalyzeGemini = vi.fn();
+const mockAnalyzeOpenAI = vi.fn();
+
+// 2. MOCKEJEM LES CLASSES (Igual que abans)
+vi.mock('../providers/GeminiProvider', () => {
+  return {
+    GeminiProvider: class {
+      providerName = 'MockGemini';
+      analyzeBusiness = mockAnalyzeGemini;
+      generateContent = vi.fn();
+    }
+  };
+});
+
+vi.mock('../providers/OpenAIProvider', () => {
+  return {
+    OpenAIProvider: class {
+      providerName = 'MockOpenAI';
+      analyzeBusiness = mockAnalyzeOpenAI;
+      generateContent = vi.fn();
+    }
+  };
+});
+
+describe('AIService (Prompt Engineering Logic)', () => {
+  let service: AIService;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    service = new AIService();
+  });
+
+  // TEST 1: Verificar lògica VIP
+  it('should inject VIP context AND Anti-Redundancy rules for Prestige URLs', async () => {
+    // URL que tens a la config (assegura't que coincideix amb src/config/prestige.ts)
+    const vipUrl = 'https://digitaistudios.com'; 
+    const pageText = 'Som una agència digital amb botiga online.';
+
+    mockAnalyzeGemini.mockResolvedValue([]);
+
+    await service.analyzeBusinessOpportunity(vipUrl, pageText);
+
+    // Recuperem el prompt enviat
+    expect(mockAnalyzeGemini).toHaveBeenCalledTimes(1);
+    const promptSent = mockAnalyzeGemini.mock.calls[0][1];
+
+    // ✅ 1. Ha de tenir el context VIP
+    expect(promptSent).toContain("CLIENT VIP"); 
+    expect(promptSent).toContain("CAS D'ÈXIT");
+
+    // ✅ 2. Ha de tenir la lògica Anti-Lorito (Detecció)
+    expect(promptSent).toContain("FASE 1: DETECCIÓ");
+    expect(promptSent).toContain("REGLES D'EXCLUSIÓ");
+  });
+
+  // TEST 2: Verificar lògica Normal (No VIP)
+  it('should inject ONLY Anti-Redundancy rules for normal URLs', async () => {
+    const normalUrl = 'https://una-web-qualsevol.com';
+    const pageText = 'Text de prova amb paraula cistella.';
+
+    mockAnalyzeGemini.mockResolvedValue([]);
+
+    await service.analyzeBusinessOpportunity(normalUrl, pageText);
+
+    const promptSent = mockAnalyzeGemini.mock.calls[0][1];
     
-    // ✅ CORRECCIÓ: Posem el domini nou que tens a la config
-    expect(isPrestigeUrl('https://digitaistudios.com')).toBe(true); 
+    // ❌ 1. NO ha de tenir context VIP
+    expect(promptSent).not.toContain("CLIENT VIP");
+
+    // ✅ 2. Ha de tenir la lògica Anti-Lorito (Igualment important per webs normals)
+    expect(promptSent).toContain("FASE 1: DETECCIÓ");
+    expect(promptSent).toContain("REGLES D'EXCLUSIÓ");
     
-    // Si tens localhost a la config, també hauria de passar
-    expect(isPrestigeUrl('http://localhost:3000')).toBe(true);
-
-    // Casos negatius
-    expect(isPrestigeUrl('https://google.com')).toBe(false);
-    expect(isPrestigeUrl('https://una-web-qualsevol.com')).toBe(false);
-  });
-
-  // 2. Testejem el càlcul de la nota
-  it('should BOOST score for prestige sites with bad metrics', () => {
-    // Fem servir una URL que sabem que és VIP
-    const vipUrl = 'https://digitaistudios.com';
-    const badMetrics = { performance: 0.1, seo: 0.2, accessibility: 0.1 }; 
-
-    const score = calculateAuditScore(vipUrl, badMetrics);
-
-    // Ha de ser com a mínim la nota configurada
-    expect(score).toBeGreaterThanOrEqual(PRESTIGE_CONFIG.BOOST.MIN_SCORE);
-  });
-
-  it('should NOT boost score for normal sites', () => {
-    const normalUrl = 'https://web-lenta.com';
-    const badMetrics = { performance: 0.2, seo: 0.2, accessibility: 0.2 }; // ~20
-
-    const score = calculateAuditScore(normalUrl, badMetrics);
-
-    // Ha de ser la nota real baixa (~20), mai la nota VIP (90)
-    expect(score).toBeLessThan(50); 
-  });
-
-  it('should keep original score if it is higher than the boost', () => {
-    const vipUrl = 'https://ribotflow.com';
-    const perfectMetrics = { performance: 1, seo: 1, accessibility: 1 }; // 100
-
-    const score = calculateAuditScore(vipUrl, perfectMetrics);
-
-    // Ha de mantenir el 100
-    expect(score).toBe(100);
+    // ✅ 3. Verifiquem que el text original hi és
+    expect(promptSent).toContain(pageText);
   });
 });

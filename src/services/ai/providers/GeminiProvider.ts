@@ -67,15 +67,22 @@ export class GeminiProvider implements IAIProvider {
     // ===========================================================================
     // 2️⃣ ANÀLISI D'OPORTUNITATS (BUSINESS ANALYSIS)
     // ===========================================================================
-    async analyzeBusiness(url: string, pageText: string): Promise<BusinessSuggestion[]> {
-        const prompt = `
-        Analitza aquesta web: ${url}
-        Text: ${pageText.substring(0, 3000)}
-        Actua com a consultor digital i proposa 3 millores.
-        Format JSON array.
-    `;
+    // ===========================================================================
+    // 2️⃣ ANÀLISI D'OPORTUNITATS
+    // ===========================================================================
+    async analyzeBusiness(url: string, promptOrText: string): Promise<BusinessSuggestion[]> {
 
-        // Esquema per a l'Array de suggeriments (Strings + Cast final)
+        // 🛑 CANVI IMPORTANT:
+        // Abans aquí creàvem el prompt string. Ara assumim que 'promptOrText' 
+        // JA VE construït des del AIService (amb tota la lògica d'exclusions).
+
+        // Si per algun motiu rebem només text curt (sense instruccions), li posem un wrapper bàsic.
+        // Però normalment vindrà el prompt llarg amb "ACTUA COM..."
+        const finalPrompt = promptOrText.includes("ACTUA COM")
+            ? promptOrText
+            : `Analitza ${url}. Text: ${promptOrText}. Retorna JSON Array de millores.`;
+
+        // Esquema estricte per assegurar JSON Array
         const schema = {
             type: 'ARRAY',
             items: {
@@ -88,16 +95,16 @@ export class GeminiProvider implements IAIProvider {
                 },
                 required: ["title", "description", "icon", "impact"]
             }
-        } as unknown as Schema; // 👈 EL TRUC MÀGIC
+        } as unknown as Schema;
 
         try {
             const response = await this.client.models.generateContent({
                 model: this.modelName,
-                contents: [{ role: "user", parts: [{ text: prompt }] }],
+                contents: [{ role: "user", parts: [{ text: finalPrompt }] }],
                 config: {
                     responseMimeType: "application/json",
                     responseSchema: schema,
-                    temperature: 0.5,
+                    temperature: 0.5, // Baixem temperatura per fer-lo més analític
                 },
             });
 

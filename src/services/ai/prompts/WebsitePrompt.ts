@@ -46,39 +46,65 @@ export class WebsitePrompt {
     `;
     }
 
-    /**
-     * Genera el prompt per detectar oportunitats de negoci en una web existent.
+   /**
+     * 🧠 PROMPT INTEL·LIGENT D'ANÀLISI DE NEGOCI
+     * Inclou lògica negativa per evitar suggerir coses que la web ja té.
      */
-    static buildBusinessAnalysis(url: string, text: string): string {
-        return `
-      ACTUA COM: Un Consultor de Transformació Digital expert en Vendes B2B.
-      OBJECTIU: Analitzar el contingut d'una web i proposar 3 funcionalitats tecnològiques per augmentar la facturació.
+    static buildBusinessAnalysis(url: string, pageText: string, isVip: boolean): string {
+        
+        let prompt = `
+        ACTUA COM: Un Consultor d'Estratègia Digital expert en creixement de negocis B2B.
+        OBJECTIU: Analitzar el text d'una web i detectar 3 OPORTUNITATS DE NEGOCI que faltin.
+        
+        CONTEXT DE LA WEB:
+        - URL: "${url}"
+        - CONTINGUT EXTRÈT (HTML TEXT): 
+        """
+        ${pageText.substring(0, 8000)} 
+        """
+        `;
 
-      DADES DE LA WEB:
-      - URL: "${url}"
-      - CONTINGUT EXTRET: "${text.substring(0, 5000)}" (Pot contenir brutícia HTML, ignora-la).
-
-      TASCA:
-      1. Identifica el sector del negoci (ex: Reformes, Advocats, Botiga, Restaurant).
-      2. Detecta QUÈ LI FALTA a nivell digital que la competència moderna sí que té.
-      3. Proposa 3 mòduls concrets.
-
-      EXEMPLES DE SUGGERIMENTS (Icones vàlides: 'calendar', 'shop', 'user', 'chart', 'settings'):
-      - Si venen serveis (advocat/metge) -> "Reserva de Cita Online" (calendar).
-      - Si fan obres/reformes -> "Calculadora de Pressupostos" (chart) o "Galeria Abans/Després" (settings).
-      - Si venen productes físics -> "Botiga Online / Click&Collect" (shop).
-      - Si tenen clients recurrents -> "Àrea Privada de Clients" (user).
-
-      FORMAT DE RESPOSTA (JSON Array estricte):
-      [
-        {
-          "title": "Títol Comercial (ex: Automatitza les cites)",
-          "description": "Explicació del benefici econòmic (ex: Deixa de perdre trucades fora d'horari).",
-          "icon": "calendar",
-          "impact": "high"
+        // INJECCIÓ VIP (Si és un dels teus clients top)
+        if (isVip) {
+            prompt += `
+            🚨 NOTA IMPORTANT (CLIENT VIP - CAS D'ÈXIT): 
+            Aquesta web ja és un referent tecnològic. 
+            NO suggereixis millores bàsiques com "fer la web responsive" o "millorar velocitat".
+            Centra't en estratègies avançades: Fidelització, IA, Automatització de processos interns o Expansió internacional.
+            `;
         }
-      ]
-    `;
-    }
 
+        // 🛡️ LÒGICA ANTI-REDUNDÀNCIA (El Detectiu)
+        prompt += `
+        🛑 FASE 1: DETECCIÓ (CRÍTIC):
+        Abans de generar cap suggeriment, analitza el text proporcionat per veure què JA EXISTEIX.
+        
+        REGLES D'EXCLUSIÓ (Si trobes aquestes paraules, NO suggereixis la funcionalitat):
+        - Paraules: "cistella", "preu", "comprar", "shop", "cart" -> LA WEB JA TÉ E-COMMERCE. NO suggereixis "Crear Botiga Online".
+        - Paraules: "opinions", "clients diuen", "ressenyas", "stars", "testimonials" -> LA WEB JA TÉ TESTIMONIS. NO suggereixis "Afegir Testimonis".
+        - Paraules: "reservar", "cita", "calendari", "booking", "demanar hora" -> LA WEB JA TÉ RESERVES. NO suggereixis "Sistema de Reserves".
+        - Paraules: "subscriu-te", "newsletter", "butlletí" -> LA WEB JA TÉ CAPTACIÓ DE LEADS.
+        - Paraules: "accés clients", "àrea privada", "login" -> LA WEB JA TÉ ÀREA D'USUARI.
+
+        🛑 FASE 2: GENERACIÓ:
+        Genera 3 suggeriments de valor que NO estiguin a la llista d'exclusions que has detectat.
+        
+        Si la web sembla molt completa, suggereix opcions avançades com: 
+        1. "Assistent Virtual amb IA (Chatbot)"
+        2. "Programa de Punts i Fidelització"
+        3. "Estratègia de SEO Local Avançat"
+
+        FORMAT DE RESPOSTA (JSON Array pur):
+        [
+          {
+            "title": "Títol curt i persuasiu",
+            "description": "Per què això farà guanyar més diners al negoci. Sigues directe.",
+            "icon": "Tria una: 'calendar', 'shop', 'user', 'chart', 'settings', 'message'",
+            "impact": "high"
+          }
+        ]
+        `;
+
+        return prompt;
+    }
 }
