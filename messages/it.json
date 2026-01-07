@@ -49,28 +49,7 @@
     "cta": "Audit Gratuito",
     "form_title": "Analizza il tuo sito in secondi"
   },
-  "Auth": {
-    "login_title": "Bentornato",
-    "login_subtitle": "Accedi al tuo pannello di controllo digitale.",
-    "social_github": "Continua con GitHub",
-    "or_email": "O con email",
-    "label_email": "Email",
-    "label_password": "Password",
-    "forgot_password": "Hai dimenticato la password?",
-    "cta_login": "Accedi",
-    "cta_loading": "Accesso in corso...",
-    "no_account_prefix": "Non hai ancora un account?",
-    "register_link": "Registrati gratis",
-    "social_maintenance_error": "🚧 Il login social è in manutenzione. Usa la tua email e password.",
-    "register_title": "Crea il tuo account",
-    "register_subtitle": "Per vedere il tuo report di audit completo",
-    "already_have_account": "Hai già un account?",
-    "login_link": "Accedi",
-    "social_google": "Continua con Google",
-    "social_google_register": "Registrati con Google",
-    "social_facebook": "Continua con Facebook",
-    "social_facebook_register": "Registrati con Facebook"
-  },
+
   "Dashboard": {
     "welcome": "Benvenuto, {name}",
     "my_audits": "I miei Audit",
@@ -604,6 +583,38 @@
       "description": "Hai visto i nostri articoli in evidenza. Vuoi vedere altri contenuti?",
       "btn_reset": "Ricomincia",
       "btn_view_all": "Vedi Tutto"
+    }
+  },
+  "Auth": {
+    "login_title": "Bentornato",
+    "login_subtitle": "Inserisci le tue credenziali per accedere",
+    "label_email": "Email",
+    "label_password": "Password",
+    "cta_login": "Accedi",
+    "register_title": "Crea il tuo account",
+    "register_subtitle": "Inizia ad automatizzare il tuo business oggi.",
+    "social_google": "Continua con Google",
+    "social_google_register": "Registrati con Google",
+    "or_email": "Oppure con email",
+    "forgot_password": "Hai dimenticato la password?",
+    "no_account_prefix": "Non hai un account?",
+    "register_link": "Registrati",
+    "already_have_account": "Hai già un account?",
+    "login_link": "Accedi",
+    "error": {
+      "invalid_login": "L’email o la password non sono corretti.",
+      "not_in_org": "Questo utente non appartiene a questa organizzazione.",
+      "email_taken": "Questa email è già registrata in questa organizzazione.",
+      "technical": "Si è verificato un errore tecnico. Per favore riprova.",
+      "confirm_email": "Per favore, conferma la tua email prima di accedere."
+    },
+    "info": {
+      "account_exists_please_login": "Hai già un account globale su DigitAI. Accedi per collegarti a questa nuova organizzazione."
+    },
+    "audit_banner": {
+      "title": "Audit completato!",
+      "sent_to": "Abbiamo inviato il riepilogo esecutivo a <highlight>{email}</highlight>.",
+      "unlock_report": "Registrati ora per visualizzare il report tecnico completo e le opportunità di business individuate dall’IA."
     }
   }
 }

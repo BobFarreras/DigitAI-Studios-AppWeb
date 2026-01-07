@@ -1,22 +1,20 @@
 import { LoginForm } from '@/features/auth/ui/LoginForm';
 import { Sparkles } from 'lucide-react';
 import Link from 'next/link';
-// 👇 CANVI IMPORTANT: Importem des de 'next-intl/server'
 import { getTranslations } from 'next-intl/server'; 
 
 type Props = {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-  params: Promise<{ locale: string }>; // Afegim params per consistència
+  params: Promise<{ locale: string }>;
 };
 
 export default async function LoginPage({ searchParams }: Props) {
-  // 👇 CORRECCIÓ: Usem await getTranslations() en lloc de useTranslations()
   const t = await getTranslations('AuthPages.login');
   
-  // Resolem la promesa dels paràmetres
+  // Resolució de promeses (Next.js 15)
   const params = await searchParams;
   
-  // Extraiem l'email de forma segura
+  // Extracció segura de l'email
   const emailParam = typeof params.email === 'string' ? params.email : undefined;
 
   return (
@@ -31,7 +29,7 @@ export default async function LoginPage({ searchParams }: Props) {
          {/* Logo */}
          <div className="relative z-10">
            <Link href="/" className="flex items-center gap-2 text-2xl font-bold text-white">
-               DigitAI <span className="gradient-text">Studios</span>
+               DigitAI <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-400 to-purple-600">Studios</span>
             </Link>
          </div>
 
@@ -56,12 +54,12 @@ export default async function LoginPage({ searchParams }: Props) {
       </div>
 
       {/* COLUMNA DRETA (Formulari) */}
-      <div className="flex items-center justify-center p-8 relative">
+      <div className="flex items-center justify-center p-8 relative h-full">
          <Link href="/" className="absolute top-8 right-8 text-sm text-muted-foreground hover:text-foreground lg:hidden">
             {t('back_home')}
          </Link>
 
-         {/* Passem l'email extret al component Client */}
+         {/* Component Client */}
          <LoginForm prefilledEmail={emailParam} />
       </div>
     </div>

@@ -618,6 +618,11 @@
     },
     "info": {
       "account_exists_please_login": "Ya tienes una cuenta global en DigitAI. Por favor, inicia sesión para vincularte a esta nueva organización."
+    },
+    "audit_banner": {
+      "title": "¡Auditoría completada!",
+      "sent_to": "Hemos enviado el resumen ejecutivo a <highlight>{email}</highlight>.",
+      "unlock_report": "Regístrate ahora para ver el informe técnico completo y las oportunidades de negocio detectadas por la IA."
     }
   }
 }

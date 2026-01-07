@@ -68,31 +68,34 @@ export async function registerAction(
 ): Promise<AuthFormState> {
   
   if (!MAIN_ORG_ID) {
-    return { success: false, message: "Error de configuració: Manca ORG_ID" };
+    return { success: false, message: "Configuration Error: Missing ORG_ID" };
   }
 
   const t = await getTranslations('Auth');
   
-  // Cridem al servei
+  // Extraiem dades addicionals
+  const fullName = formData.get('full_name') as string;
+  
+  // Opcional: Validar que el nom no estigui buit aquí també
+  if (!fullName || fullName.length < 2) {
+    return { success: false, message: t('error_name_required') };
+  }
+
+  // Passem el fullName al servei (assegura't que el teu AuthService accepti metadata)
+  // Si el teu AuthService només passa formData, hauràs de modificar-lo per extreure 'full_name' 
+  // i passar-lo a supabase.auth.signUp({ options: { data: { full_name: ... } } })
   const result = await authService.register(formData, MAIN_ORG_ID);
 
   if (!result.success) {
-    // CAS ESPECIAL: L'usuari ja existeix globalment a Supabase
     if (result.redirectToLogin) {
        return { 
          success: false, 
-         message: t(result.error), // "Ja tens compte, fes login..."
+         message: t(result.error), 
          shouldRedirectToLogin: true 
        };
     }
-
-    return { 
-      success: false, 
-      message: t(result.error!) 
-    };
+    return { success: false, message: t(result.error!) };
   }
 
-  // Si el registre és correcte, normalment Supabase fa auto-login o envia email de confirmació.
-  // Redirigim a una pàgina d'espera o al dashboard directament.
   redirect('/dashboard'); 
 }

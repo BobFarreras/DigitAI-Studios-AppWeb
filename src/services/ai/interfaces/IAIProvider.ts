@@ -7,14 +7,11 @@ export interface IAIProvider {
 
   // 1. Generar Web (Factory)
   generateContent(
-    businessName: string, 
-    description: string, 
+    businessName: string,
+    description: string,
     sectorConfig: SectorConfig
   ): Promise<I18nSchema>;
 
   // 2. Analitzar Negoci (Auditoria Comercial) 👈 NOU MÈTODE
-  analyzeBusiness(
-    url: string, 
-    pageText: string
-  ): Promise<BusinessSuggestion[]>;
+  analyzeBusiness(url: string, finalPrompt: string): Promise<BusinessSuggestion[]>;
 }

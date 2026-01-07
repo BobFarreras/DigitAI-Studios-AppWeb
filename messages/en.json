@@ -618,6 +618,11 @@
     },
     "info": {
       "account_exists_please_login": "You already have a global DigitAI account. Please sign in to link it to this new organization."
+    },
+    "audit_banner": {
+      "title": "Audit completed!",
+      "sent_to": "We have sent the executive summary to <highlight>{email}</highlight>.",
+      "unlock_report": "Sign up now to view the full technical report and business opportunities detected by AI."
     }
   }
 }
