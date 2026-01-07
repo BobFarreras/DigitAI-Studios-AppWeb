@@ -94,6 +94,7 @@ export interface Project {
   tags: string[];
   color: string;
   link: string;
+  logo: StaticImageData; // ✅ Logo obligatori
   imageAlt: string;
   image: StaticImageData;
   adaptiveImages?: Record<string, ThemeImageSet>; 

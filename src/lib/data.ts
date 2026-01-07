@@ -56,7 +56,7 @@ export const TESTIMONIALS: Testimonial[] = [
 
   {
     id: 'jardineria-pons',
-    name: "Mercel Pons",
+    name: "Mercel",
     company: "Jardineria Pons",
     text: "Una web ràpida i directa. Ara els clients poden veure clarament els nostres serveis i contactar-nos fàcilment.",
     rating: 5,
@@ -66,7 +66,7 @@ export const TESTIMONIALS: Testimonial[] = [
   },
   {
     id: 'analytic',
-    name: "Ignasi Farreras",
+    name: "Ignasi",
     company: "Ocaso",
     text: "L'appWeb ens permet visualitzar grafiques i estadistiques arxius exel que ens permet ser mes aguils i eficients.",
     rating: 5,
