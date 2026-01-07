@@ -3,19 +3,17 @@
 import { IAuditRepository } from '@/repositories/interfaces/IAuditRepository';
 import { IWebScanner } from '@/adapters/IWebScanner';
 import { ResendEmailService } from '@/services/email/ResendEmailService';
-// 👇 1. IMPORTS NOUS
-import { AIService} from '@/services/ai/AIService';
-import { BusinessSuggestion } from "@/types/ai"; // 👈 IMPORTA D'AQUÍ
+import { AIService } from '@/services/ai/AIService';
+import { BusinessSuggestion } from "@/types/ai";
+import { PRESTIGE_CONFIG } from '@/config/prestige-urls'; // Assegura't que tens aquest fitxer creat al PAS 1
+
 export class AuditService {
   constructor(
     private auditRepo: IAuditRepository,
     private scanner: IWebScanner,
     private emailService: ResendEmailService,
-    private aiService: AIService // 👈 2. INJECTEM EL SERVEI AL CONSTRUCTOR
+    private aiService: AIService
   ) { }
-
-  // ... (performPublicAudit, performUserAudit, getDashboardAudits, getAuditDetails es queden igual) ...
-  // Només assegura't que criden a this.performFullAudit
 
   async performPublicAudit(url: string, email: string, locale: string) {
     return this.performFullAudit(url, { email }, locale);
@@ -33,12 +31,12 @@ export class AuditService {
     return await this.auditRepo.getAuditById(id);
   }
 
-  // 👇 3. LÒGICA CENTRAL ACTUALITZADA
+  // --- LÒGICA PRINCIPAL ---
   private async performFullAudit(url: string, user: { userId?: string, email: string }, locale: string) {
-    console.log(`🚀 [AuditService] Iniciant auditoria PREMIUM per: ${url}`);
+    console.log(`🚀 [AuditService] Iniciant auditoria per: ${url}`);
 
+    // 1. Creem registre inicial (Processing)
     let newAudit;
-    // Creem l'auditoria a la DB (Estat: processing)
     if (user.userId) {
       newAudit = await this.auditRepo.createAuditForUser(url, user.userId, user.email);
     } else {
@@ -46,65 +44,74 @@ export class AuditService {
     }
 
     try {
-      // ---------------------------------------------------------
-      // FASE 1: ESCANEIG TÈCNIC (Google Lighthouse)
-      // ---------------------------------------------------------
+      // 2. ESCANEIG TÈCNIC (Lighthouse)
       const scanResult = await this.scanner.scanUrl(url);
 
-      // ---------------------------------------------------------
-      // FASE 2: ANÀLISI COMERCIAL (IA / Gemini) 🧠
-      // ---------------------------------------------------------
+      // --- 🌟 APLICACIÓ DEL PRESTIGE BOOST (INTEGRAT AQUÍ) ---
+      let finalSeoScore = scanResult.seoScore;
+      let finalPerfScore = scanResult.performanceScore;
+      
+      const cleanUrl = url.toLowerCase();
+      // Verifiquem si és VIP
+      const isPrestige = PRESTIGE_CONFIG.URLS.some(domain => cleanUrl.includes(domain));
+
+      if (isPrestige) {
+        console.log(`✨ [AuditService] Prestige Boost activat per: ${url}`);
+        // Assegurem que la nota mínima sigui la definida (ex: 88)
+        // Convertim a escala 0-100 si cal, o 0-1 segons com ho guardis. 
+        // Assumim que scanResult ve en 0-100.
+        finalSeoScore = Math.max(finalSeoScore, PRESTIGE_CONFIG.BOOST.MIN_SCORE);
+        finalPerfScore = Math.max(finalPerfScore, PRESTIGE_CONFIG.BOOST.MIN_SCORE);
+      }
+      // -------------------------------------------------------
+
+      // 3. ANÀLISI IA (Oportunitats de Negoci)
       let suggestions: BusinessSuggestion[] = [];
       try {
-        // A. Necessitem el text de la web per a la IA. 
-        // Fem un fetch ràpid (timeout 5s) per no bloquejar massa.
+        // Fetch del text de la web per a la IA
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000);
+        const timeoutId = setTimeout(() => controller.abort(), 8000); // 8s timeout
         
         const response = await fetch(url, { signal: controller.signal });
         clearTimeout(timeoutId);
-        
-        const html = await response.text();
-        // B. Neteja bàsica (treure etiquetes HTML per estalviar tokens)
-        const textOnly = html.replace(/<script[^>]*>([\s\S]*?)<\/script>/gi, "")
-                             .replace(/<style[^>]*>([\s\S]*?)<\/style>/gi, "")
-                             .replace(/<[^>]+>/g, ' ')
-                             .replace(/\s+/g, ' ')
-                             .trim();
 
-        // C. Cridem al nostre nou AIService
+        const html = await response.text();
+        // Neteja simple de HTML per estalviar tokens
+        const textOnly = html.replace(/<script[^>]*>([\s\S]*?)<\/script>/gi, "")
+          .replace(/<style[^>]*>([\s\S]*?)<\/style>/gi, "")
+          .replace(/<[^>]+>/g, ' ')
+          .replace(/\s+/g, ' ')
+          .trim()
+          .substring(0, 15000); // Limitem caràcters per seguretat
+
+        // Cridem al AIService (que ja sap gestionar VIPs internament)
         suggestions = await this.aiService.analyzeBusinessOpportunity(url, textOnly);
-        
+
       } catch (err) {
-        console.warn("⚠️ No s'ha pogut fer l'anàlisi IA (continuem igualment):", err);
-        // No fem throw, perquè volem que l'auditoria tècnica es guardi igualment.
+        console.warn("⚠️ Error en anàlisi IA (saltant pas):", err);
       }
 
-      // ---------------------------------------------------------
-      // FASE 3: GUARDAR A LA DB
-      // ---------------------------------------------------------
+      // 4. GUARDAR RESULTATS (Completed)
       await this.auditRepo.updateStatus(newAudit.id, 'completed', {
-        seoScore: scanResult.seoScore,
-        performanceScore: scanResult.performanceScore,
+        seoScore: finalSeoScore,      // Guardem la nota trucada (si és VIP)
+        performanceScore: finalPerfScore,
         reportData: {
           screenshot: scanResult.screenshot,
           issues: scanResult.issues,
           metrics: scanResult.metrics,
           raw: scanResult.reportData,
-          suggestions: suggestions // 👈 GUARDEM ELS SUGGERIMENTS A JSON
+          suggestions: suggestions // Guardem suggeriments IA
         }
       });
 
-      // ---------------------------------------------------------
-      // FASE 4: ENVIAR EMAIL (AMB LA NOVA PLANTILLA)
-      // ---------------------------------------------------------
+      // 5. ENVIAR EMAIL
       try {
         await this.emailService.sendAuditResult(user.email, {
           url: url,
-          seo: scanResult.seoScore,
-          perf: scanResult.performanceScore,
+          seo: finalSeoScore,
+          perf: finalPerfScore,
           id: newAudit.id,
-          suggestions: suggestions // 👈 PASSEM ELS SUGGERIMENTS AL EMAIL
+          suggestions: suggestions
         }, locale);
       } catch (emailErr) {
         console.error("Error enviant email:", emailErr);

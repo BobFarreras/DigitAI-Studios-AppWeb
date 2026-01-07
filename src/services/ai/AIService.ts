@@ -3,7 +3,10 @@ import { OpenAIProvider } from "./providers/OpenAIProvider";
 import { I18nSchema } from "@/types/i18n";
 import { getSectorConfig, SectorConfig } from "@/types/sectors";
 // 👇 IMPORTANT: Importem el tipus del fitxer centralitzat, no el redefinim aquí
-import { BusinessSuggestion } from "@/types/ai"; 
+import { BusinessSuggestion } from "@/types/ai";
+// ✅ NOU: Importem la lògica de prestigi
+import { isPrestigeUrl } from "../audit/AuditLogic";
+import { PRESTIGE_CONFIG } from "@/config/prestige-urls";
 
 export class AIService {
   private gemini: GeminiProvider;
@@ -18,28 +21,28 @@ export class AIService {
   // 1️⃣ GENERACIÓ DE CONTINGUT WEB (COPYWRITING) - ORQUESTRACIÓ
   // ===========================================================================
   async generateTranslationFile(
-    businessName: string, 
-    description: string, 
+    businessName: string,
+    description: string,
     sectorInput: string
   ): Promise<I18nSchema> {
-    
+
     const sectorConfig: SectorConfig = getSectorConfig(sectorInput);
     console.log(`🤖 [AIService] Generant Copywriting Premium per: "${businessName}"...`);
 
     // --- INTENT 1: GOOGLE GEMINI (Prioritari) ---
     try {
-        console.log(`🔵 [AIService] Provant ${this.gemini.providerName}...`);
-        return await this.gemini.generateContent(businessName, description, sectorConfig);
+      console.log(`🔵 [AIService] Provant ${this.gemini.providerName}...`);
+      return await this.gemini.generateContent(businessName, description, sectorConfig);
     } catch (error) {
-        console.warn(`⚠️ [AIService] Gemini ha fallat. Canviant a OpenAI...`, error);
+      console.warn(`⚠️ [AIService] Gemini ha fallat. Canviant a OpenAI...`, error);
     }
 
     // --- INTENT 2: OPENAI (Reserva) ---
     try {
-        console.log(`🟢 [AIService] Provant ${this.openai.providerName}...`);
-        return await this.openai.generateContent(businessName, description, sectorConfig);
+      console.log(`🟢 [AIService] Provant ${this.openai.providerName}...`);
+      return await this.openai.generateContent(businessName, description, sectorConfig);
     } catch (error) {
-        console.error(`❌ [AIService] OpenAI també ha fallat.`, error);
+      console.error(`❌ [AIService] OpenAI també ha fallat.`, error);
     }
 
     // --- INTENT 3: FALLBACK (Seguretat total) ---
@@ -53,19 +56,33 @@ export class AIService {
   async analyzeBusinessOpportunity(url: string, pageText: string): Promise<BusinessSuggestion[]> {
     console.log(`🕵️ [AIService] Analitzant oportunitats de negoci per: ${url}...`);
 
+    // ✅ DETECCIÓ VIP
+    const isVip = isPrestigeUrl(url);
+    let contextInjection = "";
+
+    if (isVip) {
+      console.log("✨ [AIService] Mode VIP activat per a l'anàlisi.");
+      contextInjection = PRESTIGE_CONFIG.AI_CONTEXT;
+    }
+    // Passem el context extra als proveïdors
+    // (Nota: Caldrà actualitzar lleugerament els mètodes analyzeBusiness dels providers 
+    // per acceptar aquest string extra, o concatenar-lo al pageText aquí mateix).
+
+    // ESTRATÈGIA RÀPIDA: Injectar-ho al principi del text perquè la IA ho llegeix primer
+    const enrichedText = isVip
+      ? `[SYSTEM INSTRUCTION: ${contextInjection}]\n\nCONTINGUT WEB:\n${pageText}`
+      : pageText;
+
     // Intent 1: Gemini
     try {
-      console.log(`🔵 Provant Gemini (Analyze)...`);
-      return await this.gemini.analyzeBusiness(url, pageText);
+      return await this.gemini.analyzeBusiness(url, enrichedText);
     } catch (error) {
-      // AQUÍ ÉS ON EL SISTEMA SALTA AUTOMÀTICAMENT QUAN GEMINI ESTÀ BLOQUEJAT (429)
       console.warn("⚠️ Gemini Analysis failed. Trying OpenAI...", error);
     }
 
     // Intent 2: OpenAI
     try {
-      console.log(`🟢 Provant OpenAI (Analyze)...`);
-      return await this.openai.analyzeBusiness(url, pageText);
+      return await this.openai.analyzeBusiness(url, enrichedText);
     } catch (error) {
       console.error("❌ OpenAI Analysis failed.", error);
     }
@@ -100,9 +117,9 @@ export class AIService {
   private getFallbackContent(name: string, desc: string, _config: SectorConfig): I18nSchema {
     return {
       hero: { title: name, subtitle: desc, cta: "Contactar", image_prompt: "" },
-      about: { 
-          badge: "Info", title: "Sobre nosaltres", description: desc, image_prompt: "", 
-          stats: { label1: "Experiència", value1: "+10", label2: "Clients", value2: "100%", label3: "Projectes", value3: "+50" } 
+      about: {
+        badge: "Info", title: "Sobre nosaltres", description: desc, image_prompt: "",
+        stats: { label1: "Experiència", value1: "+10", label2: "Clients", value2: "100%", label3: "Projectes", value3: "+50" }
       },
       services: { badge: "Serveis", title: "Serveis", subtitle: "", items: [] },
       featured_products: { title: "Productes", subtitle: "Selecció", limit: 4 }, // ✅ Afegit el que has posat
