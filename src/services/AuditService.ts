@@ -50,7 +50,7 @@ export class AuditService {
       // --- 🌟 APLICACIÓ DEL PRESTIGE BOOST (INTEGRAT AQUÍ) ---
       let finalSeoScore = scanResult.seoScore;
       let finalPerfScore = scanResult.performanceScore;
-      
+
       const cleanUrl = url.toLowerCase();
       // Verifiquem si és VIP
       const isPrestige = PRESTIGE_CONFIG.URLS.some(domain => cleanUrl.includes(domain));
@@ -71,7 +71,7 @@ export class AuditService {
         // Fetch del text de la web per a la IA
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 8000); // 8s timeout
-        
+
         const response = await fetch(url, { signal: controller.signal });
         clearTimeout(timeoutId);
 
@@ -124,5 +124,13 @@ export class AuditService {
       await this.auditRepo.updateStatus(newAudit.id, 'failed');
       throw new Error("No s'ha pogut completar l'auditoria.");
     }
+  }
+  // ✅ NOU MÈTODE PER A L'ADMIN
+  async getAdminAuditDetails(id: string) {
+    return await this.auditRepo.getAuditByIdAdmin(id);
+  }
+  async deleteAuditAsAdmin(id: string) {
+    console.log(`🗑️ [AuditService] Eliminant auditoria: ${id}`);
+    return await this.auditRepo.deleteAudit(id);
   }
 }

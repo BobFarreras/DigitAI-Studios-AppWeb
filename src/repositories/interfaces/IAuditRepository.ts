@@ -27,4 +27,7 @@ export interface IAuditRepository {
   
 // 👇 El mètode ha de retornar aquest tipus concret
   getAllLight(): Promise<AuditSummary[]>;
+  // ✅ NOU MÈTODE: Accés total per ID (sense filtres d'usuari)
+  getAuditByIdAdmin(id: string): Promise<AuditDTO | null>;
+  deleteAudit(id: string): Promise<void>; // 👈 NOU
 }

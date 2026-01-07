@@ -6,6 +6,7 @@ import { StaticImageData } from 'next/image';
 export type AuditDTO = {
   id: string;
   url: string;
+  email: string | null;
   status: 'processing' | 'completed' | 'failed';
   seoScore: number | null;
   performanceScore: number | null;

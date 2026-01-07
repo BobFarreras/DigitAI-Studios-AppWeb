@@ -7,6 +7,7 @@ export const PRESTIGE_CONFIG = {
     'ribotflow.com',
     'getsalutflow.com',
     'digitaistudios.com',
+    'garatgeestacio.com',
     'triatu.vercel.app',
     'localhost' // Útil per proves
   ],

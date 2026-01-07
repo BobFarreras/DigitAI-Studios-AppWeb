@@ -8,18 +8,24 @@ type AuditRow = Database['public']['Tables']['web_audits']['Row'];
 
 export class SupabaseAuditRepository implements IAuditRepository {
 
+  // --- HELPER PRIVAT PER MAPEJAR ---
   private mapToDTO(row: AuditRow): AuditDTO {
     return {
       id: row.id,
       url: row.url,
+      email: row.email, // Important incloure l'email
       status: row.status as AuditDTO['status'],
       seoScore: row.seo_score,
       performanceScore: row.performance_score,
       createdAt: row.created_at ? new Date(row.created_at) : new Date(),
-      // Fem un cast segur cap a un objecte genèric o unknown
+      // Cast segur del JSON
       reportData: row.report_data as Record<string, unknown>,
     };
   }
+
+  // =================================================================
+  // LECTURA (USER SIDE)
+  // =================================================================
 
   async getAuditsByUserEmail(email: string): Promise<AuditDTO[]> {
     const supabase = await createClient();
@@ -33,35 +39,86 @@ export class SupabaseAuditRepository implements IAuditRepository {
     return data.map(this.mapToDTO);
   }
 
+  async getAuditsByUserId(userId: string): Promise<AuditDTO[]> {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from('web_audits')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false });
+
+    if (error) throw new Error(error.message);
+    return data.map(this.mapToDTO);
+  }
+
   async getAuditById(id: string): Promise<AuditDTO | null> {
     const supabase = await createClient();
     const { data } = await supabase.from('web_audits').select('*').eq('id', id).single();
     return data ? this.mapToDTO(data) : null;
   }
 
-  async createAudit(url: string, email: string): Promise<AuditDTO> {
-    console.log(`[Repo] Creant auditoria per: ${email} - URL: ${url}`);
+  // =================================================================
+  // ESCRIPTURA (CREACIÓ)
+  // =================================================================
 
+  // Mètode genèric (per compatibilitat)
+  async createAudit(url: string, email: string): Promise<AuditDTO> {
+    return this.createPublicAudit(url, email);
+  }
+
+  // CAS 1: Amb Usuari Registrat (Guardem Org ID)
+  async createAuditForUser(url: string, userId: string, email: string): Promise<AuditDTO> {
+    const supabaseAdmin = createAdminClient();
+
+    // 1. Busquem l'Organització de l'usuari
+    const { data: profile } = await supabaseAdmin
+      .from('profiles')
+      .select('organization_id')
+      .eq('id', userId)
+      .single();
+
+    const orgId = profile?.organization_id || null;
+
+    // 2. Creem l'auditoria vinculada
+    const { data, error } = await supabaseAdmin
+      .from('web_audits')
+      .insert({
+        url,
+        user_id: userId,
+        email: email,
+        organization_id: orgId, // ✅ Guardat correctament
+        status: 'processing'
+      })
+      .select()
+      .single();
+
+    if (error) throw new Error(error.message);
+    return this.mapToDTO(data);
+  }
+
+  // CAS 2: Pública / Leads (Sense Org ID encara)
+  async createPublicAudit(url: string, email: string): Promise<AuditDTO> {
     const supabaseAdmin = createAdminClient();
 
     const { data, error } = await supabaseAdmin
       .from('web_audits')
       .insert({
         url,
-        email,
-        status: 'processing'
+        email: email,
+        status: 'processing',
+        organization_id: null, // Públic = Sense organització inicialment
+        user_id: null
       })
       .select()
       .single();
 
-    if (error) {
-      console.error('[Repo] Error Supabase:', error);
-      throw new Error(`Error creating audit: ${error.message}`);
-    }
-
-    console.log('[Repo] Auditoria creada OK:', data.id);
+    if (error) throw new Error(error.message);
     return this.mapToDTO(data);
   }
+
+  // =================================================================
+  // ACTUALITZACIÓ
+  // =================================================================
 
   async updateStatus(
     id: string,
@@ -74,18 +131,12 @@ export class SupabaseAuditRepository implements IAuditRepository {
   ): Promise<void> {
     const supabaseAdmin = createAdminClient();
 
-    // Utilitzem Partial<AuditRow> per assegurar que els camps coincideixen amb la DB
-    // Omitim 'id' i 'created_at' perquè no els tocarem
     const updatePayload: Partial<AuditRow> = { status };
 
     if (results) {
       if (results.seoScore !== undefined) updatePayload.seo_score = results.seoScore;
       if (results.performanceScore !== undefined) updatePayload.performance_score = results.performanceScore;
-
       if (results.reportData !== undefined) {
-        // ✅ CORRECCIÓ CLAU:
-        // En lloc de 'as any', fem un cast al tipus específic que Supabase espera per aquesta columna.
-        // Això satisfà l'Eslint i manté la seguretat de tipus relativa a la DB.
         updatePayload.report_data = results.reportData as AuditRow['report_data'];
       }
     }
@@ -97,67 +148,12 @@ export class SupabaseAuditRepository implements IAuditRepository {
 
     if (error) throw new Error(error.message);
   }
-  async getAuditsByUserId(userId: string): Promise<AuditDTO[]> {
-    const supabase = await createClient();
-    const { data, error } = await supabase
-      .from('web_audits')
-      .select('*')
-      .eq('user_id', userId) // 👈 Filtrem per ID, molt més robust
-      .order('created_at', { ascending: false });
 
-    if (error) throw new Error(error.message);
-    return data.map(this.mapToDTO);
-  }
+  // =================================================================
+  // ADMIN ONLY (BYPASS RLS)
+  // =================================================================
 
-  // CAS 1: Des del Dashboard (Tenim ID segur)
-  async createAuditForUser(url: string, userId: string, email: string): Promise<AuditDTO> {
-    const supabaseAdmin = createAdminClient();
-    const { data, error } = await supabaseAdmin
-      .from('web_audits')
-      .insert({
-        url,
-        user_id: userId, // ✅ Clau
-        email: email,
-        status: 'processing'
-      })
-      .select()
-      .single();
-
-    if (error) throw new Error(error.message);
-    return this.mapToDTO(data);
-  }
-
-  // CAS 2: Des de la Landing (Només tenim Email)
-  async createPublicAudit(url: string, email: string): Promise<AuditDTO> {
-    const supabaseAdmin = createAdminClient();
-
-    // Opcional: Buscar si ja existeix un usuari amb aquest email per lligar-ho?
-    // Per ara, ho guardem sense user_id (o amb un user_id temporal si la taula ho requereix)
-    // NOTA: Si la taula 'web_audits' té 'user_id' com NOT NULL, necessitem una estratègia aquí.
-    // L'estratègia habitual és crear un usuari "fantasma" o deixar el camp nullable.
-    // Assumint que user_id pot ser null o gestionem el registre després.
-
-    const { data, error } = await supabaseAdmin
-      .from('web_audits')
-      .insert({
-        url,
-        email: email,
-        status: 'processing'
-        // user_id: null (si la DB ho permet)
-      })
-      .select()
-      .single();
-
-    if (error) throw new Error(error.message);
-    return this.mapToDTO(data);
-  }
   async getAllLight(): Promise<AuditSummary[]> {
-    // ❌ ABANS: const supabase = await createClient();
-    // Aquest client respecta RLS, per això només veus les teves.
-
-    // ✅ ARA: Fem servir el client Admin (Service Role)
-    // Aquest client té "superpoders" i ho veu tot.
-    // És segur fer-ho aquí perquè l'Action 'getAdminAudits' ja ha verificat el login.
     const supabase = createAdminClient();
 
     const { data, error } = await supabase
@@ -181,17 +177,44 @@ export class SupabaseAuditRepository implements IAuditRepository {
     }));
   }
 
+  async getAuditByIdAdmin(id: string): Promise<AuditDTO | null> {
+    const supabaseAdmin = createAdminClient();
 
-  // Per al detall (més endavant), sí que voldrem el report_data
-  async getById(id: string) {
-    const supabase = await createClient();
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('web_audits')
       .select('*')
       .eq('id', id)
       .single();
 
-    if (error) return null;
-    return data;
+    if (error || !data) {
+      console.error(`❌ Error fetching audit (Admin) [${id}]:`, error?.message);
+      return null;
+    }
+
+    // ✅ MAPEIG MANUAL COMPLET
+    return {
+      id: data.id,
+      url: data.url,
+      email: data.email, // Afegit email
+      status: data.status,
+      seoScore: data.seo_score,
+      performanceScore: data.performance_score,
+      createdAt: data.created_at ? new Date(data.created_at) : new Date(), // Afegida data
+      reportData: data.report_data as Record<string, unknown>
+    } as AuditDTO;
+  }
+
+  async deleteAudit(id: string): Promise<void> {
+    const supabaseAdmin = createAdminClient(); // Usem Admin per assegurar que podem esborrar qualsevol
+
+    const { error } = await supabaseAdmin
+      .from('web_audits')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      console.error(`❌ Error deleting audit [${id}]:`, error.message);
+      throw new Error("No s'ha pogut eliminar l'auditoria");
+    }
   }
 }
