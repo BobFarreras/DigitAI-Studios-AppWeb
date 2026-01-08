@@ -164,7 +164,7 @@ export const AuditReadyEmail = ({
             </Text>
             <Button
               style={button}
-              href={`${baseUrl}/contact`}
+              href={`${baseUrl}/#contact`}
             >
               SOL·LICITAR IMPLEMENTACIÓ →
             </Button>
@@ -180,7 +180,7 @@ export const AuditReadyEmail = ({
           {/* FOOTER */}
           <Section style={footer}>
             <Text style={footerText}>
-              © 2024 DigitAI Studios. Transformant negocis.
+              © 2026 DigitAI Studios. Transformant negocis.
             </Text>
             <Text style={footerText}>
               <Link href={`${baseUrl}/contact`} style={link}>Contacte</Link> • 
