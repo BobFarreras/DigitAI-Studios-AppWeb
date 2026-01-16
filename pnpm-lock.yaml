@@ -93,8 +93,8 @@ importers:
         specifier: ^5.0.5
         version: 5.0.5
       openai:
-        specifier: ^6.13.0
-        version: 6.13.0(ws@8.18.3)(zod@4.2.0)
+        specifier: ^6.16.0
+        version: 6.16.0(ws@8.18.3)(zod@4.2.0)
       react:
         specifier: ^19.2.3
         version: 19.2.3
@@ -4341,8 +4341,8 @@ packages:
     resolution: {integrity: sha512-4+/OFSqOjoyULo7eN7EA97DE0Xydj/PW5aIckxqQIoFjFwqXKuFCvXUJObyJfBF9Khu4RL/jlDRI9FPaMGfPnw==}
     engines: {node: '>= 20'}
 
-  openai@6.13.0:
-    resolution: {integrity: sha512-yHbMo+EpNGPG3sRrXvmo0LhUPFN4bAURJw3G17bE+ax1G4tcTFCa9ZjvCWh3cvni0aHY0uWlk2IxcsPH4NR9Ow==}
+  openai@6.16.0:
+    resolution: {integrity: sha512-fZ1uBqjFUjXzbGc35fFtYKEOxd20kd9fDpFeqWtsOZWiubY8CZ1NAlXHW3iathaFvqmNtCWMIsosCuyeI7Joxg==}
     hasBin: true
     peerDependencies:
       ws: ^8.18.0
@@ -10242,7 +10242,7 @@ snapshots:
       '@octokit/types': 16.0.0
       '@octokit/webhooks': 14.2.0
 
-  openai@6.13.0(ws@8.18.3)(zod@4.2.0):
+  openai@6.16.0(ws@8.18.3)(zod@4.2.0):
     optionalDependencies:
       ws: 8.18.3
       zod: 4.2.0
