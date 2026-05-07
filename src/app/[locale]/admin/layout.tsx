@@ -1,6 +1,6 @@
 // src/app/[locale]/admin/layout.tsx
 import { requireAdmin } from '@/lib/auth/admin-guard';
-import { AdminBottomNav } from '@/components/admin/AminMobileMenu'; // Assegura't del nom correcte (AminMobileMenu o AdminMobileMenu)
+import { AdminBottomNav } from '@/components/admin/AdminMobileMenu';
 import { AdminSidebar } from '@/components/admin/AdminSidebar'; // 👈 El nou component
 import { ShieldAlert } from 'lucide-react';
 

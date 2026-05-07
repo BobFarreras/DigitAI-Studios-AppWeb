@@ -7,7 +7,7 @@ import { AuditHeader } from '@/features/audit/ui/components/AuditHeader';
 import { ScoreGrid } from '@/features/audit/ui/components/ScoreGrid';
 import { CoreVitalsGrid, AuditMetric } from '@/features/audit/ui/components/CoreVitalsGrid';
 import { IssuesList } from '@/features/audit/ui/components/IssuesList';
-import { MobilePreview } from '@/features/audit/ui/components/MobilePreviw';
+import { MobilePreview } from '@/features/audit/ui/components/MobilePreview';
 import { BusinessOpportunities } from '@/features/audit/ui/components/BusinessOpportunities';
 import { AuditIssue } from '@/adapters/IWebScanner';
 import { BusinessSuggestion } from '@/types/ai';

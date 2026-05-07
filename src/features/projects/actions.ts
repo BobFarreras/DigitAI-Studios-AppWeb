@@ -1,6 +1,6 @@
 'use server';
 
-import { InfrastructureService } from '@/services/factory/InfrastrocutreService';
+import { InfrastructureService } from '@/services/factory/InfrastructureService';
 import { TenantService } from '@/services/TenantService';
 import { AIService } from '@/services/ai/AIService'; 
 import { ImageService } from '@/services/ImageService';

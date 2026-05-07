@@ -6,7 +6,7 @@ import { Link } from '@/routing';
 import { Github, Globe, Server, LayoutDashboard, FlaskConical, ArrowLeft } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ProjectCampaignsList } from '@/features/projects/ui/ProjectCampaignsList';
-import { ProjectTeamManager } from '@/features/projects/ui/ProjectTeamManeger';
+import { ProjectTeamManager } from '@/features/projects/ui/ProjectTeamManager';
 // 👇 1. IMPORTEM EL TIPUS DEL REPOSITORI
 import { SupabaseProjectRepository, ProjectMember } from '@/repositories/supabase/SupabaseProjectRepository';
 import { DestructionButton } from '@/features/projects/ui/DeleteProjectButton';
