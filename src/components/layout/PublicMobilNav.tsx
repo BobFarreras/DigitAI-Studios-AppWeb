@@ -1,7 +1,7 @@
 'use client';
 
 import { Link, usePathname } from '@/routing';
-import { Home, Zap, FolderGit2, BookOpen, LayoutDashboard, UserCircle, type LucideIcon, ChevronUp } from 'lucide-react';
+import { Home, Zap, LayoutDashboard, UserCircle, type LucideIcon, ChevronUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
 import type { User } from '@supabase/supabase-js';
@@ -52,7 +52,6 @@ export function PublicMobileNav({ user }: PublicMobileNavProps) {
   const SOLUTIONS_LINKS = [
     { href: '/#solutions', label: 'Solucions Tech' },
     { href: '/#services', label: 'Serveis' },
-    { href: '/#audit', label: 'Auditoria Web' },
     { href: '/#testimonials', label: "Casos d'Èxit" },
     { href: '/#contacte', label: 'Contacte' }
   ];
@@ -64,8 +63,6 @@ export function PublicMobileNav({ user }: PublicMobileNavProps) {
   const NAV_ITEMS: NavItem[] = [
     { id: 'home', label: t('home'), href: '/', icon: Home },
     { id: 'solutions', label: t('solutions'), href: '#', icon: Zap, isDropdown: true },
-    { id: 'projects', label: t('projects'), href: '/projectes', icon: FolderGit2 },
-    { id: 'blog', label: t('blog'), href: '/blog', icon: BookOpen },
     authItem,
   ];
 
@@ -76,7 +73,7 @@ export function PublicMobileNav({ user }: PublicMobileNavProps) {
           Substituïm 'flex justify-around px-2' per 'grid grid-cols-5'.
           Això fa que cada icona tingui exactament la mateixa amplada.
       */}
-      <div className="grid grid-cols-5 h-16 items-center">
+      <div className="grid grid-cols-3 h-16 items-center">
         {NAV_ITEMS.map((item) => {
 
           const isActive = item.href === '/'

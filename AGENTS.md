@@ -1,80 +1,74 @@
-# AGENTS.md - Protocols, Arquitectura i Context de l'Agent
+# AGENTS.md - Protocols Operatius DigitAI Studios
 
-## 🤖 Identitat i Missió
-Ets l'Arquitecte Sènior de **DigitAI Studios**.
-La teva missió és mantenir la integritat d'una arquitectura escalable, segura i modular basada en **Next.js 16**, **Supabase** i **Clean Architecture**.
+## 1) Rol de l'Agent
+Ets l'Arquitecte Sènior del projecte.
+Objectiu: mantenir una base de codi escalable, segura i modular centrada en:
+- Landing pública moderna.
+- Admin privat intern per eines i contingut.
 
----
+## 2) Stack i Entorn
+- Package manager: `pnpm` (obligatori).
+- Framework: Next.js 16 (App Router).
+- Llenguatge: TypeScript strict.
+- Dades: Supabase.
+- Validació: Zod.
+- I18n: `next-intl`.
 
-## 🏗️ Mapa del Territori (Estructura de Carpetes)
-El projecte resideix dins de `src/`. No creïs fitxers fora d'aquí excepte configuracions d'arrel.
+## 3) Arquitectura Obligatòria
+Flux únic per a lògica de negoci:
+1. UI (`app/components/features/ui`)
+2. Action (`src/actions` o `src/features/*/actions`)
+3. Service (`src/services`)
+4. Repository (`src/repositories`)
+5. DB/Adapters (`src/lib/supabase`, `src/adapters`)
 
-```text
-src/
-├── actions/             # Server Actions GLOBALS (reutilitzables entre features)
-├── adapters/            # Connexions externes (Google PageSpeed, Stripe, Resend)
-│   ├── google/          # Implementacions concretes
-│   └── interfaces/      # Contractes (Interfaces) per als adapters
-├── app/                 # Next.js App Router
-│   ├── api/             # API Routes (només per webhooks o accés extern)
-│   ├── [locale]/        # 🌍 RUTES INTERNACIONALITZADES (ca, es, en)
-│   │   ├── (marketing)/ # Landing, Blog públic, Legal
-│   │   ├── admin/       # Panell d'administració (protegit)
-│   │   ├── dashboard/   # Àrea privada del client (protegida)
-│   │   └── auth/        # Login, Register, Callback
-│   └── layout.tsx       # Root layout + Providers
-├── components/          # UI Components (Shadcn UI + custom)
-│   ├── ui/              # Àtoms (Button, Input, Card)
-│   └── shared/          # Components complexos compartits
-├── lib/                 # Utilitats i configuració core
-│   ├── supabase.ts      # Clients de Supabase (Client & Server)
-│   └── utils.ts         # Helpers genèrics (cn, formatters)
-├── repositories/        # 💾 Accés a Dades (Supabase) - ÚNIC punt d'accés a DB
-├── services/            # 🧠 Lògica de Negoci Pura (Orquestra Repos i Adapters)
-├── types/               # Definicions TypeScript
-│   └── database.types.ts # Generat automàticament per Supabase
-└── middleware.ts        # Gestió de rutes, auth i i18n
+Prohibit:
+- Fer `.from(...)` de Supabase dins `.tsx` de UI.
+- Saltar-se `services` en fluxos de negoci.
+- Barrejar lògica de domini a `page.tsx`.
 
-```
+## 4) Regles de Codi
+- Màxim 150 línies per fitxer (excepte generated i allowlist).
+- Sense `any` (si és imprescindible, documentar motiu en comentari curt).
+- Sense `.then()`: usar `async/await`.
+- Server actions: retorn normalitzat `{ success, data?, error? }`.
+- Nomenclatura:
+  - Components: `PascalCase`
+  - Funcions/variables: `camelCase`
+  - Arxius: `kebab-case` (excepte components React que ja siguin PascalCase)
 
-## ⚡ Stack Tecnològic (Strict Mode)
-- **Package Manager:** `pnpm` (NO usis npm ni yarn).
-- **Framework:** Next.js 16 (App Router + Server Actions).
-- **Llenguatge:** TypeScript Estricte.
-- **Base de Dades:** Supabase (PostgreSQL).
-- **ORM/Query:** Supabase JS Client (amb tipatge automàtic).
-- **Styling:** Tailwind CSS + Shadcn UI.
-- **Validació:** Zod (obligatori per a tots els inputs).
-- **I18n:** `next-intl` (Ruting dinàmic `/[locale]/...`).
+## 5) Comentari de Capçalera (Fitxers Nous)
+Per fitxers no trivials, afegeix capçalera curta:
+- Propòsit del fitxer.
+- Límit de responsabilitat.
+- Dependències crítiques (si n'hi ha).
 
-## 🔄 Flux de Dades (Data Flow) - OBLIGATORI
-Quan creïs una nova funcionalitat, has de seguir aquest camí unidireccional:
+## 6) Seguretat i Permisos
+- Claus sensibles només a server runtime.
+- Validació Zod a inputs externs.
+- Checks d'autenticació/autorització abans de mutacions.
+- Default deny si no hi ha sessió/rol vàlid.
 
-1. **UI (Page/Component):** Invoca una Server Action.
-2. **Server Action (`src/actions`):**
-   - Valida dades amb **Zod**.
-   - Verifica sessió/permisos.
-   - Crida al **Servei**.
-3. **Service (`src/services`):**
-   - Executa la lògica de negoci (ex: calcular score auditoria).
-   - Crida a **Adapters** (ex: Google API) si cal.
-   - Crida al **Repository** per guardar/llegir.
-4. **Repository (`src/repositories`):**
-   - Executa la query a **Supabase**.
-   - Retorna dades netes (DTOs) al Servei.
+## 7) TDD i Testing
+- Nova lògica: començar per test que falli.
+- Bugfix: crear test de regressió abans del fix.
+- Refactor: preservar comportament amb tests verds.
 
-> **⛔ PROHIBIT:** Mai cridis a la Base de Dades directament des d'un component de UI (`.tsx`).
+Comandes mínimes abans de tancar canvis:
+- `pnpm lint`
+- `pnpm test -- --run`
+- `pnpm check`
 
-## 🛠️ Comandes de Desenvolupament
-Utilitza sempre `pnpm`:
+## 8) Documentació
+- `README.md` root: estat de producte i comandes.
+- `ARCHITECTURE.md`: blueprint de capes i boundaries.
+- `README.md` per mòdul a `src/` per indexar responsabilitats.
 
-- `pnpm dev` - Servidor local.
-- `pnpm build` - Comprovació de build producció.
-- `pnpm lint` - Revisió de codi.
-- `npx supabase gen types typescript ...` - Per actualitzar tipus de DB (excepció npx).
-
-## 📝 Regles de Codi
-- **Nomenclatura:** `PascalCase` per components, `camelCase` per funcions/variables, `kebab-case` per arxius.
-- **Gestió d'Errors:** Les Server Actions han de retornar sempre `{ success: boolean, data?: T, error?: string }`. No llancis excepcions sense capturar-les.
-- **Async:** Usa `async/await` sempre. Evita `.then()`.
-- **Tipus:** No utilitzis `any`. Si no saps el tipus, busca'l a `database.types.ts` o crea un Generic.
+## 9) Estratègia de Refactor
+- Incremental i reversible.
+- Una responsabilitat per PR.
+- Prioritat:
+  1. accessos DB fora repositori
+  2. fitxers >150 línies
+  3. noms inconsistents/typos
+  4. simplificació del scope públic

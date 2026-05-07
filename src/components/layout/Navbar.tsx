@@ -30,8 +30,6 @@ type Props = {
 const DROPDOWN_LINKS = [
   { href: '/#solutions', label: 'Solucions Tecnològiques' },
   { href: '/#services', label: 'Serveis & Packs' },
-  { href: '/#audit', label: 'Auditoria Web Gratuïta' },
-  { href: '/#blog-feed', label: 'Blog & Recursos' },
   { href: '/#testimonials', label: "Casos d'Èxit" },
   { href: '/#contact', label: 'Contacte' }
 ];
@@ -122,14 +120,6 @@ export function Navbar({ user }: Props) {
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
-
-            <Link href="/projectes" className={cn("text-sm font-medium hover:text-primary transition-colors", pathname === '/projectes' ? "text-primary" : "text-muted-foreground")}>
-              {t('projects')}
-            </Link>
-
-            <Link href="/blog" className={cn("text-sm font-medium hover:text-primary transition-colors", pathname === '/blog' ? "text-primary" : "text-muted-foreground")}>
-              {t('blog')}
-            </Link>
           </nav>
 
           {/* 3. ÀREA D'ACCIONS (DRETA) */}

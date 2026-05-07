@@ -13,7 +13,6 @@ const SOCIALS = [
 
 export function Footer() {
   const t = useTranslations('Footer');
-  const tNav = useTranslations('Navbar');
   const currentYear = new Date().getFullYear();
 
   // 2️⃣ CANVI DE LÒGICA: Afegim '/' davant dels '#'
@@ -32,8 +31,6 @@ export function Footer() {
       title: t('company_title'),
       links: [
         { label: t('about'), href: '/#hero' },                // Abans '#hero'
-        { label: tNav('projects'), href: '/projectes' },      // Rutes absolutes (correcte)
-        { label: tNav('blog'), href: '/blog' },
         { label: t('contact'), href: '/#contacte' },          // Abans '#contacte'
       ],
     },
