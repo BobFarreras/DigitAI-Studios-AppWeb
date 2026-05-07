@@ -6,7 +6,6 @@ src/app/[locale]/admin/projects/page.tsx
 src/app/[locale]/admin/tests/[id]/page.tsx
 src/app/[locale]/admin/tests/new/page.tsx
 src/app/[locale]/auth/callback/route.ts
-src/app/[locale]/auth/reset-password/page.tsx
 src/app/[locale]/dashboard/audits/page.tsx
 src/app/[locale]/dashboard/new-audit/page.tsx
 src/app/[locale]/dashboard/projects/[id]/[testId]/page.tsx
