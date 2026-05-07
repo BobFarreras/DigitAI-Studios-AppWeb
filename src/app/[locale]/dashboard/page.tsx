@@ -1,23 +1,20 @@
 import { getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
 import { Link } from '@/routing';
-import { createClient } from '@/lib/supabase/server';
-import { auditRepository } from '@/services/container';
 import { Activity, BarChart3, Clock, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { AuditCard } from '@/components/dashboard/AuditCard';
+import { getDashboardHomeData } from '@/actions/dashboard-home';
 
 export default async function DashboardPage() {
-    const supabase = await createClient();
     // Use the namespace we created
     const t = await getTranslations('DashboardHome'); 
-    
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user || !user.email) {
+    const result = await getDashboardHomeData();
+    if (!result.success && result.authRequired) {
         redirect('/');
     }
-
-    const audits = await auditRepository.getAuditsByUserEmail(user.email);
+    const audits = result.success ? result.audits : [];
+    const userEmail = result.success ? result.userEmail : '';
     const totalAudits = audits.length;
     const validSeoScores = audits
         .filter(a => a.seoScore !== null && a.seoScore !== undefined)
@@ -33,7 +30,7 @@ export default async function DashboardPage() {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-6 border-b border-border">
                 <div>
                     <h1 className="text-2xl md:text-3xl font-bold text-foreground">
-                        {t('welcome', { name: user.email.split('@')[0] })}
+                        {t('welcome', { name: userEmail.split('@')[0] })}
                     </h1>
                     <p className="text-muted-foreground mt-1 text-sm md:text-base">{t('subtitle')}</p>
                 </div>
