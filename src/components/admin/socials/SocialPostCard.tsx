@@ -2,8 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { type Database } from '@/types/database.types';
-import { publishSocialPost, changeSocialStatus } from '@/actions/social-media';
-import { createClient } from '@/lib/supabase/client';
+import { publishSocialPost, changeSocialStatus, uploadSocialMedia, removeSocialMedia } from '@/actions/social-media';
 import { Loader2, Send, CheckCircle, ImagePlus, X, Save } from 'lucide-react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
@@ -55,7 +54,6 @@ export function SocialPostCard({ post, onSave, isSaving }: SocialPostCardProps) 
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null); 
-  const supabase = createClient();
 
   const theme = PLATFORM_THEMES[post.platform] || PLATFORM_THEMES.linkedin;
 
@@ -70,11 +68,7 @@ export function SocialPostCard({ post, onSave, isSaving }: SocialPostCardProps) 
   const deleteImageFromStorage = async (urlToDelete: string) => {
     if (!urlToDelete) return;
     try {
-      const urlParts = urlToDelete.split('/social-media/');
-      if (urlParts.length > 1) {
-        const filePath = urlParts[1];
-        await supabase.storage.from('social-media').remove([filePath]);
-      }
+      await removeSocialMedia(urlToDelete);
     } catch (error) {
       console.error("Error esborrant imatge:", error);
     }
@@ -107,12 +101,8 @@ export function SocialPostCard({ post, onSave, isSaving }: SocialPostCardProps) 
 
     setIsUploading(true);
     try {
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${post.id}-${Date.now()}.${fileExt}`;
-      const { error: uploadError } = await supabase.storage.from('social-media').upload(fileName, file);
-      if (uploadError) throw uploadError;
-
-      const { data: { publicUrl } } = supabase.storage.from('social-media').getPublicUrl(fileName);
+      const uploadResult = await uploadSocialMedia(post.id, file, mediaUrl);
+      const publicUrl = uploadResult.publicUrl;
       setMediaUrl(publicUrl);
       setIsDirty(true);
       onSave(post.id, content, publicUrl);

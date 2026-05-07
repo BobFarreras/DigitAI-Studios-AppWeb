@@ -117,6 +117,55 @@ export async function updateSocialPostContent(
 }
 
 /**
+ * Puja un fitxer multimèdia al bucket social-media i retorna la URL pública.
+ * També elimina la imatge anterior si es proporciona.
+ */
+export async function uploadSocialMedia(
+  socialId: string,
+  file: File,
+  previousMediaUrl?: string | null
+) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Unauthorized");
+
+  if (!file) throw new Error("No file provided");
+
+  if (previousMediaUrl) {
+    const previousParts = previousMediaUrl.split('/social-media/');
+    if (previousParts.length > 1) {
+      await supabase.storage.from('social-media').remove([previousParts[1]]);
+    }
+  }
+
+  const fileExt = file.name.split('.').pop() || 'bin';
+  const fileName = `${socialId}-${Date.now()}.${fileExt}`;
+  const { error: uploadError } = await supabase.storage.from('social-media').upload(fileName, file);
+  if (uploadError) throw new Error("Error pujant arxiu");
+
+  const { data: { publicUrl } } = supabase.storage.from('social-media').getPublicUrl(fileName);
+  return { success: true, publicUrl };
+}
+
+/**
+ * Elimina un fitxer del bucket social-media a partir de la URL pública.
+ */
+export async function removeSocialMedia(mediaUrl: string) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Unauthorized");
+
+  if (!mediaUrl) return { success: true };
+
+  const urlParts = mediaUrl.split('/social-media/');
+  if (urlParts.length > 1) {
+    await supabase.storage.from('social-media').remove([urlParts[1]]);
+  }
+
+  return { success: true };
+}
+
+/**
  * Canvia l'estat manualment (Draft <-> Approved <-> Published)
  */
 export async function changeSocialStatus(socialId: string, newStatus: 'draft' | 'approved' | 'published' | 'failed') {

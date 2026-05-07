@@ -19,7 +19,6 @@ src/app/[locale]/dashboard/tests/page.tsx
 src/app/actions/delete-user.ts
 src/app/actions/get-users.ts
 src/app/api/oauth/callback/route.ts
-src/components/admin/socials/SocialPostCard.tsx
 src/features/auth/actions/auth.ts
 src/features/auth/actions/reset-password.ts
 src/features/auth/ui/LoginForm.tsx
