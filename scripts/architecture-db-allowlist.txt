@@ -13,8 +13,6 @@ src/app/[locale]/dashboard/layout.tsx
 src/app/[locale]/dashboard/new-audit/page.tsx
 src/app/[locale]/dashboard/page.tsx
 src/app/[locale]/dashboard/projects/[id]/[testId]/page.tsx
-src/app/[locale]/dashboard/projects/[id]/page.tsx
-src/app/[locale]/dashboard/projects/page.tsx
 src/app/[locale]/dashboard/tests/page.tsx
 src/app/actions/delete-user.ts
 src/app/actions/get-users.ts
