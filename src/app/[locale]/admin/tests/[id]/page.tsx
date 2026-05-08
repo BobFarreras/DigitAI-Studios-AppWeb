@@ -5,7 +5,6 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { TesterManager } from '@/features/tests/ui/TesterManager';
 import { VisualFlowBuilder } from '@/features/tests/ui/VisualFlowBuilder';
 import { CampaignDetailsForm } from '@/features/tests/ui/CampaignDetailsForm';
-import { createClient } from '@/lib/supabase/server';
 import { BackButton } from '@/components/ui/back-button';
 import { DeleteCampaignButton } from '@/features/tests/ui/DeleteCampaignButton';
 import { CampaignAnalytics } from '@/features/tests/ui/CampaignAnalytics';
@@ -14,22 +13,17 @@ export default async function AdminTestDetailPage({ params }: { params: Promise<
   await requireAdmin();
   const { id } = await params;
   const repo = new SupabaseTestRepository();
-  const supabase = await createClient();
 
   const ctx = await repo.getCampaignWithContext(id, 'admin');
   if (!ctx.campaign) return <div className="p-8 text-center text-muted-foreground">Campanya no trobada</div>;
 
-  const { data: project } = await supabase
-    .from('projects')
-    .select('organization_id')
-    .eq('id', ctx.campaign.projectId)
-    .single();
+  const organizationId = await repo.getProjectOrganizationId(ctx.campaign.projectId);
 
-  if (!project || !project.organization_id) return <div>Error d'integritat: Projecte sense organització</div>;
+  if (!organizationId) return <div>Error d'integritat: Projecte sense organització</div>;
 
   const [assigned, available] = await Promise.all([
     repo.getAssignedTesters(id),
-    repo.getProjectMembersForTest(id, ctx.campaign.projectId, project.organization_id)
+    repo.getProjectMembersForTest(id, ctx.campaign.projectId, organizationId)
   ]);
   const analyticsData = await repo.getCampaignResults(id);
 
