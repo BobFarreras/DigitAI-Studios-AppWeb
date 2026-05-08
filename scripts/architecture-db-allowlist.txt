@@ -1,8 +1,5 @@
-src/app/[locale]/admin/blog/[slug]/page.tsx
 src/app/[locale]/admin/debug/page.tsx
 src/app/[locale]/auth/callback/route.ts
-src/app/actions/delete-user.ts
-src/app/actions/get-users.ts
 src/app/api/oauth/callback/route.ts
 src/features/auth/actions/auth.ts
 src/features/auth/actions/reset-password.ts

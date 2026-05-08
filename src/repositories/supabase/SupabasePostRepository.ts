@@ -7,6 +7,7 @@ import { Database } from '@/types/database.types';
 type PostRow = Database['public']['Tables']['posts']['Row'];
 type PostUpdate = Database['public']['Tables']['posts']['Update'];
 type PostInsert = Database['public']['Tables']['posts']['Insert'];
+type SocialPostRow = Database['public']['Tables']['social_posts']['Row'];
 
 // 2. ✅ DEFINICIÓ ESTRICTA DEL JOIN AMB EL NOM CORRECTE DE LA COLUMNA
 type PostRowWithRelations = PostRow & {
@@ -211,6 +212,17 @@ export class SupabasePostRepository implements IPostRepository {
 
     // 🛠️ TRUC: Casting
     return this.mapToDTO(data as unknown as PostRowWithRelations);
+  }
+
+  async getSocialPostsByPostId(postId: string): Promise<SocialPostRow[]> {
+    const supabase = createAdminClient();
+    const { data, error } = await supabase
+      .from('social_posts')
+      .select('*')
+      .eq('post_id', postId);
+
+    if (error || !data) return [];
+    return data;
   }
 
   // ... (Reaccions igual)
