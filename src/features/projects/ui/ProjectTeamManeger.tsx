@@ -1,3 +1,9 @@
+/**
+ * @file src/features/projects/ui/ProjectTeamManeger.tsx
+ * @updated 2026-05-08
+ * @summary Feature module: src/features/projects/ui/ProjectTeamManeger.tsx
+ * @scope UI o logica de feature encapsulada dins del domini corresponent.
+ */
 'use client';
 
 import { useState } from 'react';

@@ -1,3 +1,9 @@
+/**
+ * @file src/app/[locale]/dashboard/projects/page.tsx
+ * @updated 2026-05-08
+ * @summary Route module: src/app/[locale]/dashboard/projects/page.tsx
+ * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
+ */
 import { Link } from '@/routing';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -95,3 +101,4 @@ export default async function ProjectsListPage() {
     </div>
   );
 }
+

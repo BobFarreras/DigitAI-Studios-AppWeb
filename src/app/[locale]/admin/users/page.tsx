@@ -1,3 +1,9 @@
+/**
+ * @file src/app/[locale]/admin/users/page.tsx
+ * @updated 2026-05-08
+ * @summary Route module: src/app/[locale]/admin/users/page.tsx
+ * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
+ */
 import { getAdminUsersList } from '@/actions/admin/users';
 import { Mail, Download, User, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -129,3 +135,4 @@ export default async function AdminUsersPage() {
     </div>
   );
 }
+

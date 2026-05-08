@@ -1,3 +1,9 @@
+/**
+ * @file src/app/[locale]/dashboard/tests/page.tsx
+ * @updated 2026-05-08
+ * @summary Route module: src/app/[locale]/dashboard/tests/page.tsx
+ * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
+ */
 import { Link } from '@/routing';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -94,3 +100,4 @@ export default async function TesterDashboard() {
         </div>
     );
 }
+

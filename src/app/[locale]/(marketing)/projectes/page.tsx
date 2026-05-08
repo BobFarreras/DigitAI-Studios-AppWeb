@@ -1,3 +1,9 @@
+/**
+ * @file src/app/[locale]/(marketing)/projectes/page.tsx
+ * @updated 2026-05-08
+ * @summary Route module: src/app/[locale]/(marketing)/projectes/page.tsx
+ * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
+ */
 import { ProjectsHero, ProjectsList, ProjectsCTA } from '@/features/projects';
 
 export default function ProjectsPage() {

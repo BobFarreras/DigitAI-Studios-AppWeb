@@ -1,3 +1,9 @@
+/**
+ * @file src/app/[locale]/admin/projects/new/page.tsx
+ * @updated 2026-05-08
+ * @summary Route module: src/app/[locale]/admin/projects/new/page.tsx
+ * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
+ */
 import { NewProjectForm } from '@/features/projects/ui/form/NewProjectForm';
 import { requireAdmin } from '@/lib/auth/admin-guard'; // La teva protecció d'admin
 

@@ -1,3 +1,9 @@
+/**
+ * @file src/app/[locale]/auth/reset-password/page.tsx
+ * @updated 2026-05-08
+ * @summary Route module: src/app/[locale]/auth/reset-password/page.tsx
+ * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
+ */
 import { redirect } from 'next/navigation';
 import { getTranslations, getLocale } from 'next-intl/server';
 import { ResetPasswordForm } from '@/features/auth/ui/ResetPasswordForm';
@@ -28,3 +34,4 @@ export default async function ResetPasswordPage() {
     </div>
   );
 }
+

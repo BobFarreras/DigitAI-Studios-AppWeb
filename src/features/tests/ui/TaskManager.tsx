@@ -1,3 +1,9 @@
+/**
+ * @file src/features/tests/ui/TaskManager.tsx
+ * @updated 2026-05-08
+ * @summary Feature module: src/features/tests/ui/TaskManager.tsx
+ * @scope UI o logica de feature encapsulada dins del domini corresponent.
+ */
 // fitxer: src/features/tests/ui/TaskManager.tsx
 
 'use client';

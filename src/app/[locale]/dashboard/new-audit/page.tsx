@@ -1,3 +1,9 @@
+/**
+ * @file src/app/[locale]/dashboard/new-audit/page.tsx
+ * @updated 2026-05-08
+ * @summary Route module: src/app/[locale]/dashboard/new-audit/page.tsx
+ * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
+ */
 import { redirect } from 'next/navigation';
 import { getLocale, getTranslations } from 'next-intl/server'; // Importem getTranslations
 import { CreateAuditForm } from '@/features/audit/ui/components/CreateAuditForm';
@@ -40,3 +46,4 @@ export default async function NewAuditPage() {
     </div>
   );
 }
+

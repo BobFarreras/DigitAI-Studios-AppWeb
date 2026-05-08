@@ -1,3 +1,9 @@
+/**
+ * @file src/features/analytics/ui/BarListChart.tsx
+ * @updated 2026-05-08
+ * @summary Feature module: src/features/analytics/ui/BarListChart.tsx
+ * @scope UI o logica de feature encapsulada dins del domini corresponent.
+ */
 'use client';
 
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';

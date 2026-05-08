@@ -1,3 +1,9 @@
+/**
+ * @file src/app/[locale]/auth/forgot-password/page.tsx
+ * @updated 2026-05-08
+ * @summary Route module: src/app/[locale]/auth/forgot-password/page.tsx
+ * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
+ */
 import { getTranslations } from 'next-intl/server';
 import { Link } from '@/routing';
 import { ForgotPasswordForm } from '@/features/auth/ui/ForgotPasswordForm';

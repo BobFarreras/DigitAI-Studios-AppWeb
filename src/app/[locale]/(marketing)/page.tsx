@@ -1,3 +1,9 @@
+/**
+ * @file src/app/[locale]/(marketing)/page.tsx
+ * @updated 2026-05-08
+ * @summary Route module: src/app/[locale]/(marketing)/page.tsx
+ * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
+ */
 import { HeroSection } from '@/components/landing/HeroSection';
 import { TechStackSection } from '@/components/landing/TechStackSection';
 import { ServicesGrid } from '@/components/landing/ServicesGrid';
@@ -41,3 +47,4 @@ export default async function MarketingPage() {
     </>
   );
 }
+

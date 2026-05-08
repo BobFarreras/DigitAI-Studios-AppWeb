@@ -1,3 +1,9 @@
+/**
+ * @file src/app/[locale]/dashboard/projects/[id]/page.tsx
+ * @updated 2026-05-08
+ * @summary Route module: src/app/[locale]/dashboard/projects/[id]/page.tsx
+ * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
+ */
 import { notFound, redirect } from 'next/navigation';
 import { Layout, ArrowRight, Target, FlaskConical, Trophy } from 'lucide-react';
 import { MissionCard } from '@/features/tests/ui/MissionCard';
@@ -112,3 +118,4 @@ export default async function ProjectDetailPage({ params }: Props) {
         </div>
     );
 }
+

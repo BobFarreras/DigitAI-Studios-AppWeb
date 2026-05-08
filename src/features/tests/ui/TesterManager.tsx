@@ -1,3 +1,9 @@
+/**
+ * @file src/features/tests/ui/TesterManager.tsx
+ * @updated 2026-05-08
+ * @summary Feature module: src/features/tests/ui/TesterManager.tsx
+ * @scope UI o logica de feature encapsulada dins del domini corresponent.
+ */
 'use client';
 
 import { useState, useMemo } from 'react';

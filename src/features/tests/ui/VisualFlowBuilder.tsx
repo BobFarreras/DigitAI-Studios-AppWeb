@@ -1,3 +1,9 @@
+/**
+ * @file src/features/tests/ui/VisualFlowBuilder.tsx
+ * @updated 2026-05-08
+ * @summary Feature module: src/features/tests/ui/VisualFlowBuilder.tsx
+ * @scope UI o logica de feature encapsulada dins del domini corresponent.
+ */
 'use client';
 
 import { useActionState, useRef, useEffect } from 'react';

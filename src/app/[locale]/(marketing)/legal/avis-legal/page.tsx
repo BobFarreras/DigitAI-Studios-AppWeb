@@ -1,3 +1,9 @@
+/**
+ * @file src/app/[locale]/(marketing)/legal/avis-legal/page.tsx
+ * @updated 2026-05-08
+ * @summary Route module: src/app/[locale]/(marketing)/legal/avis-legal/page.tsx
+ * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
+ */
 import LegalLayout from '@/components/layout/LegalLayout';
 import { Building2, Mail, MapPin, Fingerprint, AlertTriangle, Gavel } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';

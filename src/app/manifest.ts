@@ -1,3 +1,9 @@
+/**
+ * @file src/app/manifest.ts
+ * @updated 2026-05-08
+ * @summary Route module: src/app/manifest.ts
+ * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
+ */
 import { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {

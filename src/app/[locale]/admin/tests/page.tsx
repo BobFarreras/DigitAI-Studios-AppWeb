@@ -1,3 +1,9 @@
+/**
+ * @file src/app/[locale]/admin/tests/page.tsx
+ * @updated 2026-05-08
+ * @summary Route module: src/app/[locale]/admin/tests/page.tsx
+ * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
+ */
 import { requireAdmin } from '@/lib/auth/admin-guard';
 import { SupabaseTestRepository } from '@/repositories/supabase/SupabaseTestRepository';
 import { Link } from '@/routing';

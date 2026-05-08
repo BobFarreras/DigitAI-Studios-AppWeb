@@ -1,3 +1,9 @@
+/**
+ * @file src/features/analytics/actions.ts
+ * @updated 2026-05-08
+ * @summary Feature module: src/features/analytics/actions.ts
+ * @scope UI o logica de feature encapsulada dins del domini corresponent.
+ */
 'use server';
 
 import { headers } from 'next/headers';

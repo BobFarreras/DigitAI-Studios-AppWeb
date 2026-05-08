@@ -1,3 +1,9 @@
+/**
+ * @file src/app/[locale]/dashboard/audits/[id]/page.tsx
+ * @updated 2026-05-08
+ * @summary Route module: src/app/[locale]/dashboard/audits/[id]/page.tsx
+ * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
+ */
 import { notFound } from 'next/navigation';
 import { getDashboardAuditDetail } from '@/actions/dashboard-audit-details';
 import { AuditHeader } from '@/features/audit/ui/components/AuditHeader';
@@ -137,3 +143,4 @@ export default async function AuditDetailsPage({ params }: Props) {
     </div>
   );
 }
+

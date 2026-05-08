@@ -1,3 +1,9 @@
+/**
+ * @file src/features/auth/ui/ResetPasswordForm.tsx
+ * @updated 2026-05-08
+ * @summary Feature module: src/features/auth/ui/ResetPasswordForm.tsx
+ * @scope UI o logica de feature encapsulada dins del domini corresponent.
+ */
 // =================== FILE: src/features/auth/ui/ResetPasswordForm.tsx ===================
 
 'use client'

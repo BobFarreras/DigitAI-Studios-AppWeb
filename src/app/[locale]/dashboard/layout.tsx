@@ -1,3 +1,9 @@
+/**
+ * @file src/app/[locale]/dashboard/layout.tsx
+ * @updated 2026-05-08
+ * @summary Route module: src/app/[locale]/dashboard/layout.tsx
+ * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
+ */
 import { Sidebar } from '@/components/dashboard/Sidebar';
 import { MobileBottomBar } from './MobilBottomBar';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
@@ -47,3 +53,4 @@ export default async function DashboardLayout({ children, params }: Props) {
     </div>
   );
 }
+

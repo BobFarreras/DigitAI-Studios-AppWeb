@@ -1,3 +1,9 @@
+/**
+ * @file src/app/[locale]/auth/register/page.tsx
+ * @updated 2026-05-08
+ * @summary Route module: src/app/[locale]/auth/register/page.tsx
+ * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
+ */
 import { RegisterForm } from '@/features/auth/ui/RegisterForm';
 import { Link } from '@/routing';
 import { Sparkles, ArrowLeft } from 'lucide-react';

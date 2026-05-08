@@ -1,3 +1,9 @@
+/**
+ * @file src/app/sitemap.ts
+ * @updated 2026-05-08
+ * @summary Route module: src/app/sitemap.ts
+ * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
+ */
 import { MetadataRoute } from 'next';
 import { postService } from '@/services/container';
 

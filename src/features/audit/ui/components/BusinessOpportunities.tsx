@@ -1,3 +1,9 @@
+/**
+ * @file src/features/audit/ui/components/BusinessOpportunities.tsx
+ * @updated 2026-05-08
+ * @summary Feature module: src/features/audit/ui/components/BusinessOpportunities.tsx
+ * @scope UI o logica de feature encapsulada dins del domini corresponent.
+ */
 import { BusinessSuggestion } from "@/types/ai";
 import { Lightbulb, Calendar, ShoppingCart, Users, BarChart3, Settings, Rocket } from "lucide-react";
 

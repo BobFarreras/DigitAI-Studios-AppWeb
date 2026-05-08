@@ -1,3 +1,9 @@
+/**
+ * @file src/features/projects/ui/form/FormSection.tsx
+ * @updated 2026-05-08
+ * @summary Feature module: src/features/projects/ui/form/FormSection.tsx
+ * @scope UI o logica de feature encapsulada dins del domini corresponent.
+ */
 'use client';
 
 import { motion } from 'framer-motion';

@@ -1,3 +1,9 @@
+/**
+ * @file src/features/tests/actions/task-actions.ts
+ * @updated 2026-05-08
+ * @summary Feature module: src/features/tests/actions/task-actions.ts
+ * @scope UI o logica de feature encapsulada dins del domini corresponent.
+ */
 // fitxer: src/features/tests/actions/task-actions.ts
 
 'use server';

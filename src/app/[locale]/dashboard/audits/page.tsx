@@ -1,3 +1,9 @@
+/**
+ * @file src/app/[locale]/dashboard/audits/page.tsx
+ * @updated 2026-05-08
+ * @summary Route module: src/app/[locale]/dashboard/audits/page.tsx
+ * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
+ */
 import { getTranslations, getLocale } from 'next-intl/server';
 import { Link } from '@/routing';
 import { redirect } from 'next/navigation';
@@ -133,3 +139,4 @@ function getScoreColor(score: number) {
    if (score >= 50) return 'text-yellow-500';
    return 'text-red-500';
 }
+

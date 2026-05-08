@@ -1,3 +1,9 @@
+/**
+ * @file src/app/[locale]/(marketing)/layout.tsx
+ * @updated 2026-05-08
+ * @summary Route module: src/app/[locale]/(marketing)/layout.tsx
+ * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
+ */
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { ScrollManager } from '@/components/layout/ScrollManager'; // 👈 Importem el component, NO el hook
@@ -26,3 +32,4 @@ export default async function MarketingLayout({
     </div>
   );
 }
+

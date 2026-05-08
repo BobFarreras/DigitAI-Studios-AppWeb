@@ -1,3 +1,9 @@
+/**
+ * @file src/app/[locale]/dashboard/page.tsx
+ * @updated 2026-05-08
+ * @summary Route module: src/app/[locale]/dashboard/page.tsx
+ * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
+ */
 import { getTranslations } from 'next-intl/server';
 import { redirect } from 'next/navigation';
 import { Link } from '@/routing';
@@ -126,3 +132,4 @@ function KpiCard({ label, value, icon: Icon, color, bg }: KpiCardProps) {
         </div>
     );
 }
+

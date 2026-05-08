@@ -1,3 +1,9 @@
+/**
+ * @file src/features/tests/ui/CampaignDetailsForm.tsx
+ * @updated 2026-05-08
+ * @summary Feature module: src/features/tests/ui/CampaignDetailsForm.tsx
+ * @scope UI o logica de feature encapsulada dins del domini corresponent.
+ */
 'use client';
 
 import { useActionState, useEffect } from 'react';

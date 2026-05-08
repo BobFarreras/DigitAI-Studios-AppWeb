@@ -1,3 +1,9 @@
+/**
+ * @file src/features/audit/ui/components/ScoreGrid.tsx
+ * @updated 2026-05-08
+ * @summary Feature module: src/features/audit/ui/components/ScoreGrid.tsx
+ * @scope UI o logica de feature encapsulada dins del domini corresponent.
+ */
 import { Card, CardContent } from '@/components/ui/card';
 import { ScoreRing } from '@/components/charts/ScoreRing';
 

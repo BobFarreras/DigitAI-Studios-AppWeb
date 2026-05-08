@@ -1,3 +1,9 @@
+/**
+ * @file src/app/[locale]/admin/debug/page.tsx
+ * @updated 2026-05-08
+ * @summary Route module: src/app/[locale]/admin/debug/page.tsx
+ * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
+ */
 'use client';
 
 import { useState } from 'react';
@@ -79,3 +85,4 @@ export default function DebugAnalyticsPage() {
     </div>
   );
 }
+

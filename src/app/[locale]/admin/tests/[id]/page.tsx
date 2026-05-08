@@ -1,3 +1,9 @@
+/**
+ * @file src/app/[locale]/admin/tests/[id]/page.tsx
+ * @updated 2026-05-08
+ * @summary Route module: src/app/[locale]/admin/tests/[id]/page.tsx
+ * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
+ */
 import { SupabaseTestRepository } from '@/repositories/supabase/SupabaseTestRepository';
 import { requireAdmin } from '@/lib/auth/admin-guard';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -99,3 +105,4 @@ export default async function AdminTestDetailPage({ params }: { params: Promise<
     </div>
   );
 }
+

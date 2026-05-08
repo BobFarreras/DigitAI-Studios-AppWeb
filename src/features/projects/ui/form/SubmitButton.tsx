@@ -1,3 +1,9 @@
+/**
+ * @file src/features/projects/ui/form/SubmitButton.tsx
+ * @updated 2026-05-08
+ * @summary Feature module: src/features/projects/ui/form/SubmitButton.tsx
+ * @scope UI o logica de feature encapsulada dins del domini corresponent.
+ */
 'use client';
 
 import { Loader2, Rocket } from 'lucide-react';

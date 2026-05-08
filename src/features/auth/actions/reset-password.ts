@@ -1,3 +1,9 @@
+/**
+ * @file src/features/auth/actions/reset-password.ts
+ * @updated 2026-05-08
+ * @summary Feature module: src/features/auth/actions/reset-password.ts
+ * @scope UI o logica de feature encapsulada dins del domini corresponent.
+ */
 // =================== FILE: src/features/auth/actions/reset-password.ts ===================
 
 'use server'

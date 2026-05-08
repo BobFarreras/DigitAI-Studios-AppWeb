@@ -1,3 +1,9 @@
+/**
+ * @file src/app/api/oauth/init/route.ts
+ * @updated 2026-05-08
+ * @summary Route module: src/app/api/oauth/init/route.ts
+ * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
+ */
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {

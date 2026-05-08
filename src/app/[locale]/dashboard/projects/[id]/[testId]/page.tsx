@@ -1,3 +1,9 @@
+/**
+ * @file src/app/[locale]/dashboard/projects/[id]/[testId]/page.tsx
+ * @updated 2026-05-08
+ * @summary Route module: src/app/[locale]/dashboard/projects/[id]/[testId]/page.tsx
+ * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
+ */
 import { notFound, redirect } from 'next/navigation';
 import { SupabaseTestRepository } from '@/repositories/supabase/SupabaseTestRepository';
 import { TaskRunner } from '@/features/tests/ui/TaskRunner';
@@ -132,3 +138,4 @@ export default async function TestRunnerPage({ params }: Props) {
     </div>
   );
 }
+

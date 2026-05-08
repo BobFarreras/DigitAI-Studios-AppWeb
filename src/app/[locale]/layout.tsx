@@ -1,3 +1,9 @@
+/**
+ * @file src/app/[locale]/layout.tsx
+ * @updated 2026-05-08
+ * @summary Route module: src/app/[locale]/layout.tsx
+ * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
+ */
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';

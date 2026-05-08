@@ -1,3 +1,9 @@
+/**
+ * @file src/app/robots.ts
+ * @updated 2026-05-08
+ * @summary Route module: src/app/robots.ts
+ * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
+ */
 import { MetadataRoute } from 'next';
 
 export default function robots(): MetadataRoute.Robots {

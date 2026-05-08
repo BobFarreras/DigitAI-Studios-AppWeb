@@ -1,3 +1,9 @@
+/**
+ * @file src/app/[locale]/(marketing)/blog/page.tsx
+ * @updated 2026-05-08
+ * @summary Route module: src/app/[locale]/(marketing)/blog/page.tsx
+ * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
+ */
 import { Link } from '@/routing';
 import { postService } from '@/services/container';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
