@@ -1,4 +1,10 @@
 'use server';
+/**
+ * @file src/actions/admin/debug.ts
+ * @updated 2026-05-08
+ * @summary Action de diagnòstic de connexió a analytics.
+ * @scope Consulta controlada a Supabase per debug d'admin.
+ */
 
 import { createClient } from '@/lib/supabase/server';
 

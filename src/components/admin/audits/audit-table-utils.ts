@@ -1,4 +1,10 @@
 import { AuditSummary } from '@/repositories/interfaces/IAuditRepository';
+/**
+ * @file src/components/admin/audits/audit-table-utils.ts
+ * @updated 2026-05-08
+ * @summary Utilitats de format i tipus per la taula d'auditories admin.
+ * @scope Helpers purs i tipatges compartits entre vistes mobile/desktop.
+ */
 
 export function formatAuditDate(dateInput: Date | string) {
   try {

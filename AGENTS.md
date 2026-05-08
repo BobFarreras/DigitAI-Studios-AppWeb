@@ -37,11 +37,12 @@ Prohibit:
   - Funcions/variables: `camelCase`
   - Arxius: `kebab-case` (excepte components React que ja siguin PascalCase)
 
-## 5) Comentari de Capçalera (Fitxers Nous)
-Per fitxers no trivials, afegeix capçalera curta:
-- Propòsit del fitxer.
-- Límit de responsabilitat.
-- Dependències crítiques (si n'hi ha).
+## 5) Comentari de Capçalera (Fitxers Nous i Refactoritzats)
+Per fitxers no trivials, afegeix capçalera curta amb aquest format:
+- `@file`: ruta relativa del fitxer.
+- `@updated`: data de darrera modificació (`YYYY-MM-DD`).
+- `@summary`: descripció breu del que fa.
+- `@scope`: límit de responsabilitat del fitxer.
 
 ## 6) Seguretat i Permisos
 - Claus sensibles només a server runtime.

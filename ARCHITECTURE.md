@@ -47,7 +47,11 @@ Forbidden:
 
 ## 7. Quality Gates
 - Max 150 lines per file (except generated typings, migrations, and explicit allowlist).
-- Every new non-trivial file includes a short header comment (purpose + scope).
+- Every new/refactored non-trivial file includes a short header comment:
+  - `@file` relative path
+  - `@updated` date (`YYYY-MM-DD`)
+  - `@summary` file purpose
+  - `@scope` responsibility boundary
 - No `any` unless documented with rationale.
 
 ## 8. Refactor Strategy

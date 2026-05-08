@@ -1,4 +1,10 @@
 'use client';
+/**
+ * @file src/components/admin/audits/AuditsDesktopTable.tsx
+ * @updated 2026-05-08
+ * @summary Renderitzat desktop de la taula d'auditories.
+ * @scope Presentació UI desktop; reutilitza utilitats compartides.
+ */
 
 import { ExternalLink, Calendar, Eye, Trash2 } from 'lucide-react';
 import Link from 'next/link';

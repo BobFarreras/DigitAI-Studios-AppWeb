@@ -1,4 +1,10 @@
 'use client';
+/**
+ * @file src/components/admin/RoleBadge.tsx
+ * @updated 2026-05-08
+ * @summary Badge visual de rol d'usuari per taules i llistats admin.
+ * @scope Mapeig rol -> estil/icona, sense dependències de dades.
+ */
 
 import { ShieldCheck, UserCheck, UserPlus, User } from 'lucide-react';
 

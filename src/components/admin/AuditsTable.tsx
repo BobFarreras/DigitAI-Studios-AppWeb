@@ -1,4 +1,10 @@
 'use client';
+/**
+ * @file src/components/admin/AuditsTable.tsx
+ * @updated 2026-05-08
+ * @summary Contenidor de taula d'auditories admin.
+ * @scope Orquestra accions d'eliminació i delega render a mobile/desktop.
+ */
 import { useTransition } from 'react'; // Per gestionar l'estat de càrrega
 import { deleteAdminAudit } from '@/actions/admin/audits'; // 👈 Importem l'acció
 import { AuditSummary } from '@/repositories/interfaces/IAuditRepository';

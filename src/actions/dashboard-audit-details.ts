@@ -1,4 +1,10 @@
 'use server';
+/**
+ * @file src/actions/dashboard-audit-details.ts
+ * @updated 2026-05-08
+ * @summary Action de detall d'auditoria per dashboard d'usuari.
+ * @scope Auth + ownership check abans de retornar dades d'auditoria.
+ */
 
 import { createClient } from '@/lib/supabase/server';
 import { auditRepository } from '@/services/container';

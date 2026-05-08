@@ -1,4 +1,10 @@
 'use client';
+/**
+ * @file src/components/admin/audits/AuditsMobileCards.tsx
+ * @updated 2026-05-08
+ * @summary Renderitzat mòbil de la llista d'auditories.
+ * @scope Presentació UI mobile; no conté lògica de dades.
+ */
 
 import { ExternalLink, Search, Gauge, User, Eye, Trash2 } from 'lucide-react';
 import Link from 'next/link';
