@@ -1,4 +1,3 @@
-import { createClient } from '@/lib/supabase/server';
 import { notFound, redirect } from 'next/navigation';
 import { SupabaseTestRepository } from '@/repositories/supabase/SupabaseTestRepository';
 import { TaskRunner } from '@/features/tests/ui/TaskRunner';
@@ -7,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { BookOpen, CheckCircle2, Trophy } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
+import { getSessionUser } from '@/actions/session-user';
 
 type Props = {
   params: Promise<{ id: string; testId: string }>;
@@ -15,9 +15,8 @@ type Props = {
 export default async function TestRunnerPage({ params }: Props) {
   const { id: projectId, testId } = await params;
   const t = await getTranslations('Dashboard.test_runner');
-  
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const session = await getSessionUser();
+  const user = session.user;
   if (!user) redirect('/auth/login');
 
   const repo = new SupabaseTestRepository();

@@ -1,5 +1,4 @@
 import { requireAdmin } from '@/lib/auth/admin-guard';
-import { createClient } from '@/lib/supabase/server';
 import { SupabaseTestRepository } from '@/repositories/supabase/SupabaseTestRepository';
 import { notFound } from 'next/navigation';
 import { Link } from '@/routing';
@@ -10,6 +9,7 @@ import { ProjectTeamManager } from '@/features/projects/ui/ProjectTeamManager';
 // 👇 1. IMPORTEM EL TIPUS DEL REPOSITORI
 import { SupabaseProjectRepository, ProjectMember } from '@/repositories/supabase/SupabaseProjectRepository';
 import { DestructionButton } from '@/features/projects/ui/DeleteProjectButton';
+import { getAdminProjectDetails } from '@/actions/project-details';
 
 // 👇 2. DEFINIM EL TIPUS PER ALS CANDIDATS (Còpia de l'estructura de 'profiles')
 type Candidate = {
@@ -26,19 +26,18 @@ type Props = {
 export default async function ProjectDetailPage({ params }: Props) {
     await requireAdmin();
     const { id } = await params;
-    const supabase = await createClient();
 
     // Instanciem repositoris
     const testRepo = new SupabaseTestRepository();
     const projectRepo = new SupabaseProjectRepository();
 
     // 1. Dades del Projecte + Campanyes en paral·lel
-    const [projectRes, campaigns] = await Promise.all([
-        supabase.from('projects').select('*, organizations(*)').eq('id', id).single(),
+    const [projectResult, campaigns] = await Promise.all([
+        getAdminProjectDetails(id),
         testRepo.getCampaignsByProject(id)
     ]);
 
-    const project = projectRes.data;
+    const project = projectResult.project;
     if (!project) notFound();
 
     // 2. 🔥 CÀRREGA DE DADES D'EQUIP (CORREGIT SENSE 'any')

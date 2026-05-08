@@ -40,4 +40,15 @@ export class DashboardProjectRepository {
     if (error || !data) return null;
     return data;
   }
+
+  async getAdminProjectById(projectId: string) {
+    const { data, error } = await this.supabase
+      .from('projects')
+      .select('*, organizations(*)')
+      .eq('id', projectId)
+      .single();
+
+    if (error || !data) return null;
+    return data;
+  }
 }
