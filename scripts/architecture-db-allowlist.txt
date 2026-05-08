@@ -3,12 +3,8 @@ src/app/[locale]/admin/blog/[slug]/page.tsx
 src/app/[locale]/admin/debug/page.tsx
 src/app/[locale]/admin/projects/[id]/page.tsx
 src/app/[locale]/admin/tests/[id]/page.tsx
-src/app/[locale]/admin/tests/new/page.tsx
 src/app/[locale]/auth/callback/route.ts
-src/app/[locale]/dashboard/audits/page.tsx
-src/app/[locale]/dashboard/new-audit/page.tsx
 src/app/[locale]/dashboard/projects/[id]/[testId]/page.tsx
-src/app/[locale]/dashboard/tests/page.tsx
 src/app/actions/delete-user.ts
 src/app/actions/get-users.ts
 src/app/api/oauth/callback/route.ts

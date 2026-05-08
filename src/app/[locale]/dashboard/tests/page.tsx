@@ -1,27 +1,16 @@
-import { createClient } from '@/lib/supabase/server';
-import { SupabaseTestRepository } from '@/repositories/supabase/SupabaseTestRepository';
-import { GamificationService } from '@/services/GamificationService';
 import { Link } from '@/routing';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Trophy, Target, Zap } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
+import { getTesterDashboardData } from '@/actions/tester-dashboard';
 
 export default async function TesterDashboard() {
     const t = await getTranslations('Dashboard.tester_dashboard');
-    const supabase = await createClient();
-    
-    const { data: { user } } = await supabase.auth.getUser();
-    if(!user) return <div>{t('error_no_user')}</div>;
-
-    const repo = new SupabaseTestRepository();
-    const gameService = new GamificationService();
-
-    // Paral·lelitzem les dades
-    const [assignments, stats] = await Promise.all([
-        repo.getMyAssignments(user.id),
-        gameService.getUserStats(user.id)
-    ]);
+    const result = await getTesterDashboardData();
+    if (!result.success && result.authRequired) return <div>{t('error_no_user')}</div>;
+    const assignments = result.success ? result.assignments : [];
+    const stats = result.success ? result.stats : { rankName: 'Novell 🌟', level: 1, xp: 0, nextLevelXp: 100, progressToNext: 0 };
 
     // Lògica segura per separar emoji i nom (si el format és "Nom Emoji" o "Nom")
     const rankParts = stats.rankName.split(' ');

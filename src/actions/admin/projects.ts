@@ -11,3 +11,13 @@ export async function getAdminProjectsOverview() {
 
   return { success: true, projects: projects ?? [] };
 }
+
+export async function getAdminProjectOptions() {
+  const supabase = await createClient();
+  const { data: projects } = await supabase
+    .from('projects')
+    .select('id, name')
+    .order('created_at', { ascending: false });
+
+  return { success: true, projects: projects ?? [] };
+}
