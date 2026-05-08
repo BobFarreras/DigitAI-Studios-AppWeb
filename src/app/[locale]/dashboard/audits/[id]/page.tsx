@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { auditRepository } from '@/services/container';
+import { getDashboardAuditDetail } from '@/actions/dashboard-audit-details';
 import { AuditHeader } from '@/features/audit/ui/components/AuditHeader';
 import { ScoreGrid } from '@/features/audit/ui/components/ScoreGrid';
 import { CoreVitalsGrid, AuditMetric } from '@/features/audit/ui/components/CoreVitalsGrid';
@@ -34,9 +34,9 @@ type Props = {
 export default async function AuditDetailsPage({ params }: Props) {
   const { id } = await params;
   const t = await getTranslations('AuditDetails'); // Namespace AuditDetails
-  const audit = await auditRepository.getAuditById(id);
-
-  if (!audit) notFound();
+  const result = await getDashboardAuditDetail(id);
+  if (!result.success) notFound();
+  const audit = result.audit;
 
   if (audit.status === 'processing') {
     return <div className="p-12 text-center text-foreground">{t('processing_message')}</div>;
