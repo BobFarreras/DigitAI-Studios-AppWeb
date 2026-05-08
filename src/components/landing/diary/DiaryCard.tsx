@@ -157,13 +157,13 @@ export function DiaryCard({ post, index, isFront, onRemove, currentCardNumber, t
 
         {/* BOTÓ */}
         <div className="pt-2 mt-auto">
-          <Link href={`/blog/${post.slug}`} className="w-full block" onClick={(e) => e.stopPropagation()}>
+          <Link href="/#contact" className="w-full block" onClick={(e) => e.stopPropagation()}>
             <Button
               className="w-full h-11 rounded-xl text-sm font-bold shadow-md"
               tabIndex={isFront ? 0 : -1}
               disabled={!isFront}
             >
-              Llegir Article <ExternalLink className="w-4 h-4 ml-2" />
+              Parlem del teu projecte <ExternalLink className="w-4 h-4 ml-2" />
             </Button>
           </Link>
 

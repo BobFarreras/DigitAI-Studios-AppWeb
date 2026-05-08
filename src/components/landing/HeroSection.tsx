@@ -37,7 +37,7 @@ export function HeroSection() {
             <Link href="#contacte">
               <Button size="lg">{t('cta_primary')}</Button>
             </Link>
-            <Link href="#audit">
+            <Link href="#services">
               <Button variant="outline" size="lg">{t('cta_secondary')}</Button>
             </Link>
           </div>

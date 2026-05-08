@@ -62,7 +62,7 @@ export async function LatestPostsSection() {
             
             <Reveal delay={0.4} direction="left">
                <div className="pt-4">
-                  <Link href="/blog" className="group inline-flex items-center gap-2 text-foreground font-bold hover:text-primary transition-colors border-b-2 border-transparent hover:border-primary pb-0.5">
+                  <Link href="/#contact" className="group inline-flex items-center gap-2 text-foreground font-bold hover:text-primary transition-colors border-b-2 border-transparent hover:border-primary pb-0.5">
                     {t('cta')} <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                   </Link>
                </div>

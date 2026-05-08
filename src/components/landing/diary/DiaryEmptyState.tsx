@@ -30,7 +30,7 @@ export function DiaryEmptyState({ onReset }: { onReset: () => void }) {
           <RotateCcw className="w-4 h-4 mr-2" /> {t('btn_reset')}
         </Button>
         
-        <Link href="/blog">
+        <Link href="/#contact">
           <Button className="h-12 px-8 rounded-full shadow-lg shadow-primary/20">
             {t('btn_view_all')} <ArrowRight className="w-4 h-4 ml-2" />
           </Button>
