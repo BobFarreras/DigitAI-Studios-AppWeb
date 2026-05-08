@@ -3,21 +3,18 @@ import { Link } from '@/routing';
 import { redirect } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Plus, Globe, Calendar, ArrowRight, Activity } from 'lucide-react';
-import { createClient } from '@/lib/supabase/server'; 
-import { auditRepository } from '@/services/container';
+import { getDashboardHomeData } from '@/actions/dashboard-home';
 
 export default async function AuditsListPage() {
   const t = await getTranslations('AuditList'); // Namespace AuditList
   const locale = await getLocale();
-  const supabase = await createClient();
+  const result = await getDashboardHomeData();
 
-  const { data: { user } } = await supabase.auth.getUser();
-
-  if (!user || !user.email) {
+  if (!result.success && result.authRequired) {
     redirect(`/${locale}/auth/login`); 
   }
 
-  const audits = await auditRepository.getAuditsByUserEmail(user.email);
+  const audits = result.success ? result.audits : [];
 
   // Helper per traduir estats dins del component server
   const getStatusLabel = (status: string) => {

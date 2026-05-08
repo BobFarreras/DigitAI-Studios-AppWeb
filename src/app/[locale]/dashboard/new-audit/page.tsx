@@ -1,18 +1,16 @@
-import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { getLocale, getTranslations } from 'next-intl/server'; // Importem getTranslations
 import { CreateAuditForm } from '@/features/audit/ui/components/CreateAuditForm';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import { hasAuthenticatedSession } from '@/actions/auth-session';
 
 export default async function NewAuditPage() {
-  const supabase = await createClient();
+  const session = await hasAuthenticatedSession();
   const locale = await getLocale();
   const t = await getTranslations('NewAudit'); // Namespace NewAudit
-  
-  const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user) {
+  if (!session.hasSession) {
     redirect(`/${locale}/auth/login`);
   }
 
