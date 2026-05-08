@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react';
 import { Trash2, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { deleteUserFromOrg } from '@/app/actions/delete-user';
+import { deleteUserFromOrg } from '@/actions/admin/users';
 
 export function UserDeleteButton({ userId }: { userId: string }) {
   const [isPending, startTransition] = useTransition();

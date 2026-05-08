@@ -1,4 +1,4 @@
-import { getAdminUsersList } from '@/app/actions/get-users';
+import { getAdminUsersList } from '@/actions/admin/users';
 import { Mail, Download, User, Calendar, ShieldCheck, UserCheck, UserPlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { UserDeleteButton } from '@/components/admin/UserDeleteButton';
