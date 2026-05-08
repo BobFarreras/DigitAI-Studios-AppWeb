@@ -1,3 +1,9 @@
+/**
+ * @file src/actions/social-oauth-callback.ts
+ * @updated 2026-05-08
+ * @summary Server actions per src/actions/social-oauth-callback.ts
+ * @scope Operacions de servidor, validacio i orquestracio de capa aplicacio.
+ */
 'use server';
 
 import { createClient } from '@/lib/supabase/server';
@@ -123,3 +129,4 @@ export async function resolveSocialOauthCallback(requestUrl: string) {
     return `${origin}/admin/blog?error=${encodeURIComponent(errorMessage)}`;
   }
 }
+

@@ -1,3 +1,9 @@
+/**
+ * @file src/actions/project-details.ts
+ * @updated 2026-05-08
+ * @summary Server actions per src/actions/project-details.ts
+ * @scope Operacions de servidor, validacio i orquestracio de capa aplicacio.
+ */
 'use server';
 
 import { createClient } from '@/lib/supabase/server';
@@ -9,3 +15,4 @@ export async function getAdminProjectDetails(projectId: string) {
   const project = await repo.getAdminProjectById(projectId);
   return { success: true, project };
 }
+

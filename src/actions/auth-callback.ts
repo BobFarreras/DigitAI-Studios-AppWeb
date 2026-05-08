@@ -1,3 +1,9 @@
+/**
+ * @file src/actions/auth-callback.ts
+ * @updated 2026-05-08
+ * @summary Server actions per src/actions/auth-callback.ts
+ * @scope Operacions de servidor, validacio i orquestracio de capa aplicacio.
+ */
 'use server';
 
 import { createClient } from '@/lib/supabase/server';
@@ -39,3 +45,4 @@ export async function resolveLocaleAuthCallback(requestUrl: string) {
 
   return `${origin}/ca${next}`;
 }
+

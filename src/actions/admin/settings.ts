@@ -1,3 +1,9 @@
+/**
+ * @file src/actions/admin/settings.ts
+ * @updated 2026-05-08
+ * @summary Server actions per src/actions/admin/settings.ts
+ * @scope Operacions de servidor, validacio i orquestracio de capa aplicacio.
+ */
 'use server';
 
 import { createClient } from '@/lib/supabase/server';
@@ -17,3 +23,4 @@ export async function getAdminSettingsData() {
 
   return { success: true, connections };
 }
+

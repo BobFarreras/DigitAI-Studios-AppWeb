@@ -1,3 +1,9 @@
+/**
+ * @file src/actions/dashboard-home.ts
+ * @updated 2026-05-08
+ * @summary Server actions per src/actions/dashboard-home.ts
+ * @scope Operacions de servidor, validacio i orquestracio de capa aplicacio.
+ */
 'use server';
 
 import { createClient } from '@/lib/supabase/server';
@@ -18,3 +24,4 @@ export async function getDashboardHomeData() {
     audits,
   };
 }
+

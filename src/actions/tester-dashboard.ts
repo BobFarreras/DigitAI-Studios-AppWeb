@@ -1,3 +1,9 @@
+/**
+ * @file src/actions/tester-dashboard.ts
+ * @updated 2026-05-08
+ * @summary Server actions per src/actions/tester-dashboard.ts
+ * @scope Operacions de servidor, validacio i orquestracio de capa aplicacio.
+ */
 'use server';
 
 import { createClient } from '@/lib/supabase/server';
@@ -22,3 +28,4 @@ export async function getTesterDashboardData() {
 
   return { success: true, assignments, stats };
 }
+

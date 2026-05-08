@@ -1,3 +1,9 @@
+/**
+ * @file src/actions/admin/users.ts
+ * @updated 2026-05-08
+ * @summary Server actions per src/actions/admin/users.ts
+ * @scope Operacions de servidor, validacio i orquestracio de capa aplicacio.
+ */
 'use server';
 
 import { createClient, createAdminClient } from '@/lib/supabase/server';
@@ -78,3 +84,4 @@ export async function deleteUserFromOrg(userId: string) {
     return { success: false, message: 'No tens permisos o falta configuració.' };
   }
 }
+

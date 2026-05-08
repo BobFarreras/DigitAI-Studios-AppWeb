@@ -1,3 +1,9 @@
+/**
+ * @file src/components/admin/UserDeleteButton.tsx
+ * @updated 2026-05-08
+ * @summary Component UI admin: src/components/admin/UserDeleteButton.tsx
+ * @scope Presentacio i interaccio de la UI d'admin, sense acces directe a dades.
+ */
 'use client';
 
 import { useState, useTransition } from 'react';
@@ -57,3 +63,4 @@ export function UserDeleteButton({ userId }: { userId: string }) {
     </Button>
   );
 }
+

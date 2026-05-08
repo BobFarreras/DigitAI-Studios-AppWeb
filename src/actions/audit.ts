@@ -1,3 +1,9 @@
+/**
+ * @file src/actions/audit.ts
+ * @updated 2026-05-08
+ * @summary Server actions per src/actions/audit.ts
+ * @scope Operacions de servidor, validacio i orquestracio de capa aplicacio.
+ */
 'use server';
 
 import { auditService } from '@/services/container';
@@ -151,3 +157,4 @@ export async function createAuditAction(url: string) {
 
   return { success: false, message: 'No s\'ha pogut crear l\'auditoria.' };
 }
+

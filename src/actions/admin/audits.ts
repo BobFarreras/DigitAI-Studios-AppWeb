@@ -1,3 +1,9 @@
+/**
+ * @file src/actions/admin/audits.ts
+ * @updated 2026-05-08
+ * @summary Server actions per src/actions/admin/audits.ts
+ * @scope Operacions de servidor, validacio i orquestracio de capa aplicacio.
+ */
 'use server';
 
 import { createClient, createAdminClient } from '@/lib/supabase/server';

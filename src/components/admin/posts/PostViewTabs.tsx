@@ -1,3 +1,9 @@
+/**
+ * @file src/components/admin/posts/PostViewTabs.tsx
+ * @updated 2026-05-08
+ * @summary Component UI admin: src/components/admin/posts/PostViewTabs.tsx
+ * @scope Presentacio i interaccio de la UI d'admin, sense acces directe a dades.
+ */
 'use client';
 
 import { useState } from 'react';
@@ -21,10 +27,6 @@ export function PostViewTabs({ postId, socialPosts, children }: PostViewTabsProp
 
   return (
     <div className="space-y-6">
-      {/* CONTAINER NAVEGACIÓ:
-        - Mòbil: Fons gris suau (muted), padding, cantonades arrodonides.
-        - Desktop (sm): Fons transparent, sense padding, vora inferior standard.
-      */}
       <div className="sm:border-b sm:border-border">
         <nav 
           className={cn(
@@ -79,7 +81,6 @@ export function PostViewTabs({ postId, socialPosts, children }: PostViewTabsProp
   );
 }
 
-// 🧩 Subcomponent que canvia d'estil radicalment segons la pantalla
 interface ResponsiveTabButtonProps {
   id: string;
   isActive: boolean;
