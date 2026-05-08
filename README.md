@@ -33,6 +33,7 @@ Every meaningful change should pass:
 ## Architecture Docs
 - Global rules: `AGENTS.md`
 - Target architecture: `ARCHITECTURE.md`
+- Documentation index: `docs/INDEX.md`
 - Module indexes: `src/*/README.md`
 
 ## Structure
