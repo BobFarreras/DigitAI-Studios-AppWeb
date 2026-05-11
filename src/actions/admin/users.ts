@@ -7,6 +7,7 @@
 'use server';
 
 import { createClient, createAdminClient } from '@/lib/supabase/server';
+import { getServerEnv } from '@/config/server-env';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
@@ -19,19 +20,15 @@ export type UserProfile = {
   organization_id: string;
 };
 
-const MAIN_ORG_ID = process.env.NEXT_PUBLIC_MAIN_ORG_ID;
-
 async function requireAdminContext() {
+  const serverEnv = getServerEnv();
+  const MAIN_ORG_ID = serverEnv.NEXT_PUBLIC_MAIN_ORG_ID;
   const supabaseAuth = await createClient();
   const { data: { user }, error: authError } = await supabaseAuth.auth.getUser();
   if (authError || !user) redirect('/auth/login');
 
-  if (!MAIN_ORG_ID) {
-    throw new Error("Falta NEXT_PUBLIC_MAIN_ORG_ID al .env");
-  }
-
   const supabaseAdmin = createAdminClient();
-  const isSuperAdmin = user.email === process.env.ADMIN_EMAIL;
+  const isSuperAdmin = !!serverEnv.ADMIN_EMAIL && user.email === serverEnv.ADMIN_EMAIL;
 
   if (!isSuperAdmin) {
     const { data: currentUserProfile } = await supabaseAdmin
@@ -46,16 +43,16 @@ async function requireAdminContext() {
     }
   }
 
-  return { supabaseAdmin, user };
+  return { supabaseAdmin, user, MAIN_ORG_ID };
 }
 
 export async function getAdminUsersList(): Promise<UserProfile[]> {
   try {
-    const { supabaseAdmin } = await requireAdminContext();
+    const { supabaseAdmin, MAIN_ORG_ID } = await requireAdminContext();
     const { data: profiles, error } = await supabaseAdmin
       .from('profiles')
       .select('*')
-      .eq('organization_id', MAIN_ORG_ID!)
+      .eq('organization_id', MAIN_ORG_ID)
       .order('created_at', { ascending: false });
 
     if (error) return [];
@@ -67,12 +64,12 @@ export async function getAdminUsersList(): Promise<UserProfile[]> {
 
 export async function deleteUserFromOrg(userId: string) {
   try {
-    const { supabaseAdmin } = await requireAdminContext();
+    const { supabaseAdmin, MAIN_ORG_ID } = await requireAdminContext();
     const { error } = await supabaseAdmin
       .from('profiles')
       .delete()
       .eq('id', userId)
-      .eq('organization_id', MAIN_ORG_ID!);
+      .eq('organization_id', MAIN_ORG_ID);
 
     if (error) {
       return { success: false, message: 'Error a la base de dades.' };

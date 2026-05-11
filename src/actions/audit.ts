@@ -8,6 +8,7 @@
 
 import { auditService } from '@/services/container';
 import { auditSchema } from '@/lib/validations/audit';
+import { getServerEnv } from '@/config/server-env';
 import { redirect } from 'next/navigation';
 import { getLocale } from 'next-intl/server';
 import { createClient, createAdminClient } from '@/lib/supabase/server';
@@ -22,7 +23,7 @@ export type FormState = {
 };
 
 function getMainOrgId() {
-  return process.env.NEXT_PUBLIC_MAIN_ORG_ID;
+  return getServerEnv().NEXT_PUBLIC_MAIN_ORG_ID;
 }
 
 // ==========================================

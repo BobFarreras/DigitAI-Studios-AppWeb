@@ -7,8 +7,10 @@
 'use server';
 
 import { createClient } from '@/lib/supabase/server';
+import { getServerEnv } from '@/config/server-env';
 
 export async function getDashboardSessionData() {
+  const serverEnv = getServerEnv();
   const supabase = await createClient();
   const { data: { user }, error } = await supabase.auth.getUser();
 
@@ -21,7 +23,9 @@ export async function getDashboardSessionData() {
     .select('role')
     .eq('id', user.id);
 
-  const isAdmin = profiles?.some((p) => p.role === 'admin') || user.email === process.env.ADMIN_EMAIL;
+  const isAdmin =
+    profiles?.some((p) => p.role === 'admin') ||
+    (!!serverEnv.ADMIN_EMAIL && user.email === serverEnv.ADMIN_EMAIL);
   const userRole = isAdmin ? 'admin' : 'client';
 
   return {
