@@ -49,7 +49,6 @@
     "cta": "Audit Gratuito",
     "form_title": "Analizza il tuo sito in secondi"
   },
-
   "Dashboard": {
     "welcome": "Benvenuto, {name}",
     "my_audits": "I miei Audit",
@@ -615,6 +614,205 @@
       "title": "Audit completato!",
       "sent_to": "Abbiamo inviato il riepilogo esecutivo a <highlight>{email}</highlight>.",
       "unlock_report": "Registrati ora per visualizzare il report tecnico completo e le opportunità di business individuate dall’IA."
+    }
+  },
+  "LandingV2": {
+    "hero": {
+      "badge": "Crescita Digitale con Risultati",
+      "title": "Trasformiamo un sito bello in un vero motore di vendite e automazione.",
+      "subtitle": "Progettiamo esperienze che convertono visite in opportunità, con IA e processi operativi.",
+      "primaryCta": "Voglio una proposta strategica",
+      "secondaryCta": "Scopri il metodo",
+      "kpi1": {
+        "value": "+137%",
+        "label": "Conversioni medie"
+      },
+      "kpi2": {
+        "value": "-42h",
+        "label": "Tempo manuale al mese"
+      },
+      "kpi3": {
+        "value": "3.4x",
+        "label": "ROI stimato"
+      },
+      "chartTitle": "Impatto cumulato nei primi 90 giorni",
+      "chartAxis": {
+        "start": "Settimana 1",
+        "end": "Settimana 12"
+      },
+      "chip1": "Automazioni IA",
+      "chip2": "App Web & SaaS",
+      "chip3": "Software su misura",
+      "outcome1": {
+        "title": "Meno lavoro manuale",
+        "desc": "Automatizziamo i passaggi ripetitivi quotidiani."
+      },
+      "outcome2": {
+        "title": "Più velocità operativa",
+        "desc": "Risposte e processi in secondi, non in ore."
+      },
+      "outcome3": {
+        "title": "Software su misura",
+        "desc": "CRM, prenotazioni, utenti e app web personalizzata."
+      },
+      "proofLine": "Esempio reale: lead acquisito, CRM aggiornato e follow-up inviato automaticamente.",
+      "console": {
+        "title": "Console Automazione",
+        "live": "Live",
+        "columns": {
+          "step": "Fase",
+          "status": "Stato",
+          "latency": "Tempo"
+        },
+        "rows": {
+          "leadCapture": "Acquisizione lead",
+          "crmSync": "Sincronizzazione CRM",
+          "followUp": "Follow-up automatico",
+          "bookingUpdate": "Aggiornamento prenotazioni"
+        },
+        "status": {
+          "captured": "acquisito",
+          "synced": "sincronizzato",
+          "processing": "in corso",
+          "completed": "completato"
+        }
+      }
+    },
+    "pain": {
+      "badge": "Diagnosi Chiara",
+      "title": "Il traffico non è il problema. La conversione sì.",
+      "description": "Se il sito non guida, non chiarisce e non spinge a un’azione, perdi vendite ogni giorno.",
+      "pain1": "Messaggi dispersi: l’utente non capisce il valore in 5 secondi.",
+      "pain2": "Troppe sezioni: la decisione si diluisce e la conversione scende.",
+      "pain3": "Funnel assente: manca un percorso chiaro verso il contatto."
+    },
+    "process": {
+      "title": "Metodo in 3 fasi per attivare risultati rapidamente.",
+      "steps": [
+        {
+          "title": "Focus sul messaggio",
+          "description": "Definiamo proposta di valore, offerta e CTA per rendere chiaro il beneficio."
+        },
+        {
+          "title": "Esecuzione visual",
+          "description": "Landing con gerarchia, ritmo e animazioni utili per aumentare fiducia e attenzione."
+        },
+        {
+          "title": "Ottimizzazione continua",
+          "description": "Misuriamo click, scroll e form per iterare dove l’impatto sul business è maggiore."
+        }
+      ]
+    },
+    "services": {
+      "badge": "Esecuzione End-to-End",
+      "title": "Tutto il necessario per passare da presenza digitale a sistema commerciale.",
+      "cta": "Prenota una sessione strategica",
+      "items": [
+        {
+          "tag": "Acquisizione",
+          "title": "Landing + Offerta",
+          "description": "Architettura del messaggio, copy e design orientati alla decisione.",
+          "points": [
+            "Hero orientato alla conversione",
+            "CTA strategiche",
+            "Narrativa di valore"
+          ]
+        },
+        {
+          "tag": "Automazione",
+          "title": "Processi IA",
+          "description": "Flussi connessi tra form, CRM e notifiche per non perdere lead.",
+          "points": [
+            "Instradamento lead automatico",
+            "Follow-up omnicanale",
+            "Prequalifica IA"
+          ]
+        },
+        {
+          "tag": "Scala",
+          "title": "Dati e Iterazione",
+          "description": "Dashboard ed esperimenti per migliorare la conversione mese dopo mese.",
+          "points": [
+            "KPI di acquisizione",
+            "Test A/B per blocchi",
+            "Roadmap di ottimizzazione"
+          ]
+        }
+      ],
+      "subtitle": "Realizziamo automazioni, app web e software su misura: ERP, registrazione utenti e qualsiasi soluzione digitale necessaria."
+    },
+    "finalCta": {
+      "title": "Se vuoi più clienti qualificati, serve una landing che guidi le decisioni.",
+      "description": "Prepariamo un piano concreto con priorità, impatto stimato e fasi di implementazione.",
+      "primaryCta": "Richiedi diagnosi",
+      "secondaryCta": "Vedi servizi"
+    },
+    "whatWeBuild": {
+      "badge": "Cosa Facciamo Davvero",
+      "title": "Automazioni, app web e software su misura per esigenze digitali reali.",
+      "description": "Da moduli ERP interni a registrazione utenti e flussi commerciali automatizzati. Costruiamo la soluzione necessaria, non template generici.",
+      "items": [
+        {
+          "title": "Automazioni IA",
+          "description": "Flussi che collegano form, CRM, email e attività operative per ridurre lavoro manuale."
+        },
+        {
+          "title": "App Web e SaaS",
+          "description": "Piattaforme moderne per vendere, operare e scalare processi digitali."
+        },
+        {
+          "title": "Registrazione Utenti",
+          "description": "Sistemi account sicuri con ruoli, permessi e pannelli amministrativi."
+        },
+        {
+          "title": "Software su Misura",
+          "description": "Moduli ERP, tool interni e sistemi custom in base al tuo modello di business."
+        }
+      ],
+      "flow": {
+        "label": "Come Lavoriamo",
+        "steps": [
+          "Analisi e obiettivi",
+          "Design e prototipo",
+          "Sviluppo modulare",
+          "Go-live in produzione"
+        ]
+      }
+    },
+    "explainer": {
+      "badge": "Perché Funziona",
+      "title": "Automazione = meno attività manuali, meno errori e molto più tempo per vendere.",
+      "subtitle": "Quando automatizziamo i processi ripetitivi, il team smette il lavoro meccanico e si concentra su clienti, vendite e crescita.",
+      "automation": {
+        "title": "Impatto reale delle automazioni",
+        "description": "Sostituiamo passaggi manuali con flussi automatici collegati a CRM, email e notifiche.",
+        "beforeLabel": "Prima",
+        "beforeText": "Attività manuali/settimana",
+        "afterLabel": "Dopo",
+        "afterText": "Attività manuali/settimana",
+        "points": [
+          "Acquisizione automatica di lead e dati",
+          "Follow-up automatico senza perdere clienti",
+          "Meno errori umani nei processi ripetitivi"
+        ]
+      },
+      "software": {
+        "title": "Software su misura per esigenze reali",
+        "description": "Non vendiamo template chiusi. Costruiamo il tuo strumento: CRM, gestione prenotazioni, utenti e app web personalizzata.",
+        "cases": [
+          "CRM interno per vendite e follow-up",
+          "Registrazione utenti con ruoli e permessi",
+          "Controllo prenotazioni in tempo reale",
+          "App web operativa per clienti e team interno"
+        ],
+        "flowLabel": "Flusso soluzione",
+        "flow": [
+          "Esigenza",
+          "Design funzionale",
+          "Sviluppo",
+          "Risultato operativo"
+        ]
+      }
     }
   }
 }

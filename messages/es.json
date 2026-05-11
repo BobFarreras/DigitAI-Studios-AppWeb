@@ -624,5 +624,204 @@
       "sent_to": "Hemos enviado el resumen ejecutivo a <highlight>{email}</highlight>.",
       "unlock_report": "Regístrate ahora para ver el informe técnico completo y las oportunidades de negocio detectadas por la IA."
     }
+  },
+  "LandingV2": {
+    "hero": {
+      "badge": "Crecimiento Digital con Resultados",
+      "title": "Pasamos de una web bonita a un motor real de ventas y automatización.",
+      "subtitle": "Diseñamos experiencias que convierten visitas en oportunidades, con IA y procesos que ahorran horas cada semana.",
+      "primaryCta": "Quiero una propuesta estratégica",
+      "secondaryCta": "Ver cómo trabajamos",
+      "kpi1": {
+        "value": "+137%",
+        "label": "Conversiones medias"
+      },
+      "kpi2": {
+        "value": "-42h",
+        "label": "Tiempo manual al mes"
+      },
+      "kpi3": {
+        "value": "3.4x",
+        "label": "Retorno estimado"
+      },
+      "chartTitle": "Impacto acumulado de los primeros 90 días",
+      "chartAxis": {
+        "start": "Semana 1",
+        "end": "Semana 12"
+      },
+      "chip1": "Automatizaciones IA",
+      "chip2": "App Web & SaaS",
+      "chip3": "Software a medida",
+      "outcome1": {
+        "title": "Menos tarea manual",
+        "desc": "Automatizamos pasos repetitivos del día a día."
+      },
+      "outcome2": {
+        "title": "Más velocidad operativa",
+        "desc": "Respuestas y procesos en segundos, no en horas."
+      },
+      "outcome3": {
+        "title": "Software hecho para ti",
+        "desc": "CRM, reservas, usuarios y app web a medida."
+      },
+      "proofLine": "Ejemplo real: lead capturado, CRM actualizado y seguimiento enviado automáticamente.",
+      "console": {
+        "title": "Consola de Automatización",
+        "live": "En vivo",
+        "columns": {
+          "step": "Paso",
+          "status": "Estado",
+          "latency": "Tiempo"
+        },
+        "rows": {
+          "leadCapture": "Captura de lead",
+          "crmSync": "Sincronización CRM",
+          "followUp": "Seguimiento automático",
+          "bookingUpdate": "Actualización de reservas"
+        },
+        "status": {
+          "captured": "capturado",
+          "synced": "sincronizado",
+          "processing": "procesando",
+          "completed": "completado"
+        }
+      }
+    },
+    "pain": {
+      "badge": "Diagnóstico Claro",
+      "title": "El problema no es tener tráfico. El problema es no convertirlo.",
+      "description": "Si la web no guía, no resuelve dudas y no impulsa una acción clara, estás perdiendo ventas cada día.",
+      "pain1": "Mensajes dispersos: el usuario no entiende qué ofreces en 5 segundos.",
+      "pain2": "Exceso de secciones: la decisión se diluye y baja la conversión.",
+      "pain3": "Sin embudo activo: no existe un recorrido claro hasta el contacto."
+    },
+    "process": {
+      "title": "Metodología en 3 fases para activar resultados rápido.",
+      "steps": [
+        {
+          "title": "Foco de mensaje",
+          "description": "Sintetizamos propuesta de valor, oferta y CTA para que el visitante entienda qué gana."
+        },
+        {
+          "title": "Ejecución visual",
+          "description": "Landing con jerarquía, ritmo y animación útil para retener atención y reforzar confianza."
+        },
+        {
+          "title": "Optimización continua",
+          "description": "Medimos clics, scroll y formularios para iterar donde realmente impacta en negocio."
+        }
+      ]
+    },
+    "services": {
+      "badge": "Ejecución End-to-End",
+      "title": "Todo lo necesario para pasar de presencia digital a sistema comercial.",
+      "cta": "Reservar sesión de valor",
+      "items": [
+        {
+          "tag": "Captación",
+          "title": "Landing + Oferta",
+          "description": "Arquitectura de mensaje, copy y diseño orientado a decisión rápida.",
+          "points": [
+            "Hero de conversión",
+            "CTA estratégicos",
+            "Narrativa de valor"
+          ]
+        },
+        {
+          "tag": "Automatización",
+          "title": "Procesos IA",
+          "description": "Flujos conectados entre formularios, CRM y notificaciones para no perder ningún lead.",
+          "points": [
+            "Lead routing automático",
+            "Seguimiento omnicanal",
+            "Calificación inicial IA"
+          ]
+        },
+        {
+          "tag": "Escalado",
+          "title": "Datos e Iteración",
+          "description": "Cuadro de mando y experimentos para subir conversión mes a mes.",
+          "points": [
+            "KPIs de captación",
+            "Test A/B por bloques",
+            "Roadmap de mejoras"
+          ]
+        }
+      ],
+      "subtitle": "Desarrollamos automatizaciones, app webs y software a medida: ERP, registro de usuarios y cualquier solución digital que necesites."
+    },
+    "finalCta": {
+      "title": "Si quieres más clientes cualificados, necesitas una landing que guíe decisiones.",
+      "description": "Preparamos una propuesta concreta con prioridades, impacto estimado y plan de implementación.",
+      "primaryCta": "Solicitar diagnóstico",
+      "secondaryCta": "Revisar servicios"
+    },
+    "whatWeBuild": {
+      "badge": "Que Hacemos Exactamente",
+      "title": "Automatizaciones, app webs y software a medida para cualquier necesidad digital.",
+      "description": "Desde un ERP interno hasta un registro de usuarios o flujos comerciales automatizados. Construimos la solución que necesitas, no una plantilla genérica.",
+      "items": [
+        {
+          "title": "Automatizaciones IA",
+          "description": "Flujos que conectan formularios, CRM, emails y tareas internas para reducir trabajo manual."
+        },
+        {
+          "title": "App Web y SaaS",
+          "description": "Plataformas web modernas para vender, operar y escalar procesos digitales."
+        },
+        {
+          "title": "Registro de Usuarios",
+          "description": "Sistemas de cuentas, roles, permisos y paneles de administración seguros."
+        },
+        {
+          "title": "Software a Medida",
+          "description": "ERP, gestión interna y herramientas custom según tu modelo de negocio."
+        }
+      ],
+      "flow": {
+        "label": "Metodo de Trabajo",
+        "steps": [
+          "Diagnóstico y objetivos",
+          "Diseño y prototipo",
+          "Desarrollo modular",
+          "Salida a producción"
+        ]
+      }
+    },
+    "explainer": {
+      "badge": "Por Que Funciona",
+      "title": "Automatización = menos tareas manuales, menos errores y mucho más tiempo para vender.",
+      "subtitle": "Cuando automatizamos procesos repetitivos, tu equipo deja el trabajo mecánico y se centra en clientes, ventas y crecimiento.",
+      "automation": {
+        "title": "Impacto real de las automatizaciones",
+        "description": "Sustituimos pasos manuales por flujos automáticos conectados con CRM, email y notificaciones.",
+        "beforeLabel": "Antes",
+        "beforeText": "Tareas manuales/semana",
+        "afterLabel": "Después",
+        "afterText": "Tareas manuales/semana",
+        "points": [
+          "Captura automática de leads y datos",
+          "Seguimiento automático sin olvidar clientes",
+          "Menos errores humanos en procesos repetidos"
+        ]
+      },
+      "software": {
+        "title": "Software a medida para necesidades reales",
+        "description": "No vendemos una plantilla cerrada. Construimos tu herramienta: CRM, control de reservas, usuarios y app web personalizada.",
+        "cases": [
+          "CRM interno para ventas y seguimiento",
+          "Registro de usuarios con roles y permisos",
+          "Control de reservas en tiempo real",
+          "App web operativa para clientes y equipo interno"
+        ],
+        "flowLabel": "Flujo de solución",
+        "flow": [
+          "Necesidad",
+          "Diseño funcional",
+          "Desarrollo",
+          "Resultado productivo"
+        ]
+      }
+    }
   }
 }

@@ -624,5 +624,204 @@
       "sent_to": "Hem enviat el resum executiu a <highlight>{email}</highlight>.",
       "unlock_report": "Registra't ara per veure l'informe tècnic complet i les oportunitats de negoci detectades per la IA."
     }
+  },
+  "LandingV2": {
+    "hero": {
+      "badge": "Creixement Digital Amb Resultats",
+      "title": "Passem de web bonica a motor real de vendes i automatitzacio.",
+      "subtitle": "Dissenyem experiències que converteixen visites en oportunitats, amb IA i processos que estalvien hores cada setmana.",
+      "primaryCta": "Vull una proposta estratègica",
+      "secondaryCta": "Veure com treballem",
+      "kpi1": {
+        "value": "+137%",
+        "label": "Conversions mitjanes"
+      },
+      "kpi2": {
+        "value": "-42h",
+        "label": "Temps manual al mes"
+      },
+      "kpi3": {
+        "value": "3.4x",
+        "label": "Retorn estimat"
+      },
+      "chartTitle": "Impacte acumulat dels primers 90 dies",
+      "chartAxis": {
+        "start": "Setmana 1",
+        "end": "Setmana 12"
+      },
+      "chip1": "Automatitzacions IA",
+      "chip2": "App Web & SaaS",
+      "chip3": "Software a mida",
+      "outcome1": {
+        "title": "Menys tasca manual",
+        "desc": "Automatitzem passos repetitius del dia a dia."
+      },
+      "outcome2": {
+        "title": "Més velocitat operativa",
+        "desc": "Respostes i processos en segons, no en hores."
+      },
+      "outcome3": {
+        "title": "Software fet per tu",
+        "desc": "CRM, reserves, usuaris i app web a mida."
+      },
+      "proofLine": "Exemple real: lead capturat, CRM actualitzat i seguiment enviat automàticament.",
+      "console": {
+        "title": "Consola d Automatitzacio",
+        "live": "En viu",
+        "columns": {
+          "step": "Pas",
+          "status": "Estat",
+          "latency": "Temps"
+        },
+        "rows": {
+          "leadCapture": "Captura de lead",
+          "crmSync": "Sincronitzacio CRM",
+          "followUp": "Seguiment automatic",
+          "bookingUpdate": "Actualitzacio reserves"
+        },
+        "status": {
+          "captured": "capturat",
+          "synced": "sincronitzat",
+          "processing": "processant",
+          "completed": "completat"
+        }
+      }
+    },
+    "pain": {
+      "badge": "Diagnosi Clara",
+      "title": "El problema no es tenir trànsit. El problema es no convertir-lo.",
+      "description": "Si la web no guia, no respon dubtes i no impulsa una accio clara, estàs perdent vendes cada dia.",
+      "pain1": "Missatges dispersos: l’usuari no entén què ofereixes en 5 segons.",
+      "pain2": "Excés de seccions: la decisió es dilueix i la conversió cau.",
+      "pain3": "Sense embut actiu: no hi ha recorregut clar cap al contacte."
+    },
+    "process": {
+      "title": "Metodologia en 3 fases per activar resultats ràpid.",
+      "steps": [
+        {
+          "title": "Focus de missatge",
+          "description": "Sintetitzem proposta de valor, oferta i CTA perquè el visitant entengui què guanya."
+        },
+        {
+          "title": "Execució visual",
+          "description": "Landing amb jerarquia, ritme i animació útil per retenir atenció i reforçar confiança."
+        },
+        {
+          "title": "Optimització continua",
+          "description": "Mesurem clics, scroll i formularis per iterar on realment impacta negoci."
+        }
+      ]
+    },
+    "services": {
+      "badge": "Execucio End-to-End",
+      "title": "Tot el que cal per passar de presència digital a sistema comercial.",
+      "cta": "Reservar sessio de valor",
+      "items": [
+        {
+          "tag": "Captacio",
+          "title": "Landing + Oferta",
+          "description": "Arquitectura de missatge, copy i disseny enfocat a decisio rapida.",
+          "points": [
+            "Hero de conversio",
+            "CTA estratègics",
+            "Narrativa de valor"
+          ]
+        },
+        {
+          "tag": "Automatitzacio",
+          "title": "Processos IA",
+          "description": "Fluxos connectats entre formularis, CRM i notificacions perquè no es perdi cap lead.",
+          "points": [
+            "Lead routing automàtic",
+            "Seguiment omnicanal",
+            "Qualificacio inicial IA"
+          ]
+        },
+        {
+          "tag": "Escalat",
+          "title": "Dades i Iteracio",
+          "description": "Quadre de comandament i experiments per augmentar conversio mes a mes.",
+          "points": [
+            "KPIs de captacio",
+            "Test A/B per blocs",
+            "Roadmap de millores"
+          ]
+        }
+      ],
+      "subtitle": "Fem automatitzacions, app webs i software a mida: ERP, registres d usuaris i qualsevol solucio digital que necessitis."
+    },
+    "finalCta": {
+      "title": "Si vols més clients qualificats, necessites una landing que guiï decisions.",
+      "description": "Et preparem una proposta concreta de millora amb prioritats, impacte estimat i pla d’implementació.",
+      "primaryCta": "Demanar diagnosi",
+      "secondaryCta": "Revisar serveis"
+    },
+    "whatWeBuild": {
+      "badge": "Que Fem Exactament",
+      "title": "Automatitzacions, app webs i software a mida per qualsevol necessitat digital del client.",
+      "description": "Des d un ERP intern fins a un registre d usuaris o fluxos comercials automatitzats. Construim la solucio que necessites, no una plantilla generica.",
+      "items": [
+        {
+          "title": "Automatitzacions IA",
+          "description": "Fluxos que connecten formularis, CRM, emails i tasques internes per reduir feina manual."
+        },
+        {
+          "title": "App Web i SaaS",
+          "description": "Plataformes web modernes per vendre, operar i escalar processos digitals."
+        },
+        {
+          "title": "Registre d Usuaris",
+          "description": "Sistemes de comptes, rols, permisos i panells d administracio segurs."
+        },
+        {
+          "title": "Software a Mida",
+          "description": "ERP, gestio interna i eines custom segons el teu model de negoci."
+        }
+      ],
+      "flow": {
+        "label": "Com Treballem",
+        "steps": [
+          "Diagnosi i objectius",
+          "Disseny i prototip",
+          "Desenvolupament modular",
+          "Posada en produccio"
+        ]
+      }
+    },
+    "explainer": {
+      "badge": "Per Que Funciona",
+      "title": "Automatitzacio = menys tasca manual, menys errors i molt mes temps per vendre.",
+      "subtitle": "Quan automatitzem processos repetitius, el teu equip deixa de fer feina mecànica i es concentra en clients, vendes i creixement.",
+      "automation": {
+        "title": "Impacte real de les automatitzacions",
+        "description": "Substituim passos manuals per fluxos automatics connectats amb CRM, email i notificacions.",
+        "beforeLabel": "Abans",
+        "beforeText": "Tasques manuals/setmana",
+        "afterLabel": "Despres",
+        "afterText": "Tasques manuals/setmana",
+        "points": [
+          "Captura automàtica de leads i dades",
+          "Seguiment automàtic sense oblidar clients",
+          "Menys errors humans en processos repetits"
+        ]
+      },
+      "software": {
+        "title": "Software a mida per necessitats reals",
+        "description": "No venem una plantilla tancada. Construim la teva eina: CRM, control de reserves, usuaris i app web personalitzada.",
+        "cases": [
+          "CRM intern per vendes i seguiment",
+          "Registre d usuaris amb rols i permisos",
+          "Control de reserves i disponibilitat en temps real",
+          "App web operativa per clients i equip intern"
+        ],
+        "flowLabel": "Flux de solucio",
+        "flow": [
+          "Necessitat",
+          "Disseny funcional",
+          "Desenvolupament",
+          "Resultat productiu"
+        ]
+      }
+    }
   }
 }

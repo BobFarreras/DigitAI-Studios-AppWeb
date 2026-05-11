@@ -624,5 +624,204 @@
       "sent_to": "We have sent the executive summary to <highlight>{email}</highlight>.",
       "unlock_report": "Sign up now to view the full technical report and business opportunities detected by AI."
     }
+  },
+  "LandingV2": {
+    "hero": {
+      "badge": "Digital Growth with Real Outcomes",
+      "title": "We turn a nice website into a real sales and automation engine.",
+      "subtitle": "We design experiences that convert traffic into opportunities, powered by AI and operational workflows.",
+      "primaryCta": "Get a strategic proposal",
+      "secondaryCta": "See our process",
+      "kpi1": {
+        "value": "+137%",
+        "label": "Average conversions"
+      },
+      "kpi2": {
+        "value": "-42h",
+        "label": "Manual work monthly"
+      },
+      "kpi3": {
+        "value": "3.4x",
+        "label": "Estimated ROI"
+      },
+      "chartTitle": "Cumulative impact in the first 90 days",
+      "chartAxis": {
+        "start": "Week 1",
+        "end": "Week 12"
+      },
+      "chip1": "AI Automations",
+      "chip2": "Web Apps & SaaS",
+      "chip3": "Custom Software",
+      "outcome1": {
+        "title": "Less manual work",
+        "desc": "We automate repetitive daily tasks."
+      },
+      "outcome2": {
+        "title": "Faster operations",
+        "desc": "Responses and workflows in seconds, not hours."
+      },
+      "outcome3": {
+        "title": "Software built for you",
+        "desc": "Custom CRM, bookings, user systems, and web apps."
+      },
+      "proofLine": "Real example: lead captured, CRM updated, and follow-up sent automatically.",
+      "console": {
+        "title": "Automation Console",
+        "live": "Live",
+        "columns": {
+          "step": "Step",
+          "status": "Status",
+          "latency": "Latency"
+        },
+        "rows": {
+          "leadCapture": "Lead capture",
+          "crmSync": "CRM sync",
+          "followUp": "Auto follow-up",
+          "bookingUpdate": "Booking update"
+        },
+        "status": {
+          "captured": "captured",
+          "synced": "synced",
+          "processing": "processing",
+          "completed": "completed"
+        }
+      }
+    },
+    "pain": {
+      "badge": "Clear Diagnosis",
+      "title": "Traffic is not the issue. Conversion is.",
+      "description": "If your site does not guide, clarify, and drive a clear next step, you lose revenue every day.",
+      "pain1": "Scattered messaging: visitors do not get your value in the first 5 seconds.",
+      "pain2": "Too many sections: decisions get delayed and conversion drops.",
+      "pain3": "No active funnel: no clear path from interest to contact."
+    },
+    "process": {
+      "title": "A 3-step method to unlock results fast.",
+      "steps": [
+        {
+          "title": "Message focus",
+          "description": "We sharpen value proposition, offer, and CTAs so visitors instantly understand the benefit."
+        },
+        {
+          "title": "Visual execution",
+          "description": "A landing with hierarchy, pace, and meaningful motion to increase trust and retention."
+        },
+        {
+          "title": "Continuous optimization",
+          "description": "We track clicks, scroll depth, and form actions to iterate where business impact is highest."
+        }
+      ]
+    },
+    "services": {
+      "badge": "End-to-End Delivery",
+      "title": "Everything you need to move from digital presence to revenue system.",
+      "cta": "Book strategy call",
+      "items": [
+        {
+          "tag": "Acquisition",
+          "title": "Landing + Offer",
+          "description": "Message architecture, conversion copy, and design for faster decisions.",
+          "points": [
+            "Conversion-focused hero",
+            "Strategic CTAs",
+            "Value narrative"
+          ]
+        },
+        {
+          "tag": "Automation",
+          "title": "AI Workflows",
+          "description": "Connected flows across forms, CRM, and notifications so no lead gets lost.",
+          "points": [
+            "Automated lead routing",
+            "Omnichannel follow-up",
+            "AI pre-qualification"
+          ]
+        },
+        {
+          "tag": "Scale",
+          "title": "Data & Iteration",
+          "description": "Dashboards and experiments to improve conversion month after month.",
+          "points": [
+            "Acquisition KPIs",
+            "Block-level A/B tests",
+            "Optimization roadmap"
+          ]
+        }
+      ],
+      "subtitle": "We build automations, web apps, and custom software: ERP workflows, user management, and any digital solution your business needs."
+    },
+    "finalCta": {
+      "title": "If you want more qualified leads, you need a landing that drives decisions.",
+      "description": "We deliver a concrete plan with priorities, expected impact, and implementation phases.",
+      "primaryCta": "Request diagnosis",
+      "secondaryCta": "View services"
+    },
+    "whatWeBuild": {
+      "badge": "What We Actually Build",
+      "title": "Automations, web apps, and custom software for real business operations.",
+      "description": "From internal ERP modules to user management systems and automated growth workflows. We build what your business needs, not generic templates.",
+      "items": [
+        {
+          "title": "AI Automations",
+          "description": "Connected workflows across forms, CRM, email, and operations to remove manual work."
+        },
+        {
+          "title": "Web Apps & SaaS",
+          "description": "Modern platforms to sell, manage operations, and scale digital processes."
+        },
+        {
+          "title": "User Registration Systems",
+          "description": "Secure account systems with roles, permissions, and admin panels."
+        },
+        {
+          "title": "Custom Software",
+          "description": "ERP modules, internal tools, and custom systems aligned to your business model."
+        }
+      ],
+      "flow": {
+        "label": "Delivery Flow",
+        "steps": [
+          "Discovery and goals",
+          "Design and prototype",
+          "Modular development",
+          "Production launch"
+        ]
+      }
+    },
+    "explainer": {
+      "badge": "Why It Works",
+      "title": "Automation means fewer manual tasks, fewer errors, and more time to grow revenue.",
+      "subtitle": "By automating repetitive workflows, your team stops doing mechanical work and focuses on clients, sales, and growth.",
+      "automation": {
+        "title": "Real automation impact",
+        "description": "We replace manual steps with connected workflows across CRM, email, and notifications.",
+        "beforeLabel": "Before",
+        "beforeText": "Manual tasks/week",
+        "afterLabel": "After",
+        "afterText": "Manual tasks/week",
+        "points": [
+          "Automatic lead and data capture",
+          "Automatic follow-up with no missed opportunities",
+          "Fewer human errors in repetitive operations"
+        ]
+      },
+      "software": {
+        "title": "Custom software for real business needs",
+        "description": "We do not sell fixed templates. We build your system: CRM, booking control, user management, and custom web apps.",
+        "cases": [
+          "Internal CRM for sales and follow-up",
+          "User registration with roles and permissions",
+          "Real-time booking and availability control",
+          "Operational web app for clients and internal teams"
+        ],
+        "flowLabel": "Solution flow",
+        "flow": [
+          "Need",
+          "Functional design",
+          "Development",
+          "Productive outcome"
+        ]
+      }
+    }
   }
 }

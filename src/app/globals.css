@@ -187,4 +187,43 @@ img {
   .section-divider {
     @apply h-[1px] w-full bg-gradient-to-r from-transparent via-white/10 to-transparent my-12;
   }
+
+  .linear-shell {
+    background: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+
+  .linear-surface-1 {
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    box-shadow: rgba(0, 0, 0, 0.08) 0 2px 8px 0;
+  }
+
+  .linear-surface-2 {
+    background: color-mix(in oklab, hsl(var(--card)) 88%, black 12%);
+    border: 1px solid hsl(var(--border));
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, hsl(var(--border)) 70%, transparent 30%);
+  }
+
+  .linear-muted {
+    color: hsl(var(--muted-foreground));
+  }
+
+  .linear-meta {
+    color: color-mix(in oklab, hsl(var(--muted-foreground)) 82%, transparent 18%);
+  }
+
+  .linear-accent {
+    color: #5e6ad2;
+  }
+
+  .linear-cta {
+    background: #5e6ad2;
+    color: #08090a;
+    border: 1px solid #4f5bc9;
+  }
+
+  .linear-cta:hover {
+    background: #707be0;
+  }
 }
