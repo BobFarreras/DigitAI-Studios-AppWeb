@@ -134,7 +134,7 @@ export const AuditPDFDocument = ({ url, date, scores, screenshot, issues }: Prop
       {screenshot && (
         <View style={styles.imageContainer}>
             <Text style={[styles.subtitle, { marginBottom: 10 }]}>Vista Prèvia Dispositiu Mòbil</Text>
-            <Image src={screenshot} style={styles.screenshot} />
+            <Image src={screenshot} style={styles.screenshot} alt="Captura de pantalla mobile" />
         </View>
       )}
 

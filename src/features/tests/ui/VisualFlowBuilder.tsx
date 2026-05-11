@@ -6,13 +6,13 @@
  */
 'use client';
 
-import { useActionState, useRef, useEffect } from 'react';
+import { useActionState, useRef } from 'react';
 import { TestTaskDTO } from '@/types/models';
 import { addTaskAction, deleteTaskAction, TaskActionState } from '../actions/task-actions';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Plus, Trash2, ArrowDown, GripVertical, CheckSquare } from 'lucide-react';
+import { Plus, Trash2, ArrowDown, CheckSquare } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -22,7 +22,7 @@ export function VisualFlowBuilder({ campaignId, tasks }: { campaignId: string, t
     const formRef = useRef<HTMLFormElement>(null);
     
     // Hook per gestionar l'acció de crear
-    const [state, action, isPending] = useActionState(async (prev: TaskActionState, formData: FormData) => {
+    const [, action, isPending] = useActionState(async (prev: TaskActionState, formData: FormData) => {
         const result = await addTaskAction(prev, formData);
         if (result.success) {
             formRef.current?.reset();

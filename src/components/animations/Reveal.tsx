@@ -39,7 +39,7 @@ export const Reveal = ({
 
   // CALCULEM EL MOVIMENT OPTIMITZAT
   // En lloc de moure 75px, en movem menys per evitar "salts" grans en pantalles petites
-  const distance = 30; 
+  const distance = disableMobileMovement ? 0 : 30; 
 
   const getHiddenVariant = () => {
     if (shouldReduceMotion) return { opacity: 0, x: 0, y: 0 }; // Només fade-in si demana poc moviment

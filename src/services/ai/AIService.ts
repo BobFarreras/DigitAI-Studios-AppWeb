@@ -110,14 +110,14 @@ export class AIService {
   // ===========================================================================
   // 🧱 FALLBACK CONTENT (SCHEMA)
   // ===========================================================================
-  private getFallbackContent(name: string, desc: string, _config: SectorConfig): I18nSchema {
+  private getFallbackContent(name: string, desc: string, config: SectorConfig): I18nSchema {
     return {
       hero: { title: name, subtitle: desc, cta: "Contactar", image_prompt: "" },
       about: {
         badge: "Info", title: "Sobre nosaltres", description: desc, image_prompt: "",
         stats: { label1: "Experiència", value1: "+10", label2: "Clients", value2: "100%", label3: "Projectes", value3: "+50" }
       },
-      services: { badge: "Serveis", title: "Serveis", subtitle: "", items: [] },
+      services: { badge: "Serveis", title: "Serveis", subtitle: config.promptHint, items: [] },
       featured_products: { title: "Productes", subtitle: "Selecció", limit: 4 }, // ✅ Afegit el que has posat
       testimonials: { badge: "Opinions", title: "Opinions", subtitle: "", reviews: [] },
       cta_banner: { heading: "T'interessa?", subheading: "Parlem avui", buttonText: "Contactar" },

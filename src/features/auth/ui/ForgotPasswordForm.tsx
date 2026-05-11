@@ -9,7 +9,6 @@
 'use client'
 
 import { useActionState } from 'react';
-import { useTranslations } from 'next-intl';
 import { requestPasswordReset } from '../actions/reset-password';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -17,8 +16,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Loader2, CheckCircle2 } from 'lucide-react';
 
 export function ForgotPasswordForm() {
-  const t = useTranslations('Auth'); // Assegura't de tenir les traduccions
-  
   const [state, action, isPending] = useActionState(requestPasswordReset, {
     message: '',
     errors: {}

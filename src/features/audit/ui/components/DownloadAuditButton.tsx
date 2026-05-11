@@ -15,7 +15,10 @@ import { AuditPDFDocument } from '@/features/audit/ui/pdf/AuditPdfDocument';
 import { AuditIssue } from '@/adapters/IWebScanner';
 
 const PDFDownloadLink = dynamic(
-  () => import('@react-pdf/renderer').then((mod) => mod.PDFDownloadLink),
+  async () => {
+    const mod = await import('@react-pdf/renderer');
+    return mod.PDFDownloadLink;
+  },
   { 
     ssr: false,
     loading: () => (

@@ -10,7 +10,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Save, Eye, PenTool, ExternalLink, Loader2, CheckCircle2, ArrowLeft } from 'lucide-react';
 import { Link } from '@/routing';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
 
 const initialState: ActionState = {
@@ -31,7 +30,11 @@ export function EditPostForm({ post }: { post: BlogPostDTO }) {
 
     useEffect(() => {
         if (state.message) {
-            state.success ? toast.success(state.message) : toast.error(state.message);
+            if (state.success) {
+                toast.success(state.message);
+            } else {
+                toast.error(state.message);
+            }
         }
     }, [state]);
 
