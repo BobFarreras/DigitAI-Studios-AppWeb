@@ -1,8 +1,8 @@
 /**
  * @file src/actions/social-oauth-callback.ts
- * @updated 2026-05-08
- * @summary Server actions per src/actions/social-oauth-callback.ts
- * @scope Operacions de servidor, validacio i orquestracio de capa aplicacio.
+ * @updated 2026-05-10
+ * @summary Gestiona el callback OAuth social i desa la connexio al tenant.
+ * @scope Resolucio del callback + exchange de token + persistencia a social_connections.
  */
 'use server';
 
@@ -18,10 +18,12 @@ interface ConnectionData {
   expiresIn?: number;
 }
 
-export async function resolveSocialOauthCallback(requestUrl: string) {
+export async function resolveSocialOauthCallback(
+  requestUrl: string,
+  provider: 'linkedin' | 'facebook'
+) {
   const { searchParams } = new URL(requestUrl);
   const code = searchParams.get('code');
-  const state = searchParams.get('state');
   const oauthError = searchParams.get('error');
   const origin = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
   const redirectOnSuccess = `${origin}/admin/blog?connected=true`;
@@ -33,7 +35,9 @@ export async function resolveSocialOauthCallback(requestUrl: string) {
   const supabase = await createClient();
 
   const saveConnection = async (data: ConnectionData) => {
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) throw new Error('No user found in session');
 
     const { data: profile, error: profileError } = await supabase
@@ -49,26 +53,29 @@ export async function resolveSocialOauthCallback(requestUrl: string) {
       throw new Error(`Perfil incomplet. Falta el registre a la taula 'profiles' per l'ID ${user.id}`);
     }
 
-    const { error } = await supabase.from('social_connections').upsert({
-      organization_id: profile.organization_id,
-      user_id: user.id,
-      provider: data.provider,
-      access_token: data.accessToken,
-      provider_account_id: data.providerAccountId,
-      provider_page_id: data.providerPageId,
-      provider_page_name: data.providerPageName,
-      provider_avatar_url: data.providerAvatar,
-      expires_at: data.expiresIn ? Date.now() + (data.expiresIn * 1000) : null,
-      updated_at: new Date().toISOString(),
-    }, {
-      onConflict: 'organization_id, provider, provider_page_id',
-    });
+    const { error } = await supabase.from('social_connections').upsert(
+      {
+        organization_id: profile.organization_id,
+        user_id: user.id,
+        provider: data.provider,
+        access_token: data.accessToken,
+        provider_account_id: data.providerAccountId,
+        provider_page_id: data.providerPageId,
+        provider_page_name: data.providerPageName,
+        provider_avatar_url: data.providerAvatar,
+        expires_at: data.expiresIn ? Date.now() + data.expiresIn * 1000 : null,
+        updated_at: new Date().toISOString(),
+      },
+      {
+        onConflict: 'organization_id, provider, provider_page_id',
+      }
+    );
 
     if (error) throw error;
   };
 
   try {
-    if (state?.includes('linkedin')) {
+    if (provider === 'linkedin') {
       const tokenRes = await fetch('https://www.linkedin.com/oauth/v2/accessToken', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -99,13 +106,15 @@ export async function resolveSocialOauthCallback(requestUrl: string) {
         providerAvatar: userData.picture,
         expiresIn: tokenData.expires_in,
       });
-    } else if (state?.includes('facebook')) {
+    } else {
       const tokenUrl = `https://graph.facebook.com/v19.0/oauth/access_token?client_id=${process.env.FACEBOOK_CLIENT_ID}&redirect_uri=${origin}/api/oauth/callback&client_secret=${process.env.FACEBOOK_CLIENT_SECRET}&code=${code}`;
       const tokenRes = await fetch(tokenUrl);
       const tokenData = await tokenRes.json();
       if (tokenData.error) throw new Error(tokenData.error.message);
 
-      const pagesRes = await fetch(`https://graph.facebook.com/v19.0/me/accounts?access_token=${tokenData.access_token}`);
+      const pagesRes = await fetch(
+        `https://graph.facebook.com/v19.0/me/accounts?access_token=${tokenData.access_token}`
+      );
       const pagesData = await pagesRes.json();
       if (!pagesData.data || pagesData.data.length === 0) {
         return `${origin}/admin/blog?error=no_pages_found`;
@@ -129,4 +138,3 @@ export async function resolveSocialOauthCallback(requestUrl: string) {
     return `${origin}/admin/blog?error=${encodeURIComponent(errorMessage)}`;
   }
 }
-
