@@ -7,13 +7,21 @@
 'use client';
 
 import { useState } from 'react';
-import { ProjectMember } from '@/repositories/supabase/SupabaseProjectRepository'; // Importa el tipus
 import { addProjectMemberAction, removeProjectMemberAction } from '../actions/project-actions';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Trash2, UserPlus, Shield } from 'lucide-react';
 import { toast } from 'sonner';
+
+type ProjectMember = {
+    user_id: string;
+    profile: {
+        email: string;
+        full_name: string | null;
+        avatar_url: string | null;
+    };
+};
 
 type Candidate = {
     id: string;

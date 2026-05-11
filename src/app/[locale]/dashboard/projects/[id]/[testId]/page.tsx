@@ -1,18 +1,17 @@
 /**
  * @file src/app/[locale]/dashboard/projects/[id]/[testId]/page.tsx
- * @updated 2026-05-08
+ * @updated 2026-05-10
  * @summary Route module: src/app/[locale]/dashboard/projects/[id]/[testId]/page.tsx
  * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
  */
 import { notFound, redirect } from 'next/navigation';
-import { SupabaseTestRepository } from '@/repositories/supabase/SupabaseTestRepository';
+import { getUserCampaignRunnerView } from '@/features/tests/actions/query-actions';
 import { TaskRunner } from '@/features/tests/ui/TaskRunner';
 import { BackButton } from '@/components/ui/back-button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { BookOpen, CheckCircle2, Trophy } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
-import { getSessionUser } from '@/actions/session-user';
 
 type Props = {
   params: Promise<{ id: string; testId: string }>;
@@ -21,12 +20,9 @@ type Props = {
 export default async function TestRunnerPage({ params }: Props) {
   const { id: projectId, testId } = await params;
   const t = await getTranslations('Dashboard.test_runner');
-  const session = await getSessionUser();
-  const user = session.user;
-  if (!user) redirect('/auth/login');
-
-  const repo = new SupabaseTestRepository();
-  const ctx = await repo.getCampaignWithContext(testId, user.id);
+  const view = await getUserCampaignRunnerView(testId);
+  if (!view) redirect('/auth/login');
+  const { ctx } = view;
 
   if (!ctx.campaign) return notFound();
   if (ctx.campaign.projectId !== projectId) return notFound();

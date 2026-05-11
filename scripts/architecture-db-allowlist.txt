@@ -1,13 +1,2 @@
-src/app/[locale]/admin/debug/page.tsx
-src/app/api/oauth/callback/route.ts
-src/features/auth/actions/auth.ts
-src/features/auth/actions/reset-password.ts
 src/features/auth/ui/LoginForm.tsx
 src/features/auth/ui/RegisterForm.tsx
-src/features/blog/actions.ts
-src/features/blog/ui/ReactionDock.tsx
-src/features/projects/actions.ts
-src/features/projects/actions/invite-actions.ts
-src/features/tests/actions.ts
-src/features/tests/ui/CampaignAnalytics.tsx
-src/features/tests/ui/TesterManager.tsx

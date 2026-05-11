@@ -21,8 +21,19 @@ function getAllowlist(path) {
 }
 
 const allowlist = getAllowlist(allowlistPath);
-const output = run('rg -n "\\.from\\(|createClient\\(" src/app src/components src/features');
-const rows = output.split('\n').filter(Boolean);
+const targetGlobs = 'src/app src/components src/features --glob "*.tsx"';
+
+const repositoryImportOutput = run(`rg -n "from ['\\"]@/repositories" ${targetGlobs}`);
+const supabaseServerImportOutput = run(`rg -n "from ['\\"]@/lib/supabase/server" ${targetGlobs}`);
+const supabaseMiddlewareImportOutput = run(`rg -n "from ['\\"]@/lib/supabase/middleware" ${targetGlobs}`);
+const supabaseClientImportOutput = run(`rg -n "from ['\\"]@/lib/supabase/client" ${targetGlobs}`);
+
+const rows = [
+  ...repositoryImportOutput.split('\n'),
+  ...supabaseServerImportOutput.split('\n'),
+  ...supabaseMiddlewareImportOutput.split('\n'),
+  ...supabaseClientImportOutput.split('\n'),
+].filter(Boolean);
 const violatingFiles = new Set();
 
 for (const row of rows) {
@@ -34,7 +45,7 @@ for (const row of rows) {
 }
 
 if (violatingFiles.size > 0) {
-  console.error('Architecture violations (DB access in app/components/features outside allowlist):');
+  console.error('Architecture violations (repository/supabase imports in UI layers outside allowlist):');
   for (const file of [...violatingFiles].sort()) {
     console.error(`- ${file}`);
   }

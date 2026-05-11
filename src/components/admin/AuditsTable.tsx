@@ -7,9 +7,18 @@
  */
 import { useTransition } from 'react'; // Per gestionar l'estat de càrrega
 import { deleteAdminAudit } from '@/actions/admin/audits'; // 👈 Importem l'acció
-import { AuditSummary } from '@/repositories/interfaces/IAuditRepository';
 import { AuditsMobileCards } from '@/components/admin/audits/AuditsMobileCards';
 import { AuditsDesktopTable } from '@/components/admin/audits/AuditsDesktopTable';
+
+type AuditSummary = {
+  id: string;
+  created_at: string | null;
+  domain: string;
+  report_data?: {
+    email?: string;
+    score?: number;
+  } | null;
+};
 
 export function AuditsTable({ audits }: { audits: AuditSummary[] }) {
   const [isPending, startTransition] = useTransition();

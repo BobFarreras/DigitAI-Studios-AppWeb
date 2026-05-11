@@ -1,11 +1,10 @@
 /**
  * @file src/app/[locale]/admin/tests/[id]/page.tsx
- * @updated 2026-05-08
+ * @updated 2026-05-10
  * @summary Route module: src/app/[locale]/admin/tests/[id]/page.tsx
  * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
  */
-import { SupabaseTestRepository } from '@/repositories/supabase/SupabaseTestRepository';
-import { requireAdmin } from '@/lib/auth/admin-guard';
+import { getAdminCampaignDetailView } from '@/features/tests/actions/query-actions';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { TesterManager } from '@/features/tests/ui/TesterManager';
@@ -16,22 +15,11 @@ import { DeleteCampaignButton } from '@/features/tests/ui/DeleteCampaignButton';
 import { CampaignAnalytics } from '@/features/tests/ui/CampaignAnalytics';
 
 export default async function AdminTestDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  await requireAdmin();
   const { id } = await params;
-  const repo = new SupabaseTestRepository();
-
-  const ctx = await repo.getCampaignWithContext(id, 'admin');
-  if (!ctx.campaign) return <div className="p-8 text-center text-muted-foreground">Campanya no trobada</div>;
-
-  const organizationId = await repo.getProjectOrganizationId(ctx.campaign.projectId);
-
-  if (!organizationId) return <div>Error d'integritat: Projecte sense organització</div>;
-
-  const [assigned, available] = await Promise.all([
-    repo.getAssignedTesters(id),
-    repo.getProjectMembersForTest(id, ctx.campaign.projectId, organizationId)
-  ]);
-  const analyticsData = await repo.getCampaignResults(id);
+  const view = await getAdminCampaignDetailView(id);
+  if (!view) return <div className="p-8 text-center text-muted-foreground">Campanya no trobada</div>;
+  if ('integrityError' in view) return <div>Error d'integritat: Projecte sense organització</div>;
+  const { ctx, assigned, available, analyticsData } = view;
 
   return (
     <div className="p-6 max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500">
