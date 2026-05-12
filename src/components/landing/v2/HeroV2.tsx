@@ -8,6 +8,7 @@
 
 import { motion, type Variants } from 'framer-motion';
 import { useTranslations } from 'next-intl';
+import { BrandRevealText } from '@/components/ui/brand-reveal';
 import { HeroAmbientBackground } from './HeroAmbientBackground';
 import { HeroPillarGrid } from './HeroCommandScene';
 
@@ -42,9 +43,9 @@ export function HeroLinear() {
         <motion.div variants={itemVariants} className="max-w-6xl">
           <h1 className="text-balance text-[clamp(31px,7.4vw,42px)] font-[590] leading-[1.03] tracking-normal text-[#08090a] dark:text-[#f7f8f8] sm:text-[clamp(42px,5vw,58px)] lg:text-[clamp(48px,4.1vw,66px)]">
             {t('titleStrong')}
-            <span className="hidden text-[#383b3f] dark:text-[#8a8f98] md:inline">
+            <BrandRevealText className="max-md:!hidden text-[#383b3f] dark:text-[#8a8f98] md:!inline-grid">
               {' '}{t('titleMuted')}
-            </span>
+            </BrandRevealText>
           </h1>
         </motion.div>
 

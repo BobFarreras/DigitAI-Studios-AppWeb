@@ -5,15 +5,10 @@
  * @scope Renderitzar figures SVG animades i copy dels pilars del Hero.
  */
 'use client';
-
 import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
-
 const variants = ['stack', 'nodes', 'ramp'] as const;
-
-export function HeroPillarGrid() {
-  const t = useTranslations('LandingV2.hero');
-
+export function HeroPillarGrid() { const t = useTranslations('LandingV2.hero');
   return (
     <div className="grid min-h-0 overflow-hidden border-y border-[#d0d6e0] bg-white/34 backdrop-blur-[2px] dark:border-[#23252a] dark:bg-[#08090a]/34 lg:h-[clamp(340px,48svh,470px)] lg:grid-cols-3">
       {variants.map((variant, index) => (
@@ -40,13 +35,11 @@ export function HeroPillarGrid() {
     </div>
   );
 }
-
 function PillarFigure({ variant }: { variant: (typeof variants)[number] }) {
   if (variant === 'nodes') return <NodesFigure />;
   if (variant === 'ramp') return <RampFigure />;
   return <StackFigure />;
 }
-
 function StackFigure() {
   return (
     <motion.svg
@@ -62,21 +55,26 @@ function StackFigure() {
           className="linear-figure-line"
           d={`M40 ${88 + layer * 18} L130 ${42 + layer * 18} L220 ${88 + layer * 18} L130 ${134 + layer * 18} Z`}
           initial={{ opacity: 0, y: -8 }}
-          animate={{ opacity: 1 - layer * 0.12, y: [0, -3 - layer * 0.8, 0] }}
-          variants={{ hover: { y: -layer * 7, opacity: 0.95 } }}
-          transition={{ duration: 2.4, delay: layer * 0.1, repeat: Infinity, ease: 'easeInOut' }}
+          variants={{
+            rest: { opacity: 1 - layer * 0.12, y: 0 },
+            hover: {
+              y: [0, -layer * 7, 0], opacity: 0.95,
+              transition: { duration: 1.7, delay: layer * 0.08, repeat: Infinity, ease: 'easeInOut' },
+            },
+          }}
         />
       ))}
       <motion.path
         className="linear-figure-accent"
         d="M88 76 C96 54 164 54 172 76 M76 86 H184 M92 96 H168 M106 106 H154"
-        animate={{ opacity: [0.35, 0.85, 0.35] }}
-        transition={{ duration: 2.4, repeat: Infinity }}
+        variants={{
+          rest: { opacity: 0.56 },
+          hover: { opacity: [0.35, 0.95, 0.35], transition: { duration: 1.5, repeat: Infinity } },
+        }}
       />
     </motion.svg>
   );
 }
-
 function NodesFigure() {
   const cubes = [
     'M78 62 L120 40 L162 62 L162 112 L120 136 L78 112 Z',
@@ -84,7 +82,6 @@ function NodesFigure() {
     'M138 108 L180 86 L222 108 L222 158 L180 182 L138 158 Z',
     'M92 152 L130 132 L168 152 L168 194 L130 214 L92 194 Z',
   ];
-
   return (
     <motion.svg
       viewBox="0 0 260 220"
@@ -99,26 +96,31 @@ function NodesFigure() {
           className={index === 0 ? 'linear-figure-accent' : 'linear-figure-line'}
           d={cube}
           initial={{ opacity: 0, scale: 0.94 }}
-          animate={{
-            opacity: index === 0 ? 0.85 : 0.55,
-            scale: [1, 1.025, 1],
-            x: index % 2 === 0 ? [0, 3, 0] : [0, -3, 0],
-            y: index % 2 === 0 ? [0, -3, 0] : [0, 3, 0],
+          variants={{
+            rest: { opacity: index === 0 ? 0.85 : 0.55, scale: 1, x: 0, y: 0 },
+            hover: {
+              scale: [1, 1.08, 1], opacity: 0.95,
+              x: index % 2 === 0 ? [0, 4, 0] : [0, -4, 0],
+              y: index % 2 === 0 ? [0, -4, 0] : [0, 4, 0],
+              transition: { duration: 1.7, delay: index * 0.12, repeat: Infinity, ease: 'easeInOut' },
+            },
           }}
-          variants={{ hover: { scale: 1.1, opacity: 0.95 } }}
-          transition={{ duration: 2.2, delay: index * 0.18, repeat: Infinity, ease: 'easeInOut' }}
         />
       ))}
       <motion.path
         className="linear-figure-line"
         d="M120 136 V160 M122 130 L148 144 M112 138 L92 150"
-        animate={{ pathLength: [0.35, 1, 0.35], opacity: [0.35, 0.9, 0.35] }}
-        transition={{ duration: 2.6, repeat: Infinity, ease: 'easeInOut' }}
+        variants={{
+          rest: { pathLength: 0.62, opacity: 0.46 },
+          hover: {
+            pathLength: [0.35, 1, 0.35], opacity: [0.35, 0.9, 0.35],
+            transition: { duration: 1.8, repeat: Infinity, ease: 'easeInOut' },
+          },
+        }}
       />
     </motion.svg>
   );
 }
-
 function RampFigure() {
   return (
     <motion.svg
@@ -134,9 +136,13 @@ function RampFigure() {
           className={index > 9 ? 'linear-figure-accent' : 'linear-figure-line'}
           d={`M46 ${168 - index * 6} L160 ${108 - index * 8} L214 ${136 - index * 4} L100 ${196 - index * 2} Z`}
           initial={{ opacity: 0, x: -10 }}
-          animate={{ opacity: 0.25 + index * 0.045, x: [0, index * 0.55, 0], y: [0, -index * 0.18, 0] }}
-          variants={{ hover: { x: index * 1.4, y: -index * 0.65, opacity: 0.92 } }}
-          transition={{ duration: 2.1, delay: index * 0.055, repeat: Infinity, ease: 'easeInOut' }}
+          variants={{
+            rest: { opacity: 0.25 + index * 0.045, x: 0, y: 0 },
+            hover: {
+              x: [0, index * 1.4, 0], y: [0, -index * 0.65, 0], opacity: 0.92,
+              transition: { duration: 1.65, delay: index * 0.04, repeat: Infinity, ease: 'easeInOut' },
+            },
+          }}
         />
       ))}
     </motion.svg>

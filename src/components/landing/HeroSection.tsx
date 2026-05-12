@@ -1,3 +1,9 @@
+/**
+ * @file src/components/landing/HeroSection.tsx
+ * @updated 2026-05-12
+ * @summary Hero legacy amb headline, CTA i preview de video.
+ * @scope Presentacio inicial de landing legacy; sense logica de dades.
+ */
 'use client';
 
 import { useState } from 'react';
@@ -6,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { PlayCircle } from 'lucide-react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
+import { BrandRevealText } from '@/components/ui/brand-reveal';
 
 export function HeroSection() {
   const t = useTranslations('Hero');
@@ -27,7 +34,7 @@ export function HeroSection() {
           transition={{ duration: 0.8 }}
         >
           <h1 className="text-5xl lg:text-7xl font-bold mb-6 leading-tight">
-            {t('title_start')} <span className="text-transparent bg-clip-text bg-linear-to-r from-primary to-purple-400">{t('title_highlight_1')}</span>.<br />
+            {t('title_start')} <BrandRevealText className="text-foreground">{t('title_highlight_1')}</BrandRevealText>.<br />
             {t('title_middle')} <span className="text-foreground">{t('title_highlight_2')}</span>.
           </h1>
           <p className="text-xl text-muted-foreground mb-8 leading-relaxed max-w-lg">
