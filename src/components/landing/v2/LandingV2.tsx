@@ -4,23 +4,23 @@
  * @summary Landing principal estil Linear amb narrativa compacta.
  * @scope Orquestrar seccions de marketing i contacte final.
  */
-import { HeroImpact } from '@/components/landing/v2/HeroImpact';
-import { WhatWeBuild } from '@/components/landing/v2/WhatWeBuild';
-import { ExplainerFlows } from '@/components/landing/v2/ExplainerFlows';
-import { ServicePanels } from '@/components/landing/v2/ServicePanels';
-import { ValueSections } from '@/components/landing/v2/ValueSections';
-import { FinalCta } from '@/components/landing/v2/FinalCta';
+import { HeroLinear } from '@/components/landing/v2/HeroV2';
+
+
 import { ContactSection } from '@/components/landing/ContactSection';
+import { AutomationSection } from './AutomationSection';
+import { CustomSoftwareSection } from './CustomSoftwareSection';
+import { TrainingSection } from './TrainingSection';
 
 export function LandingV2() {
   return (
     <div className="linear-shell">
-      <HeroImpact />
-      <WhatWeBuild />
-      <ExplainerFlows />
-      <ServicePanels />
-      <ValueSections />
-      <FinalCta />
+      <HeroLinear/>
+      <AutomationSection/>
+      <CustomSoftwareSection/>
+      <TrainingSection/>
+ 
+      
       <section id="contacte">
         <ContactSection />
       </section>

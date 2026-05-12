@@ -43,34 +43,33 @@
 
 .dark {
   /* --- MODE FOSC (DARK) --- */
-  /* Aquí és on abans fallava: Ara assegurem fons fosc i text clar */
-  --background: 260 8% 4%;      /* Fons gairebé negre/lila */
-  --foreground: 260 10% 98%;    /* Text blanc */
+  --background: 200 11% 4%;
+  --foreground: 180 7% 97%;
 
-  --card: 260 14% 7%;
-  --card-foreground: 260 10% 98%;
+  --card: 210 6% 6%;
+  --card-foreground: 180 7% 97%;
 
-  --popover: 260 14% 4%;
-  --popover-foreground: 260 10% 98%;
+  --popover: 200 11% 4%;
+  --popover-foreground: 180 7% 97%;
 
-  --primary: 263 70% 50%;
-  --primary-foreground: 0 0% 98%;
+  --primary: 64 89% 54%;
+  --primary-foreground: 200 11% 4%;
 
-  --secondary: 260 15% 12%;
-  --secondary-foreground: 0 0% 98%;
+  --secondary: 210 4% 9%;
+  --secondary-foreground: 180 7% 97%;
 
-  --muted: 260 15% 12%;
-  --muted-foreground: 260 10% 65%;
+  --muted: 220 5% 16%;
+  --muted-foreground: 220 6% 57%;
 
-  --accent: 260 15% 12%;
-  --accent-foreground: 0 0% 98%;
+  --accent: 236 58% 60%;
+  --accent-foreground: 180 7% 97%;
 
   --destructive: 0 62.8% 30.6%;
   --destructive-foreground: 0 0% 98%;
 
-  --border: 260 15% 12%;
-  --input: 260 15% 12%;
-  --ring: 263 70% 50%;
+  --border: 225 9% 15%;
+  --input: 210 4% 22%;
+  --ring: 64 89% 54%;
   
   --p: 216 12% 84%;
 }
@@ -189,41 +188,78 @@ img {
   }
 
   .linear-shell {
-    background: hsl(var(--background));
-    color: hsl(var(--foreground));
+    background: #f7f8f8;
+    color: #08090a;
+  }
+
+  .dark .linear-shell {
+    background: #08090a;
+    color: #f7f8f8;
   }
 
   .linear-surface-1 {
-    background: hsl(var(--card));
-    border: 1px solid hsl(var(--border));
-    box-shadow: rgba(0, 0, 0, 0.08) 0 2px 8px 0;
+    background: #0f1011;
+    border: 1px solid #23252a;
+    box-shadow: rgba(0, 0, 0, 0.4) 0 2px 4px 0;
   }
 
   .linear-surface-2 {
-    background: color-mix(in oklab, hsl(var(--card)) 88%, black 12%);
-    border: 1px solid hsl(var(--border));
-    box-shadow: inset 0 0 0 1px color-mix(in oklab, hsl(var(--border)) 70%, transparent 30%);
+    background: #161718;
+    border: 1px solid #323334;
+    box-shadow: inset 0 0 0 1px #23252a;
   }
 
   .linear-muted {
-    color: hsl(var(--muted-foreground));
+    color: #8a8f98;
   }
 
   .linear-meta {
-    color: color-mix(in oklab, hsl(var(--muted-foreground)) 82%, transparent 18%);
+    color: #62666d;
   }
 
   .linear-accent {
-    color: #5e6ad2;
+    color: #e4f222;
   }
 
   .linear-cta {
-    background: #5e6ad2;
+    background: #e4f222;
     color: #08090a;
-    border: 1px solid #4f5bc9;
+    border: 1px solid #e4f222;
   }
 
   .linear-cta:hover {
-    background: #707be0;
+    background: #f0fb5a;
+  }
+
+  .linear-panel {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(247, 248, 248, 0.96));
+    border-color: #d0d6e0;
+  }
+
+  .dark .linear-panel {
+    background: linear-gradient(180deg, rgba(15, 16, 17, 0.78), rgba(8, 9, 10, 0.96));
+    border-color: #23252a;
+  }
+
+  .linear-figure-line {
+    fill: none;
+    stroke: #d0d6e0;
+    stroke-width: 1.1;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .linear-figure-accent {
+    fill: none;
+    stroke: #62666d;
+    stroke-width: 1.1;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .dark .linear-figure-line {
+    stroke: #383b3f;
+  }
+
+  .dark .linear-figure-accent {
+    stroke: #8a8f98;
   }
 }

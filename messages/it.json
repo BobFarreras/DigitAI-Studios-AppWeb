@@ -620,6 +620,8 @@
     "hero": {
       "badge": "Crescita Digitale con Risultati",
       "title": "Trasformiamo un sito bello in un vero motore di vendite e automazione.",
+      "titleStrong": "Automatizziamo processi. Creiamo software su misura.",
+      "titleMuted": "E formiamo il tuo team per dominarlo.",
       "subtitle": "Progettiamo esperienze che convertono visite in opportunità, con IA e processi operativi.",
       "primaryCta": "Voglio una proposta strategica",
       "secondaryCta": "Scopri il metodo",
@@ -656,6 +658,20 @@
         "desc": "CRM, prenotazioni, utenti e app web personalizzata."
       },
       "proofLine": "Esempio reale: lead acquisito, CRM aggiornato e follow-up inviato automaticamente.",
+      "pillars": [
+        {
+          "title": "Automazioni che lavorano da sole",
+          "desc": "Colleghiamo form, WhatsApp, CRM, email ed ERP affinche ogni dato arrivi al posto giusto senza inserirlo a mano."
+        },
+        {
+          "title": "Software pensato per il tuo processo",
+          "desc": "WebApp, portali, ERP, SAT e dashboard interne progettate intorno a come lavora davvero la tua azienda."
+        },
+        {
+          "title": "Formazione per dominare lo strumento",
+          "desc": "Cybersecurity, programmazione, sistemi, IA e automazioni spiegate con pratica affinche il team possa applicarle."
+        }
+      ],
       "console": {
         "title": "Console Automazione",
         "live": "Live",

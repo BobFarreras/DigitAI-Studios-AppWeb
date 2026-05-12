@@ -629,6 +629,8 @@
     "hero": {
       "badge": "Crecimiento Digital con Resultados",
       "title": "Pasamos de una web bonita a un motor real de ventas y automatización.",
+      "titleStrong": "Automatizamos procesos. Creamos software a medida.",
+      "titleMuted": "Y formamos a tu equipo para dominarlo.",
       "subtitle": "Diseñamos experiencias que convierten visitas en oportunidades, con IA y procesos que ahorran horas cada semana.",
       "primaryCta": "Quiero una propuesta estratégica",
       "secondaryCta": "Ver cómo trabajamos",
@@ -665,6 +667,20 @@
         "desc": "CRM, reservas, usuarios y app web a medida."
       },
       "proofLine": "Ejemplo real: lead capturado, CRM actualizado y seguimiento enviado automáticamente.",
+      "pillars": [
+        {
+          "title": "Automatizaciones que trabajan solas",
+          "desc": "Conectamos formularios, WhatsApp, CRM, email y ERP para que cada dato llegue donde toca sin introducirlo a mano."
+        },
+        {
+          "title": "Software pensado para tu proceso",
+          "desc": "AppWebs, portales, ERP, SAT y paneles internos diseñados alrededor de cómo trabaja realmente tu empresa."
+        },
+        {
+          "title": "Formación para dominar la herramienta",
+          "desc": "Cybersecurity, programación, sistemas, IA y automatizaciones explicadas con práctica para que el equipo pueda aplicarlas."
+        }
+      ],
       "console": {
         "title": "Consola de Automatización",
         "live": "En vivo",

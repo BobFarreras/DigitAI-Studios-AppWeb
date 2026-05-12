@@ -629,6 +629,8 @@
     "hero": {
       "badge": "Creixement Digital Amb Resultats",
       "title": "Passem de web bonica a motor real de vendes i automatitzacio.",
+      "titleStrong": "Automatitzem processos. Creem software a mida.",
+      "titleMuted": "I formem el teu equip perquè ho domini.",
       "subtitle": "Dissenyem experiències que converteixen visites en oportunitats, amb IA i processos que estalvien hores cada setmana.",
       "primaryCta": "Vull una proposta estratègica",
       "secondaryCta": "Veure com treballem",
@@ -665,6 +667,20 @@
         "desc": "CRM, reserves, usuaris i app web a mida."
       },
       "proofLine": "Exemple real: lead capturat, CRM actualitzat i seguiment enviat automàticament.",
+      "pillars": [
+        {
+          "title": "Automatitzacions que treballen soles",
+          "desc": "Connectem formularis, WhatsApp, CRM, email i ERP perquè cada dada arribi on toca sense picar-la a mà."
+        },
+        {
+          "title": "Software pensat pel teu procés",
+          "desc": "AppWebs, portals, ERP, SAT i panells interns dissenyats al voltant de com treballa realment la teva empresa."
+        },
+        {
+          "title": "Formacio per dominar l'eina",
+          "desc": "Cybersecurity, programacio, sistemes, IA i automatitzacions explicades amb pràctica perquè l'equip les pugui aplicar."
+        }
+      ],
       "console": {
         "title": "Consola d Automatitzacio",
         "live": "En viu",

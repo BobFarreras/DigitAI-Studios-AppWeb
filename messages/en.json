@@ -629,6 +629,8 @@
     "hero": {
       "badge": "Digital Growth with Real Outcomes",
       "title": "We turn a nice website into a real sales and automation engine.",
+      "titleStrong": "We automate workflows. We build custom software.",
+      "titleMuted": "And train your team to master it.",
       "subtitle": "We design experiences that convert traffic into opportunities, powered by AI and operational workflows.",
       "primaryCta": "Get a strategic proposal",
       "secondaryCta": "See our process",
@@ -665,6 +667,20 @@
         "desc": "Custom CRM, bookings, user systems, and web apps."
       },
       "proofLine": "Real example: lead captured, CRM updated, and follow-up sent automatically.",
+      "pillars": [
+        {
+          "title": "Automations that run by themselves",
+          "desc": "We connect forms, WhatsApp, CRM, email, and ERP so every data point lands where it belongs without manual entry."
+        },
+        {
+          "title": "Software shaped around your process",
+          "desc": "Web apps, portals, ERP, SAT, and internal dashboards designed around how your company actually works."
+        },
+        {
+          "title": "Training to master the system",
+          "desc": "Cybersecurity, programming, systems, AI, and automations taught through practice so the team can apply them."
+        }
+      ],
       "console": {
         "title": "Automation Console",
         "live": "Live",
