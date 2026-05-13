@@ -17,7 +17,7 @@ import { CrmView } from './custom-software/CrmView';
 import { DashboardView } from './custom-software/DashboardView';
 import { InventoryView } from './custom-software/InventoryView';
 import { PipelineView } from './custom-software/PipelineView';
-import { startClients, startJobs, startMaterial, startTeam, toStockState, views, type JobState, type LeadStage, type NewSatOrder, type ViewId } from './custom-software/model';
+import { startClients, startJobs, startMaterial, startTeam, toStockState, views, type JobState, type LeadStage, type NewMaterial, type NewSatOrder, type ViewId } from './custom-software/model';
 
 export function CustomSoftwareSection() {
   const copy = getSoftwareCopy(useLocale());
@@ -49,7 +49,7 @@ export function CustomSoftwareSection() {
     }, ...p]);
     if (!input) setJobTitle('');
   };
-  const addMaterial = () => { const name = materialName.trim(); if (!name) return; setMaterial((p) => [{ id: `MAT-${Math.floor(Math.random() * 900 + 100)}`, name, qty: 2, min: 5, state: 'Baix' }, ...p]); setMaterialName(''); };
+  const addMaterial = (input?: NewMaterial) => { const name = (input?.name ?? materialName).trim(); if (!name) return; const qty = input?.qty ?? 2, min = input?.min ?? 5; setMaterial((p) => [{ id: `MAT-${Math.floor(Math.random() * 900 + 100)}`, name, qty, min, category: input?.category, supplier: input?.supplier, supplierContact: input?.supplierContact, unitPrice: input?.unitPrice, leadTime: input?.leadTime, state: toStockState(qty, min) }, ...p]); setMaterialName(''); };
   const addUser = () => { const name = userName.trim(); if (!name) return; setTeam((p) => [{ id: `USR-${Math.floor(Math.random() * 90 + 10)}`, name, role: 'Tècnic', zone: 'Nova zona', enabled: true }, ...p]); setUserName(''); };
 
   return (

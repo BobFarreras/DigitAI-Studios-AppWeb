@@ -40,7 +40,8 @@ export type Job = {
   photos: JobPhoto[];
 };
 export type NewSatOrder = { title: string; client: string; technician: string; priority: JobPriority; sla: JobSla; eta: string; type: JobType; contact: string; location: string; description: string };
-export type Material = { id: string; name: string; qty: number; min: number; state: StockState };
+export type Material = { id: string; name: string; qty: number; min: number; state: StockState; category?: string; supplier?: string; supplierContact?: string; unitPrice?: number; leadTime?: string; location?: string };
+export type NewMaterial = { name: string; qty: number; min: number; category?: string; supplier?: string; supplierContact?: string; unitPrice?: number; leadTime?: string };
 export type Member = { id: string; name: string; role: Role; zone: string; enabled: boolean };
 export type View = { id: ViewId; label: string; icon: LucideIcon };
 
@@ -83,6 +84,19 @@ export const startMaterial: Material[] = [
   { id: 'MAT-011', name: 'Junta 22 mm', qty: 34, min: 12, state: 'OK' },
   { id: 'MAT-023', name: 'Vàlvula 3 vies', qty: 2, min: 4, state: 'Baix' },
   { id: 'MAT-045', name: 'Termo 80L', qty: 1, min: 3, state: 'Crític' },
+  { id: 'MAT-052', name: 'Sifó industrial inox', qty: 5, min: 4, state: 'OK' },
+  { id: 'MAT-064', name: 'Bomba pressió 1.5CV', qty: 2, min: 2, state: 'Baix' },
+  { id: 'MAT-071', name: 'Vas expansió 24L', qty: 3, min: 2, state: 'OK' },
+  { id: 'MAT-088', name: 'Kit instal·lació gas', qty: 1, min: 3, state: 'Crític' },
+  { id: 'MAT-096', name: 'Tefló professional', qty: 28, min: 10, state: 'OK' },
+  { id: 'MAT-104', name: 'Clau de pas 1/2', qty: 8, min: 12, state: 'Baix' },
+  { id: 'MAT-115', name: 'Aixeta temporitzada', qty: 4, min: 3, state: 'OK' },
+  { id: 'MAT-126', name: 'Maniguet coure 22 mm', qty: 16, min: 8, state: 'OK' },
+  { id: 'MAT-135', name: 'Detector fuita aigua', qty: 1, min: 2, state: 'Crític' },
+  { id: 'MAT-142', name: 'Desaigüe flexible reforçat', qty: 7, min: 6, state: 'OK' },
+  { id: 'MAT-150', name: 'Cartutx anticalç ACS', qty: 2, min: 5, state: 'Crític' },
+  { id: 'MAT-161', name: 'Ràcord llautó 3/4', qty: 22, min: 10, state: 'OK' },
+  { id: 'MAT-172', name: 'Sonda NTC caldera', qty: 3, min: 4, state: 'Baix' },
 ];
 
 export const startTeam: Member[] = [
