@@ -106,8 +106,8 @@ function WorkflowNode({ node, index, flowId, showBubble, onHover }: { node: Node
           {t(`flows.${flowId}.nodes.${node.id}.explain`)}
         </motion.div>
       ) : null}
-      <div className="mx-auto flex h-[92px] w-[92px] items-center justify-center rounded-[8px] border border-[#d0d6e0] bg-[#f7f8f8]/88 shadow-[0_12px_28px_rgba(8,9,10,0.08)] transition-colors group-hover:border-[#8b5cf6]/60 dark:border-[#323334] dark:bg-[#161718]/92">
-        <Icon className={`h-8 w-8 ${node.tone ?? 'text-[#8b5cf6]'}`} />
+      <div className="mx-auto flex h-[92px] w-[92px] items-center justify-center rounded-[8px] border border-[#d0d6e0] bg-[#f7f8f8]/78 shadow-[0_12px_28px_rgba(8,9,10,0.08)] transition-all duration-300 group-hover:border-[#8b5cf6]/60 dark:border-[#323334] dark:bg-[#161718]/84">
+        <Icon className={`h-8 w-8 transition-all duration-300 ${showBubble ? (node.tone ?? 'text-[#8b5cf6]') : 'text-[#8a8f98] dark:text-[#62666d]'} ${showBubble ? 'scale-[1.03]' : 'grayscale saturate-50 opacity-80'}`} />
       </div>
       <h4 className="mt-3 text-[14px] font-[650] leading-tight">{t(`flows.${flowId}.nodes.${node.id}.title`)}</h4>
       <p className="mt-1 text-[11px] text-[#62666d] dark:text-[#8a8f98]">{t(`flows.${flowId}.nodes.${node.id}.meta`)}</p>
