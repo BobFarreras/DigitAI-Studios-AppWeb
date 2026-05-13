@@ -17,7 +17,7 @@ import { CrmView } from './custom-software/CrmView';
 import { DashboardView } from './custom-software/DashboardView';
 import { InventoryView } from './custom-software/InventoryView';
 import { PipelineView } from './custom-software/PipelineView';
-import { nextJobState, nextLeadStage, startClients, startJobs, startMaterial, startTeam, toStockState, views, type ViewId } from './custom-software/model';
+import { nextJobState, nextLeadStage, startClients, startJobs, startMaterial, startTeam, toStockState, views, type NewSatOrder, type ViewId } from './custom-software/model';
 
 export function CustomSoftwareSection() {
   const copy = getSoftwareCopy(useLocale());
@@ -26,7 +26,21 @@ export function CustomSoftwareSection() {
   const [clientName, setClientName] = useState(''), [jobTitle, setJobTitle] = useState(''), [materialName, setMaterialName] = useState(''), [userName, setUserName] = useState('');
   const [clients, setClients] = useState(startClients), [jobs, setJobs] = useState(startJobs), [material, setMaterial] = useState(startMaterial), [team, setTeam] = useState(startTeam);
   const addClient = () => { const name = clientName.trim(); if (!name) return; setClients((p) => [{ id: Date.now(), name, segment: 'Nou servei', owner: 'Assignar', stage: 'Nou' }, ...p]); setClientName(''); };
-  const addJob = () => { const title = jobTitle.trim(); if (!title) return; setJobs((p) => [{ id: `SAT-${Math.floor(Math.random() * 900 + 100)}`, title, client: clients[0]?.name ?? 'Client nou', state: 'Pendent', priority: 'Mitja', sla: 'OK', technician: 'Assignar', eta: 'Planificar' }, ...p]); setJobTitle(''); };
+  const addJob = (input?: NewSatOrder) => {
+    const title = input?.title?.trim() || jobTitle.trim();
+    if (!title) return;
+    setJobs((p) => [{
+      id: `SAT-${Math.floor(Math.random() * 900 + 100)}`,
+      title,
+      client: input?.client || clients[0]?.name || 'Client nou',
+      state: 'Pendent',
+      priority: input?.priority || 'Mitja',
+      sla: input?.sla || 'OK',
+      technician: input?.technician || 'Assignar',
+      eta: input?.eta || 'Planificar',
+    }, ...p]);
+    if (!input) setJobTitle('');
+  };
   const addMaterial = () => { const name = materialName.trim(); if (!name) return; setMaterial((p) => [{ id: `MAT-${Math.floor(Math.random() * 900 + 100)}`, name, qty: 2, min: 5, state: 'Baix' }, ...p]); setMaterialName(''); };
   const addUser = () => { const name = userName.trim(); if (!name) return; setTeam((p) => [{ id: `USR-${Math.floor(Math.random() * 90 + 10)}`, name, role: 'Tècnic', zone: 'Nova zona', enabled: true }, ...p]); setUserName(''); };
 

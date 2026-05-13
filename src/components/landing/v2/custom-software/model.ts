@@ -17,6 +17,7 @@ export type Role = 'Tècnic' | 'Coordinador' | 'Admin';
 
 export type Client = { id: number; name: string; segment: string; owner: string; stage: LeadStage };
 export type Job = { id: string; title: string; client: string; state: JobState; priority: JobPriority; sla: JobSla; technician: string; eta: string };
+export type NewSatOrder = { title: string; client: string; technician: string; priority: JobPriority; sla: JobSla; eta: string };
 export type Material = { id: string; name: string; qty: number; min: number; state: StockState };
 export type Member = { id: string; name: string; role: Role; zone: string; enabled: boolean };
 export type View = { id: ViewId; label: string; icon: LucideIcon };
