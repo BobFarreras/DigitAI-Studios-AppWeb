@@ -6,76 +6,103 @@
  */
 'use client';
 import { useMemo, useState } from 'react';
+import type { ReactNode } from 'react';
 import { motion } from 'framer-motion';
-import { AlertTriangle, Clock3, Plus, ShieldCheck, X } from 'lucide-react';
-import type { Job, JobPriority, JobSla, JobState, NewSatOrder } from './model';
+import { ArrowUpRight, Check, Circle, ClipboardCheck, Hammer, Info as InfoIcon, Minus, Plus, Search, SearchCheck, SignalHigh, SignalLow, SignalMedium, SlidersHorizontal, Wrench, X, Zap } from 'lucide-react';
+import { FloatingTip } from './FloatingTip';
+import type { Job, JobPriority, JobSla, JobState, JobType, NewSatOrder } from './model';
+import { SatOrderDetail } from './SatOrderDetail';
 
-type Props = { jobs: Job[]; jobTitle: string; onSetJobTitle: (v: string) => void; onAddJob: (input?: NewSatOrder) => void; onAdvance: (id: string) => void };
+type Props = { jobs: Job[]; jobTitle: string; onSetJobTitle: (v: string) => void; onAddJob: (input?: NewSatOrder) => void; onSetJobState: (id: string, state: JobState) => void };
 const states: JobState[] = ['Pendent', 'En curs', 'Blocat', 'Completat'];
-const nextState: Record<JobState, JobState> = { Pendent: 'En curs', 'En curs': 'Completat', Blocat: 'En curs', Completat: 'Pendent' };
+const initialForm: NewSatOrder = { title: '', client: '', technician: '', priority: 'Mitja', sla: 'OK', eta: '', type: 'Reparacio', contact: '', location: '', description: '' };
+const columns = [
+  ['Ordre', 'El color i la icona indiquen el tipus de treball.'],
+  ['Client', 'Empresa o centre afectat per la incidencia.'],
+  ['Tipus', 'Classifica si es reparacio, manteniment, muntatge o auditoria.'],
+  ['Tecnic', 'Persona responsable de la intervencio.'],
+  ['Prioritat', 'Insignia d impacte: una barra baixa, dues mitja, tres alta.'],
+  ['SLA', 'Salut del compromis: verd dins termini, groc en risc, vermell vençut.'],
+  ['Estat', 'Icona del flux operatiu de la ordre.'],
+  ['Accio', 'Obre la fitxa completa amb diagnosi, materials, fotos i resolucio.'],
+] as const;
 
-export function PipelineView({ jobs, jobTitle, onSetJobTitle, onAddJob, onAdvance }: Props) {
+export function PipelineView({ jobs, jobTitle, onSetJobTitle, onAddJob, onSetJobState }: Props) {
   const [selected, setSelected] = useState<string | null>(jobs[0]?.id ?? null);
   const [stateFilter, setStateFilter] = useState<'all' | JobState>('all');
   const [openDialog, setOpenDialog] = useState(false);
-  const [form, setForm] = useState<NewSatOrder>({ title: '', client: '', technician: '', priority: 'Mitja', sla: 'OK', eta: '' });
+  const [screen, setScreen] = useState<'list' | 'detail'>('list');
+  const [form, setForm] = useState<NewSatOrder>(initialForm);
   const filtered = useMemo(() => jobs.filter((j) => (stateFilter === 'all' || j.state === stateFilter) && `${j.id} ${j.title} ${j.client} ${j.technician}`.toLowerCase().includes(jobTitle.toLowerCase())), [jobs, stateFilter, jobTitle]);
   const current = jobs.find((j) => j.id === selected) ?? filtered[0] ?? null;
 
   const submit = () => {
-    if (!form.title.trim() || !form.client.trim() || !form.technician.trim() || !form.eta.trim()) return;
+    if (!form.title.trim() || !form.client.trim() || !form.technician.trim() || !form.eta.trim() || !form.description.trim()) return;
     onAddJob(form);
-    setForm({ title: '', client: '', technician: '', priority: 'Mitja', sla: 'OK', eta: '' });
+    setForm(initialForm);
     setOpenDialog(false);
   };
 
+  if (screen === 'detail' && current) {
+    return <motion.div key="pipeline-detail" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="h-full"><SatOrderDetail job={current} onBack={() => setScreen('list')} onSetState={(state) => onSetJobState(current.id, state)} /></motion.div>;
+  }
+
   return (
-    <motion.div key="pipeline" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="grid h-full gap-4 overflow-auto pr-1 lg:grid-cols-12">
-      <section className="space-y-4 lg:col-span-8">
-        <div className="group rounded-[8px] border border-[#d0d6e0] bg-[#eceff4]/82 p-3 [filter:saturate(.4)_grayscale(.35)] transition-all duration-500 hover:[filter:saturate(1)_grayscale(0)] dark:border-[#23252a] dark:bg-[#161718]/88">
-          <div className="flex flex-col gap-2 md:flex-row">
-            <input value={jobTitle} onChange={(e) => onSetJobTitle(e.target.value)} placeholder="Cercar ordre, client o tècnic..." className="h-10 flex-1 rounded-[6px] border border-[#c0c8d5] bg-white px-3 text-[13px] dark:border-[#323334] dark:bg-[#08090a]" />
-            <button onClick={() => setOpenDialog(true)} className="inline-flex h-10 items-center justify-center gap-2 rounded-[6px] border border-[#c0c8d5] bg-white px-4 text-[12px] font-semibold text-[#383b3f] transition dark:border-[#323334] dark:bg-[#08090a] dark:text-[#d0d6e0] group-hover:bg-[#e4f222] group-hover:text-[#08090a]"><Plus className="h-4 w-4" />Crear ordre</button>
+    <motion.div key="pipeline" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="relative h-full overflow-hidden rounded-[10px] border border-[#d0d6e0] bg-white text-[#08090a] dark:border-[#23252a] dark:bg-[radial-gradient(circle_at_20%_0%,rgba(255,255,255,0.055),transparent_26%),linear-gradient(135deg,#111213,#0b0c0d_58%,#101112)] dark:text-[#f7f8f8]">
+      <section className="flex h-full flex-col">
+        <div className="flex min-h-12 items-center justify-between border-b border-[#d0d6e0] px-4 dark:border-[#23252a]">
+          <div className="flex items-center gap-1 text-[12px] font-[560]">
+            <Tab active={stateFilter === 'all'} onClick={() => setStateFilter('all')} label="Tot" />
+            {states.map((s) => <Tab key={s} active={stateFilter === s} onClick={() => setStateFilter(s)} label={s} />)}
           </div>
-          <div className="mt-2 flex flex-wrap gap-2">
-            <Chip active={stateFilter === 'all'} onClick={() => setStateFilter('all')} label="Tot" />
-            {states.map((s) => <Chip key={s} active={stateFilter === s} onClick={() => setStateFilter(s)} label={s} />)}
+          <div className="flex items-center gap-2">
+            <label className="hidden h-8 items-center gap-2 rounded-[6px] border border-[#c0c8d5] bg-white px-2 text-[12px] dark:border-[#323334] dark:bg-[#08090a] md:flex">
+              <Search className="h-3.5 w-3.5 text-[#8a8f98]" />
+              <input value={jobTitle} onChange={(e) => onSetJobTitle(e.target.value)} placeholder="Cercar..." className="w-32 bg-transparent outline-none placeholder:text-[#8a8f98]" />
+            </label>
+            <SlidersHorizontal className="h-4 w-4 text-[#8a8f98]" />
+            <button onClick={() => setOpenDialog(true)} className="inline-flex h-8 items-center justify-center gap-2 rounded-[6px] bg-[#08090a] px-3 text-[12px] font-semibold text-white dark:bg-[#e4f222] dark:text-[#08090a]"><Plus className="h-4 w-4" />Crear</button>
           </div>
         </div>
 
-        <div className="group overflow-hidden rounded-[8px] border border-[#d0d6e0] [filter:saturate(.4)_grayscale(.35)] transition-all duration-500 hover:[filter:saturate(1)_grayscale(0)] dark:border-[#23252a]">
-          <div className="max-h-[420px] overflow-auto">
-            <table className="w-full text-left text-[13px]">
-              <thead className="bg-[#eceff4] text-[#8a8f98] dark:bg-[#161718]"><tr><th className="px-3 py-2">Ordre</th><th className="px-3 py-2">Client</th><th className="px-3 py-2">Tècnic</th><th className="px-3 py-2">Prioritat</th><th className="px-3 py-2">SLA</th><th className="px-3 py-2">Estat</th></tr></thead>
+        <div className="min-h-0 flex-1 overflow-auto">
+          <table className="w-full min-w-[900px] text-left text-[13px]">
+            <thead className="sticky top-0 z-10 border-b border-[#d0d6e0] bg-white/96 text-[#8a8f98] backdrop-blur dark:border-[#23252a] dark:bg-[#111213]/96"><tr>{columns.map(([label, tip]) => <th key={label} className="px-4 py-3 font-[520]"><ColumnHint label={label} tip={tip} /></th>)}</tr></thead>
               <tbody>{filtered.map((j) => (
-                <tr key={j.id} onClick={() => setSelected(j.id)} className={`cursor-pointer border-t border-[#d0d6e0] dark:border-[#23252a] ${current?.id === j.id ? 'bg-[#eef1f6] dark:bg-[#121314]' : 'bg-white dark:bg-[#0f1011]'}`}>
-                  <td className="px-3 py-2 font-[560]">{j.id}<p className="text-[11px] text-[#62666d]">{j.title}</p></td><td className="px-3 py-2">{j.client}</td><td className="px-3 py-2">{j.technician}</td>
-                  <td className="px-3 py-2"><PriorityPill value={j.priority} /></td><td className="px-3 py-2"><SlaPill value={j.sla} /></td><td className="px-3 py-2"><StatePill value={j.state} /></td>
+                <tr key={j.id} onClick={() => setSelected(j.id)} className={`border-b border-[#d0d6e0]/70 bg-white transition-colors hover:bg-[#f4f6fa] dark:border-[#23252a]/80 dark:bg-transparent dark:hover:bg-[#171819] ${current?.id === j.id ? 'bg-[#f4f6fa] dark:bg-[#151617]' : ''}`}>
+                  <td className="px-4 py-4"><div className="flex items-center gap-3"><OrderMarker job={j} /><div><p className="font-[590]">{j.id}</p><p className="text-[12px] text-[#62666d] dark:text-[#8a8f98]">{j.title}</p></div></div></td>
+                  <td className="px-4 py-4 text-[#383b3f] dark:text-[#d0d6e0]">{j.client}</td><td className="px-4 py-4 text-[#62666d] dark:text-[#8a8f98]">{j.type}</td><td className="px-4 py-4 text-[#62666d] dark:text-[#8a8f98]">{j.technician}</td>
+                  <td className="px-4 py-4"><PriorityPill value={j.priority} /></td><td className="px-4 py-4"><SlaPill value={j.sla} /></td><td className="px-4 py-4"><StatePill value={j.state} /></td>
+                  <td className="px-4 py-4"><button onClick={(e) => { e.stopPropagation(); setSelected(j.id); setScreen('detail'); }} className="inline-flex items-center gap-1 rounded-[6px] border border-[#c0c8d5] bg-white px-2 py-1 text-[11px] font-semibold text-[#383b3f] transition hover:border-[#8a8f98] dark:border-[#323334] dark:bg-[#08090a] dark:text-[#d0d6e0]"><ArrowUpRight className="h-3.5 w-3.5" />Detall</button></td>
                 </tr>
               ))}</tbody>
-            </table>
-          </div>
+          </table>
         </div>
       </section>
 
-      <aside className="group rounded-[8px] border border-[#d0d6e0] bg-[#eceff4]/82 p-3 [filter:saturate(.4)_grayscale(.35)] transition-all duration-500 hover:[filter:saturate(1)_grayscale(0)] dark:border-[#23252a] dark:bg-[#161718]/88 lg:col-span-4">
-        <h4 className="text-[15px] font-semibold">{current?.id ?? 'Sense ordre seleccionada'}</h4><p className="mt-1 text-[12px] text-[#62666d]">{current ? current.title : 'Selecciona una ordre per veure detall.'}</p>
-        {current ? <div className="mt-3 space-y-2"><Info label="Client" value={current.client} /><Info label="Tècnic assignat" value={current.technician} /><Info label="ETA" value={current.eta} /><div className="grid grid-cols-2 gap-2"><PriorityPill value={current.priority} /><SlaPill value={current.sla} /></div><button onClick={() => onAdvance(current.id)} className="mt-2 flex w-full items-center justify-center gap-2 rounded-[6px] border border-[#c0c8d5] bg-white px-3 py-2 text-[12px] font-semibold text-[#383b3f] transition dark:border-[#323334] dark:bg-[#08090a] dark:text-[#d0d6e0] group-hover:bg-[#e4f222] group-hover:text-[#08090a]"><Clock3 className="h-4 w-4" />Passar a {nextState[current.state]}</button><Alerts job={current} /></div> : null}
-      </aside>
-
       {openDialog ? (
-        <div className="fixed inset-0 z-[90] flex items-center justify-center bg-black/45 p-4">
-          <div className="w-full max-w-xl rounded-[10px] border border-[#323334] bg-[#0f1011] p-4 text-[#f7f8f8]">
-            <div className="mb-3 flex items-center justify-between"><h4 className="text-[16px] font-semibold">Crear ordre SAT</h4><button onClick={() => setOpenDialog(false)} className="rounded-[6px] border border-[#323334] p-1"><X className="h-4 w-4" /></button></div>
-            <div className="grid gap-2 sm:grid-cols-2">
-              <Field value={form.title} onChange={(v) => setForm((f) => ({ ...f, title: v }))} label="Títol incidència" />
+        <div className="absolute inset-0 z-20 flex items-center justify-center rounded-[8px] bg-white/62 p-4 backdrop-blur-md dark:bg-[#08090a]/70">
+          <div className="max-h-full w-full max-w-2xl overflow-auto rounded-[10px] border border-[#d0d6e0] bg-[#f7f8f8] p-4 text-[#08090a] shadow-[0_24px_80px_rgba(8,9,10,0.22)] dark:border-[#323334] dark:bg-[#0f1011] dark:text-[#f7f8f8]">
+            <div className="mb-3 flex items-start justify-between gap-3 border-b border-[#d0d6e0] pb-3 dark:border-[#23252a]">
+              <div><h4 className="text-[16px] font-semibold">Crear ordre SAT</h4><p className="mt-1 text-[12px] text-[#62666d] dark:text-[#8a8f98]">Registra la incidencia amb dades suficients per assignar, prioritzar i resoldre.</p></div>
+              <button onClick={() => setOpenDialog(false)} className="rounded-[6px] border border-[#c0c8d5] bg-white p-1 text-[#62666d] dark:border-[#323334] dark:bg-[#08090a] dark:text-[#8a8f98]"><X className="h-4 w-4" /></button>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <Field value={form.title} onChange={(v) => setForm((f) => ({ ...f, title: v }))} label="Resum de l avaria" />
               <Field value={form.client} onChange={(v) => setForm((f) => ({ ...f, client: v }))} label="Client" />
               <Field value={form.technician} onChange={(v) => setForm((f) => ({ ...f, technician: v }))} label="Tècnic assignat" />
               <Field value={form.eta} onChange={(v) => setForm((f) => ({ ...f, eta: v }))} label="ETA" />
+              <Field value={form.contact} onChange={(v) => setForm((f) => ({ ...f, contact: v }))} label="Contacte client" />
+              <Field value={form.location} onChange={(v) => setForm((f) => ({ ...f, location: v }))} label="Ubicacio" />
+              <Select label="Tipus ordre" value={form.type} onChange={(v) => setForm((f) => ({ ...f, type: v as JobType }))} values={['Reparacio', 'Manteniment', 'Muntatge', 'Auditoria']} />
               <Select label="Prioritat" value={form.priority} onChange={(v) => setForm((f) => ({ ...f, priority: v as JobPriority }))} values={['Alta', 'Mitja', 'Baixa']} />
               <Select label="SLA" value={form.sla} onChange={(v) => setForm((f) => ({ ...f, sla: v as JobSla }))} values={['OK', 'Risc', 'Fora SLA']} />
+              <TextArea value={form.description} onChange={(v) => setForm((f) => ({ ...f, description: v }))} label="Descripcio clara de l avaria" />
             </div>
-            <button onClick={submit} className="mt-3 w-full rounded-[6px] bg-[#e4f222] px-3 py-2 text-[12px] font-semibold text-[#08090a]">Crear ordre</button>
+            <div className="mt-4 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+              <button onClick={() => setOpenDialog(false)} className="h-10 rounded-[6px] border border-[#c0c8d5] bg-white px-4 text-[12px] font-semibold text-[#383b3f] dark:border-[#323334] dark:bg-[#08090a] dark:text-[#d0d6e0]">Cancel·lar</button>
+              <button onClick={submit} className="h-10 rounded-[6px] bg-[#e4f222] px-4 text-[12px] font-semibold text-[#08090a]">Crear ordre</button>
+            </div>
           </div>
         </div>
       ) : null}
@@ -83,14 +110,15 @@ export function PipelineView({ jobs, jobTitle, onSetJobTitle, onAddJob, onAdvanc
   );
 }
 
-function Alerts({ job }: { job: Job }) {
-  const items = [`${job.client}: validació client pendent`, job.sla === 'Fora SLA' ? 'Escalar a coordinació en < 15 min' : 'Seguiment actiu de l ordre', job.priority === 'Alta' ? 'Bloqueig crític: prioritzar equip' : 'Sense bloqueig crític'];
-  return <div className="rounded-[6px] border border-[#c0c8d5] bg-white p-2 text-[12px] dark:border-[#323334] dark:bg-[#08090a]"><p className="mb-1 font-[560]">Alertes operatives</p>{items.map((t, i) => <p key={i} className="mt-1 flex items-center gap-1 text-[#62666d]">{i === 1 ? <AlertTriangle className="h-3.5 w-3.5 text-[#f5a623]" /> : <ShieldCheck className="h-3.5 w-3.5 text-[#27a644]" />}{t}</p>)}</div>;
+function ColumnHint({ label, tip }: { label: string; tip: string }) {
+  return <FloatingTip text={tip} className="inline-flex cursor-help items-center gap-1.5 outline-none">{label}<InfoIcon className="h-3.5 w-3.5" /></FloatingTip>;
 }
-function Field({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) { return <label className="text-[12px]"><span className="mb-1 block text-[#8a8f98]">{label}</span><input value={value} onChange={(e) => onChange(e.target.value)} className="h-10 w-full rounded-[6px] border border-[#323334] bg-[#08090a] px-3 text-[13px]" /></label>; }
-function Select({ label, value, onChange, values }: { label: string; value: string; onChange: (v: string) => void; values: string[] }) { return <label className="text-[12px]"><span className="mb-1 block text-[#8a8f98]">{label}</span><select value={value} onChange={(e) => onChange(e.target.value)} className="h-10 w-full rounded-[6px] border border-[#323334] bg-[#08090a] px-3 text-[13px]">{values.map((v) => <option key={v} value={v}>{v}</option>)}</select></label>; }
-function Chip({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) { return <button onClick={onClick} className={`rounded-full border px-2.5 py-1 text-[11px] ${active ? 'border-[#5e6ad2] text-[#5e6ad2]' : 'border-[#c0c8d5] text-[#8a8f98]'}`}>{label}</button>; }
-function StatePill({ value }: { value: JobState }) { const c = value === 'Pendent' ? 'text-[#5e6ad2] bg-[#5e6ad2]/12 border-[#5e6ad2]/35' : value === 'En curs' ? 'text-[#35b8e8] bg-[#35b8e8]/12 border-[#35b8e8]/35' : value === 'Blocat' ? 'text-[#eb5757] bg-[#eb5757]/12 border-[#eb5757]/35' : 'text-[#27a644] bg-[#27a644]/12 border-[#27a644]/35'; return <span className={`rounded-[4px] border px-2 py-0.5 text-[11px] ${c}`}>{value}</span>; }
-function PriorityPill({ value }: { value: JobPriority }) { const c = value === 'Alta' ? 'text-[#eb5757] bg-[#eb5757]/12 border-[#eb5757]/35' : value === 'Mitja' ? 'text-[#f5a623] bg-[#f5a623]/12 border-[#f5a623]/35' : 'text-[#5e6ad2] bg-[#5e6ad2]/12 border-[#5e6ad2]/35'; return <span className={`rounded-[4px] border px-2 py-0.5 text-[11px] ${c}`}>{value}</span>; }
-function SlaPill({ value }: { value: JobSla }) { const c = value === 'OK' ? 'text-[#27a644] bg-[#27a644]/12 border-[#27a644]/35' : value === 'Risc' ? 'text-[#f5a623] bg-[#f5a623]/12 border-[#f5a623]/35' : 'text-[#eb5757] bg-[#eb5757]/12 border-[#eb5757]/35'; return <span className={`rounded-[4px] border px-2 py-0.5 text-[11px] ${c}`}>{value}</span>; }
-function Info({ label, value }: { label: string; value: string }) { return <div className="rounded-[6px] border border-[#c0c8d5] bg-white px-2.5 py-2 text-[12px] dark:border-[#323334] dark:bg-[#08090a]"><p className="text-[#8a8f98]">{label}</p><p className="font-[560]">{value}</p></div>; }
+function Field({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) { return <label className="text-[12px]"><span className="mb-1 block text-[#62666d] dark:text-[#8a8f98]">{label}</span><input value={value} onChange={(e) => onChange(e.target.value)} className="h-10 w-full rounded-[6px] border border-[#c0c8d5] bg-white px-3 text-[13px] outline-none transition focus:border-[#5e6ad2] dark:border-[#323334] dark:bg-[#08090a]" /></label>; }
+function TextArea({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) { return <label className="text-[12px] sm:col-span-2"><span className="mb-1 block text-[#62666d] dark:text-[#8a8f98]">{label}</span><textarea value={value} onChange={(e) => onChange(e.target.value)} className="min-h-24 w-full rounded-[6px] border border-[#c0c8d5] bg-white px-3 py-2 text-[13px] outline-none transition focus:border-[#5e6ad2] dark:border-[#323334] dark:bg-[#08090a]" /></label>; }
+function Select({ label, value, onChange, values }: { label: string; value: string; onChange: (v: string) => void; values: string[] }) { return <label className="text-[12px]"><span className="mb-1 block text-[#62666d] dark:text-[#8a8f98]">{label}</span><select value={value} onChange={(e) => onChange(e.target.value)} className="h-10 w-full rounded-[6px] border border-[#c0c8d5] bg-white px-3 text-[13px] outline-none transition focus:border-[#5e6ad2] dark:border-[#323334] dark:bg-[#08090a]">{values.map((v) => <option key={v} value={v}>{v}</option>)}</select></label>; }
+function Tab({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) { return <button onClick={onClick} className={`rounded-[5px] px-2 py-1 transition ${active ? 'bg-[#eceff4] text-[#08090a] dark:bg-[#1a1b1d] dark:text-[#f7f8f8]' : 'text-[#62666d] hover:text-[#08090a] dark:text-[#8a8f98] dark:hover:text-[#f7f8f8]'}`}>{label}</button>; }
+function Tip({ text, children }: { text: string; children: ReactNode }) { return <FloatingTip text={text} className="inline-flex items-center outline-none">{children}</FloatingTip>; }
+function OrderMarker({ job }: { job: Job }) { const icon = job.type === 'Reparacio' ? <Wrench className="h-3 w-3" /> : job.type === 'Manteniment' ? <ClipboardCheck className="h-3 w-3" /> : job.type === 'Muntatge' ? <Hammer className="h-3 w-3" /> : <SearchCheck className="h-3 w-3" />; const c = job.type === 'Reparacio' ? 'border-[#00c2d7]/55 bg-[#00c2d7]/14 text-[#00c2d7]' : job.type === 'Manteniment' ? 'border-[#22c55e]/55 bg-[#22c55e]/12 text-[#22c55e]' : job.type === 'Muntatge' ? 'border-[#6b7cff]/55 bg-[#6b7cff]/14 text-[#6b7cff]' : 'border-[#facc15]/55 bg-[#facc15]/14 text-[#facc15]'; return <Tip text={`Tipus: ${job.type}`}><span className={`flex h-5 w-5 items-center justify-center rounded-full border ${c}`}>{icon}</span></Tip>; }
+function StatePill({ value }: { value: JobState }) { const icon = value === 'Completat' ? <Check className="h-3.5 w-3.5" /> : value === 'Blocat' ? <X className="h-3.5 w-3.5" /> : value === 'En curs' ? <Zap className="h-3.5 w-3.5" /> : <Circle className="h-3.5 w-3.5" />; const c = value === 'Completat' ? 'text-[#22c55e]' : value === 'Blocat' ? 'text-[#ff5c5c]' : value === 'En curs' ? 'text-[#00c2d7]' : 'text-[#8a8f98]'; return <Tip text={`Estat: ${value}`}><span className={c}>{icon}</span></Tip>; }
+function PriorityPill({ value }: { value: JobPriority }) { const icon = value === 'Alta' ? <SignalHigh className="h-5 w-5" /> : value === 'Mitja' ? <SignalMedium className="h-5 w-5" /> : <SignalLow className="h-5 w-5" />; const c = value === 'Alta' ? 'text-[#ff5c5c]' : value === 'Mitja' ? 'text-[#facc15]' : 'text-[#6b7cff]'; return <Tip text={`Prioritat ${value}`}><span className={`inline-flex h-7 w-7 items-center justify-center rounded-[6px] ${c}`}>{icon}</span></Tip>; }
+function SlaPill({ value }: { value: JobSla }) { const c = value === 'OK' ? 'bg-[#22c55e]' : value === 'Risc' ? 'bg-[#facc15]' : 'bg-[#ff5c5c]'; return <Tip text={`SLA: ${value}`}><span className="inline-flex items-center gap-1.5">{value === 'OK' ? <Check className="h-3.5 w-3.5 text-[#22c55e]" /> : value === 'Risc' ? <Minus className="h-3.5 w-3.5 text-[#facc15]" /> : <X className="h-3.5 w-3.5 text-[#ff5c5c]" />}<span className={`h-1.5 w-1.5 rounded-full ${c}`} /></span></Tip>; }

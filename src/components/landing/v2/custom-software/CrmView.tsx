@@ -26,7 +26,7 @@ export function CrmView({ clients, query, clientName, onSetClientName, onAddClie
   return (
     <motion.div key="crm" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="grid h-full gap-4 lg:grid-cols-12">
       <section className="space-y-4 lg:col-span-8">
-        <div className="group rounded-[8px] border border-[#d0d6e0] bg-[#eceff4]/82 p-3 [filter:saturate(.4)_grayscale(.35)] transition-all duration-500 hover:[filter:saturate(1)_grayscale(0)] dark:border-[#23252a] dark:bg-[#161718]/88">
+        <div className="group rounded-[8px] border border-[#d0d6e0] bg-[#eceff4]/82 p-3 transition-all duration-500 dark:border-[#23252a] dark:bg-[#161718]/88">
           <div className="mb-3 grid grid-cols-2 gap-2 md:grid-cols-4">
             <Kpi label="Leads actius" value={String(clients.filter((c) => c.stage !== 'Tancat').length)} icon={<Users className="h-4 w-4 text-[#8a8cff]" />} />
             <Kpi label="Propostes obertes" value={String(clients.filter((c) => c.stage === 'Proposta').length)} icon={<PieChart className="h-4 w-4 text-[#87f1c9]" />} />
@@ -48,7 +48,7 @@ export function CrmView({ clients, query, clientName, onSetClientName, onAddClie
         </div>
 
         {mode === 'table' ? (
-          <div className="group overflow-hidden rounded-[8px] border border-[#d0d6e0] [filter:saturate(.4)_grayscale(.35)] transition-all duration-500 hover:[filter:saturate(1)_grayscale(0)] dark:border-[#23252a]">
+          <div className="group overflow-hidden rounded-[8px] border border-[#d0d6e0] transition-all duration-500 dark:border-[#23252a]">
             <div className="max-h-[420px] overflow-auto">
             <table className="w-full text-left text-[13px]">
               <thead className="bg-[#eceff4] text-[#8a8f98] dark:bg-[#161718]"><tr><th className="px-3 py-2">Client</th><th className="px-3 py-2">Segment</th><th className="px-3 py-2">Owner</th><th className="px-3 py-2">Fase</th><th className="px-3 py-2">Acció</th></tr></thead>
@@ -76,7 +76,7 @@ export function CrmView({ clients, query, clientName, onSetClientName, onAddClie
         )}
       </section>
 
-      <aside className="group rounded-[8px] border border-[#d0d6e0] bg-[#eceff4]/82 p-3 [filter:saturate(.4)_grayscale(.35)] transition-all duration-500 hover:[filter:saturate(1)_grayscale(0)] dark:border-[#23252a] dark:bg-[#161718]/88 lg:col-span-4">
+      <aside className="group rounded-[8px] border border-[#d0d6e0] bg-[#eceff4]/82 p-3 transition-all duration-500 dark:border-[#23252a] dark:bg-[#161718]/88 lg:col-span-4">
         <h4 className="text-[15px] font-semibold">{selectedClient?.name ?? 'Sense client seleccionat'}</h4>
         <p className="mt-1 text-[12px] text-[#62666d]">{selectedClient ? `${selectedClient.segment} · ${selectedClient.owner}` : 'Selecciona un client per veure detall.'}</p>
         {selectedClient ? (
