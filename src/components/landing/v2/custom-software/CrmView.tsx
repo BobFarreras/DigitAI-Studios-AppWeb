@@ -1,111 +1,78 @@
 /**
  * @file src/components/landing/v2/custom-software/CrmView.tsx
  * @updated 2026-05-13
- * @summary CRM interactiu amb taula, kanban i panell de detall.
- * @scope Operacions client-side per entendre i simular el flux comercial.
+ * @summary CRM minimalista amb taula, cercador i alta de clients.
+ * @scope Operacions client-side per simular el flux comercial.
  */
 'use client';
+import type { ReactNode } from 'react';
 import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import { CheckCircle2, Clock3, LayoutGrid, PieChart, Table2, Users } from 'lucide-react';
-import type { ReactNode } from 'react';
+import { ArrowUpRight, Check, Circle, FileText, Info as InfoIcon, Plus, Search, Target, UserRound, X } from 'lucide-react';
+import { FloatingTip } from './FloatingTip';
+import { CrmClientDetail } from './CrmClientDetail';
 import type { Client, LeadStage } from './model';
 
-type Props = { clients: Client[]; query: string; clientName: string; onSetClientName: (v: string) => void; onAddClient: () => void; onMoveStage: (id: number) => void };
+type Props = { clients: Client[]; clientName: string; onSetClientName: (v: string) => void; onAddClient: () => void; onSetStage: (id: number, stage: LeadStage) => void };
 const stages: LeadStage[] = ['Nou', 'Qualificat', 'Proposta', 'Tancat'];
+const columns = [
+  ['Client', 'Empresa o compte del pipeline comercial.'],
+  ['Segment', 'Necessitat principal o tipus de servei contractable.'],
+  ['Owner', 'Persona responsable del seguiment.'],
+  ['Fase', 'Moment del cicle comercial, editable des del desplegable.'],
+  ['Accio', 'Obre la fitxa completa del client.'],
+] as const;
 
-export function CrmView({ clients, query, clientName, onSetClientName, onAddClient, onMoveStage }: Props) {
-  const [mode, setMode] = useState<'table' | 'board'>('table');
+export function CrmView({ clients, clientName, onSetClientName, onAddClient, onSetStage }: Props) {
   const [stageFilter, setStageFilter] = useState<'all' | LeadStage>('all');
+  const [localQuery, setLocalQuery] = useState('');
   const [selected, setSelected] = useState<number | null>(clients[0]?.id ?? null);
-  const filtered = useMemo(() => clients.filter((c) => (`${c.name} ${c.segment} ${c.owner}`.toLowerCase().includes(query.trim().toLowerCase())) && (stageFilter === 'all' || c.stage === stageFilter)), [clients, query, stageFilter]);
-  const selectedClient = clients.find((c) => c.id === selected) ?? filtered[0] ?? null;
+  const [openDialog, setOpenDialog] = useState(false);
+  const [screen, setScreen] = useState<'list' | 'detail'>('list');
+  const filtered = useMemo(() => clients.filter((c) => (`${c.name} ${c.segment} ${c.owner}`.toLowerCase().includes(localQuery.trim().toLowerCase())) && (stageFilter === 'all' || c.stage === stageFilter)), [clients, localQuery, stageFilter]);
+  const current = clients.find((c) => c.id === selected) ?? filtered[0] ?? null;
   const wonRate = clients.length ? Math.round((clients.filter((c) => c.stage === 'Tancat').length / clients.length) * 100) : 0;
-  const dueToday = Math.max(1, clients.filter((c) => c.stage !== 'Tancat').length - 1);
+
+  if (screen === 'detail' && current) {
+    return <motion.div key="crm-detail" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="h-full"><CrmClientDetail client={current} onBack={() => setScreen('list')} onSetStage={(stage) => onSetStage(current.id, stage)} /></motion.div>;
+  }
+
+  const submitClient = () => { onAddClient(); setOpenDialog(false); };
 
   return (
-    <motion.div key="crm" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="grid h-full gap-4 lg:grid-cols-12">
-      <section className="space-y-4 lg:col-span-8">
-        <div className="group rounded-[8px] border border-[#d0d6e0] bg-[#eceff4]/82 p-3 transition-all duration-500 dark:border-[#23252a] dark:bg-[#161718]/88">
-          <div className="mb-3 grid grid-cols-2 gap-2 md:grid-cols-4">
-            <Kpi label="Leads actius" value={String(clients.filter((c) => c.stage !== 'Tancat').length)} icon={<Users className="h-4 w-4 text-[#8a8cff]" />} />
-            <Kpi label="Propostes obertes" value={String(clients.filter((c) => c.stage === 'Proposta').length)} icon={<PieChart className="h-4 w-4 text-[#87f1c9]" />} />
-            <Kpi label="Win rate" value={`${wonRate}%`} icon={<CheckCircle2 className="h-4 w-4 text-[#27a644]" />} />
-            <Kpi label="Seguiment avui" value={String(dueToday)} icon={<Clock3 className="h-4 w-4 text-[#5e6ad2]" />} />
-          </div>
-          <div className="flex flex-col gap-2 md:flex-row">
-            <input value={clientName} onChange={(e) => onSetClientName(e.target.value)} placeholder="Nom empresa" className="h-10 flex-1 rounded-[6px] border border-[#c0c8d5] bg-white px-3 text-[13px] dark:border-[#323334] dark:bg-[#08090a]" />
-            <button onClick={onAddClient} className="h-10 rounded-[6px] border border-[#c0c8d5] bg-white px-4 text-[12px] font-semibold text-[#383b3f] transition dark:border-[#323334] dark:bg-[#08090a] dark:text-[#d0d6e0] group-hover:bg-[#e4f222] group-hover:text-[#08090a]">Afegir client</button>
-            <div className="flex items-center gap-1 rounded-[6px] border border-[#c0c8d5] bg-white p-1 dark:border-[#323334] dark:bg-[#08090a]">
-              <button onClick={() => setMode('table')} className={`rounded-[5px] px-2 py-1 text-[12px] ${mode === 'table' ? 'bg-[#eceff4] dark:bg-[#161718]' : ''}`}><Table2 className="h-4 w-4" /></button>
-              <button onClick={() => setMode('board')} className={`rounded-[5px] px-2 py-1 text-[12px] ${mode === 'board' ? 'bg-[#eceff4] dark:bg-[#161718]' : ''}`}><LayoutGrid className="h-4 w-4" /></button>
-            </div>
-          </div>
-          <div className="mt-2 flex flex-wrap gap-2">
-            <FilterChip active={stageFilter === 'all'} onClick={() => setStageFilter('all')} label="Tot" />
-            {stages.map((s) => <FilterChip key={s} active={stageFilter === s} onClick={() => setStageFilter(s)} label={s} />)}
+    <motion.div key="crm" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="relative h-full overflow-hidden rounded-[10px] border border-[#d0d6e0] bg-white text-[#08090a] dark:border-[#23252a] dark:bg-[radial-gradient(circle_at_20%_0%,rgba(255,255,255,0.055),transparent_26%),linear-gradient(135deg,#111213,#0b0c0d_58%,#101112)] dark:text-[#f7f8f8]">
+      <section className="flex h-full flex-col">
+        <div className="flex min-h-12 flex-wrap items-center justify-between gap-2 border-b border-[#d0d6e0] px-4 py-2 dark:border-[#23252a]">
+          <div className="flex flex-wrap items-center gap-1 text-[12px] font-[560]"><Tab active={stageFilter === 'all'} onClick={() => setStageFilter('all')} label="Tot" />{stages.map((s) => <Tab key={s} active={stageFilter === s} onClick={() => setStageFilter(s)} label={s} />)}</div>
+          <div className="flex flex-wrap items-center justify-end gap-1.5">
+            <MiniKpi label="Actius" value={String(clients.filter((c) => c.stage !== 'Tancat').length)} icon={<UserRound className="h-3.5 w-3.5 text-[#6b7cff]" />} />
+            <MiniKpi label="Propostes" value={String(clients.filter((c) => c.stage === 'Proposta').length)} icon={<FileText className="h-3.5 w-3.5 text-[#facc15]" />} />
+            <MiniKpi label="Tancats" value={String(clients.filter((c) => c.stage === 'Tancat').length)} icon={<Check className="h-3.5 w-3.5 text-[#22c55e]" />} />
+            <MiniKpi label="Win" value={`${wonRate}%`} icon={<Target className="h-3.5 w-3.5 text-[#00c2d7]" />} />
+            <label className="hidden h-8 items-center gap-2 rounded-[6px] border border-[#c0c8d5] bg-white px-2 text-[12px] dark:border-[#323334] dark:bg-[#08090a] md:flex"><Search className="h-3.5 w-3.5 text-[#8a8f98]" /><input value={localQuery} onChange={(e) => setLocalQuery(e.target.value)} placeholder="Cercar..." className="w-36 bg-transparent outline-none placeholder:text-[#8a8f98]" /></label>
+            <button onClick={() => setOpenDialog(true)} className="inline-flex h-8 items-center justify-center gap-2 rounded-[6px] bg-[#08090a] px-3 text-[12px] font-semibold text-white dark:bg-[#e4f222] dark:text-[#08090a]"><Plus className="h-4 w-4" />Client</button>
           </div>
         </div>
-
-        {mode === 'table' ? (
-          <div className="group overflow-hidden rounded-[8px] border border-[#d0d6e0] transition-all duration-500 dark:border-[#23252a]">
-            <div className="max-h-[420px] overflow-auto">
-            <table className="w-full text-left text-[13px]">
-              <thead className="bg-[#eceff4] text-[#8a8f98] dark:bg-[#161718]"><tr><th className="px-3 py-2">Client</th><th className="px-3 py-2">Segment</th><th className="px-3 py-2">Owner</th><th className="px-3 py-2">Fase</th><th className="px-3 py-2">Acció</th></tr></thead>
-              <tbody>{filtered.map((c) => (
-                <tr key={c.id} onClick={() => setSelected(c.id)} className={`cursor-pointer border-t border-[#d0d6e0] dark:border-[#23252a] ${selectedClient?.id === c.id ? 'bg-[#eef1f6] dark:bg-[#121314]' : 'bg-white dark:bg-[#0f1011]'}`}>
-                  <td className="px-3 py-2 font-[560]">{c.name}</td><td className="px-3 py-2 text-[#62666d]">{c.segment}</td><td className="px-3 py-2">{c.owner}</td>
-                  <td className="px-3 py-2"><StagePill stage={c.stage} /></td>
-                  <td className="px-3 py-2"><button onClick={(e) => { e.stopPropagation(); onMoveStage(c.id); }} className="text-[11px] text-[#5e6ad2]">Moure fase</button></td>
-                </tr>
-              ))}</tbody>
-            </table>
-            </div>
-          </div>
-        ) : (
-          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-            {stages.map((stage) => (
-              <article key={stage} className="rounded-[8px] border border-[#d0d6e0] bg-[#eceff4]/82 p-2 dark:border-[#23252a] dark:bg-[#161718]/88">
-                <div className="mb-2 flex items-center justify-between"><StagePill stage={stage} /><span className="text-[11px] text-[#8a8f98]">{filtered.filter((c) => c.stage === stage).length}</span></div>
-                <div className="space-y-2">
-                  {filtered.filter((c) => c.stage === stage).map((c) => <button key={c.id} onClick={() => setSelected(c.id)} className="w-full rounded-[6px] border border-[#c0c8d5] bg-white p-2 text-left text-[12px] dark:border-[#323334] dark:bg-[#08090a]"><p className="font-[560]">{c.name}</p><p className="text-[11px] text-[#62666d]">{c.segment} · {c.owner}</p></button>)}
-                </div>
-              </article>
-            ))}
-          </div>
-        )}
+        <div className="min-h-0 flex-1 overflow-auto">
+          <table className="w-full min-w-[760px] text-left text-[13px]">
+            <thead className="sticky top-0 z-10 border-b border-[#d0d6e0] bg-white/96 text-[#8a8f98] backdrop-blur dark:border-[#23252a] dark:bg-[#111213]/96"><tr>{columns.map(([label, tip]) => <th key={label} className="px-4 py-3 font-[520]"><ColumnHint label={label} tip={tip} /></th>)}</tr></thead>
+            <tbody>{filtered.map((c) => <tr key={c.id} onClick={() => setSelected(c.id)} className={`border-b border-[#d0d6e0]/70 bg-white transition hover:bg-[#f4f6fa] dark:border-[#23252a]/80 dark:bg-transparent dark:hover:bg-[#171819] ${current?.id === c.id ? 'bg-[#f4f6fa] dark:bg-[#151617]' : ''}`}>
+              <td className="px-4 py-4"><div className="flex items-center gap-3"><StageDot stage={c.stage} /><span className="font-[590]">{c.name}</span></div></td><td className="px-4 py-4 text-[#62666d] dark:text-[#8a8f98]">{c.segment}</td><td className="px-4 py-4 text-[#62666d] dark:text-[#8a8f98]">{c.owner}</td>
+              <td className="px-4 py-4"><StageMenu value={c.stage} onChange={(stage) => onSetStage(c.id, stage)} /></td>
+              <td className="px-4 py-4"><button onClick={(e) => { e.stopPropagation(); setSelected(c.id); setScreen('detail'); }} className="inline-flex items-center gap-1 rounded-[6px] border border-[#c0c8d5] bg-white px-2 py-1 text-[11px] font-semibold text-[#383b3f] dark:border-[#323334] dark:bg-[#08090a] dark:text-[#d0d6e0]"><ArrowUpRight className="h-3.5 w-3.5" />Detall</button></td>
+            </tr>)}</tbody>
+          </table>
+        </div>
       </section>
-
-      <aside className="group rounded-[8px] border border-[#d0d6e0] bg-[#eceff4]/82 p-3 transition-all duration-500 dark:border-[#23252a] dark:bg-[#161718]/88 lg:col-span-4">
-        <h4 className="text-[15px] font-semibold">{selectedClient?.name ?? 'Sense client seleccionat'}</h4>
-        <p className="mt-1 text-[12px] text-[#62666d]">{selectedClient ? `${selectedClient.segment} · ${selectedClient.owner}` : 'Selecciona un client per veure detall.'}</p>
-        {selectedClient ? (
-          <div className="mt-3 space-y-2">
-            <InfoRow label="Fase actual" value={selectedClient.stage} />
-            <InfoRow label="Prioritat" value={selectedClient.stage === 'Proposta' ? 'Alta' : 'Mitja'} />
-            <InfoRow label="Últim contacte" value="Avui · 10:42" />
-            <InfoRow label="Pròxim pas" value={selectedClient.stage === 'Tancat' ? 'Upsell Q3' : 'Trucada comercial'} />
-            <button onClick={() => onMoveStage(selectedClient.id)} className="mt-2 flex w-full items-center justify-center gap-2 rounded-[6px] border border-[#c0c8d5] bg-white px-3 py-2 text-[12px] font-semibold text-[#383b3f] transition dark:border-[#323334] dark:bg-[#08090a] dark:text-[#d0d6e0] group-hover:bg-[#e4f222] group-hover:text-[#08090a]"><Clock3 className="h-4 w-4" />Avançar fase</button>
-          </div>
-        ) : null}
-      </aside>
+      {openDialog ? <ClientDialog clientName={clientName} onSetClientName={onSetClientName} onClose={() => setOpenDialog(false)} onSubmit={submitClient} /> : null}
     </motion.div>
   );
 }
 
-function Kpi({ label, value, icon }: { label: string; value: string; icon: ReactNode }) {
-  return <div className="rounded-[6px] border border-[#c0c8d5] bg-white p-2 dark:border-[#323334] dark:bg-[#08090a]"><div className="mb-1 flex items-center justify-between"><p className="text-[11px] text-[#8a8f98]">{label}</p>{icon}</div><p className="text-[22px] font-semibold leading-none">{value}</p><div className="mt-1 h-1.5 rounded-full bg-[#d8dde7] dark:bg-[#23252a]"><div className="h-1.5 w-[68%] rounded-full bg-gradient-to-r from-[#5e6ad2] via-[#a855f7] to-[#27a644]" /></div></div>;
-}
-function FilterChip({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) { return <button onClick={onClick} className={`rounded-full border px-2.5 py-1 text-[11px] ${active ? 'border-[#5e6ad2] text-[#5e6ad2]' : 'border-[#c0c8d5] text-[#8a8f98]'}`}>{label}</button>; }
-function StagePill({ stage }: { stage: LeadStage }) {
-  const cls =
-    stage === 'Nou'
-      ? 'border-[#5e6ad2]/40 bg-[#5e6ad2]/12 text-[#5e6ad2]'
-      : stage === 'Qualificat'
-        ? 'border-[#35b8e8]/40 bg-[#35b8e8]/12 text-[#35b8e8]'
-        : stage === 'Proposta'
-          ? 'border-[#a855f7]/40 bg-[#a855f7]/12 text-[#a855f7]'
-          : 'border-[#27a644]/40 bg-[#27a644]/12 text-[#27a644]';
-  return <span className={`rounded-[4px] border px-2 py-0.5 text-[11px] ${cls}`}>{stage}</span>;
-}
-function InfoRow({ label, value }: { label: string; value: string }) { return <div className="rounded-[6px] border border-[#c0c8d5] bg-white px-2.5 py-2 text-[12px] dark:border-[#323334] dark:bg-[#08090a]"><p className="text-[#8a8f98]">{label}</p><p className="font-[560]">{value}</p></div>; }
+function ColumnHint({ label, tip }: { label: string; tip: string }) { return <FloatingTip text={tip} className="inline-flex cursor-help items-center gap-1.5 outline-none">{label}<InfoIcon className="h-3.5 w-3.5" /></FloatingTip>; }
+function MiniKpi({ label, value, icon }: { label: string; value: string; icon: ReactNode }) { return <div className="hidden h-8 items-center gap-1.5 rounded-[6px] border border-[#d0d6e0] bg-[#f7f8f8] px-2 text-[11px] dark:border-[#323334] dark:bg-[#08090a] sm:flex">{icon}<span className="text-[#8a8f98]">{label}</span><strong className="text-[12px] font-semibold">{value}</strong></div>; }
+function Tab({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) { return <button onClick={onClick} className={`rounded-[5px] px-2 py-1 transition ${active ? 'bg-[#eceff4] text-[#08090a] dark:bg-[#1a1b1d] dark:text-[#f7f8f8]' : 'text-[#62666d] hover:text-[#08090a] dark:text-[#8a8f98] dark:hover:text-[#f7f8f8]'}`}>{label}</button>; }
+function StageDot({ stage }: { stage: LeadStage }) { const c = stage === 'Nou' ? 'border-[#6b7cff]/55 bg-[#6b7cff]/14' : stage === 'Qualificat' ? 'border-[#00c2d7]/55 bg-[#00c2d7]/14' : stage === 'Proposta' ? 'border-[#facc15]/55 bg-[#facc15]/14' : 'border-[#22c55e]/55 bg-[#22c55e]/14'; return <span className={`h-3 w-3 rounded-full border ${c}`} />; }
+function StageIcon({ stage }: { stage: LeadStage }) { const c = stage === 'Nou' ? 'text-[#6b7cff]' : stage === 'Qualificat' ? 'text-[#00c2d7]' : stage === 'Proposta' ? 'text-[#facc15]' : 'text-[#22c55e]'; const icon = stage === 'Tancat' ? <Check className="h-4 w-4" /> : stage === 'Proposta' ? <FileText className="h-4 w-4" /> : stage === 'Qualificat' ? <Target className="h-4 w-4" /> : <Circle className="h-4 w-4" />; return <span className={c}>{icon}</span>; }
+function StageMenu({ value, onChange }: { value: LeadStage; onChange: (stage: LeadStage) => void }) { const [open, setOpen] = useState(false); return <div className="relative"><button onClick={(e) => { e.stopPropagation(); setOpen((v) => !v); }} className="inline-flex h-8 items-center gap-2 rounded-[6px] border border-[#c0c8d5] bg-white px-2 text-[12px] dark:border-[#323334] dark:bg-[#08090a]"><StageIcon stage={value} /><span>{value}</span></button>{open ? <div className="absolute left-0 top-10 z-40 w-40 rounded-[7px] border border-[#c0c8d5] bg-white p-1 shadow-[0_16px_42px_rgba(8,9,10,0.16)] dark:border-[#323334] dark:bg-[#08090a]">{stages.map((s) => <button key={s} onClick={(e) => { e.stopPropagation(); onChange(s); setOpen(false); }} className={`flex w-full items-center gap-2 rounded-[5px] px-2 py-1.5 text-left text-[12px] ${value === s ? 'bg-[#eceff4] dark:bg-[#161718]' : 'text-[#62666d] hover:bg-[#f4f6fa] dark:text-[#8a8f98] dark:hover:bg-[#161718]'}`}><StageIcon stage={s} />{s}</button>)}</div> : null}</div>; }
+function ClientDialog({ clientName, onSetClientName, onClose, onSubmit }: { clientName: string; onSetClientName: (v: string) => void; onClose: () => void; onSubmit: () => void }) { return <div className="absolute inset-0 z-20 flex items-center justify-center rounded-[8px] bg-white/62 p-4 backdrop-blur-md dark:bg-[#08090a]/70"><div className="w-full max-w-md rounded-[10px] border border-[#d0d6e0] bg-[#f7f8f8] p-4 text-[#08090a] shadow-[0_24px_80px_rgba(8,9,10,0.22)] dark:border-[#323334] dark:bg-[#0f1011] dark:text-[#f7f8f8]"><div className="mb-3 flex items-start justify-between gap-3 border-b border-[#d0d6e0] pb-3 dark:border-[#23252a]"><div><h4 className="text-[16px] font-semibold">Afegir client</h4><p className="mt-1 text-[12px] text-[#62666d] dark:text-[#8a8f98]">Crea una oportunitat nova al CRM.</p></div><button onClick={onClose} className="rounded-[6px] border border-[#c0c8d5] bg-white p-1 text-[#62666d] dark:border-[#323334] dark:bg-[#08090a] dark:text-[#8a8f98]"><X className="h-4 w-4" /></button></div><label className="text-[12px]"><span className="mb-1 block text-[#62666d] dark:text-[#8a8f98]">Nom empresa</span><input value={clientName} onChange={(e) => onSetClientName(e.target.value)} className="h-10 w-full rounded-[6px] border border-[#c0c8d5] bg-white px-3 text-[13px] outline-none dark:border-[#323334] dark:bg-[#08090a]" /></label><div className="mt-4 flex justify-end gap-2"><button onClick={onClose} className="h-10 rounded-[6px] border border-[#c0c8d5] bg-white px-4 text-[12px] font-semibold dark:border-[#323334] dark:bg-[#08090a]">Cancel·lar</button><button onClick={onSubmit} className="h-10 rounded-[6px] bg-[#e4f222] px-4 text-[12px] font-semibold text-[#08090a]">Crear</button></div></div></div>; }

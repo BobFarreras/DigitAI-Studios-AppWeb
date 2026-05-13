@@ -8,7 +8,7 @@
 
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Bell, Database, Search, ShieldCheck } from 'lucide-react';
+import { Database, ShieldCheck } from 'lucide-react';
 import { useLocale } from 'next-intl';
 import { BrandRevealText } from '@/components/ui/brand-reveal';
 import { getSoftwareCopy } from './custom-software/copy';
@@ -17,12 +17,11 @@ import { CrmView } from './custom-software/CrmView';
 import { DashboardView } from './custom-software/DashboardView';
 import { InventoryView } from './custom-software/InventoryView';
 import { PipelineView } from './custom-software/PipelineView';
-import { nextLeadStage, startClients, startJobs, startMaterial, startTeam, toStockState, views, type JobState, type NewSatOrder, type ViewId } from './custom-software/model';
+import { startClients, startJobs, startMaterial, startTeam, toStockState, views, type JobState, type LeadStage, type NewSatOrder, type ViewId } from './custom-software/model';
 
 export function CustomSoftwareSection() {
   const copy = getSoftwareCopy(useLocale());
   const [view, setView] = useState<ViewId>('dashboard');
-  const [query, setQuery] = useState('');
   const [clientName, setClientName] = useState(''), [jobTitle, setJobTitle] = useState(''), [materialName, setMaterialName] = useState(''), [userName, setUserName] = useState('');
   const [clients, setClients] = useState(startClients), [jobs, setJobs] = useState(startJobs), [material, setMaterial] = useState(startMaterial), [team, setTeam] = useState(startTeam);
   const addClient = () => { const name = clientName.trim(); if (!name) return; setClients((p) => [{ id: Date.now(), name, segment: 'Nou servei', owner: 'Assignar', stage: 'Nou' }, ...p]); setClientName(''); };
@@ -68,14 +67,10 @@ export function CustomSoftwareSection() {
               <div className="hidden border-t border-[#d0d6e0] p-4 md:block dark:border-[#23252a]"><div className="flex items-center gap-2 text-[12px] text-[#62666d] dark:text-[#8a8f98]"><ShieldCheck className="h-4 w-4 text-[#27a644]" />Control segur i traçable</div></div>
             </aside>
             <main className="min-w-0 flex-1">
-              <header className="flex h-14 items-center justify-between border-b border-[#d0d6e0] px-4 dark:border-[#23252a] md:px-6">
-                <div className="flex items-center gap-3"><h3 className="text-[14px] font-[590]">{views.find((v) => v.id === view)?.label}</h3><span className="rounded-full border border-[#b8c0ce] bg-[#eceff4] px-2 py-0.5 text-[11px] text-[#62666d] dark:border-[#323334] dark:bg-[#161718] dark:text-[#8a8f98]">LIVE</span></div>
-                <div className="flex items-center gap-3"><label className="hidden items-center gap-2 rounded-[6px] border border-[#c0c8d5] bg-white px-2.5 py-1.5 dark:border-[#323334] dark:bg-[#08090a] md:flex"><Search className="h-3.5 w-3.5 text-[#8a8f98]" /><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Cerca client..." className="w-40 bg-transparent text-[12px] outline-none placeholder:text-[#8a8f98]" /></label><button className="relative text-[#62666d] dark:text-[#8a8f98]"><Bell className="h-5 w-5" /><span className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-[#e4f222]" /></button></div>
-              </header>
-              <div className="h-[clamp(560px,64svh,740px)] overflow-hidden p-4 md:p-6">
+              <div className="h-[clamp(616px,70svh,796px)] overflow-hidden p-4 md:p-6">
                 <AnimatePresence mode="wait">
                   {view === 'dashboard' && <DashboardView copy={copy} onOpenCrm={() => setView('crm')} onAddJob={addJob} onAddClient={addClient} />}
-                  {view === 'crm' && <CrmView clients={clients} query={query} clientName={clientName} onSetClientName={setClientName} onAddClient={addClient} onMoveStage={(id) => setClients((p) => p.map((x) => (x.id === id ? { ...x, stage: nextLeadStage(x.stage) } : x)))} />}
+                  {view === 'crm' && <CrmView clients={clients} clientName={clientName} onSetClientName={setClientName} onAddClient={addClient} onSetStage={(id, stage: LeadStage) => setClients((p) => p.map((x) => (x.id === id ? { ...x, stage } : x)))} />}
                   {view === 'pipeline' && <PipelineView jobs={jobs} jobTitle={jobTitle} onSetJobTitle={setJobTitle} onAddJob={addJob} onSetJobState={(id, state: JobState) => setJobs((p) => p.map((x) => (x.id === id ? { ...x, state } : x)))} />}
                   {view === 'inventory' && <InventoryView material={material} materialName={materialName} onSetMaterialName={setMaterialName} onAddMaterial={addMaterial} onIncrement={(id) => setMaterial((p) => p.map((x) => (x.id === id ? { ...x, qty: x.qty + 1, state: toStockState(x.qty + 1, x.min) } : x)))} />}
                   {view === 'access' && <AccessView team={team} userName={userName} onSetUserName={setUserName} onAddUser={addUser} onToggle={(id) => setTeam((p) => p.map((x) => (x.id === id ? { ...x, enabled: !x.enabled } : x)))} />}
