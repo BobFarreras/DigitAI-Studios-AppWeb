@@ -19,7 +19,7 @@ export function DashboardView({ copy, onOpenCrm, onAddJob, onAddClient }: Props)
   const [trendFocus, setTrendFocus] = useState<'all' | 'inc' | 'avg'>('all');
   const conversion = Math.round((quotes.accepted / quotes.sent) * 100);
   return (
-    <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="grid min-h-[clamp(560px,64svh,740px)] grid-cols-12 gap-3">
+    <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="grid h-full grid-cols-12 gap-3 overflow-auto pr-1">
       <article className="group col-span-12 rounded-[8px] border border-[#d0d6e0] bg-[#eceff4]/82 p-3 saturate-[0.65] transition-all hover:saturate-100 dark:border-[#23252a] dark:bg-[#161718]/88">
         <div className="mb-2 flex items-center justify-between gap-3">
           <h4 className="text-[15px] font-semibold text-[#383b3f] dark:text-[#d0d6e0]">{copy.title}</h4>

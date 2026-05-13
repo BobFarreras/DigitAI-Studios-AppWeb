@@ -404,6 +404,13 @@ img {
       cursor: none !important;
     }
 
+    .custom-cursor-enabled ::-webkit-scrollbar,
+    .custom-cursor-enabled ::-webkit-scrollbar-thumb,
+    .custom-cursor-enabled ::-webkit-scrollbar-track,
+    .custom-cursor-enabled ::-webkit-scrollbar-corner {
+      cursor: none !important;
+    }
+
     .custom-cursor {
       --cursor-x: 0px;
       --cursor-y: 0px;

@@ -49,7 +49,7 @@ export function CustomSoftwareSection() {
                 <div className="flex items-center gap-3"><h3 className="text-[14px] font-[590]">{views.find((v) => v.id === view)?.label}</h3><span className="rounded-full border border-[#b8c0ce] bg-[#eceff4] px-2 py-0.5 text-[11px] text-[#62666d] dark:border-[#323334] dark:bg-[#161718] dark:text-[#8a8f98]">LIVE</span></div>
                 <div className="flex items-center gap-3"><label className="hidden items-center gap-2 rounded-[6px] border border-[#c0c8d5] bg-white px-2.5 py-1.5 dark:border-[#323334] dark:bg-[#08090a] md:flex"><Search className="h-3.5 w-3.5 text-[#8a8f98]" /><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Cerca client..." className="w-40 bg-transparent text-[12px] outline-none placeholder:text-[#8a8f98]" /></label><button className="relative text-[#62666d] dark:text-[#8a8f98]"><Bell className="h-5 w-5" /><span className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-[#e4f222]" /></button></div>
               </header>
-              <div className="p-4 md:p-6">
+              <div className="h-[clamp(560px,64svh,740px)] overflow-hidden p-4 md:p-6">
                 <AnimatePresence mode="wait">
                   {view === 'dashboard' && <DashboardView copy={copy} onOpenCrm={() => setView('crm')} onAddJob={addJob} onAddClient={addClient} />}
                   {view === 'crm' && <CrmView clients={clients} query={query} clientName={clientName} onSetClientName={setClientName} onAddClient={addClient} onMoveStage={(id) => setClients((p) => p.map((x) => (x.id === id ? { ...x, stage: nextLeadStage(x.stage) } : x)))} />}

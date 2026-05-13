@@ -31,6 +31,18 @@ export const startClients: Client[] = [
   { id: 1, name: 'Hotel Costa Brava', segment: 'Manteniment', owner: 'Marta', stage: 'Qualificat' },
   { id: 2, name: 'Clínica Nexe', segment: 'Instal·lació', owner: 'Nil', stage: 'Proposta' },
   { id: 3, name: 'LogisNord', segment: 'SAT 24/7', owner: 'Júlia', stage: 'Nou' },
+  { id: 4, name: 'EcoMarket Girona', segment: 'TPV + ERP', owner: 'Marta', stage: 'Qualificat' },
+  { id: 5, name: 'TransCat Nord', segment: 'Tracking flota', owner: 'Nil', stage: 'Proposta' },
+  { id: 6, name: 'Residència Bellmar', segment: 'Helpdesk intern', owner: 'Júlia', stage: 'Nou' },
+  { id: 7, name: 'AquaNex Solutions', segment: 'Portal client', owner: 'Marta', stage: 'Tancat' },
+  { id: 8, name: 'ServeiTec Lleida', segment: 'Automatització CRM', owner: 'Nil', stage: 'Qualificat' },
+  { id: 9, name: 'MediCore Labs', segment: 'Seguretat i backup', owner: 'Júlia', stage: 'Proposta' },
+  { id: 10, name: 'BioHealth Center', segment: 'Portal pacients', owner: 'Marta', stage: 'Nou' },
+  { id: 11, name: 'Nautic Girona', segment: 'SAT + inventari', owner: 'Nil', stage: 'Qualificat' },
+  { id: 12, name: 'UrbanFoods BCN', segment: 'BI comercial', owner: 'Júlia', stage: 'Proposta' },
+  { id: 13, name: 'EduNova Campus', segment: 'Suport IT 24/7', owner: 'Marta', stage: 'Tancat' },
+  { id: 14, name: 'ClinicData Pro', segment: 'Integració API', owner: 'Nil', stage: 'Qualificat' },
+  { id: 15, name: 'GreenVolt Energy', segment: 'Automatització lead', owner: 'Júlia', stage: 'Nou' },
 ];
 
 export const startJobs: Job[] = [

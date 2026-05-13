@@ -6,27 +6,17 @@
  */
 'use client';
 
-import { useEffect, useState } from 'react';
-import type { CSSProperties } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 type CursorMode = 'default' | 'action' | 'text';
 
 type CursorState = {
-  x: number;
-  y: number;
   mode: CursorMode;
   pressed: boolean;
   visible: boolean;
 };
 
-type CursorStyle = CSSProperties & {
-  '--cursor-x': string;
-  '--cursor-y': string;
-};
-
 const initialState: CursorState = {
-  x: 0,
-  y: 0,
   mode: 'default',
   pressed: false,
   visible: false,
@@ -41,6 +31,7 @@ function getCursorMode(target: EventTarget | null): CursorMode {
 
 export function CustomCursor() {
   const [state, setState] = useState(initialState);
+  const cursorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const canUseCursor = window.matchMedia('(pointer: fine)').matches;
@@ -49,10 +40,12 @@ export function CustomCursor() {
     document.body.classList.add('custom-cursor-enabled');
 
     const updatePosition = (event: PointerEvent) => {
+      if (cursorRef.current) {
+        cursorRef.current.style.setProperty('--cursor-x', `${event.clientX}px`);
+        cursorRef.current.style.setProperty('--cursor-y', `${event.clientY}px`);
+      }
       setState((current) => ({
         ...current,
-        x: event.clientX,
-        y: event.clientY,
         mode: getCursorMode(event.target),
         visible: true,
       }));
@@ -88,13 +81,8 @@ export function CustomCursor() {
     state.visible ? 'is-visible' : '',
   ].join(' ');
 
-  const style: CursorStyle = {
-    '--cursor-x': `${state.x}px`,
-    '--cursor-y': `${state.y}px`,
-  };
-
   return (
-    <div className={className} style={style}>
+    <div ref={cursorRef} className={className}>
       <span className="custom-cursor__ring" />
       <span className="custom-cursor__dot" />
     </div>
