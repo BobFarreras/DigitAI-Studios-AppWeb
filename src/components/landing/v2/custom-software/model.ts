@@ -10,11 +10,13 @@ import { type LucideIcon, Boxes, KeyRound, LayoutDashboard, Users, Wrench } from
 export type ViewId = 'dashboard' | 'crm' | 'pipeline' | 'inventory' | 'access';
 export type LeadStage = 'Nou' | 'Qualificat' | 'Proposta' | 'Tancat';
 export type JobState = 'Pendent' | 'En curs' | 'Blocat' | 'Completat';
+export type JobPriority = 'Alta' | 'Mitja' | 'Baixa';
+export type JobSla = 'OK' | 'Risc' | 'Fora SLA';
 export type StockState = 'OK' | 'Baix' | 'Crític';
 export type Role = 'Tècnic' | 'Coordinador' | 'Admin';
 
 export type Client = { id: number; name: string; segment: string; owner: string; stage: LeadStage };
-export type Job = { id: string; title: string; client: string; state: JobState };
+export type Job = { id: string; title: string; client: string; state: JobState; priority: JobPriority; sla: JobSla; technician: string; eta: string };
 export type Material = { id: string; name: string; qty: number; min: number; state: StockState };
 export type Member = { id: string; name: string; role: Role; zone: string; enabled: boolean };
 export type View = { id: ViewId; label: string; icon: LucideIcon };
@@ -22,7 +24,7 @@ export type View = { id: ViewId; label: string; icon: LucideIcon };
 export const views: View[] = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { id: 'crm', label: 'CRM', icon: Users },
-  { id: 'pipeline', label: 'Pipeline SAT', icon: Wrench },
+  { id: 'pipeline', label: 'SAT', icon: Wrench },
   { id: 'inventory', label: 'Material', icon: Boxes },
   { id: 'access', label: 'Accessos', icon: KeyRound },
 ];
@@ -46,9 +48,12 @@ export const startClients: Client[] = [
 ];
 
 export const startJobs: Job[] = [
-  { id: 'SAT-912', title: 'Revisió centraleta', client: 'Hotel Costa Brava', state: 'En curs' },
-  { id: 'SAT-913', title: 'Fallada accés remot', client: 'Clínica Nexe', state: 'Blocat' },
-  { id: 'SAT-914', title: 'Manteniment preventiu', client: 'LogisNord', state: 'Pendent' },
+  { id: 'SAT-912', title: 'Revisió centraleta', client: 'Hotel Costa Brava', state: 'En curs', priority: 'Mitja', sla: 'OK', technician: 'Júlia Serra', eta: 'Avui 14:45' },
+  { id: 'SAT-913', title: 'Fallada accés remot', client: 'Clínica Nexe', state: 'Blocat', priority: 'Alta', sla: 'Risc', technician: 'Nil Ruiz', eta: 'Avui 16:20' },
+  { id: 'SAT-914', title: 'Manteniment preventiu', client: 'LogisNord', state: 'Pendent', priority: 'Baixa', sla: 'OK', technician: 'Marta Casas', eta: 'Demà 09:00' },
+  { id: 'SAT-915', title: 'Tall VPN delegació', client: 'UrbanFoods BCN', state: 'En curs', priority: 'Alta', sla: 'Fora SLA', technician: 'Júlia Serra', eta: 'Urgent' },
+  { id: 'SAT-916', title: 'Reconfiguració switch core', client: 'Nautic Girona', state: 'Pendent', priority: 'Mitja', sla: 'Risc', technician: 'Nil Ruiz', eta: 'Demà 12:30' },
+  { id: 'SAT-917', title: 'Error còpia nocturna', client: 'MediCore Labs', state: 'Completat', priority: 'Alta', sla: 'OK', technician: 'Marta Casas', eta: 'Tancat 11:08' },
 ];
 
 export const startMaterial: Material[] = [
