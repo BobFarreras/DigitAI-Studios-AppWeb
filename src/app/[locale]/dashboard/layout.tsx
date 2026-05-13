@@ -1,6 +1,6 @@
 /**
  * @file src/app/[locale]/dashboard/layout.tsx
- * @updated 2026-05-08
+ * @updated 2026-05-13
  * @summary Route module: src/app/[locale]/dashboard/layout.tsx
  * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
  */
@@ -15,6 +15,13 @@ type Props = {
   params: Promise<{ locale: string }>;
 };
 
+type DashboardRole = 'admin' | 'client' | 'lead';
+
+function normalizeDashboardRole(role: string | undefined): DashboardRole {
+  if (role === 'admin' || role === 'lead') return role;
+  return 'client';
+}
+
 export default async function DashboardLayout({ children, params }: Props) {
   const { locale } = await params;
   const result = await getDashboardSessionData();
@@ -23,7 +30,7 @@ export default async function DashboardLayout({ children, params }: Props) {
     redirect({ href: '/auth/login', locale });
   }
 
-  const userRole = result.success ? result.userRole : 'client';
+  const userRole = normalizeDashboardRole(result.success ? result.userRole : undefined);
   const userEmail = result.success ? result.userEmail : '';
   const profilesCount = result.success ? result.profilesCount : 0;
   console.log(`✅ Rol calculat per ${userEmail}: ${userRole} (Perfils trobats: ${profilesCount})`);

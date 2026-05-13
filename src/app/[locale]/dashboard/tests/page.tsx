@@ -1,6 +1,6 @@
 /**
  * @file src/app/[locale]/dashboard/tests/page.tsx
- * @updated 2026-05-08
+ * @updated 2026-05-13
  * @summary Route module: src/app/[locale]/dashboard/tests/page.tsx
  * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
  */
@@ -15,8 +15,9 @@ export default async function TesterDashboard() {
     const t = await getTranslations('Dashboard.tester_dashboard');
     const result = await getTesterDashboardData();
     if (!result.success && result.authRequired) return <div>{t('error_no_user')}</div>;
-    const assignments = result.success ? result.assignments : [];
-    const stats = result.success ? result.stats : { rankName: 'Novell 🌟', level: 1, xp: 0, nextLevelXp: 100, progressToNext: 0 };
+    const fallbackStats = { rankName: 'Novell 🌟', level: 1, xp: 0, nextLevelXp: 100, progressToNext: 0 };
+    const assignments = result.success ? (result.assignments ?? []) : [];
+    const stats = result.success ? (result.stats ?? fallbackStats) : fallbackStats;
 
     // Lògica segura per separar emoji i nom (si el format és "Nom Emoji" o "Nom")
     const rankParts = stats.rankName.split(' ');

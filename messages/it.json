@@ -698,6 +698,60 @@
         }
       }
     },
+    "automation": {
+      "titleStrong": "Automatizziamo processi che",
+      "titleMuted": "lavorano da soli.",
+      "flows": {
+        "leads": {
+          "name": "Lead",
+          "summary": "Acquisisce contatti, rileva interesse, aggiorna il CRM e programma follow-up perché nessuna opportunità resti ferma.",
+          "nodes": {
+            "campaign": { "title": "Primo contatto", "meta": "WhatsApp / email", "explain": "Un messaggio viene inviato o ricevuto e il sistema registra il contatto." },
+            "interest": { "title": "Rilevare interesse", "meta": "risposta e intento", "explain": "L’IA separa curiosità, urgenza e reale opportunità commerciale." },
+            "filter": { "title": "Filtrare lead", "meta": "qualifica", "explain": "Avanza solo ciò che rispetta i criteri del business." },
+            "crm": { "title": "Aggiornare CRM", "meta": "storico vivo", "explain": "Salva dati, stato, origine e prossima azione nel CRM." },
+            "follow": { "title": "Follow-up 48h", "meta": "promemoria", "explain": "Se non risponde, programma un nuovo contatto senza perdere il filo." },
+            "team": { "title": "Avvisare team", "meta": "contesto completo", "explain": "Quando c’è un segnale reale, arriva alla persona giusta." }
+          }
+        },
+        "quotes": {
+          "name": "Preventivi",
+          "summary": "Trasforma richieste in dati ordinati, applica criteri commerciali e prepara preventivi o fatture da validare.",
+          "nodes": {
+            "request": { "title": "Richiesta", "meta": "form o email", "explain": "Raccoglie dati del cliente, servizio e condizioni di vendita." },
+            "clean": { "title": "Ordinare dati", "meta": "validazione", "explain": "Rileva campi incompleti e normalizza le informazioni." },
+            "rules": { "title": "Applicare criteri", "meta": "prezzi e margine", "explain": "Applica tariffe, sconti, tasse e margini concordati." },
+            "quote": { "title": "Preventivo", "meta": "documento", "explain": "Genera una bozza pronta da revisionare e inviare." },
+            "invoice": { "title": "Fattura", "meta": "quando accettato", "explain": "Quando il cliente accetta, lascia pronta la fattura." },
+            "notify": { "title": "Validazione", "meta": "responsabile", "explain": "Il team revisiona decisioni senza riscrivere dati." }
+          }
+        },
+        "social": {
+          "name": "Social",
+          "summary": "Trasforma idee in contenuti adattati per canale, li invia in revisione e li programma con controllo risultati.",
+          "nodes": {
+            "idea": { "title": "Idea o notizia", "meta": "input iniziale", "explain": "Un’idea, prodotto o notizia avvia il flusso contenuti." },
+            "copy": { "title": "Creare versioni", "meta": "tono e formato", "explain": "Adatta il messaggio per LinkedIn, Instagram, blog o email." },
+            "approve": { "title": "Revisionare", "meta": "controllo umano", "explain": "Prima di pubblicare, il team può validare il contenuto." },
+            "calendar": { "title": "Programmare", "meta": "calendario", "explain": "Decide giorno, ora e canale in base al piano." },
+            "publish": { "title": "Pubblicare", "meta": "canali", "explain": "Pubblica o prepara i contenuti su ogni piattaforma." },
+            "report": { "title": "Misurare", "meta": "risultati", "explain": "Raggruppa metriche e rileva cosa ha funzionato meglio." }
+          }
+        },
+        "support": {
+          "name": "Supporto",
+          "summary": "Risponde alle domande frequenti, consulta documentazione e crea ticket contestuali quando serve intervento umano.",
+          "nodes": {
+            "chat": { "title": "Domanda cliente", "meta": "chat o web", "explain": "Il cliente chiede e riceve una prima risposta immediata." },
+            "kb": { "title": "Consultare base", "meta": "documentazione", "explain": "Cerca in manuali, FAQ, incidenti e storico." },
+            "resolve": { "title": "Può risolvere?", "meta": "decisione", "explain": "Se è sicuro risponde; altrimenti prepara l’escalation." },
+            "answer": { "title": "Risposta guidata", "meta": "passo passo", "explain": "Fornisce istruzioni chiare per far avanzare il cliente." },
+            "ticket": { "title": "Creare ticket", "meta": "supporto tecnico", "explain": "Se serve intervento, crea un ticket con contesto." },
+            "close": { "title": "Follow-up", "meta": "stato e riepilogo", "explain": "Tiene informati cliente e team fino alla chiusura." }
+          }
+        }
+      }
+    },
     "pain": {
       "badge": "Diagnosi Chiara",
       "title": "Il traffico non è il problema. La conversione sì.",

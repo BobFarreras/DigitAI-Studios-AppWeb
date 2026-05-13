@@ -1,6 +1,6 @@
 /**
  * @file src/app/[locale]/dashboard/projects/[id]/page.tsx
- * @updated 2026-05-08
+ * @updated 2026-05-13
  * @summary Route module: src/app/[locale]/dashboard/projects/[id]/page.tsx
  * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
  */
@@ -28,9 +28,9 @@ export default async function ProjectDetailPage({ params }: Props) {
     const t = await getTranslations('Dashboard.project_detail');
     const result = await getDashboardProjectDetail(id);
     if (!result.success && result.authRequired) redirect('/auth/login');
-    const project = result.success ? result.project : null;
-    const stats = result.success ? result.stats : null;
-    const missions = result.success ? result.missions : [];
+    const project = 'project' in result ? result.project : null;
+    const stats = 'stats' in result ? result.stats : null;
+    const missions = 'missions' in result ? result.missions : [];
     if (!project) return notFound();
     if (!stats) return notFound();
 

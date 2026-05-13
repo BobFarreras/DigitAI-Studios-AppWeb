@@ -20,6 +20,9 @@ src/components/landing/services/mockups/WebMockup.tsx
 src/components/landing/solutions/mockups/MockupBooking.tsx
 src/components/landing/solutions/mockups/MockupFinance.tsx
 src/components/landing/solutions/mockups/MockupGrowth.tsx
+src/components/landing/v2/CustomSoftwareSection.tsx
+src/components/landing/v2/HeroCommandScene.tsx
+src/components/landing/v2/TrainingSection.tsx
 src/components/layout/Navbar.tsx
 src/components/layout/PublicMobilNav.tsx
 src/components/ui/alert-dialog.tsx

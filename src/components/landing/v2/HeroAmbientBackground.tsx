@@ -1,7 +1,7 @@
 /**
  * @file src/components/landing/v2/HeroAmbientBackground.tsx
- * @updated 2026-05-12
- * @summary Fons canvas subtil amb xarxa de dades per al Hero.
+ * @updated 2026-05-13
+ * @summary Fons canvas subtil amb xarxa de dades per a la landing v2.
  * @scope Renderitzar textura animada decorativa sense afectar contingut.
  */
 'use client';
@@ -35,7 +35,7 @@ class AmbientNode {
   }
 }
 
-export function HeroAmbientBackground() {
+export function HeroAmbientBackground({ className = 'absolute inset-0' }: { className?: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -108,7 +108,7 @@ export function HeroAmbientBackground() {
   }, []);
 
   return (
-    <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
+    <div className={`pointer-events-none z-0 overflow-hidden ${className}`}>
       <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(8,9,10,0.06),transparent_40%,rgba(35,37,42,0.08))] dark:bg-[linear-gradient(135deg,rgba(138,143,152,0.08),transparent_42%,rgba(98,102,109,0.06))]" />
       <div className="absolute left-[-12%] top-[12%] h-[70vh] w-[44vw] rounded-full bg-[#08090a]/10 blur-[110px] dark:bg-[#8a8f98]/8" />
       <div className="absolute right-[-14%] top-[22%] h-[70vh] w-[46vw] rounded-full bg-[#08090a]/10 blur-[110px] dark:bg-[#8a8f98]/7" />

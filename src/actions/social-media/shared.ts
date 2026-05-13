@@ -1,7 +1,6 @@
-'use server';
 /**
  * @file src/actions/social-media/shared.ts
- * @updated 2026-05-09
+ * @updated 2026-05-13
  * @summary Helpers compartits per accions de social media.
  * @scope Auth d'usuari i utilitats de gestió d'URLs/bucket.
  */

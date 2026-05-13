@@ -1,6 +1,6 @@
 /**
  * @file src/app/[locale]/admin/tests/[id]/page.tsx
- * @updated 2026-05-10
+ * @updated 2026-05-13
  * @summary Route module: src/app/[locale]/admin/tests/[id]/page.tsx
  * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
  */
@@ -20,6 +20,7 @@ export default async function AdminTestDetailPage({ params }: { params: Promise<
   if (!view) return <div className="p-8 text-center text-muted-foreground">Campanya no trobada</div>;
   if ('integrityError' in view) return <div>Error d'integritat: Projecte sense organització</div>;
   const { ctx, assigned, available, analyticsData } = view;
+  if (!ctx.campaign) return <div className="p-8 text-center text-muted-foreground">Campanya no trobada</div>;
 
   return (
     <div className="p-6 max-w-6xl mx-auto space-y-8 animate-in fade-in duration-500">

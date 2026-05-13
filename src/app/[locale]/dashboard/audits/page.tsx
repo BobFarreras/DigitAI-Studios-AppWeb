@@ -1,6 +1,6 @@
 /**
  * @file src/app/[locale]/dashboard/audits/page.tsx
- * @updated 2026-05-08
+ * @updated 2026-05-13
  * @summary Route module: src/app/[locale]/dashboard/audits/page.tsx
  * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
  */
@@ -20,7 +20,7 @@ export default async function AuditsListPage() {
     redirect(`/${locale}/auth/login`); 
   }
 
-  const audits = result.success ? result.audits : [];
+  const audits = result.success ? (result.audits ?? []) : [];
 
   // Helper per traduir estats dins del component server
   const getStatusLabel = (status: string) => {

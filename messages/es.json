@@ -707,6 +707,60 @@
         }
       }
     },
+    "automation": {
+      "titleStrong": "Automatizamos procesos que",
+      "titleMuted": "trabajan solos.",
+      "flows": {
+        "leads": {
+          "name": "Leads",
+          "summary": "Capta contactos, detecta interés, actualiza el CRM y programa seguimientos para que ninguna oportunidad quede parada.",
+          "nodes": {
+            "campaign": { "title": "Primer contacto", "meta": "WhatsApp / email", "explain": "Se envía o entra un mensaje y el sistema registra el contacto." },
+            "interest": { "title": "Detectar interés", "meta": "respuesta e intención", "explain": "La IA separa curiosidad, urgencia y oportunidad comercial." },
+            "filter": { "title": "Filtrar lead", "meta": "calificación", "explain": "Solo avanza lo que encaja con los criterios del negocio." },
+            "crm": { "title": "Actualizar CRM", "meta": "historial vivo", "explain": "Guarda datos, estado, origen y siguiente acción en el CRM." },
+            "follow": { "title": "Follow-up 48h", "meta": "recordatorio", "explain": "Si no responde, programa un nuevo contacto sin perder el hilo." },
+            "team": { "title": "Avisar equipo", "meta": "contexto completo", "explain": "Cuando hay señal real, llega a la persona adecuada." }
+          }
+        },
+        "quotes": {
+          "name": "Presupuestos",
+          "summary": "Transforma solicitudes en datos ordenados, aplica criterios comerciales y prepara presupuestos o facturas para validar.",
+          "nodes": {
+            "request": { "title": "Solicitud", "meta": "formulario o email", "explain": "Recoge datos del cliente, servicio y condiciones de venta." },
+            "clean": { "title": "Ordenar datos", "meta": "validación", "explain": "Detecta campos incompletos y normaliza la información." },
+            "rules": { "title": "Aplicar criterios", "meta": "precios y margen", "explain": "Aplica tarifas, descuentos, impuestos y márgenes pactados." },
+            "quote": { "title": "Presupuesto", "meta": "documento", "explain": "Genera un borrador listo para revisar y enviar." },
+            "invoice": { "title": "Factura", "meta": "cuando se acepta", "explain": "Cuando el cliente acepta, deja la factura preparada." },
+            "notify": { "title": "Validación", "meta": "responsable", "explain": "El equipo solo revisa decisiones, no vuelve a escribir datos." }
+          }
+        },
+        "social": {
+          "name": "RRSS",
+          "summary": "Convierte ideas en piezas adaptadas por canal, las envía a revisión y las deja programadas con control de resultados.",
+          "nodes": {
+            "idea": { "title": "Idea o noticia", "meta": "entrada inicial", "explain": "Una idea, producto o noticia inicia el flujo de contenido." },
+            "copy": { "title": "Crear versiones", "meta": "tono y formato", "explain": "Adapta el mensaje para LinkedIn, Instagram, blog o email." },
+            "approve": { "title": "Revisar", "meta": "control humano", "explain": "Antes de publicar, el equipo puede validar el contenido." },
+            "calendar": { "title": "Programar", "meta": "calendario", "explain": "Decide día, hora y canal según la planificación." },
+            "publish": { "title": "Publicar", "meta": "canales", "explain": "Publica o deja preparadas las piezas en cada plataforma." },
+            "report": { "title": "Medir", "meta": "resultados", "explain": "Agrupa métricas y detecta qué ha funcionado mejor." }
+          }
+        },
+        "support": {
+          "name": "Soporte",
+          "summary": "Responde preguntas habituales, consulta documentación y crea tickets con contexto cuando necesita intervención humana.",
+          "nodes": {
+            "chat": { "title": "Pregunta cliente", "meta": "chat o web", "explain": "El cliente pregunta y recibe una primera respuesta inmediata." },
+            "kb": { "title": "Consultar base", "meta": "documentación", "explain": "Busca en manuales, FAQs, incidencias e historial." },
+            "resolve": { "title": "¿Puede resolver?", "meta": "decisión", "explain": "Si tiene confianza, responde; si no, prepara escalado." },
+            "answer": { "title": "Respuesta guiada", "meta": "paso a paso", "explain": "Da instrucciones claras para que el cliente avance." },
+            "ticket": { "title": "Crear ticket", "meta": "soporte técnico", "explain": "Si hace falta intervención, crea un ticket con contexto." },
+            "close": { "title": "Seguimiento", "meta": "estado y resumen", "explain": "Mantiene informado al cliente y al equipo hasta el cierre." }
+          }
+        }
+      }
+    },
     "pain": {
       "badge": "Diagnóstico Claro",
       "title": "El problema no es tener tráfico. El problema es no convertirlo.",

@@ -707,6 +707,60 @@
         }
       }
     },
+    "automation": {
+      "titleStrong": "We automate processes that",
+      "titleMuted": "work on their own.",
+      "flows": {
+        "leads": {
+          "name": "Leads",
+          "summary": "Captures contacts, detects intent, updates the CRM and schedules follow-ups so no opportunity stalls.",
+          "nodes": {
+            "campaign": { "title": "First contact", "meta": "WhatsApp / email", "explain": "A message is sent or received and the system records the contact." },
+            "interest": { "title": "Detect interest", "meta": "reply and intent", "explain": "AI separates curiosity, urgency and real sales opportunity." },
+            "filter": { "title": "Filter lead", "meta": "qualification", "explain": "Only leads that match business criteria move forward." },
+            "crm": { "title": "Update CRM", "meta": "live history", "explain": "Stores data, status, source and next action in the CRM." },
+            "follow": { "title": "48h follow-up", "meta": "reminder", "explain": "If there is no reply, it schedules another touchpoint automatically." },
+            "team": { "title": "Notify team", "meta": "full context", "explain": "When there is a real signal, it reaches the right person." }
+          }
+        },
+        "quotes": {
+          "name": "Quotes",
+          "summary": "Turns requests into structured data, applies commercial rules and prepares quotes or invoices for review.",
+          "nodes": {
+            "request": { "title": "Request", "meta": "form or email", "explain": "Collects customer, service and sales condition data." },
+            "clean": { "title": "Clean data", "meta": "validation", "explain": "Detects missing fields and normalizes information." },
+            "rules": { "title": "Apply rules", "meta": "pricing and margin", "explain": "Applies rates, discounts, taxes and agreed margins." },
+            "quote": { "title": "Quote", "meta": "document", "explain": "Generates a draft ready to review and send." },
+            "invoice": { "title": "Invoice", "meta": "when accepted", "explain": "When the customer accepts, the invoice is prepared." },
+            "notify": { "title": "Validation", "meta": "owner", "explain": "The team reviews decisions instead of retyping data." }
+          }
+        },
+        "social": {
+          "name": "Social",
+          "summary": "Turns ideas into channel-specific assets, sends them for review and schedules them with result tracking.",
+          "nodes": {
+            "idea": { "title": "Idea or news", "meta": "initial input", "explain": "An idea, product or update starts the content workflow." },
+            "copy": { "title": "Create versions", "meta": "tone and format", "explain": "Adapts the message for LinkedIn, Instagram, blog or email." },
+            "approve": { "title": "Review", "meta": "human control", "explain": "Before publishing, the team can validate the content." },
+            "calendar": { "title": "Schedule", "meta": "calendar", "explain": "Chooses day, time and channel based on the plan." },
+            "publish": { "title": "Publish", "meta": "channels", "explain": "Publishes or prepares assets for each platform." },
+            "report": { "title": "Measure", "meta": "results", "explain": "Aggregates metrics and detects what performed best." }
+          }
+        },
+        "support": {
+          "name": "Support",
+          "summary": "Answers common questions, checks documentation and creates contextual tickets when human help is needed.",
+          "nodes": {
+            "chat": { "title": "Customer question", "meta": "chat or web", "explain": "The customer asks and receives an immediate first response." },
+            "kb": { "title": "Search knowledge", "meta": "documentation", "explain": "Searches manuals, FAQs, incidents and history." },
+            "resolve": { "title": "Can solve?", "meta": "decision", "explain": "If confidence is high, it replies; otherwise it prepares escalation." },
+            "answer": { "title": "Guided answer", "meta": "step by step", "explain": "Gives clear instructions so the customer can move forward." },
+            "ticket": { "title": "Create ticket", "meta": "technical support", "explain": "If intervention is needed, it creates a ticket with context." },
+            "close": { "title": "Follow-up", "meta": "status and summary", "explain": "Keeps the customer and team informed until resolution." }
+          }
+        }
+      }
+    },
     "pain": {
       "badge": "Clear Diagnosis",
       "title": "Traffic is not the issue. Conversion is.",

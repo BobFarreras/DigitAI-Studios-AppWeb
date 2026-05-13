@@ -707,6 +707,60 @@
         }
       }
     },
+    "automation": {
+      "titleStrong": "Automatitzem processos que",
+      "titleMuted": "treballen sols.",
+      "flows": {
+        "leads": {
+          "name": "Leads",
+          "summary": "Capta contactes, detecta interès, actualitza el CRM i programa seguiments perquè cap oportunitat quedi parada.",
+          "nodes": {
+            "campaign": { "title": "Primer contacte", "meta": "WhatsApp / email", "explain": "S’envia o entra un missatge i el sistema registra el contacte." },
+            "interest": { "title": "Detectar interès", "meta": "resposta i intenció", "explain": "La IA separa curiositat, urgència i oportunitat comercial." },
+            "filter": { "title": "Filtrar lead", "meta": "qualificació", "explain": "Només avança el que encaixa amb els criteris del negoci." },
+            "crm": { "title": "Actualitzar CRM", "meta": "historial viu", "explain": "Guarda dades, estat, origen i següent acció al CRM." },
+            "follow": { "title": "Follow-up 48h", "meta": "recordatori", "explain": "Si no respon, programa un nou contacte sense perdre el fil." },
+            "team": { "title": "Avisar equip", "meta": "context complet", "explain": "Quan hi ha senyal real, arriba a la persona adequada." }
+          }
+        },
+        "quotes": {
+          "name": "Pressupostos",
+          "summary": "Transforma sol·licituds en dades ordenades, aplica criteris comercials i prepara pressupostos o factures per validar.",
+          "nodes": {
+            "request": { "title": "Sol·licitud", "meta": "formulari o email", "explain": "Recull dades del client, servei i condicions de venda." },
+            "clean": { "title": "Ordenar dades", "meta": "validació", "explain": "Detecta camps incomplets i normalitza la informació." },
+            "rules": { "title": "Aplicar criteris", "meta": "preus i marge", "explain": "Aplica tarifes, descomptes, impostos i marges pactats." },
+            "quote": { "title": "Pressupost", "meta": "document", "explain": "Genera un esborrany llest per revisar i enviar." },
+            "invoice": { "title": "Factura", "meta": "quan s’accepta", "explain": "Quan el client accepta, deixa la factura preparada." },
+            "notify": { "title": "Validació", "meta": "responsable", "explain": "L’equip només revisa decisions, no torna a escriure dades." }
+          }
+        },
+        "social": {
+          "name": "RRSS",
+          "summary": "Converteix idees en peces adaptades per canal, les envia a revisió i les deixa programades amb control de resultats.",
+          "nodes": {
+            "idea": { "title": "Idea o notícia", "meta": "entrada inicial", "explain": "Una idea, producte o notícia inicia el flux de contingut." },
+            "copy": { "title": "Crear versions", "meta": "to i format", "explain": "Adapta el missatge per LinkedIn, Instagram, blog o email." },
+            "approve": { "title": "Revisar", "meta": "control humà", "explain": "Abans de publicar, l’equip pot validar el contingut." },
+            "calendar": { "title": "Programar", "meta": "calendari", "explain": "Decideix dia, hora i canal segons la planificació." },
+            "publish": { "title": "Publicar", "meta": "canals", "explain": "Publica o deixa preparades les peces a cada plataforma." },
+            "report": { "title": "Mesurar", "meta": "resultats", "explain": "Agrupa mètriques i detecta què ha funcionat millor." }
+          }
+        },
+        "support": {
+          "name": "Suport",
+          "summary": "Respon preguntes habituals, consulta documentació i crea tickets amb context quan necessita intervenció humana.",
+          "nodes": {
+            "chat": { "title": "Pregunta client", "meta": "chat o web", "explain": "El client pregunta i rep una primera resposta immediata." },
+            "kb": { "title": "Consultar base", "meta": "documentació", "explain": "Busca en manuals, FAQs, incidències i historial." },
+            "resolve": { "title": "Pot resoldre?", "meta": "decisió", "explain": "Si té confiança, respon; si no, prepara escalat." },
+            "answer": { "title": "Resposta guiada", "meta": "pas a pas", "explain": "Dona instruccions clares perquè el client avanci." },
+            "ticket": { "title": "Crear ticket", "meta": "suport tècnic", "explain": "Si cal intervenció, crea un ticket amb context." },
+            "close": { "title": "Seguiment", "meta": "estat i resum", "explain": "Manté informat el client i l’equip fins al tancament." }
+          }
+        }
+      }
+    },
     "pain": {
       "badge": "Diagnosi Clara",
       "title": "El problema no es tenir trànsit. El problema es no convertir-lo.",

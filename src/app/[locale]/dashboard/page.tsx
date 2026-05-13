@@ -1,6 +1,6 @@
 /**
  * @file src/app/[locale]/dashboard/page.tsx
- * @updated 2026-05-08
+ * @updated 2026-05-13
  * @summary Route module: src/app/[locale]/dashboard/page.tsx
  * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
  */
@@ -19,8 +19,8 @@ export default async function DashboardPage() {
     if (!result.success && result.authRequired) {
         redirect('/');
     }
-    const audits = result.success ? result.audits : [];
-    const userEmail = result.success ? result.userEmail : '';
+    const audits = result.success ? (result.audits ?? []) : [];
+    const userEmail = result.success ? (result.userEmail ?? '') : '';
     const totalAudits = audits.length;
     const validSeoScores = audits
         .filter(a => a.seoScore !== null && a.seoScore !== undefined)

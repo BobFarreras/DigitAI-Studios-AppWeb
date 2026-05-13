@@ -1,7 +1,7 @@
 'use server';
 /**
  * @file src/features/projects/actions.ts
- * @updated 2026-05-08
+ * @updated 2026-05-13
  * @summary Action principal de creacio de projecte/client.
  * @scope Orquestracio high-level entre infraestructura, IA, tenant i deploy.
  */
@@ -15,7 +15,7 @@ import { ActionResult } from '@/types/actions';
 import { getSectorConfig } from '@/types/sectors';
 import { I18nSchema } from '@/types/i18n';
 import { seedProducts } from '@/actions/projects-seeding';
-import { BASE_SKELETON, buildFallbackContent } from './create-project-support';
+import { BASE_SKELETON, buildFallbackContent } from './actions/create-project-support';
 const infra = new InfrastructureService();
 const tenant = new TenantService();
 const ai = new AIService();

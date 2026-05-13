@@ -1,7 +1,7 @@
 'use client';
 /**
  * @file src/components/admin/AuditsTable.tsx
- * @updated 2026-05-08
+ * @updated 2026-05-13
  * @summary Contenidor de taula d'auditories admin.
  * @scope Orquestra accions d'eliminació i delega render a mobile/desktop.
  */
@@ -9,18 +9,9 @@ import { useTransition } from 'react'; // Per gestionar l'estat de càrrega
 import { deleteAdminAudit } from '@/actions/admin/audits'; // 👈 Importem l'acció
 import { AuditsMobileCards } from '@/components/admin/audits/AuditsMobileCards';
 import { AuditsDesktopTable } from '@/components/admin/audits/AuditsDesktopTable';
+import type { AuditTableSummary } from '@/components/admin/audits/audit-table-utils';
 
-type AuditSummary = {
-  id: string;
-  created_at: string | null;
-  domain: string;
-  report_data?: {
-    email?: string;
-    score?: number;
-  } | null;
-};
-
-export function AuditsTable({ audits }: { audits: AuditSummary[] }) {
+export function AuditsTable({ audits }: { audits: AuditTableSummary[] }) {
   const [isPending, startTransition] = useTransition();
 
   const handleDelete = async (id: string) => {

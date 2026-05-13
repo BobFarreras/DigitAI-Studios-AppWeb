@@ -117,7 +117,7 @@ export class AIService {
         badge: "Info", title: "Sobre nosaltres", description: desc, image_prompt: "",
         stats: { label1: "Experiència", value1: "+10", label2: "Clients", value2: "100%", label3: "Projectes", value3: "+50" }
       },
-      services: { badge: "Serveis", title: "Serveis", subtitle: config.promptHint, items: [] },
+      services: { badge: "Serveis", title: "Serveis", subtitle: config.keywords.services, items: [] },
       featured_products: { title: "Productes", subtitle: "Selecció", limit: 4 }, // ✅ Afegit el que has posat
       testimonials: { badge: "Opinions", title: "Opinions", subtitle: "", reviews: [] },
       cta_banner: { heading: "T'interessa?", subheading: "Parlem avui", buttonText: "Contactar" },

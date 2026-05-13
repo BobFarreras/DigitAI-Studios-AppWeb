@@ -37,6 +37,8 @@ export type AuditRowActions = {
   onDelete: (id: string) => void;
 };
 
+export type AuditTableSummary = AuditSummary;
+
 export type AuditRowsProps = {
   audits: AuditSummary[];
 } & AuditRowActions;

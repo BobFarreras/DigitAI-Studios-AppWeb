@@ -1,6 +1,6 @@
 /**
  * @file src/components/landing/v2/HeroV2.tsx
- * @updated 2026-05-12
+ * @updated 2026-05-13
  * @summary Hero Linear amb headline superior i tres pilars visuals.
  * @scope Presentar automatitzacions, software i formacio com a portes d'entrada.
  */
@@ -9,7 +9,6 @@
 import { motion, type Variants } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { BrandRevealText } from '@/components/ui/brand-reveal';
-import { HeroAmbientBackground } from './HeroAmbientBackground';
 import { HeroPillarGrid } from './HeroCommandScene';
 
 const containerVariants: Variants = {
@@ -28,9 +27,8 @@ export function HeroLinear() {
   return (
     <section
       id="inici"
-      className="relative isolate h-[100svh] overflow-hidden bg-[#f7f8f8] px-4 pb-4 pt-[92px] text-[#08090a] dark:bg-[#08090a] dark:text-[#f7f8f8] sm:px-6 sm:pb-5 sm:pt-[96px] lg:px-8 lg:pb-7 lg:pt-[104px]"
+      className="relative isolate h-[100svh] overflow-hidden bg-transparent px-4 pb-4 pt-[92px] text-[#08090a] dark:text-[#f7f8f8] sm:px-6 sm:pb-5 sm:pt-[96px] lg:px-8 lg:pb-7 lg:pt-[104px]"
     >
-      <HeroAmbientBackground />
       <div className="pointer-events-none absolute inset-x-0 top-0 z-[1] h-28 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.72),transparent)] dark:bg-[linear-gradient(to_bottom,rgba(8,9,10,0.78),transparent)]" />
       <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-32 bg-[linear-gradient(to_top,rgba(255,255,255,0.58),transparent)] dark:bg-[linear-gradient(to_top,rgba(8,9,10,0.7),transparent)]" />
 
