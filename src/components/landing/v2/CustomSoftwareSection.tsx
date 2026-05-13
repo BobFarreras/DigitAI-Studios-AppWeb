@@ -18,9 +18,10 @@ import { DashboardView } from './custom-software/DashboardView';
 import { InventoryView } from './custom-software/InventoryView';
 import { PipelineView } from './custom-software/PipelineView';
 import { startClients, startJobs, startMaterial, startTeam, toStockState, views, type JobState, type LeadStage, type NewMaterial, type NewSatOrder, type ViewId } from './custom-software/model';
+import { useSoftwareText } from './custom-software/software-i18n';
 
 export function CustomSoftwareSection() {
-  const copy = getSoftwareCopy(useLocale());
+  const copy = getSoftwareCopy(useLocale()), ui = useSoftwareText();
   const [view, setView] = useState<ViewId>('dashboard');
   const [clientName, setClientName] = useState(''), [jobTitle, setJobTitle] = useState(''), [materialName, setMaterialName] = useState(''), [userName, setUserName] = useState('');
   const [clients, setClients] = useState(startClients), [jobs, setJobs] = useState(startJobs), [material, setMaterial] = useState(startMaterial), [team, setTeam] = useState(startTeam);
@@ -56,15 +57,15 @@ export function CustomSoftwareSection() {
     <section id="software-a-mida" className="relative w-full border-t border-[#d0d6e0] px-4 pb-5 pt-[88px] dark:border-[#23252a] md:px-6 md:pb-6 md:pt-[94px] lg:pb-8 lg:pt-[102px]">
       <div className="mx-auto max-w-7xl">
         <div className="mb-6 max-w-5xl sm:mb-7 lg:mb-8">
-          <h2 className="text-balance text-[clamp(31px,7.4vw,42px)] font-[590] leading-[1.03] text-[#08090a] dark:text-[#f7f8f8] sm:text-[clamp(42px,5vw,58px)] lg:text-[clamp(48px,4.1vw,66px)]">Tecnologia que s&apos;adapta al teu equip<BrandRevealText className="ml-1 text-[#383b3f] dark:text-[#8a8f98]">i creix amb el teu negoci.</BrandRevealText></h2>
-          <p className="mt-4 max-w-4xl text-[14px] leading-[1.5] text-[#62666d] dark:text-[#8a8f98] sm:text-[15px]">Demo real d&apos;un SAT per a una empresa de lampisteria amb CRM, ordres de treball, materials i accessos.</p>
+          <h2 className="text-balance text-[clamp(31px,7.4vw,42px)] font-[590] leading-[1.03] text-[#08090a] dark:text-[#f7f8f8] sm:text-[clamp(42px,5vw,58px)] lg:text-[clamp(48px,4.1vw,66px)]">{ui.text('Tecnologia que s\'adapta al teu equip')}<BrandRevealText className="ml-1 text-[#383b3f] dark:text-[#8a8f98]">{ui.text('i creix amb el teu negoci.')}</BrandRevealText></h2>
+          <p className="mt-4 max-w-4xl text-[14px] leading-[1.5] text-[#62666d] dark:text-[#8a8f98] sm:text-[15px]">{ui.text('Demo real d\'un SAT per a una empresa de lampisteria amb CRM, ordres de treball, materials i accessos.')}</p>
         </div>
         <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} className="relative overflow-hidden rounded-[12px] border border-[#d0d6e0] bg-white/70 [filter:grayscale(1)_saturate(0)_contrast(.94)] transition-all duration-500 hover:[filter:grayscale(0)_saturate(1)_contrast(1)] dark:border-[#323334] dark:bg-[#0f1011]/95">
           <div className="flex min-h-[clamp(560px,73svh,760px)] flex-col md:flex-row">
             <aside className="w-full border-b border-[#d0d6e0] bg-white/78 md:w-[240px] md:border-b-0 md:border-r dark:border-[#23252a] dark:bg-[#08090a]/90">
               <div className="flex h-14 items-center gap-3 px-4"><div className="flex h-7 w-7 items-center justify-center rounded-[5px] bg-gradient-to-br from-[#5e6ad2] to-[#27a644]"><Database className="h-4 w-4 text-white" /></div><span className="text-[14px] font-[590]">Lampisteria SAT</span></div>
-              <nav className="grid grid-cols-2 gap-2 p-3 md:grid-cols-1">{views.map((item) => <button key={item.id} onClick={() => setView(item.id)} className={`flex items-center gap-2 rounded-[6px] px-3 py-2 text-left text-[13px] ${view === item.id ? 'border border-[#b8c0ce] bg-[#eceff4] dark:border-[#323334] dark:bg-[#161718]' : 'border border-transparent text-[#62666d] hover:bg-[#eef1f6] dark:text-[#8a8f98] dark:hover:bg-[#161718]'}`}><item.icon className="h-4 w-4" />{item.label}</button>)}</nav>
-              <div className="hidden border-t border-[#d0d6e0] p-4 md:block dark:border-[#23252a]"><div className="flex items-center gap-2 text-[12px] text-[#62666d] dark:text-[#8a8f98]"><ShieldCheck className="h-4 w-4 text-[#27a644]" />Control segur i traçable</div></div>
+              <nav className="grid grid-cols-2 gap-2 p-3 md:grid-cols-1">{views.map((item) => <button key={item.id} onClick={() => setView(item.id)} className={`flex items-center gap-2 rounded-[6px] px-3 py-2 text-left text-[13px] ${view === item.id ? 'border border-[#b8c0ce] bg-[#eceff4] dark:border-[#323334] dark:bg-[#161718]' : 'border border-transparent text-[#62666d] hover:bg-[#eef1f6] dark:text-[#8a8f98] dark:hover:bg-[#161718]'}`}><item.icon className="h-4 w-4" />{item.id === 'pipeline' ? ui.t('sat') : item.id === 'inventory' ? ui.t('materials') : item.id === 'access' ? ui.t('access') : item.label}</button>)}</nav>
+              <div className="hidden border-t border-[#d0d6e0] p-4 md:block dark:border-[#23252a]"><div className="flex items-center gap-2 text-[12px] text-[#62666d] dark:text-[#8a8f98]"><ShieldCheck className="h-4 w-4 text-[#27a644]" />{ui.text('Control segur i traçable')}</div></div>
             </aside>
             <main className="min-w-0 flex-1">
               <div className="h-[clamp(616px,70svh,796px)] overflow-hidden p-4 md:p-6">

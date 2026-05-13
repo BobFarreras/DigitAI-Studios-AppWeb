@@ -6,6 +6,7 @@
  */
 
 import type { Material } from './model';
+import type { Locale } from './software-i18n';
 
 export type InventoryProfile = {
   category: string;
@@ -28,7 +29,7 @@ export type InventoryProfile = {
   history: string[];
 };
 
-export function getMaterialProfile(material: Material, reservedExtra: number, orderedFlag: boolean): InventoryProfile {
+export function getMaterialProfile(material: Material, reservedExtra: number, orderedFlag: boolean, locale: Locale = 'ca'): InventoryProfile {
   const category = material.category || getCategory(material.name);
   const supplier = material.supplier || getSupplier(category);
   const supplierContact = material.supplierContact || getSupplierContact(supplier);
@@ -45,8 +46,8 @@ export function getMaterialProfile(material: Material, reservedExtra: number, or
   const alternativeSupplier = getAlternativeSupplier(supplier);
   const alternativePrice = Number((unitPrice * (priceDelta > 8 ? 0.88 : 0.96)).toFixed(2));
   const saving = Number(Math.max(0, unitPrice - alternativePrice).toFixed(2));
-  const recommendation = getRecommendation(material, reorderQty, saving, alternativeSupplier);
-  return { category, supplier, supplierContact, leadTime, location: material.location || getLocation(category), unitPrice, reserved, ordered, reorderQty, available, value, monthlyUse, priceDelta, alternativeSupplier, alternativePrice, saving, recommendation, history: getHistory(material, reserved, ordered) };
+  const recommendation = getRecommendation(material, reorderQty, saving, alternativeSupplier, locale);
+  return { category, supplier, supplierContact, leadTime, location: material.location || getLocation(category), unitPrice, reserved, ordered, reorderQty, available, value, monthlyUse, priceDelta, alternativeSupplier, alternativePrice, saving, recommendation, history: getHistory(material, reserved, ordered, locale) };
 }
 
 function getCategory(name: string) {
@@ -117,14 +118,20 @@ function getSupplierContact(supplier: string) {
   return 'Marc Vidal · 972 300 145';
 }
 
-function getRecommendation(material: Material, reorderQty: number, saving: number, supplier: string) {
+function getRecommendation(material: Material, reorderQty: number, saving: number, supplier: string, locale: Locale) {
+  if (locale === 'en') return material.state === 'Crític' ? `Order ${reorderQty} units today. Alternative: ${supplier}.` : saving > 6 ? `Review purchase: ${supplier} saves ${saving.toFixed(2)} €/unit.` : material.state === 'Baix' ? `Prepare an order for ${reorderQty} units.` : 'Stock is correct for active work orders.';
+  if (locale === 'es') return material.state === 'Crític' ? `Pedir ${reorderQty} unidades hoy. Alternativa: ${supplier}.` : saving > 6 ? `Revisar compra: ${supplier} ahorra ${saving.toFixed(2)} €/unidad.` : material.state === 'Baix' ? `Preparar pedido de ${reorderQty} unidades.` : 'Stock correcto para las órdenes activas.';
+  if (locale === 'it') return material.state === 'Crític' ? `Ordina ${reorderQty} unità oggi. Alternativa: ${supplier}.` : saving > 6 ? `Rivedi acquisto: ${supplier} fa risparmiare ${saving.toFixed(2)} €/unità.` : material.state === 'Baix' ? `Prepara un ordine di ${reorderQty} unità.` : 'Stock corretto per gli ordini attivi.';
   if (material.state === 'Crític') return `Demanar ${reorderQty} unitats avui. Alternativa: ${supplier}.`;
   if (saving > 6) return `Revisar compra: ${supplier} estalvia ${saving.toFixed(2)} €/unitat.`;
   if (material.state === 'Baix') return `Preparar comanda de ${reorderQty} unitats.`;
   return 'Stock correcte per a les ordres actives.';
 }
 
-function getHistory(material: Material, reserved: number, ordered: number) {
+function getHistory(material: Material, reserved: number, ordered: number, locale: Locale) {
+  if (locale === 'en') return [`Inventory reviewed: ${material.qty} units, minimum ${material.min}.`, reserved > 0 ? `${reserved} units reserved for SAT orders.` : 'No active reservations.', ordered > 0 ? `Open supplier order for ${ordered} units.` : 'No pending orders.'];
+  if (locale === 'es') return [`Inventario revisado: ${material.qty} unidades, mínimo ${material.min}.`, reserved > 0 ? `${reserved} unidades reservadas para órdenes SAT.` : 'Sin reservas activas.', ordered > 0 ? `Pedido abierto de ${ordered} unidades al proveedor.` : 'Sin pedidos pendientes.'];
+  if (locale === 'it') return [`Inventario revisionato: ${material.qty} unità, minimo ${material.min}.`, reserved > 0 ? `${reserved} unità riservate per ordini SAT.` : 'Nessuna riserva attiva.', ordered > 0 ? `Ordine aperto di ${ordered} unità al fornitore.` : 'Nessun ordine in sospeso.'];
   return [
     `Inventari revisat: ${material.qty} unitats, mínim ${material.min}.`,
     reserved > 0 ? `${reserved} unitats reservades per ordres SAT.` : 'Sense reserves actives.',
