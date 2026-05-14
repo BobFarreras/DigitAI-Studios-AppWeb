@@ -27,7 +27,7 @@ export function HeroLinear() {
   return (
     <section
       id="inici"
-      className="relative isolate overflow-visible bg-transparent px-4 pb-4 pt-[82px] text-[#08090a] dark:text-[#f7f8f8] sm:px-6 sm:pb-5 sm:pt-[96px] lg:h-[100svh] lg:overflow-hidden lg:px-8 lg:pb-7 lg:pt-[104px]"
+      className="relative isolate overflow-visible bg-transparent px-4 pb-8 pt-[82px] text-[#08090a] dark:text-[#f7f8f8] sm:px-6 sm:pb-5 sm:pt-[96px] lg:h-[100svh] lg:overflow-hidden lg:px-8 lg:pb-7 lg:pt-[104px]"
     >
       <div className="pointer-events-none absolute inset-x-0 top-0 z-[1] h-28 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.72),transparent)] dark:bg-[linear-gradient(to_bottom,rgba(8,9,10,0.78),transparent)]" />
       <motion.div

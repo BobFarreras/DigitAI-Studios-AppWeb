@@ -16,12 +16,12 @@ type MobilePoint = { x: number; y: number };
 
 const smoothEase = [0.22, 1, 0.36, 1] as const;
 const mobilePoints: MobilePoint[] = [
-  { x: 50, y: 7 },
-  { x: 30, y: 21 },
-  { x: 70, y: 35 },
-  { x: 28, y: 53 },
-  { x: 72, y: 53 },
-  { x: 50, y: 74 },
+  { x: 50, y: 16 },
+  { x: 30, y: 30 },
+  { x: 70, y: 44 },
+  { x: 28, y: 62 },
+  { x: 72, y: 62 },
+  { x: 50, y: 83 },
 ];
 
 export function AutomationMobileFlow({ workflow }: Props) {

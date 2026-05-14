@@ -76,7 +76,7 @@ export function AutomationSection() {
   const [hoveredNode, setHoveredNode] = useState<number | null>(null);
   const workflow = workflows[active];
   return (
-    <section id="automatitzacions" className="relative z-10 flex min-h-[100svh] overflow-hidden px-4 pb-[72px] pt-5 text-[#08090a] dark:text-[#f7f8f8] sm:px-6 sm:py-[84px] lg:px-8 lg:py-[92px]">
+    <section id="automatitzacions" className="relative z-10 flex min-h-[100svh] overflow-hidden px-4 pb-[72px] pt-9 text-[#08090a] dark:text-[#f7f8f8] sm:px-6 sm:py-[84px] lg:px-8 lg:py-[92px]">
       <motion.div variants={sectionReveal} initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.32, margin: '-4% 0px -20% 0px' }} className="mx-auto flex w-full max-w-7xl flex-col justify-center">
         <motion.h2 variants={riseReveal} className="mx-auto max-w-6xl text-balance text-center text-[clamp(28px,4.2vw,56px)] font-[590] leading-[1.02]">
           {t('titleStrong')} <BrandRevealText className="text-[#383b3f] dark:text-[#8a8f98]">{t('titleMuted')}</BrandRevealText>
