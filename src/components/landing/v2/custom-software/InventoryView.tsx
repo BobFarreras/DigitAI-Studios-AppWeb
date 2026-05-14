@@ -15,16 +15,17 @@ import { getMaterialProfile, type InventoryProfile } from './inventory-utils';
 import type { Material, NewMaterial, StockState } from './model';
 import { useSoftwareText } from './software-i18n';
 
-type Props = { material: Material[]; materialName: string; onSetMaterialName: (value: string) => void; onAddMaterial: (input?: NewMaterial) => void; onIncrement: (id: string) => void };
+type Props = { material: Material[]; targetMaterial?: string | null; materialName: string; onSetMaterialName: (value: string) => void; onAddMaterial: (input?: NewMaterial) => void; onIncrement: (id: string) => void };
 type Filter = 'Tot' | StockState | 'Reservat' | 'Demanat';
 type Row = { material: Material; profile: InventoryProfile };
 const filters: Filter[] = ['Tot', 'OK', 'Baix', 'Crític', 'Reservat', 'Demanat'];
-export function InventoryView({ material, materialName, onSetMaterialName, onAddMaterial, onIncrement }: Props) {
+export function InventoryView({ material, targetMaterial, materialName, onSetMaterialName, onAddMaterial, onIncrement }: Props) {
   const ui = useSoftwareText();
   const columns = [[ui.t('material'), ui.tip('material')], [ui.t('stock'), ui.tip('stock')], [ui.t('status'), ui.tip('status')], [ui.t('supplier'), ui.tip('supplier')], [ui.t('sat'), ui.tip('sat')], [ui.t('action'), ui.tip('detail')]] as const;
   const [filter, setFilter] = useState<Filter>('Tot');
-  const [selected, setSelected] = useState(material[0]?.id ?? '');
-  const [screen, setScreen] = useState<'list' | 'detail'>('list');
+  const target = material.find((item) => item.name === targetMaterial || item.name.includes(targetMaterial ?? ''));
+  const [selected, setSelected] = useState(target?.id ?? material[0]?.id ?? '');
+  const [screen, setScreen] = useState<'list' | 'detail'>(target ? 'detail' : 'list');
   const [mode, setMode] = useState<'table' | 'analytics'>('table');
   const [query, setQuery] = useState('');
   const [openDialog, setOpenDialog] = useState(false);
@@ -78,7 +79,7 @@ export function InventoryView({ material, materialName, onSetMaterialName, onAdd
 
 function MaterialRow({ row, active, onSelect, onIncrement, onReserve, onDetail }: { row: Row; active: boolean; onSelect: () => void; onIncrement: () => void; onReserve: () => void; onDetail: () => void }) {
   const ui = useSoftwareText();
-  return <tr onClick={onSelect} className={`border-b border-[#d0d6e0]/70 bg-white transition hover:bg-[#f4f6fa] dark:border-[#23252a]/80 dark:bg-transparent dark:hover:bg-[#171819] ${active ? 'bg-[#f4f6fa] dark:bg-[#151617]' : ''}`}>
+  return <tr onClick={() => { onSelect(); onDetail(); }} className={`cursor-pointer border-b border-[#d0d6e0]/70 bg-white transition hover:bg-[#f4f6fa] dark:border-[#23252a]/80 dark:bg-transparent dark:hover:bg-[#171819] ${active ? 'bg-[#f4f6fa] dark:bg-[#151617]' : ''}`}>
     <td className="px-4 py-4"><p className="font-[590]">{row.material.name}</p><p className="text-[11px] text-[#8a8f98]">{row.material.id} · {row.profile.category}</p></td>
     <td className="px-4 py-4"><p className="font-[560]">{row.material.qty} {ui.t('units')}</p><p className="text-[11px] text-[#8a8f98]">{ui.t('minStock')} {row.material.min} · {ui.t('available')} {row.profile.available}</p></td>
     <td className="px-4 py-4"><StockMark state={row.material.state} /></td>

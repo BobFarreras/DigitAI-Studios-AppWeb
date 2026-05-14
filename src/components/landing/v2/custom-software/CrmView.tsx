@@ -14,16 +14,17 @@ import { CrmClientDetail } from './CrmClientDetail';
 import type { Client, LeadStage } from './model';
 import { useSoftwareText } from './software-i18n';
 
-type Props = { clients: Client[]; clientName: string; onSetClientName: (v: string) => void; onAddClient: () => void; onSetStage: (id: number, stage: LeadStage) => void };
+type Props = { clients: Client[]; targetClient?: string | null; clientName: string; onSetClientName: (v: string) => void; onAddClient: () => void; onSetStage: (id: number, stage: LeadStage) => void };
 const stages: LeadStage[] = ['Nou', 'Qualificat', 'Proposta', 'Tancat'];
-export function CrmView({ clients, clientName, onSetClientName, onAddClient, onSetStage }: Props) {
+export function CrmView({ clients, targetClient, clientName, onSetClientName, onAddClient, onSetStage }: Props) {
   const ui = useSoftwareText();
   const columns = [[ui.t('client'), ui.tip('client')], [ui.t('segment'), ui.tip('segment')], [ui.t('owner'), ui.tip('owner')], [ui.t('phase'), ui.tip('phase')], [ui.t('action'), ui.tip('detail')]] as const;
   const [stageFilter, setStageFilter] = useState<'all' | LeadStage>('all');
   const [localQuery, setLocalQuery] = useState('');
-  const [selected, setSelected] = useState<number | null>(clients[0]?.id ?? null);
+  const target = clients.find((client) => client.name === targetClient || client.name.includes(targetClient ?? ''));
+  const [selected, setSelected] = useState<number | null>(target?.id ?? clients[0]?.id ?? null);
   const [openDialog, setOpenDialog] = useState(false);
-  const [screen, setScreen] = useState<'list' | 'detail'>('list');
+  const [screen, setScreen] = useState<'list' | 'detail'>(target ? 'detail' : 'list');
   const filtered = useMemo(() => clients.filter((c) => (`${c.name} ${c.segment} ${c.owner}`.toLowerCase().includes(localQuery.trim().toLowerCase())) && (stageFilter === 'all' || c.stage === stageFilter)), [clients, localQuery, stageFilter]);
   const current = clients.find((c) => c.id === selected) ?? filtered[0] ?? null;
   const wonRate = clients.length ? Math.round((clients.filter((c) => c.stage === 'Tancat').length / clients.length) * 100) : 0;
@@ -51,7 +52,7 @@ export function CrmView({ clients, clientName, onSetClientName, onAddClient, onS
         <div className="min-h-0 flex-1 overflow-auto">
           <table className="w-full min-w-[760px] text-left text-[13px]">
             <thead className="sticky top-0 z-10 border-b border-[#d0d6e0] bg-white/96 text-[#8a8f98] backdrop-blur dark:border-[#23252a] dark:bg-[#111213]/96"><tr>{columns.map(([label, tip]) => <th key={label} className="px-4 py-3 font-[520]"><ColumnHint label={label} tip={tip} /></th>)}</tr></thead>
-            <tbody>{filtered.map((c) => <tr key={c.id} onClick={() => setSelected(c.id)} className={`border-b border-[#d0d6e0]/70 bg-white transition hover:bg-[#f4f6fa] dark:border-[#23252a]/80 dark:bg-transparent dark:hover:bg-[#171819] ${current?.id === c.id ? 'bg-[#f4f6fa] dark:bg-[#151617]' : ''}`}>
+            <tbody>{filtered.map((c) => <tr key={c.id} onClick={() => { setSelected(c.id); setScreen('detail'); }} className={`cursor-pointer border-b border-[#d0d6e0]/70 bg-white transition hover:bg-[#f4f6fa] dark:border-[#23252a]/80 dark:bg-transparent dark:hover:bg-[#171819] ${current?.id === c.id ? 'bg-[#f4f6fa] dark:bg-[#151617]' : ''}`}>
               <td className="px-4 py-4"><div className="flex items-center gap-3"><StageDot stage={c.stage} /><span className="font-[590]">{c.name}</span></div></td><td className="px-4 py-4 text-[#62666d] dark:text-[#8a8f98]">{c.segment}</td><td className="px-4 py-4 text-[#62666d] dark:text-[#8a8f98]">{c.owner}</td>
               <td className="px-4 py-4"><StageMenu value={c.stage} onChange={(stage) => onSetStage(c.id, stage)} /></td>
               <td className="px-4 py-4"><button onClick={(e) => { e.stopPropagation(); setSelected(c.id); setScreen('detail'); }} className="inline-flex items-center gap-1 rounded-[6px] border border-[#c0c8d5] bg-white px-2 py-1 text-[11px] font-semibold text-[#383b3f] dark:border-[#323334] dark:bg-[#08090a] dark:text-[#d0d6e0]"><ArrowUpRight className="h-3.5 w-3.5" />{ui.t('detail')}</button></td>

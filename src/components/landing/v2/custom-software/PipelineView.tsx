@@ -14,16 +14,16 @@ import type { Job, JobPriority, JobSla, JobState, JobType, NewSatOrder } from '.
 import { SatOrderDetail } from './SatOrderDetail';
 import { useSoftwareText } from './software-i18n';
 
-type Props = { jobs: Job[]; jobTitle: string; onSetJobTitle: (v: string) => void; onAddJob: (input?: NewSatOrder) => void; onSetJobState: (id: string, state: JobState) => void };
+type Props = { jobs: Job[]; targetJob?: string | null; jobTitle: string; onSetJobTitle: (v: string) => void; onAddJob: (input?: NewSatOrder) => void; onSetJobState: (id: string, state: JobState) => void };
 const states: JobState[] = ['Pendent', 'En curs', 'Blocat', 'Completat'];
 const initialForm: NewSatOrder = { title: '', client: '', technician: '', priority: 'Mitja', sla: 'OK', eta: '', type: 'Reparacio', contact: '', location: '', description: '' };
-export function PipelineView({ jobs, jobTitle, onSetJobTitle, onAddJob, onSetJobState }: Props) {
+export function PipelineView({ jobs, targetJob, jobTitle, onSetJobTitle, onAddJob, onSetJobState }: Props) {
   const ui = useSoftwareText();
   const columns = [[ui.t('order'), ui.tip('order')], [ui.t('client'), ui.tip('client')], [ui.t('type'), ui.tip('type')], [ui.t('technician'), ui.tip('technician')], [ui.t('priority'), ui.tip('priority')], ['SLA', ui.tip('sla')], [ui.t('status'), ui.tip('status')], [ui.t('action'), ui.tip('detail')]] as const;
-  const [selected, setSelected] = useState<string | null>(jobs[0]?.id ?? null);
+  const [selected, setSelected] = useState<string | null>(targetJob ?? jobs[0]?.id ?? null);
   const [stateFilter, setStateFilter] = useState<'all' | JobState>('all');
   const [openDialog, setOpenDialog] = useState(false);
-  const [screen, setScreen] = useState<'list' | 'detail'>('list');
+  const [screen, setScreen] = useState<'list' | 'detail'>(targetJob ? 'detail' : 'list');
   const [form, setForm] = useState<NewSatOrder>(initialForm);
   const filtered = useMemo(() => jobs.filter((j) => (stateFilter === 'all' || j.state === stateFilter) && `${j.id} ${j.title} ${j.client} ${j.technician}`.toLowerCase().includes(jobTitle.toLowerCase())), [jobs, stateFilter, jobTitle]);
   const current = jobs.find((j) => j.id === selected) ?? filtered[0] ?? null;
@@ -61,7 +61,7 @@ export function PipelineView({ jobs, jobTitle, onSetJobTitle, onAddJob, onSetJob
           <table className="w-full min-w-[900px] text-left text-[13px]">
             <thead className="sticky top-0 z-10 border-b border-[#d0d6e0] bg-white/96 text-[#8a8f98] backdrop-blur dark:border-[#23252a] dark:bg-[#111213]/96"><tr>{columns.map(([label, tip]) => <th key={label} className="px-4 py-3 font-[520]"><ColumnHint label={label} tip={tip} /></th>)}</tr></thead>
               <tbody>{filtered.map((j) => (
-                <tr key={j.id} onClick={() => setSelected(j.id)} className={`border-b border-[#d0d6e0]/70 bg-white transition-colors hover:bg-[#f4f6fa] dark:border-[#23252a]/80 dark:bg-transparent dark:hover:bg-[#171819] ${current?.id === j.id ? 'bg-[#f4f6fa] dark:bg-[#151617]' : ''}`}>
+                <tr key={j.id} onClick={() => { setSelected(j.id); setScreen('detail'); }} className={`cursor-pointer border-b border-[#d0d6e0]/70 bg-white transition-colors hover:bg-[#f4f6fa] dark:border-[#23252a]/80 dark:bg-transparent dark:hover:bg-[#171819] ${current?.id === j.id ? 'bg-[#f4f6fa] dark:bg-[#151617]' : ''}`}>
                   <td className="px-4 py-4"><div className="flex items-center gap-3"><OrderMarker job={j} /><div><p className="font-[590]">{j.id}</p><p className="text-[12px] text-[#62666d] dark:text-[#8a8f98]">{j.title}</p></div></div></td>
                   <td className="px-4 py-4 text-[#383b3f] dark:text-[#d0d6e0]">{j.client}</td><td className="px-4 py-4 text-[#62666d] dark:text-[#8a8f98]">{ui.type(j.type)}</td><td className="px-4 py-4 text-[#62666d] dark:text-[#8a8f98]">{j.technician}</td>
                   <td className="px-4 py-4"><PriorityPill value={j.priority} /></td><td className="px-4 py-4"><SlaPill value={j.sla} /></td><td className="px-4 py-4"><StatePill value={j.state} /></td>
