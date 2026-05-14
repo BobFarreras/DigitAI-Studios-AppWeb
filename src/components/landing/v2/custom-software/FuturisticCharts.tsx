@@ -61,28 +61,42 @@ export function IncidentDualChart({ focus = 'all' }: { focus?: 'all' | 'inc' | '
   const showInc = focus === 'all' || focus === 'inc';
   const showAvg = focus === 'all' || focus === 'avg';
   return (
-    <svg viewBox="0 0 520 148" preserveAspectRatio="none" className="h-full w-full rounded-[6px] border border-[#c0c8d5] bg-white p-2 dark:border-[#323334] dark:bg-[#08090a]">
+    <svg viewBox="0 0 520 156" preserveAspectRatio="none" className="h-full w-full rounded-[6px] border border-[#c0c8d5] bg-white p-2 dark:border-[#323334] dark:bg-[#08090a]">
       <defs>
+        <pattern id="dashGrid" width="52" height="24" patternUnits="userSpaceOnUse">
+          <path d="M 52 0 L 0 0 0 24" fill="none" stroke="#25282d" strokeWidth="0.7" opacity="0.55" />
+        </pattern>
+        <filter id="chartGlow" x="-20%" y="-40%" width="140%" height="180%">
+          <feGaussianBlur stdDeviation="3.5" result="blur" />
+          <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+        </filter>
         <linearGradient id="incFill" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="#7f8cff" stopOpacity="0.28" />
+          <stop offset="0%" stopColor="#7f8cff" stopOpacity="0.34" />
           <stop offset="100%" stopColor="#7f8cff" stopOpacity="0.02" />
         </linearGradient>
         <linearGradient id="avgFill" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="#8ef7cf" stopOpacity="0.26" />
-          <stop offset="100%" stopColor="#8ef7cf" stopOpacity="0.02" />
+          <stop offset="0%" stopColor="#12a87b" stopOpacity="0.24" />
+          <stop offset="100%" stopColor="#12a87b" stopOpacity="0.02" />
         </linearGradient>
       </defs>
-      {[28, 52, 76, 100, 124].map((y) => <line key={y} x1="8" y1={y} x2="512" y2={y} stroke="#d8dde7" strokeWidth="1" />)}
-      <path d={`M 24 124 ${inc.map((v, i) => `L ${24 + i * 78} ${124 - v * 6.2}`).join(' ')} L 492 124 Z`} fill="url(#incFill)" opacity={showInc ? 1 : 0.1} />
-      <path d={`M 24 124 ${mins.map((v, i) => `L ${24 + i * 78} ${126 - v * 0.8}`).join(' ')} L 492 124 Z`} fill="url(#avgFill)" opacity={showAvg ? 1 : 0.1} />
-      <polyline points={inc.map((v, i) => `${24 + i * 78},${124 - v * 6.2}`).join(' ')} fill="none" stroke="#8a8cff" strokeWidth="3" opacity={showInc ? 1 : 0.16} />
-      <polyline points={mins.map((v, i) => `${24 + i * 78},${126 - v * 0.8}`).join(' ')} fill="none" stroke="#87f1c9" strokeWidth="2.6" opacity={showAvg ? 1 : 0.16} />
+      <rect x="0" y="0" width="520" height="156" fill="url(#dashGrid)" opacity="0.58" />
+      {[28, 54, 80, 106].map((y) => <line key={y} x1="18" y1={y} x2="502" y2={y} stroke="#d8dde7" strokeWidth="1" strokeDasharray="4 8" opacity="0.42" />)}
+      <path d={`M 24 118 ${inc.map((v, i) => `L ${24 + i * 78} ${118 - v * 5.6}`).join(' ')} L 492 118 Z`} fill="url(#incFill)" opacity={showInc ? 1 : 0.1} />
+      <path d={`M 24 118 ${mins.map((v, i) => `L ${24 + i * 78} ${120 - v * 0.64}`).join(' ')} L 492 118 Z`} fill="url(#avgFill)" opacity={showAvg ? 1 : 0.1} />
+      <polyline points={inc.map((v, i) => `${24 + i * 78},${118 - v * 5.6}`).join(' ')} fill="none" stroke="#8a8cff" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" filter="url(#chartGlow)" opacity={showInc ? 1 : 0.16} strokeDasharray="620" strokeDashoffset="620">
+        <animate attributeName="stroke-dashoffset" from="620" to="0" dur="1.15s" fill="freeze" />
+      </polyline>
+      <polyline points={mins.map((v, i) => `${24 + i * 78},${120 - v * 0.64}`).join(' ')} fill="none" stroke="#12a87b" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" filter="url(#chartGlow)" opacity={showAvg ? 1 : 0.16} strokeDasharray="620" strokeDashoffset="620">
+        <animate attributeName="stroke-dashoffset" from="620" to="0" dur="1.35s" fill="freeze" />
+      </polyline>
       {inc.map((v, i) => (
         <g key={i}>
-          <circle cx={24 + i * 78} cy={124 - v * 6.2} r="3.2" fill="#8a8cff" opacity={showInc ? 1 : 0.16} />
-          <text x={24 + i * 78} y={140} textAnchor="middle" fontSize="12" fill="#8a8f98">{days[i]}</text>
-          <text x={24 + i * 78} y={114 - v * 6.2} textAnchor="middle" fontSize="12" fill="#8a8cff" opacity={showInc ? 1 : 0.16}>{v}</text>
-          <text x={24 + i * 78} y={116 - mins[i] * 0.8} textAnchor="middle" fontSize="11" fill="#87f1c9" opacity={showAvg ? 1 : 0.16}>{mins[i]}m</text>
+          <line x1={24 + i * 78} y1="18" x2={24 + i * 78} y2="118" stroke="#8a8f98" strokeWidth="0.7" opacity="0.18" />
+          <circle cx={24 + i * 78} cy={118 - v * 5.6} r="4" fill="#8a8cff" opacity={showInc ? 1 : 0.16}><animate attributeName="r" values="3;5;3" dur="2.4s" repeatCount="indefinite" begin={`${i * 0.12}s`} /></circle>
+          <circle cx={24 + i * 78} cy={120 - mins[i] * 0.64} r="3.4" fill="#12a87b" opacity={showAvg ? 1 : 0.16} />
+          <text x={24 + i * 78} y="149" textAnchor="middle" fontSize="11" fill="#8a8f98">{days[i]}</text>
+          <text x={24 + i * 78} y={108 - v * 5.6} textAnchor="middle" fontSize="12" fill="#5e6ad2" opacity={showInc ? 1 : 0.16}>{v}</text>
+          <text x={24 + i * 78} y={133 - mins[i] * 0.64} textAnchor="middle" fontSize="10.5" fill="#087a5a" opacity={showAvg ? 1 : 0.18}>{mins[i]}m</text>
         </g>
       ))}
     </svg>

@@ -8,7 +8,7 @@
 
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Database, ShieldCheck } from 'lucide-react';
+import { Database } from 'lucide-react';
 import { useLocale } from 'next-intl';
 import { BrandRevealText } from '@/components/ui/brand-reveal';
 import { getSoftwareCopy } from './custom-software/copy';
@@ -65,9 +65,8 @@ export function CustomSoftwareSection() {
         <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} className="relative overflow-hidden rounded-[12px] border border-[#d0d6e0] bg-white/70 [filter:grayscale(1)_saturate(0)_contrast(.94)] transition-all duration-500 hover:[filter:grayscale(0)_saturate(1)_contrast(1)] dark:border-[#323334] dark:bg-[#0f1011]/95">
           <div className="flex min-h-[clamp(560px,73svh,760px)] flex-col md:flex-row">
             <aside className="w-full border-b border-[#d0d6e0] bg-white/78 md:w-[240px] md:border-b-0 md:border-r dark:border-[#23252a] dark:bg-[#08090a]/90">
-              <div className="flex h-14 items-center gap-3 px-4"><div className="flex h-7 w-7 items-center justify-center rounded-[5px] bg-gradient-to-br from-[#5e6ad2] to-[#27a644]"><Database className="h-4 w-4 text-white" /></div><span className="text-[14px] font-[590]">Lampisteria SAT</span></div>
+              <div className="flex h-14 items-center gap-3 px-4"><div className="flex h-7 w-7 items-center justify-center rounded-[5px] bg-gradient-to-br from-[#5e6ad2] to-[#27a644]"><Database className="h-4 w-4 text-white" /></div><span className="text-[14px] font-[590]">Lampisteria Costa Brava</span></div>
               <nav className="grid grid-cols-2 gap-2 p-3 md:grid-cols-1">{views.map((item) => <button key={item.id} onClick={() => openView(item.id)} className={`flex items-center gap-2 rounded-[6px] px-3 py-2 text-left text-[13px] ${view === item.id ? 'border border-[#b8c0ce] bg-[#eceff4] dark:border-[#323334] dark:bg-[#161718]' : 'border border-transparent text-[#62666d] hover:bg-[#eef1f6] dark:text-[#8a8f98] dark:hover:bg-[#161718]'}`}><item.icon className="h-4 w-4" />{item.id === 'pipeline' ? ui.t('sat') : item.id === 'inventory' ? ui.t('materials') : item.id === 'access' ? ui.t('access') : item.label}</button>)}</nav>
-              <div className="hidden border-t border-[#d0d6e0] p-4 md:block dark:border-[#23252a]"><div className="flex items-center gap-2 text-[12px] text-[#62666d] dark:text-[#8a8f98]"><ShieldCheck className="h-4 w-4 text-[#27a644]" />{ui.text('Control segur i traçable')}</div></div>
             </aside>
             <main className="min-w-0 flex-1">
               <div className="h-[clamp(616px,70svh,796px)] overflow-hidden p-4 md:p-6">
