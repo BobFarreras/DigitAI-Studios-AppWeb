@@ -6,7 +6,7 @@
  */
 'use client';
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, type Variants } from 'framer-motion';
 import { Bell, Bot, Braces, CalendarClock, CheckCircle2, Database, GitBranch, Mail, MessageCircle, Send, Share2, type LucideIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { BrandRevealText } from '@/components/ui/brand-reveal';
@@ -63,6 +63,12 @@ const workflows: Workflow[] = [
     edges: [{ from: 0, to: 1 }, { from: 1, to: 2 }, { from: 2, to: 3, bend: -18 }, { from: 2, to: 4, bend: 18 }, { from: 3, to: 5 }, { from: 4, to: 5 }],
   },
 ];
+const sectionReveal: Variants = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.2, delayChildren: 0.12 } } };
+const riseReveal: Variants = { hidden: { opacity: 0, y: 30, filter: 'blur(12px)' }, show: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.88, ease: [0.22, 1, 0.36, 1] } } };
+const nodeReveal: Variants = {
+  hidden: { opacity: 0, scale: 0.76, y: 18, filter: 'blur(12px)' },
+  show: (index: number) => ({ opacity: 1, scale: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.78, delay: index * 0.14, ease: [0.22, 1, 0.36, 1] } }),
+};
 export function AutomationSection() {
   const t = useTranslations('LandingV2.automation');
   const [active, setActive] = useState(0);
@@ -70,29 +76,29 @@ export function AutomationSection() {
   const workflow = workflows[active];
   return (
     <section id="automatitzacions" className="relative z-10 flex min-h-[100svh] overflow-hidden px-4 py-[72px] text-[#08090a] dark:text-[#f7f8f8] sm:px-6 sm:py-[84px] lg:px-8 lg:py-[92px]">
-      <div className="mx-auto flex w-full max-w-7xl flex-col justify-center">
-        <h2 className="mx-auto max-w-6xl text-balance text-center text-[clamp(28px,4.2vw,56px)] font-[590] leading-[1.02]">
+      <motion.div variants={sectionReveal} initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.32, margin: '-4% 0px -20% 0px' }} className="mx-auto flex w-full max-w-7xl flex-col justify-center">
+        <motion.h2 variants={riseReveal} className="mx-auto max-w-6xl text-balance text-center text-[clamp(28px,4.2vw,56px)] font-[590] leading-[1.02]">
           {t('titleStrong')} <BrandRevealText className="text-[#383b3f] dark:text-[#8a8f98]">{t('titleMuted')}</BrandRevealText>
-        </h2>
-        <div className="linear-panel mt-8 overflow-hidden backdrop-blur-[2px] sm:mt-10">
-          <div className="flex flex-col gap-3 p-3 md:flex-row md:items-center md:justify-between">
+        </motion.h2>
+        <motion.div variants={riseReveal} className="linear-panel mt-8 overflow-hidden backdrop-blur-[2px] sm:mt-10">
+          <motion.div variants={riseReveal} className="flex flex-col gap-3 p-3 md:flex-row md:items-center md:justify-between">
             <div className="flex flex-wrap gap-2">
               {workflows.map((item, index) => (
-                <button key={item.id} onClick={() => { setActive(index); setHoveredNode(null); }} className={`rounded-[6px] border px-3 py-2 text-[13px] font-[590] transition-colors ${active === index ? 'border-[#8b5cf6]/50 bg-[#08090a] text-white dark:bg-[#f7f8f8] dark:text-[#08090a]' : 'border-[#d0d6e0] text-[#62666d] hover:text-[#08090a] dark:border-[#23252a] dark:text-[#8a8f98] dark:hover:text-[#f7f8f8]'}`}>
+                <motion.button variants={riseReveal} key={item.id} onClick={() => { setActive(index); setHoveredNode(null); }} className={`rounded-[6px] border px-3 py-2 text-[13px] font-[590] transition-colors ${active === index ? 'border-[#8b5cf6]/50 bg-[#08090a] text-white dark:bg-[#f7f8f8] dark:text-[#08090a]' : 'border-[#d0d6e0] text-[#62666d] hover:text-[#08090a] dark:border-[#23252a] dark:text-[#8a8f98] dark:hover:text-[#f7f8f8]'}`}>
                   {t(`flows.${item.id}.name`)}
-                </button>
+                </motion.button>
               ))}
             </div>
-            <div className="max-w-2xl text-[14px] font-[560] leading-[1.45] text-[#62666d] dark:text-[#8a8f98] md:text-right lg:text-[15px]">{t(`flows.${workflow.id}.summary`)}</div>
-          </div>
-          <div className="overflow-x-auto overflow-y-hidden">
+            <motion.div variants={riseReveal} className="max-w-2xl text-[14px] font-[560] leading-[1.45] text-[#62666d] dark:text-[#8a8f98] md:text-right lg:text-[15px]">{t(`flows.${workflow.id}.summary`)}</motion.div>
+          </motion.div>
+          <motion.div variants={riseReveal} className="overflow-x-auto overflow-y-hidden">
             <div className="relative h-[clamp(350px,55svh,520px)] min-w-[820px] bg-[radial-gradient(circle,#d0d6e0_1px,transparent_1px)] bg-[size:18px_18px] dark:bg-[radial-gradient(circle,#23252a_1px,transparent_1px)] lg:min-w-0">
               <WorkflowEdges workflow={workflow} hoveredNode={hoveredNode} />
               {workflow.nodes.map((node, index) => <WorkflowNode key={`${workflow.id}-${node.id}`} node={node} index={index} flowId={workflow.id} showBubble={index === hoveredNode} onHover={setHoveredNode} />)}
             </div>
-          </div>
-        </div>
-      </div>
+          </motion.div>
+        </motion.div>
+      </motion.div>
     </section>
   );
 }
@@ -100,7 +106,7 @@ function WorkflowNode({ node, index, flowId, showBubble, onHover }: { node: Node
   const t = useTranslations('LandingV2.automation');
   const Icon = node.icon;
   return (
-    <motion.div initial={{ opacity: 0, scale: 0.78, filter: 'blur(8px)' }} animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }} transition={{ duration: 0.42, delay: index * 0.1, ease: [0.22, 1, 0.36, 1] }} className="group absolute w-[144px] -translate-x-1/2 -translate-y-1/2 text-center" onMouseEnter={() => onHover(index)} onMouseLeave={() => onHover(null)} style={{ left: `${node.x}%`, top: `${node.y}%` }}>
+    <motion.div custom={index} variants={nodeReveal} initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.22 }} className="group absolute w-[144px] -translate-x-1/2 -translate-y-1/2 text-center" onMouseEnter={() => onHover(index)} onMouseLeave={() => onHover(null)} style={{ left: `${node.x}%`, top: `${node.y}%` }}>
       {showBubble ? (
         <motion.div initial={{ opacity: 0, y: 8, scale: 0.94 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.28 }} className="absolute bottom-[calc(100%+12px)] left-1/2 hidden w-[190px] -translate-x-1/2 rounded-[8px] border border-[#d0d6e0] bg-[#f7f8f8]/90 px-3 py-2 text-left text-[12px] leading-snug text-[#62666d] shadow-[0_12px_28px_rgba(8,9,10,0.08)] backdrop-blur-md dark:border-[#323334] dark:bg-[#161718]/92 dark:text-[#d0d6e0] lg:block">
           {t(`flows.${flowId}.nodes.${node.id}.explain`)}
@@ -124,7 +130,7 @@ function WorkflowEdges({ workflow, hoveredNode }: { workflow: Workflow; hoveredN
         const isActive = hoveredNode === edge.from || hoveredNode === edge.to;
         return (
           <g key={`${from.id}-${to.id}`}>
-            <path d={path} fill="none" stroke="currentColor" strokeWidth="0.18" className="text-[#62666d]/38 dark:text-[#8a8f98]/32" />
+            <motion.path d={path} fill="none" stroke="currentColor" strokeWidth="0.18" className="text-[#62666d]/38 dark:text-[#8a8f98]/32" initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }} transition={{ duration: 1.15, delay: index * 0.12, ease: [0.22, 1, 0.36, 1] }} />
             <motion.circle
               r="0.55"
               className="fill-[#8b5cf6]"

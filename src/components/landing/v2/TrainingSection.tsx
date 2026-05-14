@@ -6,7 +6,7 @@
  */
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, type Variants } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { BrandRevealButton, BrandRevealText } from '@/components/ui/brand-reveal';
 
@@ -24,14 +24,26 @@ const formats = [
     figure: 'grid',
   },
 ] as const;
+const trainingReveal: Variants = {
+  hidden: { opacity: 0 },
+  show: { opacity: 1, transition: { staggerChildren: 0.18, delayChildren: 0.1 } },
+};
+const titleReveal: Variants = {
+  hidden: { opacity: 0, y: 22, filter: 'blur(10px)' },
+  show: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.82, ease: [0.22, 1, 0.36, 1] } },
+};
+const formatReveal: Variants = {
+  hidden: { opacity: 0, y: 42, rotateX: 8, transformPerspective: 900 },
+  show: { opacity: 1, y: 0, rotateX: 0, transition: { duration: 0.86, ease: [0.22, 1, 0.36, 1] } },
+};
 
 export function TrainingSection() {
   const t = useTranslations('LandingV2.training');
 
   return (
     <section id="formacio" className="relative isolate flex min-h-[100svh] overflow-hidden bg-transparent px-4 py-[76px] text-[#08090a] dark:text-[#f7f8f8] sm:px-6 lg:px-8">
-      <div className="mx-auto flex w-full max-w-7xl flex-col justify-center">
-        <div className="flex flex-col items-center gap-5 text-center">
+      <motion.div variants={trainingReveal} initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.28, margin: '-4% 0px -20% 0px' }} className="mx-auto flex w-full max-w-7xl flex-col justify-center">
+        <motion.div variants={titleReveal} className="flex flex-col items-center gap-5 text-center">
           <div className="mx-auto max-w-6xl">
             <h2 className="text-balance text-[clamp(31px,7.4vw,42px)] font-[590] leading-[1.03] text-[#08090a] dark:text-[#f7f8f8] sm:text-[clamp(42px,5vw,58px)] lg:text-[clamp(48px,4.1vw,66px)]">
               {t('titleStrong')}
@@ -40,35 +52,27 @@ export function TrainingSection() {
               </BrandRevealText>
             </h2>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="mt-9 grid min-h-0 overflow-visible bg-white/34 backdrop-blur-[2px] dark:bg-[#08090a]/34 sm:mt-10 lg:h-[clamp(340px,48svh,470px)] lg:grid-cols-3">
+        <motion.div variants={trainingReveal} className="mt-9 grid min-h-0 overflow-visible bg-white/34 backdrop-blur-[2px] dark:bg-[#08090a]/34 sm:mt-10 lg:h-[clamp(340px,48svh,470px)] lg:grid-cols-3">
           {formats.map((item, index) => {
             return (
-              <motion.article
-                key={item.key}
-                initial="rest"
-                animate="rest"
-                whileHover="hover"
-                className="linear-panel group grid min-h-0 grid-rows-[minmax(130px,1fr)_154px] px-4 py-4 transition-colors duration-300 hover:bg-white/84 dark:hover:bg-[#161718] sm:min-h-[300px] sm:px-5 lg:min-h-0 lg:px-6 lg:py-7"
-              >
-                <div className="flex min-h-0 items-center justify-center overflow-hidden pb-4">
-                  <TrainingFigure variant={item.figure} index={index} />
-                </div>
-                <div className="flex min-w-0 flex-col items-center rounded-[6px] px-1 py-1 text-center sm:px-2 lg:px-0 lg:py-0">
-                  <h3 className="text-[18px] font-[590] leading-tight text-[#08090a] dark:text-[#d0d6e0] sm:text-[20px]">{t(`formats.${item.key}.title`)}</h3>
-                  <p className="mx-auto mt-2 min-h-[64px] max-w-[340px] text-[14px] leading-[1.45] text-[#62666d] dark:text-[#8a8f98] lg:text-[15px]">{t(`formats.${item.key}.desc`)}</p>
-                  {item.figure === 'grid' ? (
-                    <div className="mt-4 inline-flex justify-center">
-                      <BrandRevealButton href="/#contacte" label={t('registerCta')} />
-                    </div>
-                  ) : <div className="mt-4 h-9" />}
-                </div>
-              </motion.article>
+              <motion.div key={item.key} variants={formatReveal} className="min-h-0">
+                <motion.article initial="rest" animate="rest" whileHover="hover" className="linear-panel group grid h-full min-h-0 grid-rows-[minmax(130px,1fr)_154px] px-4 py-4 transition-colors duration-300 hover:bg-white/84 dark:hover:bg-[#161718] sm:min-h-[300px] sm:px-5 lg:min-h-0 lg:px-6 lg:py-7">
+                  <div className="flex min-h-0 items-center justify-center overflow-hidden pb-4">
+                    <TrainingFigure variant={item.figure} index={index} />
+                  </div>
+                  <div className="flex min-w-0 flex-col items-center rounded-[6px] px-1 py-1 text-center sm:px-2 lg:px-0 lg:py-0">
+                    <h3 className="text-[18px] font-[590] leading-tight text-[#08090a] dark:text-[#d0d6e0] sm:text-[20px]">{t(`formats.${item.key}.title`)}</h3>
+                    <p className="mx-auto mt-2 min-h-[64px] max-w-[340px] text-[14px] leading-[1.45] text-[#62666d] dark:text-[#8a8f98] lg:text-[15px]">{t(`formats.${item.key}.desc`)}</p>
+                    {item.figure === 'grid' ? <div className="mt-4 inline-flex justify-center"><BrandRevealButton href="/#contacte" label={t('registerCta')} /></div> : <div className="mt-4 h-9" />}
+                  </div>
+                </motion.article>
+              </motion.div>
             );
           })}
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </section>
   );
 }

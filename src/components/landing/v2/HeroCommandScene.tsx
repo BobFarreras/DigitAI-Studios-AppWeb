@@ -10,6 +10,14 @@ import { useTranslations } from 'next-intl';
 const variants = ['stack', 'nodes', 'ramp'] as const;
 const pillarHrefs = ['/#automatitzacions', '/#software-a-mida', '/#formacio'] as const;
 const scrollOffsets: Record<string, number> = { automatitzacions: 0, 'software-a-mida': 56, formacio: -88 };
+const gridReveal = {
+  hidden: { opacity: 0, y: 34, filter: 'blur(14px)' },
+  show: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.9, ease: [0.22, 1, 0.36, 1], staggerChildren: 0.18 } },
+};
+const panelReveal = {
+  hidden: { opacity: 0, y: 26, scale: 0.985 },
+  show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.82, ease: [0.22, 1, 0.36, 1] } },
+};
 export function HeroPillarGrid() { const t = useTranslations('LandingV2.hero');
   const activatePillar = (href: string) => {
     const sectionId = href.split('#')[1], element = document.getElementById(sectionId);
@@ -20,38 +28,39 @@ export function HeroPillarGrid() { const t = useTranslations('LandingV2.hero');
   };
 
   return (
-    <div className="grid min-h-0 overflow-visible bg-white/34 backdrop-blur-[2px] dark:bg-[#08090a]/34 lg:h-[clamp(340px,48svh,470px)] lg:grid-cols-3">
+    <motion.div variants={gridReveal} initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.28, margin: '-4% 0px -20% 0px' }} className="grid min-h-0 overflow-visible bg-white/34 backdrop-blur-[2px] dark:bg-[#08090a]/34 lg:h-[clamp(340px,48svh,470px)] lg:grid-cols-3">
       {variants.map((variant, index) => (
-        <motion.article
-          key={variant}
-          role="link"
-          tabIndex={0}
-          onClick={() => activatePillar(pillarHrefs[index])}
-          onKeyDown={(event) => {
-            if (event.key === 'Enter' || event.key === ' ') {
-              event.preventDefault();
-              activatePillar(pillarHrefs[index]);
-            }
-          }}
-          initial="rest"
-          animate="rest"
-          whileHover="hover"
-          className="linear-panel group grid min-h-0 cursor-pointer grid-rows-[minmax(120px,1fr)_112px] px-4 py-4 transition-colors duration-300 hover:bg-white/84 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8b5cf6] dark:hover:bg-[#161718] sm:min-h-[300px] sm:px-5 lg:min-h-0 lg:px-6 lg:py-7"
-        >
-          <div className="flex min-h-0 items-center justify-center pb-4">
-            <PillarFigure variant={variant} />
-          </div>
-          <div className="flex min-w-0 flex-col rounded-[6px] px-1 py-1 sm:px-2 lg:px-0 lg:py-0">
-            <h2 className="text-[14px] font-[590] leading-tight text-[#08090a] dark:text-[#d0d6e0] sm:text-[15px]">
-              {t(`pillars.${index}.title`)}
-            </h2>
-            <p className="mt-2 min-h-[58px] text-[12px] leading-[1.45] text-[#62666d] dark:text-[#8a8f98] sm:text-[13px] lg:line-clamp-3 lg:max-w-[320px] lg:text-[14px]">
-              {t(`pillars.${index}.desc`)}
-            </p>
-          </div>
-        </motion.article>
+        <motion.div key={variant} variants={panelReveal} className="min-h-0">
+          <motion.article
+            role="link"
+            tabIndex={0}
+            onClick={() => activatePillar(pillarHrefs[index])}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                activatePillar(pillarHrefs[index]);
+              }
+            }}
+            initial="rest"
+            animate="rest"
+            whileHover="hover"
+            className="linear-panel group grid h-full min-h-0 cursor-pointer grid-rows-[minmax(120px,1fr)_112px] px-4 py-4 transition-colors duration-300 hover:bg-white/84 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8b5cf6] dark:hover:bg-[#161718] sm:min-h-[300px] sm:px-5 lg:min-h-0 lg:px-6 lg:py-7"
+          >
+            <div className="flex min-h-0 items-center justify-center pb-4">
+              <PillarFigure variant={variant} />
+            </div>
+            <div className="flex min-w-0 flex-col rounded-[6px] px-1 py-1 sm:px-2 lg:px-0 lg:py-0">
+              <h2 className="text-[14px] font-[590] leading-tight text-[#08090a] dark:text-[#d0d6e0] sm:text-[15px]">
+                {t(`pillars.${index}.title`)}
+              </h2>
+              <p className="mt-2 min-h-[58px] text-[12px] leading-[1.45] text-[#62666d] dark:text-[#8a8f98] sm:text-[13px] lg:line-clamp-3 lg:max-w-[320px] lg:text-[14px]">
+                {t(`pillars.${index}.desc`)}
+              </p>
+            </div>
+          </motion.article>
+        </motion.div>
       ))}
-    </div>
+    </motion.div>
   );
 }
 function PillarFigure({ variant }: { variant: (typeof variants)[number] }) {
@@ -61,13 +70,7 @@ function PillarFigure({ variant }: { variant: (typeof variants)[number] }) {
 }
 function StackFigure() {
   return (
-    <motion.svg
-      viewBox="-24 -24 308 268"
-      className="h-full max-h-[250px] w-full max-w-[300px] overflow-visible drop-shadow-[0_14px_24px_rgba(8,9,10,0.22)]"
-      variants={{ hover: { rotateX: 10, rotateZ: -2, scale: 1.08 } }}
-      transition={{ type: 'spring', stiffness: 180, damping: 18 }}
-      aria-hidden
-    >
+    <motion.svg viewBox="-24 -24 308 268" className="h-full max-h-[250px] w-full max-w-[300px] overflow-visible drop-shadow-[0_14px_24px_rgba(8,9,10,0.22)]" variants={{ hover: { rotateX: 10, rotateZ: -2, scale: 1.08 } }} transition={{ type: 'spring', stiffness: 180, damping: 18 }} aria-hidden>
       {[0, 1, 2, 3, 4].map((layer) => (
         <motion.path
           key={layer}
@@ -93,13 +96,7 @@ function NodesFigure() {
     'M92 152 L130 132 L168 152 L168 194 L130 214 L92 194 Z',
   ];
   return (
-    <motion.svg
-      viewBox="-24 -24 308 268"
-      className="h-full max-h-[250px] w-full max-w-[300px] overflow-visible drop-shadow-[0_14px_24px_rgba(8,9,10,0.22)]"
-      variants={{ hover: { scale: 1.08, rotateZ: 2 } }}
-      transition={{ type: 'spring', stiffness: 180, damping: 18 }}
-      aria-hidden
-    >
+    <motion.svg viewBox="-24 -24 308 268" className="h-full max-h-[250px] w-full max-w-[300px] overflow-visible drop-shadow-[0_14px_24px_rgba(8,9,10,0.22)]" variants={{ hover: { scale: 1.08, rotateZ: 2 } }} transition={{ type: 'spring', stiffness: 180, damping: 18 }} aria-hidden>
       {cubes.map((cube, index) => (
         <motion.path
           key={cube}
@@ -132,13 +129,7 @@ function NodesFigure() {
 }
 function RampFigure() {
   return (
-    <motion.svg
-      viewBox="-24 -24 308 268"
-      className="h-full max-h-[250px] w-full max-w-[300px] overflow-visible drop-shadow-[0_14px_24px_rgba(8,9,10,0.22)]"
-      variants={{ hover: { scale: 1.08, rotateZ: -4 } }}
-      transition={{ type: 'spring', stiffness: 180, damping: 18 }}
-      aria-hidden
-    >
+    <motion.svg viewBox="-24 -24 308 268" className="h-full max-h-[250px] w-full max-w-[300px] overflow-visible drop-shadow-[0_14px_24px_rgba(8,9,10,0.22)]" variants={{ hover: { scale: 1.08, rotateZ: -4 } }} transition={{ type: 'spring', stiffness: 180, damping: 18 }} aria-hidden>
       {Array.from({ length: 13 }).map((_, index) => (
         <motion.path
           key={index}

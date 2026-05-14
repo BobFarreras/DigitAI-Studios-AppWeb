@@ -13,12 +13,12 @@ import { HeroPillarGrid } from './HeroCommandScene';
 
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
-  show: { opacity: 1, transition: { staggerChildren: 0.12, delayChildren: 0.08 } },
+  show: { opacity: 1, transition: { staggerChildren: 0.18, delayChildren: 0.16 } },
 };
 
 const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 18 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.58, ease: [0.22, 1, 0.36, 1] } },
+  hidden: { opacity: 0, y: 26, filter: 'blur(12px)' },
+  show: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.9, ease: [0.22, 1, 0.36, 1] } },
 };
 
 export function HeroLinear() {
@@ -33,7 +33,8 @@ export function HeroLinear() {
       <motion.div
         variants={containerVariants}
         initial="hidden"
-        animate="show"
+        whileInView="show"
+        viewport={{ once: true, amount: 0.32, margin: '-4% 0px -20% 0px' }}
         className="relative z-10 mx-auto flex h-full w-full max-w-7xl flex-col justify-start"
       >
         <motion.div variants={itemVariants} className="mx-auto max-w-6xl text-center">

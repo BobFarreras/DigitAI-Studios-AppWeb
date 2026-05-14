@@ -20,6 +20,11 @@ import { PipelineView } from './custom-software/PipelineView';
 import { startClients, startJobs, startMaterial, startTeam, toStockState, views, type JobState, type LeadStage, type NewMaterial, type NewSatOrder, type ViewId } from './custom-software/model';
 import { useSoftwareText } from './custom-software/software-i18n';
 
+const titleReveal = { hidden: { opacity: 0, y: 18, letterSpacing: '0.01em' }, show: { opacity: 1, y: 0, letterSpacing: '0em', transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } } };
+const appReveal = { hidden: { opacity: 0, y: 26, clipPath: 'inset(0 0 16% 0)' }, show: { opacity: 1, y: 0, clipPath: 'inset(0 0 0% 0)', transition: { duration: 1, ease: [0.22, 1, 0.36, 1], staggerChildren: 0.16 } } };
+const railReveal = { hidden: { opacity: 0, x: -24 }, show: { opacity: 1, x: 0, transition: { duration: 0.72, ease: [0.22, 1, 0.36, 1] } } };
+const workspaceReveal = { hidden: { opacity: 0, scale: 0.985, filter: 'blur(10px)' }, show: { opacity: 1, scale: 1, filter: 'blur(0px)', transition: { duration: 0.9, ease: [0.22, 1, 0.36, 1] } } };
+
 export function CustomSoftwareSection() {
   const copy = getSoftwareCopy(useLocale()), ui = useSoftwareText();
   const [view, setView] = useState<ViewId>('dashboard');
@@ -58,16 +63,16 @@ export function CustomSoftwareSection() {
   return (
     <section id="software-a-mida" className="relative w-full px-4 pb-5 pt-[88px] md:px-6 md:pb-6 md:pt-[94px] lg:pb-8 lg:pt-[102px]">
       <div className="mx-auto max-w-7xl">
-        <div className="mx-auto mb-6 max-w-5xl text-center sm:mb-7 lg:mb-8">
+        <motion.div variants={titleReveal} initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.34, margin: '-4% 0px -20% 0px' }} className="mx-auto mb-6 max-w-5xl text-center sm:mb-7 lg:mb-8">
           <h2 className="text-balance text-[clamp(31px,7.4vw,42px)] font-[590] leading-[1.03] text-[#08090a] dark:text-[#f7f8f8] sm:text-[clamp(42px,5vw,58px)] lg:text-[clamp(48px,4.1vw,66px)]">{ui.text('Tecnologia que s\'adapta al teu equip')}<BrandRevealText className="ml-1 text-[#383b3f] dark:text-[#8a8f98]">{ui.text('i creix amb el teu negoci.')}</BrandRevealText></h2>
-        </div>
-        <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} className="relative overflow-hidden rounded-[12px] border border-[#d0d6e0] bg-white/70 [filter:grayscale(1)_saturate(0)_contrast(.94)] transition-all duration-500 hover:[filter:grayscale(0)_saturate(1)_contrast(1)] dark:border-[#323334] dark:bg-[#0f1011]/95">
+        </motion.div>
+        <motion.div variants={appReveal} initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.24, margin: '-4% 0px -22% 0px' }} className="relative overflow-hidden rounded-[12px] border border-[#d0d6e0] bg-white/70 [filter:grayscale(1)_saturate(0)_contrast(.94)] transition-all duration-500 hover:[filter:grayscale(0)_saturate(1)_contrast(1)] dark:border-[#323334] dark:bg-[#0f1011]/95">
           <div className="flex min-h-[clamp(560px,73svh,760px)] flex-col md:flex-row">
-            <aside className="w-full border-b border-[#d0d6e0] bg-white/78 md:w-[240px] md:border-b-0 md:border-r dark:border-[#23252a] dark:bg-[#08090a]/90">
+            <motion.aside variants={railReveal} className="w-full border-b border-[#d0d6e0] bg-white/78 md:w-[240px] md:border-b-0 md:border-r dark:border-[#23252a] dark:bg-[#08090a]/90">
               <div className="flex h-14 items-center gap-3 px-4"><div className="flex h-7 w-7 items-center justify-center rounded-[5px] bg-gradient-to-br from-[#5e6ad2] to-[#27a644]"><Database className="h-4 w-4 text-white" /></div><span className="text-[14px] font-[590]">Lampisteria Costa Brava</span></div>
               <nav className="grid grid-cols-2 gap-2 p-3 md:grid-cols-1">{views.map((item) => <button key={item.id} onClick={() => openView(item.id)} className={`flex items-center gap-2 rounded-[6px] px-3 py-2 text-left text-[13px] ${view === item.id ? 'border border-[#b8c0ce] bg-[#eceff4] dark:border-[#323334] dark:bg-[#161718]' : 'border border-transparent text-[#62666d] hover:bg-[#eef1f6] dark:text-[#8a8f98] dark:hover:bg-[#161718]'}`}><item.icon className="h-4 w-4" />{item.id === 'pipeline' ? ui.t('sat') : item.id === 'inventory' ? ui.t('materials') : item.id === 'access' ? ui.t('access') : item.label}</button>)}</nav>
-            </aside>
-            <main className="min-w-0 flex-1">
+            </motion.aside>
+            <motion.main variants={workspaceReveal} className="min-w-0 flex-1">
               <div className="h-[clamp(616px,70svh,796px)] overflow-hidden p-4 md:p-6">
                 <AnimatePresence mode="wait">
                   {view === 'dashboard' && <DashboardView copy={copy} onOpenCrm={() => setView('crm')} onAddJob={addJob} onAddClient={addClient} />}
@@ -77,7 +82,7 @@ export function CustomSoftwareSection() {
                   {view === 'access' && <AccessView team={team} jobs={jobs} userName={userName} onSetUserName={setUserName} onAddUser={addUser} onOpenSat={(id) => { setTargetJob(id); setView('pipeline'); }} onOpenCrm={(name) => { setTargetClient(name); setView('crm'); }} onOpenMaterial={(name) => { setTargetMaterial(name); setView('inventory'); }} onToggle={(id) => setTeam((p) => p.map((x) => (x.id === id ? { ...x, enabled: !x.enabled } : x)))} />}
                 </AnimatePresence>
               </div>
-            </main>
+            </motion.main>
           </div>
         </motion.div>
       </div>
