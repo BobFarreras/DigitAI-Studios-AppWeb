@@ -881,6 +881,35 @@
         }
       }
     },
+    "contact": {
+      "titleStrong": "Parlem del que necessites.",
+      "titleMuted": "Y del mejor primer paso.",
+      "lead": "Explica'ns què vols millorar i et respondrem amb una proposta concreta: automatització, software, formació o una combinació realista.",
+      "services": {
+        "automation": "Automatitzacions i IA",
+        "software": "Software a mida"
+      },
+      "proof": {
+        "response": "Resposta",
+        "responseValue": "En menys de 48 h laborables",
+        "privacy": "Privacitat",
+        "privacyValue": "Dades tractades amb criteri",
+        "next": "Següent pas",
+        "nextValue": "Diagnosi i proposta inicial"
+      },
+      "form": {
+        "name": "Nom complet",
+        "namePlaceholder": "Joan Garcia",
+        "email": "Email corporatiu",
+        "emailPlaceholder": "joan@empresa.com",
+        "message": "Què necessites construir o automatitzar?",
+        "messagePlaceholder": "Vull reduir feina manual, crear un CRM intern, formar l'equip...",
+        "submit": "Enviar missatge",
+        "sending": "Enviant...",
+        "sent": "Enviat correctament"
+      },
+      "privacy": "He llegit i accepto la <link>política de privacitat</link> i el tractament de les meves dades."
+    },
     "explainer": {
       "badge": "Per Que Funciona",
       "title": "Automatitzacio = menys tasca manual, menys errors i molt mes temps per vendre.",

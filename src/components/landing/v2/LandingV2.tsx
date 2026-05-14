@@ -5,9 +5,9 @@
  * @scope Orquestrar seccions de marketing i contacte final.
  */
 import { HeroLinear } from '@/components/landing/v2/HeroV2';
-import { ContactSection } from '@/components/landing/ContactSection';
 import { HeroAmbientBackground } from './HeroAmbientBackground';
 import { AutomationSection } from './AutomationSection';
+import { ContactSectionV2 } from './ContactSectionV2';
 import { CustomSoftwareSection } from './CustomSoftwareSection';
 import { TrainingSection } from './TrainingSection';
 
@@ -19,9 +19,7 @@ export function LandingV2() {
       <AutomationSection />
       <CustomSoftwareSection />
       <TrainingSection />
-      <section id="contacte" className="relative z-10">
-        <ContactSection />
-      </section>
+      <ContactSectionV2 />
     </div>
   );
 }

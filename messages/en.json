@@ -881,6 +881,35 @@
         }
       }
     },
+    "contact": {
+      "titleStrong": "Tell us what you need.",
+      "titleMuted": "We will define the first step.",
+      "lead": "Tell us what you want to improve and we will reply with a concrete proposal: automation, software, training or a realistic combination.",
+      "services": {
+        "automation": "Automations and AI",
+        "software": "Custom software"
+      },
+      "proof": {
+        "response": "Response",
+        "responseValue": "Within 48 business hours",
+        "privacy": "Privacy",
+        "privacyValue": "Data handled carefully",
+        "next": "Next step",
+        "nextValue": "Diagnosis and initial proposal"
+      },
+      "form": {
+        "name": "Full name",
+        "namePlaceholder": "John Smith",
+        "email": "Work email",
+        "emailPlaceholder": "john@company.com",
+        "message": "What do you need to build or automate?",
+        "messagePlaceholder": "I want to reduce manual work, build an internal CRM, train the team...",
+        "submit": "Send message",
+        "sending": "Sending...",
+        "sent": "Sent successfully"
+      },
+      "privacy": "I have read and accept the <link>privacy policy</link> and the processing of my data."
+    },
     "explainer": {
       "badge": "Why It Works",
       "title": "Automation means fewer manual tasks, fewer errors, and more time to grow revenue.",

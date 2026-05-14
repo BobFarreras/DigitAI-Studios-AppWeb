@@ -29,8 +29,8 @@ export function TrainingSection() {
   const t = useTranslations('LandingV2.training');
 
   return (
-    <section id="formacio" className="relative isolate min-h-[100svh] overflow-hidden bg-transparent px-4 py-[76px] text-[#08090a] dark:text-[#f7f8f8] sm:px-6 lg:px-8">
-      <div className="mx-auto flex h-full w-full max-w-7xl flex-col justify-center">
+    <section id="formacio" className="relative isolate flex min-h-[100svh] overflow-hidden bg-transparent px-4 py-[76px] text-[#08090a] dark:text-[#f7f8f8] sm:px-6 lg:px-8">
+      <div className="mx-auto flex w-full max-w-7xl flex-col justify-center">
         <div className="flex flex-col items-center gap-5 text-center">
           <div className="mx-auto max-w-6xl">
             <h2 className="text-balance text-[clamp(31px,7.4vw,42px)] font-[590] leading-[1.03] text-[#08090a] dark:text-[#f7f8f8] sm:text-[clamp(42px,5vw,58px)] lg:text-[clamp(48px,4.1vw,66px)]">

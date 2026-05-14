@@ -881,6 +881,35 @@
         }
       }
     },
+    "contact": {
+      "titleStrong": "Hablemos de lo que necesitas.",
+      "titleMuted": "Y del mejor primer paso.",
+      "lead": "Cuéntanos qué quieres mejorar y te responderemos con una propuesta concreta: automatización, software, formación o una combinación realista.",
+      "services": {
+        "automation": "Automatizaciones e IA",
+        "software": "Software a medida"
+      },
+      "proof": {
+        "response": "Respuesta",
+        "responseValue": "En menos de 48 h laborables",
+        "privacy": "Privacidad",
+        "privacyValue": "Datos tratados con criterio",
+        "next": "Siguiente paso",
+        "nextValue": "Diagnóstico y propuesta inicial"
+      },
+      "form": {
+        "name": "Nombre completo",
+        "namePlaceholder": "Juan García",
+        "email": "Email corporativo",
+        "emailPlaceholder": "juan@empresa.com",
+        "message": "¿Qué necesitas construir o automatizar?",
+        "messagePlaceholder": "Quiero reducir trabajo manual, crear un CRM interno, formar al equipo...",
+        "submit": "Enviar mensaje",
+        "sending": "Enviando...",
+        "sent": "Enviado correctamente"
+      },
+      "privacy": "He leído y acepto la <link>política de privacidad</link> y el tratamiento de mis datos."
+    },
     "explainer": {
       "badge": "Por Que Funciona",
       "title": "Automatización = menos tareas manuales, menos errores y mucho más tiempo para vender.",

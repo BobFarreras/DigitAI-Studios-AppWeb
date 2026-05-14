@@ -872,6 +872,35 @@
         }
       }
     },
+    "contact": {
+      "titleStrong": "Parliamo di cosa ti serve.",
+      "titleMuted": "E del primo passo migliore.",
+      "lead": "Raccontaci cosa vuoi migliorare e risponderemo con una proposta concreta: automazione, software, formazione o una combinazione realistica.",
+      "services": {
+        "automation": "Automazioni e IA",
+        "software": "Software su misura"
+      },
+      "proof": {
+        "response": "Risposta",
+        "responseValue": "Entro 48 h lavorative",
+        "privacy": "Privacy",
+        "privacyValue": "Dati trattati con criterio",
+        "next": "Prossimo passo",
+        "nextValue": "Diagnosi e proposta iniziale"
+      },
+      "form": {
+        "name": "Nome completo",
+        "namePlaceholder": "Mario Rossi",
+        "email": "Email aziendale",
+        "emailPlaceholder": "mario@azienda.com",
+        "message": "Cosa devi costruire o automatizzare?",
+        "messagePlaceholder": "Voglio ridurre lavoro manuale, creare un CRM interno, formare il team...",
+        "submit": "Invia messaggio",
+        "sending": "Invio...",
+        "sent": "Inviato correttamente"
+      },
+      "privacy": "Ho letto e accetto la <link>privacy policy</link> e il trattamento dei miei dati."
+    },
     "explainer": {
       "badge": "Perché Funziona",
       "title": "Automazione = meno attività manuali, meno errori e molto più tempo per vendere.",
