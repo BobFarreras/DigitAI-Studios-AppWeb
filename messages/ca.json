@@ -261,8 +261,7 @@
     "legal_notice": "Avís Legal",
     "privacy": "Política de Privacitat",
     "cookies": "Política de Cookies",
-    "rights_reserved": "Tots els drets reservats.",
-    "made_with_love": "Fet amb ❤️ a Catalunya"
+    "rights_reserved": "Tots els drets reservats."
   },
   "Sidebar": {
     "platform": "Plataforma",
@@ -882,8 +881,8 @@
       }
     },
     "contact": {
-      "titleStrong": "Parlem del que necessites.",
-      "titleMuted": "Y del mejor primer paso.",
+      "titleStrong": "Hablemos de lo que necesitas.",
+      "titleMuted": "Y del mejor camino para conseguirlo.",
       "lead": "Explica'ns què vols millorar i et respondrem amb una proposta concreta: automatització, software, formació o una combinació realista.",
       "services": {
         "automation": "Automatitzacions i IA",

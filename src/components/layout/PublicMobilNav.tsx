@@ -1,7 +1,7 @@
 'use client';
 
 import { Link, usePathname } from '@/routing';
-import { Home, Zap, LayoutDashboard, UserCircle, type LucideIcon, ChevronUp } from 'lucide-react';
+import { Home, Menu, LayoutDashboard, LogIn, UserPlus, type LucideIcon, ChevronUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
 import type { User } from '@supabase/supabase-js';
@@ -12,7 +12,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-// 1. Definim el tipus d'item
 type NavItem = {
   id: string;
   label: string;
@@ -21,9 +20,7 @@ type NavItem = {
   isDropdown?: boolean;
 };
 
-interface PublicMobileNavProps {
-  user: User | null;
-}
+interface PublicMobileNavProps { user: User | null }
 
 export function PublicMobileNav({ user }: PublicMobileNavProps) {
   const t = useTranslations('Navbar');
@@ -37,61 +34,50 @@ export function PublicMobileNav({ user }: PublicMobileNavProps) {
       const id = href.split('#')[1];
       const element = document.getElementById(id);
 
-      if (element) {
-        setTimeout(() => {
-          const headerOffset = 85;
-          const elementPosition = element.getBoundingClientRect().top;
-          const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-          window.scrollTo({ top: offsetPosition, behavior: "smooth" });
-          window.history.pushState(null, '', href);
-        }, 100);
-      }
+      if (!element) return;
+      setTimeout(() => {
+        const offsetPosition = element.getBoundingClientRect().top + window.pageYOffset - 85;
+        window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+        window.history.pushState(null, '', href);
+      }, 100);
     }
   };
 
-  const SOLUTIONS_LINKS = [
-    { href: '/#solutions', label: 'Solucions Tech' },
-    { href: '/#services', label: 'Serveis' },
-    { href: '/#testimonials', label: "Casos d'Èxit" },
-    { href: '/#contacte', label: 'Contacte' }
+  const MENU_LINKS = [
+    { href: '/#automatitzacions', label: t('automation') },
+    { href: '/#software-a-mida', label: t('software') },
+    { href: '/#formacio', label: t('training') },
+    { href: '/#contacte', label: t('contact') },
   ];
 
   const authItem: NavItem = user
     ? { id: 'auth', label: t('dashboard'), href: '/dashboard', icon: LayoutDashboard }
-    : { id: 'auth', label: t('login'), href: '/auth/login', icon: UserCircle };
+    : { id: 'auth', label: t('register'), href: '/auth/register', icon: UserPlus };
 
   const NAV_ITEMS: NavItem[] = [
     { id: 'home', label: t('home'), href: '/', icon: Home },
-    { id: 'solutions', label: t('solutions'), href: '#', icon: Zap, isDropdown: true },
+    { id: 'solutions', label: t('solutions'), href: '#', icon: Menu, isDropdown: true },
     authItem,
   ];
 
   return (
     <div className="md:hidden fixed bottom-0 left-0 w-full z-50 bg-background/95 backdrop-blur-xl border-t border-border pb-safe transition-all duration-300">
-      
-      {/* 🛠️ CANVI CLAU: 
-          Substituïm 'flex justify-around px-2' per 'grid grid-cols-5'.
-          Això fa que cada icona tingui exactament la mateixa amplada.
-      */}
       <div className="grid grid-cols-3 h-16 items-center">
         {NAV_ITEMS.map((item) => {
-
           const isActive = item.href === '/'
             ? pathname === '/'
             : pathname.startsWith(item.href.replace('/#', ''));
-
           const Icon = item.icon;
           const isAuthItem = item.id === 'auth';
 
-          // --- CAS A: ÉS UN DROPDOWN (Solucions) ---
           if (item.isDropdown) {
             return (
               <DropdownMenu key={item.id}>
-                <DropdownMenuTrigger className="flex flex-col items-center justify-center w-full h-full gap-1 active:scale-95 transition-transform outline-none group focus:outline-none">
-                  <div className="relative">
-                    <Icon className={cn("w-6 h-6 group-data-[state=open]:text-primary text-muted-foreground")} strokeWidth={2.5} />
-                    <div className="absolute -top-1 -right-1 bg-background rounded-full p-px border border-border">
-                      <ChevronUp className="w-2 h-2 text-muted-foreground" />
+                <DropdownMenuTrigger className="flex h-full w-full flex-col items-center justify-center gap-1 active:scale-95 transition-transform outline-none group focus:outline-none">
+                  <div className="relative flex h-9 w-9 items-center justify-center rounded-full border border-primary/35 bg-primary/10 shadow-[0_0_18px_rgba(139,92,246,0.18)]">
+                    <Icon className="h-5 w-5 text-primary" strokeWidth={2.6} />
+                    <div className="absolute -right-1 -top-1 rounded-full border border-border bg-background p-px">
+                      <ChevronUp className="h-2.5 w-2.5 text-primary" />
                     </div>
                   </div>
                   <span className="text-[10px] font-medium text-muted-foreground group-data-[state=open]:text-primary truncate w-full text-center px-1">
@@ -99,12 +85,8 @@ export function PublicMobileNav({ user }: PublicMobileNavProps) {
                   </span>
                 </DropdownMenuTrigger>
 
-                <DropdownMenuContent
-                  side="top"
-                  align="center"
-                  className="w-56 mb-4 p-2 bg-card/95 backdrop-blur-md border-border shadow-2xl rounded-xl z-[60]"
-                >
-                  {SOLUTIONS_LINKS.map((subLink) => (
+                <DropdownMenuContent side="top" align="center" className="w-56 mb-4 p-2 bg-card/95 backdrop-blur-md border-border shadow-2xl rounded-xl z-[60]">
+                  {MENU_LINKS.map((subLink) => (
                     <DropdownMenuItem key={subLink.href} asChild>
                       <Link
                         href={subLink.href}
@@ -115,12 +97,25 @@ export function PublicMobileNav({ user }: PublicMobileNavProps) {
                       </Link>
                     </DropdownMenuItem>
                   ))}
+                  {!user ? (
+                    <>
+                      <DropdownMenuItem asChild>
+                        <Link href="/auth/login" className="w-full cursor-pointer text-sm py-2.5 px-2 font-medium rounded-lg focus:bg-primary/10 active:bg-primary/10">
+                          <LogIn className="mr-2 inline h-4 w-4" />{t('login')}
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link href="/auth/register" className="w-full cursor-pointer text-sm py-2.5 px-2 font-medium rounded-lg focus:bg-primary/10 active:bg-primary/10">
+                          <UserPlus className="mr-2 inline h-4 w-4" />{t('register')}
+                        </Link>
+                      </DropdownMenuItem>
+                    </>
+                  ) : null}
                 </DropdownMenuContent>
               </DropdownMenu>
             );
           }
 
-          // --- CAS B: ÉS UN LINK NORMAL ---
           return (
             <Link
               key={item.id}

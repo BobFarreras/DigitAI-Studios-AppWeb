@@ -7,7 +7,7 @@
  */
 
 import { useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, type Variants } from 'framer-motion';
 import { Database } from 'lucide-react';
 import { useLocale } from 'next-intl';
 import { BrandRevealText } from '@/components/ui/brand-reveal';
@@ -20,10 +20,11 @@ import { PipelineView } from './custom-software/PipelineView';
 import { startClients, startJobs, startMaterial, startTeam, toStockState, views, type JobState, type LeadStage, type NewMaterial, type NewSatOrder, type ViewId } from './custom-software/model';
 import { useSoftwareText } from './custom-software/software-i18n';
 
-const titleReveal = { hidden: { opacity: 0, y: 18, letterSpacing: '0.01em' }, show: { opacity: 1, y: 0, letterSpacing: '0em', transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } } };
-const appReveal = { hidden: { opacity: 0, y: 26, clipPath: 'inset(0 0 16% 0)' }, show: { opacity: 1, y: 0, clipPath: 'inset(0 0 0% 0)', transition: { duration: 1, ease: [0.22, 1, 0.36, 1], staggerChildren: 0.16 } } };
-const railReveal = { hidden: { opacity: 0, x: -24 }, show: { opacity: 1, x: 0, transition: { duration: 0.72, ease: [0.22, 1, 0.36, 1] } } };
-const workspaceReveal = { hidden: { opacity: 0, scale: 0.985, filter: 'blur(10px)' }, show: { opacity: 1, scale: 1, filter: 'blur(0px)', transition: { duration: 0.9, ease: [0.22, 1, 0.36, 1] } } };
+const smoothEase = [0.22, 1, 0.36, 1] as const;
+const titleReveal: Variants = { hidden: { opacity: 0, y: 18, letterSpacing: '0.01em' }, show: { opacity: 1, y: 0, letterSpacing: '0em', transition: { duration: 0.8, ease: smoothEase } } };
+const appReveal: Variants = { hidden: { opacity: 0, y: 26, clipPath: 'inset(0 0 16% 0)' }, show: { opacity: 1, y: 0, clipPath: 'inset(0 0 0% 0)', transition: { duration: 1, ease: smoothEase, staggerChildren: 0.16 } } };
+const railReveal: Variants = { hidden: { opacity: 0, x: -24 }, show: { opacity: 1, x: 0, transition: { duration: 0.72, ease: smoothEase } } };
+const workspaceReveal: Variants = { hidden: { opacity: 0, scale: 0.985, filter: 'blur(10px)' }, show: { opacity: 1, scale: 1, filter: 'blur(0px)', transition: { duration: 0.9, ease: smoothEase } } };
 
 export function CustomSoftwareSection() {
   const copy = getSoftwareCopy(useLocale()), ui = useSoftwareText();
@@ -79,7 +80,7 @@ export function CustomSoftwareSection() {
                   {view === 'crm' && <CrmView clients={clients} targetClient={targetClient} clientName={clientName} onSetClientName={setClientName} onAddClient={addClient} onSetStage={(id, stage: LeadStage) => setClients((p) => p.map((x) => (x.id === id ? { ...x, stage } : x)))} />}
                   {view === 'pipeline' && <PipelineView jobs={jobs} targetJob={targetJob} jobTitle={jobTitle} onSetJobTitle={setJobTitle} onAddJob={addJob} onSetJobState={(id, state: JobState) => setJobs((p) => p.map((x) => (x.id === id ? { ...x, state } : x)))} />}
                   {view === 'inventory' && <InventoryView material={material} targetMaterial={targetMaterial} materialName={materialName} onSetMaterialName={setMaterialName} onAddMaterial={addMaterial} onIncrement={(id) => setMaterial((p) => p.map((x) => (x.id === id ? { ...x, qty: x.qty + 1, state: toStockState(x.qty + 1, x.min) } : x)))} />}
-                  {view === 'access' && <AccessView team={team} jobs={jobs} userName={userName} onSetUserName={setUserName} onAddUser={addUser} onOpenSat={(id) => { setTargetJob(id); setView('pipeline'); }} onOpenCrm={(name) => { setTargetClient(name); setView('crm'); }} onOpenMaterial={(name) => { setTargetMaterial(name); setView('inventory'); }} onToggle={(id) => setTeam((p) => p.map((x) => (x.id === id ? { ...x, enabled: !x.enabled } : x)))} />}
+                  {view === 'access' && <AccessView team={team} jobs={jobs} userName={userName} onSetUserName={setUserName} onAddUser={addUser} onOpenSat={(id) => { setTargetJob(id ?? null); setView('pipeline'); }} onOpenCrm={(name) => { setTargetClient(name ?? null); setView('crm'); }} onOpenMaterial={(name) => { setTargetMaterial(name ?? null); setView('inventory'); }} onToggle={(id) => setTeam((p) => p.map((x) => (x.id === id ? { ...x, enabled: !x.enabled } : x)))} />}
                 </AnimatePresence>
               </div>
             </motion.main>

@@ -42,19 +42,19 @@ export function SatOrderDetail({ job, onBack, onSetState }: Props) {
       <div className="grid gap-0 lg:grid-cols-[1fr_300px]">
         <main className="border-b border-[#d0d6e0] p-4 dark:border-[#23252a] lg:border-b-0 lg:border-r">
           <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
-            <Info icon={<Droplets className="h-4 w-4" />} label={ui.t('client')} value={job.client} />
-            <Info icon={<UserRound className="h-4 w-4" />} label={ui.t('technician')} value={job.technician} />
-            <Info icon={<MapPin className="h-4 w-4" />} label={ui.t('location')} value={job.location} />
-            <Info icon={<Wrench className="h-4 w-4" />} label={ui.t('asset')} value={job.asset} />
+            <Info icon={<Droplets className="h-4 w-4" />} tone="text-[#35b8e8]" label={ui.t('client')} value={job.client} />
+            <Info icon={<UserRound className="h-4 w-4" />} tone="text-[#8b5cf6]" label={ui.t('technician')} value={job.technician} />
+            <Info icon={<MapPin className="h-4 w-4" />} tone="text-[#f59e0b]" label={ui.t('location')} value={job.location} />
+            <Info icon={<Wrench className="h-4 w-4" />} tone="text-[#6366f1]" label={ui.t('asset')} value={job.asset} />
           </div>
           <div className="mt-4 grid gap-3 md:grid-cols-2">
             <Block title={ui.t('diagnosis')} text={job.diagnosis} />
             <Block title={job.state === 'Completat' ? ui.t('applied') : ui.t('resolution')} text={job.resolution} />
           </div>
           <div className="mt-4 grid gap-2 sm:grid-cols-3">
-            <Info icon={<Clock3 className="h-4 w-4" />} label={ui.t('eta')} value={job.eta} />
-            <Info icon={<Check className="h-4 w-4" />} label={ui.t('close')} value={job.finishedAt ?? ui.t('pending')} />
-            <Info icon={<UserRound className="h-4 w-4" />} label={ui.t('contact')} value={job.contact} />
+            <Info icon={<Clock3 className="h-4 w-4" />} tone="text-[#35b8e8]" label={ui.t('eta')} value={job.eta} />
+            <Info icon={<Check className="h-4 w-4" />} tone="text-[#22c55e]" label={ui.t('close')} value={job.finishedAt ?? ui.t('pending')} />
+            <Info icon={<UserRound className="h-4 w-4" />} tone="text-[#8b5cf6]" label={ui.t('contact')} value={job.contact} />
           </div>
         </main>
 
@@ -99,7 +99,7 @@ function StateMenu({ value, onChange }: { value: JobState; onChange: (state: Job
     </div>
   );
 }
-function Info({ icon, label, value }: { icon: ReactNode; label: string; value: string }) { return <div className="rounded-[7px] border border-[#d0d6e0] bg-[#f7f8f8] p-2 text-[12px] dark:border-[#323334] dark:bg-[#08090a]"><div className="mb-1 flex items-center gap-2 text-[#8a8f98]">{icon}{label}</div><p className="font-[560]">{value}</p></div>; }
+function Info({ icon, label, value, tone = 'text-[#8a8f98]' }: { icon: ReactNode; label: string; value: string; tone?: string }) { return <div className="rounded-[7px] border border-[#d0d6e0] bg-[#f7f8f8] p-2 text-[12px] dark:border-[#323334] dark:bg-[#08090a]"><div className="mb-1 flex items-center gap-2 text-[#8a8f98]"><span className={tone}>{icon}</span>{label}</div><p className="font-[560]">{value}</p></div>; }
 function Block({ title, text }: { title: string; text: string }) { return <section className="rounded-[7px] border border-[#d0d6e0] bg-[#f7f8f8] p-3 text-[12px] dark:border-[#323334] dark:bg-[#08090a]"><h5 className="mb-1 text-[13px] font-semibold">{title}</h5><p className="leading-5 text-[#62666d] dark:text-[#8a8f98]">{text}</p></section>; }
 function Section({ title, children }: { title: string; children: ReactNode }) { return <section><h5 className="mb-2 text-[13px] font-semibold">{title}</h5><div className="space-y-2">{children}</div></section>; }
 function Empty({ text }: { text: string }) { return <p className="text-[12px] text-[#8a8f98]">{text}</p>; }

@@ -9,7 +9,9 @@
 import { useEffect, useRef } from 'react';
 
 const NODE_COUNT = 86;
+const MOBILE_NODE_COUNT = 48;
 const LINK_DISTANCE = 172;
+const MOBILE_LINK_DISTANCE = 118;
 const SPEED = 0.32;
 
 class AmbientNode {
@@ -57,7 +59,8 @@ export function HeroAmbientBackground({ className = 'absolute inset-0' }: { clas
       ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
 
       if (nodes.length === 0) {
-        for (let i = 0; i < NODE_COUNT; i += 1) nodes.push(new AmbientNode(rect.width, rect.height));
+        const nodeCount = rect.width < 640 ? MOBILE_NODE_COUNT : NODE_COUNT;
+        for (let i = 0; i < nodeCount; i += 1) nodes.push(new AmbientNode(rect.width, rect.height));
       }
     };
 
@@ -82,10 +85,11 @@ export function HeroAmbientBackground({ className = 'absolute inset-0' }: { clas
           const dx = node.x - peer.x;
           const dy = node.y - peer.y;
           const distance = Math.hypot(dx, dy);
-          if (distance > LINK_DISTANCE) continue;
+          const linkDistance = width < 640 ? MOBILE_LINK_DISTANCE : LINK_DISTANCE;
+          if (distance > linkDistance) continue;
 
           ctx.beginPath();
-          const alpha = (1 - distance / LINK_DISTANCE) * 0.28;
+          const alpha = (1 - distance / linkDistance) * 0.28;
           ctx.strokeStyle = isDark ? `rgba(138, 143, 152, ${alpha * 0.72})` : `rgba(8, 9, 10, ${alpha * 0.78})`;
           ctx.lineWidth = 1;
           ctx.moveTo(node.x, node.y);

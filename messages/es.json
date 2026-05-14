@@ -261,8 +261,7 @@
     "legal_notice": "Aviso Legal",
     "privacy": "Política de Privacidad",
     "cookies": "Política de Cookies",
-    "rights_reserved": "Todos los derechos reservados.",
-    "made_with_love": "Hecho con ❤️ en Cataluña"
+    "rights_reserved": "Todos los derechos reservados."
   },
   "Sidebar": {
     "platform": "Plataforma",
@@ -883,7 +882,7 @@
     },
     "contact": {
       "titleStrong": "Hablemos de lo que necesitas.",
-      "titleMuted": "Y del mejor primer paso.",
+      "titleMuted": "Y del mejor camino para conseguirlo.",
       "lead": "Cuéntanos qué quieres mejorar y te responderemos con una propuesta concreta: automatización, software, formación o una combinación realista.",
       "services": {
         "automation": "Automatizaciones e IA",

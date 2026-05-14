@@ -41,31 +41,31 @@ export function TrainingSection() {
   const t = useTranslations('LandingV2.training');
 
   return (
-    <section id="formacio" className="relative isolate flex min-h-[100svh] overflow-hidden bg-transparent px-4 py-[76px] text-[#08090a] dark:text-[#f7f8f8] sm:px-6 lg:px-8">
+    <section id="formacio" className="relative isolate flex min-h-[100svh] overflow-visible bg-transparent px-4 py-[76px] pb-[92px] text-[#08090a] dark:text-[#f7f8f8] sm:px-6 sm:pb-[76px] lg:overflow-hidden lg:px-8">
       <motion.div variants={trainingReveal} initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.28, margin: '-4% 0px -20% 0px' }} className="mx-auto flex w-full max-w-7xl flex-col justify-center">
         <motion.div variants={titleReveal} className="flex flex-col items-center gap-5 text-center">
           <div className="mx-auto max-w-6xl">
             <h2 className="text-balance text-[clamp(31px,7.4vw,42px)] font-[590] leading-[1.03] text-[#08090a] dark:text-[#f7f8f8] sm:text-[clamp(42px,5vw,58px)] lg:text-[clamp(48px,4.1vw,66px)]">
               {t('titleStrong')}
-              <BrandRevealText className="max-md:!hidden text-[#383b3f] dark:text-[#8a8f98] md:!inline-grid">
+              <BrandRevealText className="block text-[#383b3f] dark:text-[#8a8f98] md:!inline-grid">
                 {' '}{t('titleMuted')}
               </BrandRevealText>
             </h2>
           </div>
         </motion.div>
 
-        <motion.div variants={trainingReveal} className="mt-9 grid min-h-0 overflow-visible bg-white/34 backdrop-blur-[2px] dark:bg-[#08090a]/34 sm:mt-10 lg:h-[clamp(340px,48svh,470px)] lg:grid-cols-3">
+        <motion.div variants={trainingReveal} className="mt-5 grid min-h-0 gap-2 overflow-visible bg-white/48 backdrop-blur-[2px] dark:bg-[#111315]/36 sm:mt-10 lg:h-[clamp(340px,48svh,470px)] lg:grid-cols-3 lg:gap-0">
           {formats.map((item, index) => {
             return (
               <motion.div key={item.key} variants={formatReveal} className="min-h-0">
-                <motion.article initial="rest" animate="rest" whileHover="hover" className="linear-panel group grid h-full min-h-0 grid-rows-[minmax(130px,1fr)_154px] px-4 py-4 transition-colors duration-300 hover:bg-white/84 dark:hover:bg-[#161718] sm:min-h-[300px] sm:px-5 lg:min-h-0 lg:px-6 lg:py-7">
-                  <div className="flex min-h-0 items-center justify-center overflow-hidden pb-4">
+                <motion.article initial="rest" animate="rest" whileHover="hover" className="linear-panel group grid h-full min-h-[112px] grid-cols-[82px_1fr] items-center gap-3 px-3 py-3 [filter:grayscale(.82)_saturate(.18)_contrast(.94)_brightness(1.02)] transition-[filter,border-color] duration-300 dark:[filter:grayscale(1)_saturate(.18)_contrast(.9)_brightness(1.22)] sm:min-h-[132px] sm:grid-cols-[104px_1fr] sm:px-5 lg:min-h-0 lg:grid-cols-none lg:grid-rows-[minmax(130px,1fr)_154px] lg:gap-0 lg:px-6 lg:py-7">
+                  <div className="flex h-20 min-h-0 items-center justify-center overflow-hidden sm:h-24 lg:h-auto lg:pb-4">
                     <TrainingFigure variant={item.figure} index={index} />
                   </div>
-                  <div className="flex min-w-0 flex-col items-center rounded-[6px] px-1 py-1 text-center sm:px-2 lg:px-0 lg:py-0">
-                    <h3 className="text-[18px] font-[590] leading-tight text-[#08090a] dark:text-[#d0d6e0] sm:text-[20px]">{t(`formats.${item.key}.title`)}</h3>
-                    <p className="mx-auto mt-2 min-h-[64px] max-w-[340px] text-[14px] leading-[1.45] text-[#62666d] dark:text-[#8a8f98] lg:text-[15px]">{t(`formats.${item.key}.desc`)}</p>
-                    {item.figure === 'grid' ? <div className="mt-4 inline-flex justify-center"><BrandRevealButton href="/#contacte" label={t('registerCta')} /></div> : <div className="mt-4 h-9" />}
+                  <div className="flex min-w-0 flex-col rounded-[6px] px-1 py-1 sm:px-2 lg:items-center lg:px-0 lg:py-0 lg:text-center">
+                    <h3 className="text-[13px] font-[590] leading-tight text-[#08090a] dark:text-[#d0d6e0] sm:text-[15px] lg:text-[20px]">{t(`formats.${item.key}.title`)}</h3>
+                    <p className="mt-1 line-clamp-2 text-[12px] leading-[1.4] text-[#62666d] dark:text-[#8a8f98] sm:text-[13px] lg:mx-auto lg:mt-2 lg:min-h-[64px] lg:max-w-[340px] lg:text-[15px]">{t(`formats.${item.key}.desc`)}</p>
+                    {item.figure === 'grid' ? <div className="mt-2 inline-flex justify-start lg:mt-4 lg:justify-center"><BrandRevealButton href="/#contacte" label={t('registerCta')} /></div> : <div className="hidden lg:mt-4 lg:block lg:h-9" />}
                   </div>
                 </motion.article>
               </motion.div>

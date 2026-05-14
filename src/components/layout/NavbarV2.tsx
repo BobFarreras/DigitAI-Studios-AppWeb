@@ -17,6 +17,7 @@ import logo from '@/assets/images/digitai-logo.png';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { BrandRevealButton, BrandRevealLink } from '@/components/ui/brand-reveal';
+import { MobileHeaderMenu } from './MobileHeaderMenu';
 
 type Props = { user: User | null };
 
@@ -115,14 +116,11 @@ export function NavbarV2({ user }: Props) {
             <ThemeToggle />
             <LanguageSwitcher />
           </div>
-          <div className="flex items-center gap-1 md:hidden"><ThemeToggle /><LanguageSwitcher /></div>
+          <div className="flex items-center gap-1 md:hidden"><ThemeToggle /><LanguageSwitcher /><MobileHeaderMenu user={user} onSectionClick={handleAnchor} /></div>
 
           {user ? (
             <div className="hidden items-center gap-2 sm:flex">
-              <Link href="/dashboard" className="linear-cta inline-flex h-9 items-center gap-2 rounded-[6px] px-3 text-[13px] font-[590]">
-                <LayoutDashboard className="h-4 w-4" />
-                {t('dashboard')}
-              </Link>
+              <Link href="/dashboard" className="linear-cta inline-flex h-9 items-center gap-2 rounded-[6px] px-3 text-[13px] font-[590]"><LayoutDashboard className="h-4 w-4" />{t('dashboard')}</Link>
               <button
                 onClick={handleSignOut}
                 disabled={isSigningOut}
@@ -134,9 +132,7 @@ export function NavbarV2({ user }: Props) {
             </div>
           ) : (
             <div className="hidden items-center gap-2 sm:flex">
-              <Link href="/auth/login" className="px-2 text-[14px] font-[590] text-[#62666d] transition-colors hover:text-[#08090a] dark:text-[#8a8f98] dark:hover:text-[#f7f8f8]">
-                {t('login')}
-              </Link>
+              <Link href="/auth/login" className="px-2 text-[14px] font-[590] text-[#62666d] transition-colors hover:text-[#08090a] dark:text-[#8a8f98] dark:hover:text-[#f7f8f8]">{t('login')}</Link>
               <BrandRevealButton href="/auth/register" label={t('register')} />
             </div>
           )}

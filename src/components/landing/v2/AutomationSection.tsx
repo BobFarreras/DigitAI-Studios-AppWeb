@@ -10,9 +10,10 @@ import { motion, type Variants } from 'framer-motion';
 import { Bell, Bot, Braces, CalendarClock, CheckCircle2, Database, GitBranch, Mail, MessageCircle, Send, Share2, type LucideIcon } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { BrandRevealText } from '@/components/ui/brand-reveal';
+import { AutomationMobileFlow } from './AutomationMobileFlow';
 type Node = { id: string; icon: LucideIcon; x: number; y: number; tone?: string };
 type Edge = { from: number; to: number; bend?: number };
-type Workflow = { id: string; nodes: Node[]; edges: Edge[] };
+export type Workflow = { id: string; nodes: Node[]; edges: Edge[] };
 const workflows: Workflow[] = [
   {
     id: 'leads',
@@ -75,12 +76,12 @@ export function AutomationSection() {
   const [hoveredNode, setHoveredNode] = useState<number | null>(null);
   const workflow = workflows[active];
   return (
-    <section id="automatitzacions" className="relative z-10 flex min-h-[100svh] overflow-hidden px-4 py-[72px] text-[#08090a] dark:text-[#f7f8f8] sm:px-6 sm:py-[84px] lg:px-8 lg:py-[92px]">
+    <section id="automatitzacions" className="relative z-10 flex min-h-[100svh] overflow-hidden px-4 pb-[72px] pt-5 text-[#08090a] dark:text-[#f7f8f8] sm:px-6 sm:py-[84px] lg:px-8 lg:py-[92px]">
       <motion.div variants={sectionReveal} initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.32, margin: '-4% 0px -20% 0px' }} className="mx-auto flex w-full max-w-7xl flex-col justify-center">
         <motion.h2 variants={riseReveal} className="mx-auto max-w-6xl text-balance text-center text-[clamp(28px,4.2vw,56px)] font-[590] leading-[1.02]">
           {t('titleStrong')} <BrandRevealText className="text-[#383b3f] dark:text-[#8a8f98]">{t('titleMuted')}</BrandRevealText>
         </motion.h2>
-        <motion.div variants={riseReveal} className="linear-panel mt-8 overflow-hidden backdrop-blur-[2px] sm:mt-10">
+        <motion.div variants={riseReveal} className="linear-panel mt-5 overflow-hidden backdrop-blur-[2px] sm:mt-10">
           <motion.div variants={riseReveal} className="flex flex-col gap-3 p-3 md:flex-row md:items-center md:justify-between">
             <div className="flex flex-wrap gap-2">
               {workflows.map((item, index) => (
@@ -91,7 +92,8 @@ export function AutomationSection() {
             </div>
             <motion.div variants={riseReveal} className="max-w-2xl text-[14px] font-[560] leading-[1.45] text-[#62666d] dark:text-[#8a8f98] md:text-right lg:text-[15px]">{t(`flows.${workflow.id}.summary`)}</motion.div>
           </motion.div>
-          <motion.div variants={riseReveal} className="overflow-x-auto overflow-y-hidden">
+          <AutomationMobileFlow workflow={workflow} />
+          <motion.div variants={riseReveal} className="hidden overflow-x-auto overflow-y-hidden md:block">
             <div className="relative h-[clamp(350px,55svh,520px)] min-w-[820px] bg-[radial-gradient(circle,#d0d6e0_1px,transparent_1px)] bg-[size:18px_18px] dark:bg-[radial-gradient(circle,#23252a_1px,transparent_1px)] lg:min-w-0">
               <WorkflowEdges workflow={workflow} hoveredNode={hoveredNode} />
               {workflow.nodes.map((node, index) => <WorkflowNode key={`${workflow.id}-${node.id}`} node={node} index={index} flowId={workflow.id} showBubble={index === hoveredNode} onHover={setHoveredNode} />)}

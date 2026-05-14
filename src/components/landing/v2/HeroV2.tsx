@@ -27,7 +27,7 @@ export function HeroLinear() {
   return (
     <section
       id="inici"
-      className="relative isolate h-[100svh] overflow-hidden bg-transparent px-4 pb-4 pt-[92px] text-[#08090a] dark:text-[#f7f8f8] sm:px-6 sm:pb-5 sm:pt-[96px] lg:px-8 lg:pb-7 lg:pt-[104px]"
+      className="relative isolate overflow-visible bg-transparent px-4 pb-4 pt-[82px] text-[#08090a] dark:text-[#f7f8f8] sm:px-6 sm:pb-5 sm:pt-[96px] lg:h-[100svh] lg:overflow-hidden lg:px-8 lg:pb-7 lg:pt-[104px]"
     >
       <div className="pointer-events-none absolute inset-x-0 top-0 z-[1] h-28 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.72),transparent)] dark:bg-[linear-gradient(to_bottom,rgba(8,9,10,0.78),transparent)]" />
       <motion.div
@@ -40,13 +40,13 @@ export function HeroLinear() {
         <motion.div variants={itemVariants} className="mx-auto max-w-6xl text-center">
           <h1 className="text-balance text-[clamp(31px,7.4vw,42px)] font-[590] leading-[1.03] tracking-normal text-[#08090a] dark:text-[#f7f8f8] sm:text-[clamp(42px,5vw,58px)] lg:text-[clamp(48px,4.1vw,66px)]">
             {t('titleStrong')}
-            <BrandRevealText className="max-md:!hidden text-[#383b3f] dark:text-[#8a8f98] md:!inline-grid">
+            <BrandRevealText className="block text-[#383b3f] dark:text-[#8a8f98] md:!inline-grid">
               {' '}{t('titleMuted')}
             </BrandRevealText>
           </h1>
         </motion.div>
 
-        <motion.div variants={itemVariants} className="mt-6 min-h-0 sm:mt-7 lg:mt-8">
+        <motion.div variants={itemVariants} className="mt-5 min-h-0 sm:mt-7 lg:mt-8">
           <HeroPillarGrid />
         </motion.div>
       </motion.div>

@@ -9,7 +9,7 @@
 import { useActionState, useState } from 'react';
 import type { ReactNode } from 'react';
 import { motion } from 'framer-motion';
-import { AppWindow, Bot, CheckCircle2, Loader2, Mail, ShieldCheck, Sparkles } from 'lucide-react';
+import { AppWindow, Bot, CheckCircle2, Loader2, Mail, ShieldCheck } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { submitContactForm } from '@/actions/contact';
 import { BrandRevealText } from '@/components/ui/brand-reveal';
@@ -41,11 +41,8 @@ export function ContactSectionV2() {
 
         <div className="group grid overflow-hidden border border-[#d0d6e0] bg-white/34 backdrop-blur-[2px] [filter:grayscale(1)_saturate(.08)_contrast(.94)_brightness(.96)] transition-all duration-500 hover:bg-white/56 hover:[filter:grayscale(0)_saturate(.9)_contrast(1)_brightness(1)] dark:border-[#23252a] dark:bg-[#08090a]/34 dark:hover:bg-[#0f1011]/68 lg:grid-cols-[0.82fr_1.18fr]">
           <motion.div initial={{ opacity: 0, x: -28 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }} viewport={{ once: true, amount: 0.25 }} className="linear-panel border-0 p-5 sm:p-7 lg:p-8">
-            <div className="flex h-full flex-col justify-between gap-8">
+            <div className="flex h-full flex-col justify-between">
               <div>
-                <motion.div initial={{ opacity: 0, scale: 0.72 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ delay: 0.12, duration: 0.38 }} viewport={{ once: true }} className="mb-5 inline-flex h-10 w-10 items-center justify-center rounded-[7px] border border-[#d0d6e0] bg-white/70 transition-colors duration-500 group-hover:border-[#6f7f88]/65 dark:border-[#323334] dark:bg-[#161718]">
-                  <Sparkles className="h-5 w-5 text-[#8a8f98] transition-colors group-hover:text-[#7b8b93]" />
-                </motion.div>
                 <p className="max-w-xl text-[18px] font-[560] leading-[1.45] text-[#383b3f] dark:text-[#d0d6e0] sm:text-[20px]">
                   {t('lead')}
                 </p>
@@ -77,12 +74,12 @@ export function ContactSectionV2() {
               <Field name="email" type="email" label={t('form.email')} placeholder={t('form.emailPlaceholder')} error={state.errors?.email} />
               <div className="sm:col-span-2">
                 <label className="mb-2 block text-[13px] font-[650]">{t('form.message')}</label>
-                <textarea name="message" required minLength={10} rows={5} placeholder={t('form.messagePlaceholder')} className="w-full resize-none rounded-[7px] border border-[#d0d6e0] bg-white/70 px-4 py-3 text-[14px] outline-none transition-colors placeholder:text-[#8a8f98] focus:border-[#7b8b93] dark:border-[#323334] dark:bg-[#08090a]/78" />
+                <textarea name="message" required minLength={10} rows={5} placeholder={t('form.messagePlaceholder')} className="w-full resize-none rounded-[7px] border border-[#d0d6e0] bg-white/70 px-4 py-3 text-[16px] outline-none transition-colors placeholder:text-[#8a8f98] focus:border-[#7b8b93] dark:border-[#323334] dark:bg-[#08090a]/78" />
                 <Error errors={state.errors?.message} />
               </div>
             </div>
 
-            <label className="mt-5 flex items-start gap-3 text-[12px] leading-[1.45] text-[#62666d] dark:text-[#8a8f98]">
+            <label className="mt-5 flex items-start gap-3 text-[16px] leading-[1.45] text-[#62666d] dark:text-[#8a8f98]">
               <input name="privacy" value="on" required type="checkbox" className="mt-0.5 h-4 w-4 rounded border-[#d0d6e0] accent-[#08090a] dark:border-[#323334] dark:accent-[#f7f8f8]" />
               <span>{t.rich('privacy', { link: (chunks) => <Link href="/legal/privacitat" className="underline underline-offset-2 hover:text-[#08090a] dark:hover:text-[#f7f8f8]">{chunks}</Link> })}</span>
             </label>
@@ -91,7 +88,12 @@ export function ContactSectionV2() {
             <button type="submit" disabled={pending || state.success} className="mt-5 flex h-12 w-full items-center justify-center rounded-[6px] bg-[#08090a] px-4 text-[14px] font-[650] text-[#f7f8f8] transition-all hover:bg-[#383b3f] disabled:cursor-not-allowed disabled:opacity-60 dark:bg-[#f7f8f8] dark:text-[#08090a] dark:hover:bg-[#d0d6e0]">
               <span className="inline-flex items-center justify-center">{pending ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />{t('form.sending')}</> : state.success ? t('form.sent') : t('form.submit')}</span>
             </button>
-            {state.message ? <p className={cn('mt-3 rounded-[7px] border px-3 py-2 text-center text-[12px] font-[590]', state.success ? 'border-[#27a644]/25 bg-[#27a644]/10 text-[#1f7a37]' : 'border-red-500/25 bg-red-500/10 text-red-600')}>{state.message}</p> : null}
+            {state.message ? (
+              <p className={cn('mt-4 flex items-center justify-center gap-2 rounded-[7px] border px-4 py-3 text-center text-[14px] font-[650]', state.success ? 'border-[#27a644]/35 bg-[#27a644]/12 text-[#1f7a37] dark:text-[#4ade80]' : 'border-red-500/25 bg-red-500/10 text-red-600')}>
+                {state.success ? <CheckCircle2 className="h-5 w-5 shrink-0 stroke-[2.4]" /> : null}
+                <span>{state.message}</span>
+              </p>
+            ) : null}
           </motion.form>
         </div>
       </div>

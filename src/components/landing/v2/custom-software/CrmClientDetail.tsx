@@ -29,17 +29,17 @@ export function CrmClientDetail({ client, onBack, onSetStage }: Props) {
           <p className="mt-2 max-w-2xl text-[13px] leading-5 text-[#62666d] dark:text-[#8a8f98]">{profile.summary}</p>
         </div>
         <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-1">
-          <Info icon={<Phone className="h-4 w-4" />} label={ui.t('phone')} value={profile.phone} />
-          <Info icon={<Mail className="h-4 w-4" />} label={ui.t('email')} value={profile.email} />
+          <Info icon={<Phone className="h-4 w-4" />} tone="text-[#22c55e]" label={ui.t('phone')} value={profile.phone} />
+          <Info icon={<Mail className="h-4 w-4" />} tone="text-[#35b8e8]" label={ui.t('email')} value={profile.email} />
         </div>
       </section>
       <div className="grid gap-0 lg:grid-cols-[1fr_300px]">
         <main className="border-b border-[#d0d6e0] p-4 dark:border-[#23252a] lg:border-b-0 lg:border-r">
           <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
-            <Info icon={<UserRound className="h-4 w-4" />} label={ui.t('owner')} value={client.owner} />
-            <Info icon={<Euro className="h-4 w-4" />} label={ui.t('estimatedValue')} value={profile.value} />
-            <Info icon={<Target className="h-4 w-4" />} label={ui.t('probability')} value={profile.probability} />
-            <Info icon={<Clock3 className="h-4 w-4" />} label={ui.t('nextContact')} value={profile.nextContact} />
+            <Info icon={<UserRound className="h-4 w-4" />} tone="text-[#8b5cf6]" label={ui.t('owner')} value={client.owner} />
+            <Info icon={<Euro className="h-4 w-4" />} tone="text-[#22c55e]" label={ui.t('estimatedValue')} value={profile.value} />
+            <Info icon={<Target className="h-4 w-4" />} tone="text-[#f59e0b]" label={ui.t('probability')} value={profile.probability} />
+            <Info icon={<Clock3 className="h-4 w-4" />} tone="text-[#35b8e8]" label={ui.t('nextContact')} value={profile.nextContact} />
           </div>
           <div className="mt-4 grid gap-3 md:grid-cols-2">
             <Block title={ui.t('businessScope')} text={profile.scope} />
@@ -53,12 +53,12 @@ export function CrmClientDetail({ client, onBack, onSetStage }: Props) {
         </main>
         <aside className="space-y-4 p-4">
           <Section title={ui.t('sourceQualification')}>
-            <Info icon={<Globe2 className="h-4 w-4" />} label={ui.t('leadSource')} value={profile.source} />
-            <Info icon={<Building2 className="h-4 w-4" />} label={ui.t('decisionMaker')} value={profile.decisionMaker} />
-            <Info icon={<MessageCircle className="h-4 w-4" />} label={ui.t('interest')} value={profile.intent} />
-            <Info icon={<CalendarCheck className="h-4 w-4" />} label={ui.t('closeForecast')} value={profile.closeDate} />
-            <Info icon={<MapPin className="h-4 w-4" />} label={ui.t('location')} value={profile.zone} />
-            <Info icon={<FileText className="h-4 w-4" />} label={ui.t('quote')} value={profile.budget} />
+            <Info icon={<Globe2 className="h-4 w-4" />} tone="text-[#6366f1]" label={ui.t('leadSource')} value={profile.source} />
+            <Info icon={<Building2 className="h-4 w-4" />} tone="text-[#8b5cf6]" label={ui.t('decisionMaker')} value={profile.decisionMaker} />
+            <Info icon={<MessageCircle className="h-4 w-4" />} tone="text-[#35b8e8]" label={ui.t('interest')} value={profile.intent} />
+            <Info icon={<CalendarCheck className="h-4 w-4" />} tone="text-[#22c55e]" label={ui.t('closeForecast')} value={profile.closeDate} />
+            <Info icon={<MapPin className="h-4 w-4" />} tone="text-[#f59e0b]" label={ui.t('location')} value={profile.zone} />
+            <Info icon={<FileText className="h-4 w-4" />} tone="text-[#e4f222] dark:text-[#e4f222]" label={ui.t('quote')} value={profile.budget} />
           </Section>
         </aside>
       </div>
@@ -66,7 +66,7 @@ export function CrmClientDetail({ client, onBack, onSetStage }: Props) {
   );
 }
 
-function Info({ icon, label, value }: { icon: ReactNode; label: string; value: string }) { return <div className="rounded-[7px] border border-[#d0d6e0] bg-[#f7f8f8] p-2 text-[12px] dark:border-[#323334] dark:bg-[#08090a]"><div className="mb-1 flex items-center gap-2 text-[#8a8f98]">{icon}{label}</div><p className="break-words font-[560]">{value}</p></div>; }
+function Info({ icon, label, value, tone = 'text-[#8a8f98]' }: { icon: ReactNode; label: string; value: string; tone?: string }) { return <div className="rounded-[7px] border border-[#d0d6e0] bg-[#f7f8f8] p-2 text-[12px] dark:border-[#323334] dark:bg-[#08090a]"><div className="mb-1 flex items-center gap-2 text-[#8a8f98]"><span className={tone}>{icon}</span>{label}</div><p className="break-words font-[560]">{value}</p></div>; }
 function Block({ title, text }: { title: string; text: string }) { return <section className="rounded-[7px] border border-[#d0d6e0] bg-[#f7f8f8] p-3 text-[12px] dark:border-[#323334] dark:bg-[#08090a]"><h5 className="mb-1 text-[13px] font-semibold">{title}</h5><p className="leading-5 text-[#62666d] dark:text-[#8a8f98]">{text}</p></section>; }
 function Section({ title, children }: { title: string; children: ReactNode }) { return <section><h5 className="mb-2 text-[13px] font-semibold">{title}</h5><div className="space-y-2">{children}</div></section>; }
 function getClientProfile(client: Client, locale: string) {
