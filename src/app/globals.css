@@ -292,7 +292,8 @@ img {
   }
 
   .brand-reveal-link.is-active {
-    color: #f7f8f8;
+    color: #08090a;
+    font-weight: 650;
   }
 
   .brand-reveal-link:hover {
@@ -300,7 +301,7 @@ img {
   }
 
   .brand-reveal-link.is-active:hover {
-    color: #f7f8f8;
+    color: #08090a;
   }
 
   .dark .brand-reveal-link {
@@ -309,6 +310,7 @@ img {
 
   .dark .brand-reveal-link.is-active {
     color: #f7f8f8;
+    font-weight: 650;
   }
 
   .dark .brand-reveal-link:hover {

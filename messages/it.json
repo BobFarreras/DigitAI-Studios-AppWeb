@@ -699,8 +699,8 @@
       }
     },
     "automation": {
-      "titleStrong": "Automatizziamo processi che",
-      "titleMuted": "lavorano da soli.",
+      "titleStrong": "Automatizziamo processi ripetitivi affinche",
+      "titleMuted": "il business lavori da solo.",
       "flows": {
         "leads": {
           "name": "Lead",
@@ -851,6 +851,25 @@
           "Sviluppo modulare",
           "Go-live in produzione"
         ]
+      }
+    },
+    "training": {
+      "titleStrong": "Formati per creare, automatizzare",
+      "titleMuted": "e dominare tecnologia reale.",
+      "registerCta": "Registrarsi",
+      "formats": {
+        "teams": {
+          "title": "Formazione per team",
+          "desc": "Sessioni pratiche per aziende che vogliono applicare IA, automazioni e strumenti digitali con criterio."
+        },
+        "private": {
+          "title": "Formazione privata",
+          "desc": "Affiancamento diretto per professionisti, manager e autonomi che vogliono imparare con obiettivi concreti."
+        },
+        "academy": {
+          "title": "Accademia online",
+          "desc": "Percorsi digitali con lezioni, esercizi e progresso per imparare dal web al tuo ritmo."
+        }
       }
     },
     "explainer": {

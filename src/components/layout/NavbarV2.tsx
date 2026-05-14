@@ -26,6 +26,7 @@ const sectionLinks = [
   { href: '/#formacio', key: 'training' },
   { href: '/#contacte', key: 'contact' },
 ] as const;
+const sectionScrollOffsets: Record<string, number> = { automatitzacions: 0, 'software-a-mida': 56, formacio: -88, contacte: -88 };
 
 export function NavbarV2({ user }: Props) {
   const t = useTranslations('Navbar');
@@ -57,10 +58,11 @@ export function NavbarV2({ user }: Props) {
     if (!isHomePath || !href.includes('#')) return;
 
     event.preventDefault();
-    const element = document.getElementById(href.split('#')[1]);
+    const sectionId = href.split('#')[1];
+    const element = document.getElementById(sectionId);
     if (!element) return;
 
-    const top = element.getBoundingClientRect().top + window.scrollY - 88;
+    const top = element.getBoundingClientRect().top + window.scrollY + (sectionScrollOffsets[sectionId] ?? -88);
     window.scrollTo({ top, behavior: 'smooth' });
     window.history.pushState(null, '', href);
     setActiveHref(href);

@@ -74,7 +74,7 @@ export function AutomationSection() {
         <h2 className="mx-auto max-w-6xl text-balance text-center text-[clamp(28px,4.2vw,56px)] font-[590] leading-[1.02]">
           {t('titleStrong')} <BrandRevealText className="text-[#383b3f] dark:text-[#8a8f98]">{t('titleMuted')}</BrandRevealText>
         </h2>
-        <div className="linear-panel mt-5 overflow-hidden backdrop-blur-[2px] sm:mt-6">
+        <div className="linear-panel mt-8 overflow-hidden backdrop-blur-[2px] sm:mt-10">
           <div className="flex flex-col gap-3 p-3 md:flex-row md:items-center md:justify-between">
             <div className="flex flex-wrap gap-2">
               {workflows.map((item, index) => (

@@ -708,8 +708,8 @@
       }
     },
     "automation": {
-      "titleStrong": "Automatitzem processos que",
-      "titleMuted": "treballen sols.",
+      "titleStrong": "Automatitzem processos repetitius perquè",
+      "titleMuted": "el negoci treballi sol.",
       "flows": {
         "leads": {
           "name": "Leads",
@@ -860,6 +860,25 @@
           "Desenvolupament modular",
           "Posada en produccio"
         ]
+      }
+    },
+    "training": {
+      "titleStrong": "Forma't per crear, automatitzar",
+      "titleMuted": "i dominar la tecnologia real.",
+      "registerCta": "Registrar-se",
+      "formats": {
+        "teams": {
+          "title": "Formació per equips",
+          "desc": "Sessions pràctiques per empreses que volen aplicar IA, automatitzacions i eines digitals amb criteri."
+        },
+        "private": {
+          "title": "Formació privada",
+          "desc": "Acompanyament directe per professionals, directius i autònoms que volen aprendre amb objectius concrets."
+        },
+        "academy": {
+          "title": "Acadèmia online",
+          "desc": "Itineraris digitals amb càpsules, exercicis i progrés per aprendre des de la web al teu ritme."
+        }
       }
     },
     "explainer": {

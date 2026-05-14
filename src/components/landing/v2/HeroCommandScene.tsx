@@ -8,16 +8,35 @@
 import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 const variants = ['stack', 'nodes', 'ramp'] as const;
+const pillarHrefs = ['/#automatitzacions', '/#software-a-mida', '/#formacio'] as const;
+const scrollOffsets: Record<string, number> = { automatitzacions: 0, 'software-a-mida': 56, formacio: -88 };
 export function HeroPillarGrid() { const t = useTranslations('LandingV2.hero');
+  const activatePillar = (href: string) => {
+    const sectionId = href.split('#')[1], element = document.getElementById(sectionId);
+    if (!element) return;
+    const top = element.getBoundingClientRect().top + window.scrollY + (scrollOffsets[sectionId] ?? -88);
+    window.scrollTo({ top, behavior: 'smooth' });
+    window.history.pushState(null, '', href);
+  };
+
   return (
     <div className="grid min-h-0 overflow-visible bg-white/34 backdrop-blur-[2px] dark:bg-[#08090a]/34 lg:h-[clamp(340px,48svh,470px)] lg:grid-cols-3">
       {variants.map((variant, index) => (
         <motion.article
           key={variant}
+          role="link"
+          tabIndex={0}
+          onClick={() => activatePillar(pillarHrefs[index])}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault();
+              activatePillar(pillarHrefs[index]);
+            }
+          }}
           initial="rest"
           animate="rest"
           whileHover="hover"
-          className="linear-panel group grid min-h-0 grid-rows-[minmax(120px,1fr)_112px] px-4 py-4 transition-colors duration-300 hover:bg-white/84 dark:hover:bg-[#161718] sm:min-h-[300px] sm:px-5 lg:min-h-0 lg:px-6 lg:py-7"
+          className="linear-panel group grid min-h-0 cursor-pointer grid-rows-[minmax(120px,1fr)_112px] px-4 py-4 transition-colors duration-300 hover:bg-white/84 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8b5cf6] dark:hover:bg-[#161718] sm:min-h-[300px] sm:px-5 lg:min-h-0 lg:px-6 lg:py-7"
         >
           <div className="flex min-h-0 items-center justify-center pb-4">
             <PillarFigure variant={variant} />

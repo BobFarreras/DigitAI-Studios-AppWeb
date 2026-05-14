@@ -708,8 +708,8 @@
       }
     },
     "automation": {
-      "titleStrong": "We automate processes that",
-      "titleMuted": "work on their own.",
+      "titleStrong": "We automate repetitive workflows so",
+      "titleMuted": "the business runs on its own.",
       "flows": {
         "leads": {
           "name": "Leads",
@@ -860,6 +860,25 @@
           "Modular development",
           "Production launch"
         ]
+      }
+    },
+    "training": {
+      "titleStrong": "Train to build, automate",
+      "titleMuted": "and master real technology.",
+      "registerCta": "Sign up",
+      "formats": {
+        "teams": {
+          "title": "Team training",
+          "desc": "Practical sessions for companies that want to apply AI, automations and digital tools with clear criteria."
+        },
+        "private": {
+          "title": "Private training",
+          "desc": "Direct guidance for professionals, executives and freelancers who want to learn with concrete goals."
+        },
+        "academy": {
+          "title": "Online academy",
+          "desc": "Digital learning paths with lessons, exercises and progress tracking to learn from the web at your pace."
+        }
       }
     },
     "explainer": {

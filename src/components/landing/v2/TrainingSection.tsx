@@ -6,50 +6,47 @@
  */
 'use client';
 
-import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { ArrowRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { BrandRevealText } from '@/components/ui/brand-reveal';
+import { useTranslations } from 'next-intl';
+import { BrandRevealButton, BrandRevealText } from '@/components/ui/brand-reveal';
 
 const formats = [
   {
-    title: 'Formacio per equips',
-    desc: 'Sessions practiques per empreses que volen aplicar IA, automatitzacions i eines digitals amb criteri.',
+    key: 'teams',
     figure: 'path',
   },
   {
-    title: 'Formacio privada',
-    desc: 'Acompanyament directe per professionals, directius i autonoms que volen aprendre amb objectius concrets.',
+    key: 'private',
     figure: 'focus',
   },
   {
-    title: 'Academia online',
-    desc: 'Itineraris digitals amb capsules, exercicis i progres per aprendre des de la web al teu ritme.',
+    key: 'academy',
     figure: 'grid',
   },
 ] as const;
 
 export function TrainingSection() {
+  const t = useTranslations('LandingV2.training');
+
   return (
     <section id="formacio" className="relative isolate min-h-[100svh] overflow-hidden bg-transparent px-4 py-[76px] text-[#08090a] dark:text-[#f7f8f8] sm:px-6 lg:px-8">
       <div className="mx-auto flex h-full w-full max-w-7xl flex-col justify-center">
         <div className="flex flex-col items-center gap-5 text-center">
           <div className="mx-auto max-w-6xl">
             <h2 className="text-balance text-[clamp(31px,7.4vw,42px)] font-[590] leading-[1.03] text-[#08090a] dark:text-[#f7f8f8] sm:text-[clamp(42px,5vw,58px)] lg:text-[clamp(48px,4.1vw,66px)]">
-              Apren tecnologia aplicada.
+              {t('titleStrong')}
               <BrandRevealText className="max-md:!hidden text-[#383b3f] dark:text-[#8a8f98] md:!inline-grid">
-                {' '}Sense teoria morta.
+                {' '}{t('titleMuted')}
               </BrandRevealText>
             </h2>
           </div>
         </div>
 
-        <div className="mt-7 grid min-h-0 overflow-visible bg-white/34 backdrop-blur-[2px] dark:bg-[#08090a]/34 lg:h-[clamp(340px,48svh,470px)] lg:grid-cols-3">
+        <div className="mt-9 grid min-h-0 overflow-visible bg-white/34 backdrop-blur-[2px] dark:bg-[#08090a]/34 sm:mt-10 lg:h-[clamp(340px,48svh,470px)] lg:grid-cols-3">
           {formats.map((item, index) => {
             return (
               <motion.article
-                key={item.title}
+                key={item.key}
                 initial="rest"
                 animate="rest"
                 whileHover="hover"
@@ -59,12 +56,12 @@ export function TrainingSection() {
                   <TrainingFigure variant={item.figure} index={index} />
                 </div>
                 <div className="flex min-w-0 flex-col items-center rounded-[6px] px-1 py-1 text-center sm:px-2 lg:px-0 lg:py-0">
-                  <h3 className="text-[18px] font-[590] leading-tight text-[#08090a] dark:text-[#d0d6e0] sm:text-[20px]">{item.title}</h3>
-                  <p className="mx-auto mt-2 min-h-[64px] max-w-[340px] text-[14px] leading-[1.45] text-[#62666d] dark:text-[#8a8f98] lg:text-[15px]">{item.desc}</p>
+                  <h3 className="text-[18px] font-[590] leading-tight text-[#08090a] dark:text-[#d0d6e0] sm:text-[20px]">{t(`formats.${item.key}.title`)}</h3>
+                  <p className="mx-auto mt-2 min-h-[64px] max-w-[340px] text-[14px] leading-[1.45] text-[#62666d] dark:text-[#8a8f98] lg:text-[15px]">{t(`formats.${item.key}.desc`)}</p>
                   {item.figure === 'grid' ? (
-                    <Link href="#contact" className="mt-4 inline-flex justify-center">
-                      <Button className="linear-cta h-9 rounded-[6px] px-3.5 text-[13px] font-semibold">Registrar-se <ArrowRight className="ml-2 h-3.5 w-3.5" /></Button>
-                    </Link>
+                    <div className="mt-4 inline-flex justify-center">
+                      <BrandRevealButton href="/#contacte" label={t('registerCta')} />
+                    </div>
                   ) : <div className="mt-4 h-9" />}
                 </div>
               </motion.article>
