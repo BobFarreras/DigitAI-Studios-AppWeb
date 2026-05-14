@@ -71,7 +71,7 @@ export function AutomationSection() {
   return (
     <section id="automatitzacions" className="relative z-10 flex min-h-[100svh] overflow-hidden px-4 py-[72px] text-[#08090a] dark:text-[#f7f8f8] sm:px-6 sm:py-[84px] lg:px-8 lg:py-[92px]">
       <div className="mx-auto flex w-full max-w-7xl flex-col justify-center">
-        <h2 className="max-w-6xl text-balance text-[clamp(28px,4.2vw,56px)] font-[590] leading-[1.02]">
+        <h2 className="mx-auto max-w-6xl text-balance text-center text-[clamp(28px,4.2vw,56px)] font-[590] leading-[1.02]">
           {t('titleStrong')} <BrandRevealText className="text-[#383b3f] dark:text-[#8a8f98]">{t('titleMuted')}</BrandRevealText>
         </h2>
         <div className="linear-panel mt-5 overflow-hidden backdrop-blur-[2px] sm:mt-6">

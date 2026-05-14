@@ -58,9 +58,8 @@ export function CustomSoftwareSection() {
   return (
     <section id="software-a-mida" className="relative w-full px-4 pb-5 pt-[88px] md:px-6 md:pb-6 md:pt-[94px] lg:pb-8 lg:pt-[102px]">
       <div className="mx-auto max-w-7xl">
-        <div className="mb-6 max-w-5xl sm:mb-7 lg:mb-8">
+        <div className="mx-auto mb-6 max-w-5xl text-center sm:mb-7 lg:mb-8">
           <h2 className="text-balance text-[clamp(31px,7.4vw,42px)] font-[590] leading-[1.03] text-[#08090a] dark:text-[#f7f8f8] sm:text-[clamp(42px,5vw,58px)] lg:text-[clamp(48px,4.1vw,66px)]">{ui.text('Tecnologia que s\'adapta al teu equip')}<BrandRevealText className="ml-1 text-[#383b3f] dark:text-[#8a8f98]">{ui.text('i creix amb el teu negoci.')}</BrandRevealText></h2>
-          <p className="mt-4 max-w-4xl text-[14px] leading-[1.5] text-[#62666d] dark:text-[#8a8f98] sm:text-[15px]">{ui.text('Demo real d\'un SAT per a una empresa de lampisteria amb CRM, ordres de treball, materials i accessos.')}</p>
         </div>
         <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.2 }} className="relative overflow-hidden rounded-[12px] border border-[#d0d6e0] bg-white/70 [filter:grayscale(1)_saturate(0)_contrast(.94)] transition-all duration-500 hover:[filter:grayscale(0)_saturate(1)_contrast(1)] dark:border-[#323334] dark:bg-[#0f1011]/95">
           <div className="flex min-h-[clamp(560px,73svh,760px)] flex-col md:flex-row">

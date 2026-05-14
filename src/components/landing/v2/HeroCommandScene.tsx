@@ -17,16 +17,16 @@ export function HeroPillarGrid() { const t = useTranslations('LandingV2.hero');
           initial="rest"
           animate="rest"
           whileHover="hover"
-          className="linear-panel group grid min-h-0 grid-rows-[minmax(120px,1fr)_auto] px-4 py-4 transition-colors duration-300 hover:bg-white/84 dark:hover:bg-[#161718] sm:min-h-[300px] sm:px-5 lg:min-h-0 lg:px-6 lg:py-7"
+          className="linear-panel group grid min-h-0 grid-rows-[minmax(120px,1fr)_112px] px-4 py-4 transition-colors duration-300 hover:bg-white/84 dark:hover:bg-[#161718] sm:min-h-[300px] sm:px-5 lg:min-h-0 lg:px-6 lg:py-7"
         >
           <div className="flex min-h-0 items-center justify-center pb-4">
             <PillarFigure variant={variant} />
           </div>
-          <div className="min-w-0 rounded-[6px] px-1 py-1 sm:px-2 lg:px-0 lg:py-0">
+          <div className="flex min-w-0 flex-col rounded-[6px] px-1 py-1 sm:px-2 lg:px-0 lg:py-0">
             <h2 className="text-[14px] font-[590] leading-tight text-[#08090a] dark:text-[#d0d6e0] sm:text-[15px]">
               {t(`pillars.${index}.title`)}
             </h2>
-            <p className="mt-2 line-clamp-2 text-[12px] leading-[1.45] text-[#62666d] dark:text-[#8a8f98] sm:text-[13px] lg:line-clamp-3 lg:max-w-[320px] lg:text-[14px]">
+            <p className="mt-2 min-h-[58px] text-[12px] leading-[1.45] text-[#62666d] dark:text-[#8a8f98] sm:text-[13px] lg:line-clamp-3 lg:max-w-[320px] lg:text-[14px]">
               {t(`pillars.${index}.desc`)}
             </p>
           </div>
@@ -63,14 +63,6 @@ function StackFigure() {
           }}
         />
       ))}
-      <motion.path
-        className="linear-figure-accent"
-        d="M88 76 C96 54 164 54 172 76 M76 86 H184 M92 96 H168 M106 106 H154"
-        variants={{
-          rest: { opacity: 0.56 },
-          hover: { opacity: [0.35, 0.95, 0.35], transition: { duration: 1.5, repeat: Infinity } },
-        }}
-      />
     </motion.svg>
   );
 }
