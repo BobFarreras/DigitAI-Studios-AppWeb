@@ -55,7 +55,7 @@ export function TrainingSection() {
   };
 
   return (
-    <section id="formacio" className="relative w-full bg-[#08090a] px-4 md:px-6 py-24 lg:py-32 border-t border-[#23252a] overflow-hidden">
+    <section id="formacio" className="relative w-full overflow-hidden bg-transparent px-4 py-24 md:px-6 lg:py-32">
       
       {/* GLOW DE FONS (Lila subtil) */}
       <div className="absolute top-1/2 left-1/2 -z-10 h-[600px] w-[800px] -translate-x-1/2 -translate-y-1/2 bg-[radial-gradient(ellipse_at_center,rgba(139,92,246,0.06)_0%,rgba(8,9,10,0)_70%)] pointer-events-none" />

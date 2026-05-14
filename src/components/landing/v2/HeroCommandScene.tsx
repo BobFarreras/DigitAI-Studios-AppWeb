@@ -10,14 +10,14 @@ import { useTranslations } from 'next-intl';
 const variants = ['stack', 'nodes', 'ramp'] as const;
 export function HeroPillarGrid() { const t = useTranslations('LandingV2.hero');
   return (
-    <div className="grid min-h-0 overflow-hidden border-y border-[#d0d6e0] bg-white/34 backdrop-blur-[2px] dark:border-[#23252a] dark:bg-[#08090a]/34 lg:h-[clamp(340px,48svh,470px)] lg:grid-cols-3">
+    <div className="grid min-h-0 overflow-visible bg-white/34 backdrop-blur-[2px] dark:bg-[#08090a]/34 lg:h-[clamp(340px,48svh,470px)] lg:grid-cols-3">
       {variants.map((variant, index) => (
         <motion.article
           key={variant}
           initial="rest"
           animate="rest"
           whileHover="hover"
-          className="linear-panel group grid min-h-0 grid-rows-[minmax(120px,1fr)_auto] border-b border-[#d0d6e0] px-4 py-4 transition-colors duration-300 hover:bg-white/84 dark:border-[#23252a] dark:hover:bg-[#161718] sm:min-h-[300px] sm:px-5 lg:min-h-0 lg:border-b-0 lg:border-r lg:px-6 lg:py-7 lg:last:border-r-0"
+          className="linear-panel group grid min-h-0 grid-rows-[minmax(120px,1fr)_auto] px-4 py-4 transition-colors duration-300 hover:bg-white/84 dark:hover:bg-[#161718] sm:min-h-[300px] sm:px-5 lg:min-h-0 lg:px-6 lg:py-7"
         >
           <div className="flex min-h-0 items-center justify-center pb-4">
             <PillarFigure variant={variant} />
@@ -43,8 +43,8 @@ function PillarFigure({ variant }: { variant: (typeof variants)[number] }) {
 function StackFigure() {
   return (
     <motion.svg
-      viewBox="0 0 260 220"
-      className="h-full max-h-[250px] w-full max-w-[300px] drop-shadow-[0_14px_24px_rgba(8,9,10,0.22)]"
+      viewBox="-24 -24 308 268"
+      className="h-full max-h-[250px] w-full max-w-[300px] overflow-visible drop-shadow-[0_14px_24px_rgba(8,9,10,0.22)]"
       variants={{ hover: { rotateX: 10, rotateZ: -2, scale: 1.08 } }}
       transition={{ type: 'spring', stiffness: 180, damping: 18 }}
       aria-hidden
@@ -54,9 +54,8 @@ function StackFigure() {
           key={layer}
           className="linear-figure-line"
           d={`M40 ${88 + layer * 18} L130 ${42 + layer * 18} L220 ${88 + layer * 18} L130 ${134 + layer * 18} Z`}
-          initial={{ opacity: 0, y: -8 }}
           variants={{
-            rest: { opacity: 1 - layer * 0.12, y: 0 },
+            rest: { opacity: 1 - layer * 0.08, y: 0, pathLength: 1 },
             hover: {
               y: [0, -layer * 7, 0], opacity: 0.95,
               transition: { duration: 1.7, delay: layer * 0.08, repeat: Infinity, ease: 'easeInOut' },
@@ -84,8 +83,8 @@ function NodesFigure() {
   ];
   return (
     <motion.svg
-      viewBox="0 0 260 220"
-      className="h-full max-h-[250px] w-full max-w-[300px] drop-shadow-[0_14px_24px_rgba(8,9,10,0.22)]"
+      viewBox="-24 -24 308 268"
+      className="h-full max-h-[250px] w-full max-w-[300px] overflow-visible drop-shadow-[0_14px_24px_rgba(8,9,10,0.22)]"
       variants={{ hover: { scale: 1.08, rotateZ: 2 } }}
       transition={{ type: 'spring', stiffness: 180, damping: 18 }}
       aria-hidden
@@ -95,9 +94,8 @@ function NodesFigure() {
           key={cube}
           className={index === 0 ? 'linear-figure-accent' : 'linear-figure-line'}
           d={cube}
-          initial={{ opacity: 0, scale: 0.94 }}
           variants={{
-            rest: { opacity: index === 0 ? 0.85 : 0.55, scale: 1, x: 0, y: 0 },
+            rest: { opacity: index === 0 ? 0.9 : 0.68, scale: 1, x: 0, y: 0, pathLength: 1 },
             hover: {
               scale: [1, 1.08, 1], opacity: 0.95,
               x: index % 2 === 0 ? [0, 4, 0] : [0, -4, 0],
@@ -111,7 +109,7 @@ function NodesFigure() {
         className="linear-figure-line"
         d="M120 136 V160 M122 130 L148 144 M112 138 L92 150"
         variants={{
-          rest: { pathLength: 0.62, opacity: 0.46 },
+          rest: { pathLength: 1, opacity: 0.64 },
           hover: {
             pathLength: [0.35, 1, 0.35], opacity: [0.35, 0.9, 0.35],
             transition: { duration: 1.8, repeat: Infinity, ease: 'easeInOut' },
@@ -124,8 +122,8 @@ function NodesFigure() {
 function RampFigure() {
   return (
     <motion.svg
-      viewBox="0 0 260 220"
-      className="h-full max-h-[250px] w-full max-w-[300px] drop-shadow-[0_14px_24px_rgba(8,9,10,0.22)]"
+      viewBox="-24 -24 308 268"
+      className="h-full max-h-[250px] w-full max-w-[300px] overflow-visible drop-shadow-[0_14px_24px_rgba(8,9,10,0.22)]"
       variants={{ hover: { scale: 1.08, rotateZ: -4 } }}
       transition={{ type: 'spring', stiffness: 180, damping: 18 }}
       aria-hidden
@@ -135,9 +133,8 @@ function RampFigure() {
           key={index}
           className={index > 9 ? 'linear-figure-accent' : 'linear-figure-line'}
           d={`M46 ${168 - index * 6} L160 ${108 - index * 8} L214 ${136 - index * 4} L100 ${196 - index * 2} Z`}
-          initial={{ opacity: 0, x: -10 }}
           variants={{
-            rest: { opacity: 0.25 + index * 0.045, x: 0, y: 0 },
+            rest: { opacity: 0.38 + index * 0.04, x: 0, y: 0, pathLength: 1 },
             hover: {
               x: [0, index * 1.4, 0], y: [0, -index * 0.65, 0], opacity: 0.92,
               transition: { duration: 1.65, delay: index * 0.04, repeat: Infinity, ease: 'easeInOut' },

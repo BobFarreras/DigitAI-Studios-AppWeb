@@ -69,13 +69,13 @@ export function AutomationSection() {
   const [hoveredNode, setHoveredNode] = useState<number | null>(null);
   const workflow = workflows[active];
   return (
-    <section id="automatitzacions" className="relative z-10 flex min-h-[100svh] overflow-hidden border-t border-[#d0d6e0]/80 px-4 py-[72px] text-[#08090a] dark:border-[#23252a] dark:text-[#f7f8f8] sm:px-6 sm:py-[84px] lg:px-8 lg:py-[92px]">
+    <section id="automatitzacions" className="relative z-10 flex min-h-[100svh] overflow-hidden px-4 py-[72px] text-[#08090a] dark:text-[#f7f8f8] sm:px-6 sm:py-[84px] lg:px-8 lg:py-[92px]">
       <div className="mx-auto flex w-full max-w-7xl flex-col justify-center">
         <h2 className="max-w-6xl text-balance text-[clamp(28px,4.2vw,56px)] font-[590] leading-[1.02]">
           {t('titleStrong')} <BrandRevealText className="text-[#383b3f] dark:text-[#8a8f98]">{t('titleMuted')}</BrandRevealText>
         </h2>
-        <div className="linear-panel mt-5 overflow-hidden border-y backdrop-blur-[2px] sm:mt-6">
-          <div className="flex flex-col gap-3 border-b border-[#d0d6e0] p-3 dark:border-[#23252a] md:flex-row md:items-center md:justify-between">
+        <div className="linear-panel mt-5 overflow-hidden backdrop-blur-[2px] sm:mt-6">
+          <div className="flex flex-col gap-3 p-3 md:flex-row md:items-center md:justify-between">
             <div className="flex flex-wrap gap-2">
               {workflows.map((item, index) => (
                 <button key={item.id} onClick={() => { setActive(index); setHoveredNode(null); }} className={`rounded-[6px] border px-3 py-2 text-[13px] font-[590] transition-colors ${active === index ? 'border-[#8b5cf6]/50 bg-[#08090a] text-white dark:bg-[#f7f8f8] dark:text-[#08090a]' : 'border-[#d0d6e0] text-[#62666d] hover:text-[#08090a] dark:border-[#23252a] dark:text-[#8a8f98] dark:hover:text-[#f7f8f8]'}`}>
@@ -87,7 +87,7 @@ export function AutomationSection() {
           </div>
           <div className="overflow-x-auto overflow-y-hidden">
             <div className="relative h-[clamp(350px,55svh,520px)] min-w-[820px] bg-[radial-gradient(circle,#d0d6e0_1px,transparent_1px)] bg-[size:18px_18px] dark:bg-[radial-gradient(circle,#23252a_1px,transparent_1px)] lg:min-w-0">
-              <WorkflowEdges workflow={workflow} />
+              <WorkflowEdges workflow={workflow} hoveredNode={hoveredNode} />
               {workflow.nodes.map((node, index) => <WorkflowNode key={`${workflow.id}-${node.id}`} node={node} index={index} flowId={workflow.id} showBubble={index === hoveredNode} onHover={setHoveredNode} />)}
             </div>
           </div>
@@ -114,17 +114,25 @@ function WorkflowNode({ node, index, flowId, showBubble, onHover }: { node: Node
     </motion.div>
   );
 }
-function WorkflowEdges({ workflow }: { workflow: Workflow }) {
+function WorkflowEdges({ workflow, hoveredNode }: { workflow: Workflow; hoveredNode: number | null }) {
   return (
     <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden>
       {workflow.edges.map((edge, index) => {
         const from = workflow.nodes[edge.from], to = workflow.nodes[edge.to];
         const mid = ((from.x + to.x) / 2) + (edge.bend ?? 0) * 0.1;
         const path = `M ${from.x + 4} ${from.y} C ${mid} ${from.y}, ${mid} ${to.y}, ${to.x - 4} ${to.y}`;
+        const isActive = hoveredNode === edge.from || hoveredNode === edge.to;
         return (
           <g key={`${from.id}-${to.id}`}>
             <path d={path} fill="none" stroke="currentColor" strokeWidth="0.18" className="text-[#62666d]/38 dark:text-[#8a8f98]/32" />
-            <motion.circle r="0.55" className="fill-[#8b5cf6]" initial={{ offsetDistance: '0%' }} animate={{ offsetDistance: ['0%', '100%'] }} transition={{ duration: 2.2, delay: index * 0.25, repeat: Infinity, ease: 'linear' }} style={{ offsetPath: `path("${path}")` }} />
+            <motion.circle
+              r="0.55"
+              className="fill-[#8b5cf6]"
+              initial={false}
+              animate={{ opacity: isActive ? [0.25, 1, 0.25] : 0, offsetDistance: isActive ? ['0%', '100%'] : '0%' }}
+              transition={{ duration: 2.2, delay: isActive ? index * 0.08 : 0, repeat: isActive ? Infinity : 0, ease: 'linear' }}
+              style={{ offsetPath: `path("${path}")` }}
+            />
           </g>
         );
       })}
