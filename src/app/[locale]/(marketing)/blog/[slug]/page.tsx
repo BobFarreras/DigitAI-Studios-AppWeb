@@ -24,7 +24,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const post = await postService.getPost(slug);
 
   if (!post) {
-    return { title: '404 - Article no trobat' };
+    return {
+      title: '404 - Article no trobat',
+      robots: {
+        index: false,
+        follow: false,
+      },
+    };
   }
 
   // 1. Funció Helper per gestionar prefixos 'as-needed'
@@ -38,6 +44,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: post.title,
     description: post.description,
+    robots: {
+      index: false,
+      follow: false,
+    },
 
     alternates: {
       // 2. CORRECCIÓ CLAU AQUÍ 👇

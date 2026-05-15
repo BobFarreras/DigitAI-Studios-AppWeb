@@ -32,7 +32,7 @@ export function Footer() {
   return (
     <footer className="border-t border-[#d0d6e0] bg-white/44 py-6 text-[#08090a] backdrop-blur-[2px] transition-colors duration-300 dark:border-[#23252a] dark:bg-[#08090a]/44 dark:text-[#f7f8f8] md:py-8">
       <div className="container mx-auto px-4 md:px-14">
-        <div className="mb-5 grid gap-5 md:mb-7 md:grid-cols-2 md:gap-8 lg:grid-cols-[1.7fr_1fr_1fr]">
+        <div className="mb-5 grid gap-5 md:mb-7 md:grid-cols-2 md:gap-8 lg:grid-cols-[1.7fr_1fr_1fr_1fr]">
           <div className="space-y-3 text-center md:space-y-4 md:text-left">
             <Link href="/" className="inline-block">
               <span className="text-xl font-bold tracking-tight text-[#08090a] dark:text-[#f7f8f8]">
@@ -56,11 +56,11 @@ export function Footer() {
             <LinkColumn title={t('company_title')} links={companyLinks} />
           </div>
 
-          <div className="space-y-2.5 text-center md:col-span-2 lg:col-span-3">
+          <div className="space-y-2.5 text-center md:col-span-2 lg:col-span-1 lg:text-left">
             <h4 className="text-sm font-bold text-[#08090a] dark:text-[#f7f8f8]">{t('legal_title')}</h4>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-3 gap-2 lg:grid-cols-1 lg:gap-1.5">
               {legalLinks.map((link) => (
-                <Link key={link.label} href={link.href} className="px-1 text-center text-[11px] font-[590] leading-tight text-[#62666d] transition-colors hover:text-[#8b5cf6] dark:text-[#8a8f98] md:text-sm">
+                <Link key={link.label} href={link.href} className="px-1 text-center text-[11px] font-[590] leading-tight text-[#62666d] transition-colors hover:text-[#8b5cf6] dark:text-[#8a8f98] md:text-sm lg:text-left">
                   {link.label}
                 </Link>
               ))}

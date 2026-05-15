@@ -5,6 +5,14 @@
  * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
  */
 import { ProjectsHero, ProjectsList, ProjectsCTA } from '@/features/projects';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default function ProjectsPage() {
   return (

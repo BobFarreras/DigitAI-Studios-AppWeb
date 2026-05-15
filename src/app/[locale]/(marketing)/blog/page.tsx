@@ -10,10 +10,17 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { getTranslations, getLocale } from 'next-intl/server';
 import { Calendar, Tag, ImageIcon, Cpu } from 'lucide-react';
 import Image from 'next/image';
+import type { Metadata } from 'next';
 // 👇 1. IMPORT IMPORTANT
 import { PaginationControls } from '@/components/ui/pagination-controls';
 
 export const revalidate = 3600;
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 // 👇 2. DEFINICIÓ DE PROPS (Next.js 16)
 interface PageProps {

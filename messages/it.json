@@ -53,6 +53,26 @@
     "cta": "Audit Gratuito",
     "form_title": "Analizza il tuo sito in secondi"
   },
+  "Seo": {
+    "home": {
+      "title": "DigitAI Studios | Automazioni IA e software su misura",
+      "description": "Automatizziamo processi, creiamo software su misura e formiamo team affinche aziende e attivita convertano meglio e risparmino ore ogni settimana."
+    },
+    "legal": {
+      "avis_legal": {
+        "title": "Note Legali",
+        "description": "Informazioni legali, dati identificativi e condizioni d'uso del sito web di DigitAI Studios."
+      },
+      "privacitat": {
+        "title": "Informativa sulla Privacy",
+        "description": "Consulta quali dati raccoglie DigitAI Studios, perche li utilizza e come puoi esercitare i tuoi diritti."
+      },
+      "cookies": {
+        "title": "Informativa sui Cookie",
+        "description": "Informazioni sui cookie necessari e analitici utilizzati nel sito web di DigitAI Studios."
+      }
+    }
+  },
   "Dashboard": {
     "welcome": "Benvenuto, {name}",
     "my_audits": "I miei Audit",

@@ -53,6 +53,26 @@
     "cta": "Auditoria Gratuïta",
     "form_title": "Analitza la teva web en segons"
   },
+  "Seo": {
+    "home": {
+      "title": "DigitAI Studios | Automatitzacions IA i software a mida",
+      "description": "Automatitzem processos, creem software a mida i formem equips perquè empreses i negocis converteixin millor i estalviin hores cada setmana."
+    },
+    "legal": {
+      "avis_legal": {
+        "title": "Avís Legal",
+        "description": "Informació legal, dades identificatives i condicions d'ús del lloc web de DigitAI Studios."
+      },
+      "privacitat": {
+        "title": "Política de Privacitat",
+        "description": "Consulta quines dades recull DigitAI Studios, per què les utilitza i com pots exercir els teus drets."
+      },
+      "cookies": {
+        "title": "Política de Cookies",
+        "description": "Informació sobre les cookies necessàries i analítiques utilitzades al lloc web de DigitAI Studios."
+      }
+    }
+  },
   "Dashboard": {
     "welcome": "Benvingut, {name}",
     "my_audits": "Les meves Auditories",

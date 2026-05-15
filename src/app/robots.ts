@@ -5,13 +5,25 @@
  * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
  */
 import { MetadataRoute } from 'next';
+import { getLocalizedPath, SEO_LOCALES } from '@/lib/seo';
+
+const PRIVATE_PATHS = ['/admin', '/dashboard'];
+
+function blockedLocalizedPaths(paths: string[]) {
+  return SEO_LOCALES.flatMap((locale) =>
+    paths.flatMap((path) => {
+      const localizedPath = getLocalizedPath(locale, path);
+      return [localizedPath, `${localizedPath}/`];
+    })
+  );
+}
 
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: {
       userAgent: '*',
       allow: '/',
-      disallow: ['/admin/', '/dashboard/'], // 🛡️ Protegim les zones privades
+      disallow: blockedLocalizedPaths(PRIVATE_PATHS),
     },
     sitemap: 'https://digitaistudios.com/sitemap.xml', // URL final
   };

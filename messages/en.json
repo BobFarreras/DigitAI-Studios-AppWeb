@@ -53,6 +53,26 @@
     "cta": "Free Audit",
     "form_title": "Analyze your website in seconds"
   },
+  "Seo": {
+    "home": {
+      "title": "DigitAI Studios | AI automations and custom software",
+      "description": "We automate workflows, build custom software and train teams so companies convert better and save hours every week."
+    },
+    "legal": {
+      "avis_legal": {
+        "title": "Legal Notice",
+        "description": "Legal information, company details and terms of use for the DigitAI Studios website."
+      },
+      "privacitat": {
+        "title": "Privacy Policy",
+        "description": "See what data DigitAI Studios collects, why it is used and how you can exercise your rights."
+      },
+      "cookies": {
+        "title": "Cookie Policy",
+        "description": "Information about the necessary and analytics cookies used on the DigitAI Studios website."
+      }
+    }
+  },
   "Dashboard": {
     "welcome": "Welcome, {name}",
     "my_audits": "My Audits",

@@ -7,10 +7,23 @@
 import LegalLayout from '@/components/layout/LegalLayout';
 import { ShieldCheck, Server, Lock } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
+import type { Metadata } from 'next';
+import { getLocalizedAlternates } from '@/lib/seo';
 
-export const metadata = {
-  title: 'Política de Privacitat | DigitAI Studios',
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'Seo.legal.privacitat' });
+
+  return {
+    title: t('title'),
+    description: t('description'),
+    alternates: getLocalizedAlternates(locale, '/legal/privacitat'),
+  };
+}
 
 export default async function PrivacitatPage() {
   const t = await getTranslations('Legal.privacitat');

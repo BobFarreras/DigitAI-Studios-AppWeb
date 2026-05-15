@@ -6,13 +6,24 @@
  */
 import LegalLayout from '@/components/layout/LegalLayout';
 import { Building2, Mail, MapPin, Fingerprint, AlertTriangle, Gavel } from 'lucide-react';
-import { getTranslations } from 'next-intl/server';
-import { getLocale } from 'next-intl/server'; // Per la data
+import { getLocale, getTranslations } from 'next-intl/server';
+import type { Metadata } from 'next';
+import { getLocalizedAlternates } from '@/lib/seo';
 
-export const metadata = {
-  title: 'Avís Legal | DigitAI Studios',
-  description: 'Informació legal i condicions d\'ús de DigitAI Studios.',
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'Seo.legal.avis_legal' });
+
+  return {
+    title: t('title'),
+    description: t('description'),
+    alternates: getLocalizedAlternates(locale, '/legal/avis-legal'),
+  };
+}
 
 export default async function AvisLegalPage() {
   const t = await getTranslations('Legal.avis_legal');
@@ -113,10 +124,6 @@ export default async function AvisLegalPage() {
     </LegalLayout>
   );
 }
-
-// Nota: El component InfoCard es manté igual, ja que les dades que rep (label, value) ja venen traduïdes d'aquí.
-
-// Component petit per a les targetes de dades
 import { LucideIcon } from 'lucide-react';
 
 interface InfoCardProps {
@@ -124,7 +131,6 @@ interface InfoCardProps {
     label: string;
     value: string;
 }
-
 function InfoCard({ icon: Icon, label, value }: InfoCardProps) {
     return (
         <div className="bg-background border border-border p-4 rounded-lg flex items-start gap-4 shadow-sm hover:border-primary/30 transition-colors">
