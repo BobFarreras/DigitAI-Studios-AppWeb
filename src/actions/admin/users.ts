@@ -92,42 +92,8 @@ export async function deleteUserFromOrg(userId: string) {
 
 async function deleteUserData(userId: string, organizationId: string) {
   const supabase = createAdminClient();
-  const { data: projects } = await supabase
-    .from('projects')
-    .select('id')
-    .eq('client_id', userId)
-    .eq('organization_id', organizationId);
-  const projectIds = projects?.map((project) => project.id) ?? [];
-
-  if (projectIds.length > 0) {
-    const { data: campaigns } = await supabase
-      .from('test_campaigns')
-      .select('id')
-      .in('project_id', projectIds);
-    const campaignIds = campaigns?.map((campaign) => campaign.id) ?? [];
-
-    if (campaignIds.length > 0) {
-      const { data: tasks } = await supabase
-        .from('test_tasks')
-        .select('id')
-        .in('campaign_id', campaignIds);
-      const taskIds = tasks?.map((task) => task.id) ?? [];
-
-      if (taskIds.length > 0) await supabase.from('test_results').delete().in('task_id', taskIds);
-      await supabase.from('test_assignments').delete().in('campaign_id', campaignIds);
-      await supabase.from('test_tasks').delete().in('campaign_id', campaignIds);
-      await supabase.from('test_campaigns').delete().in('id', campaignIds);
-    }
-
-    await supabase.from('project_members').delete().in('project_id', projectIds);
-    await supabase.from('projects').delete().in('id', projectIds);
-  }
-
   await supabase.from('web_audits').delete().eq('user_id', userId).eq('organization_id', organizationId);
   await supabase.from('social_connections').delete().eq('user_id', userId).eq('organization_id', organizationId);
-  await supabase.from('test_results').delete().eq('user_id', userId);
-  await supabase.from('test_assignments').delete().eq('user_id', userId);
-  await supabase.from('project_members').delete().eq('user_id', userId);
   await supabase.from('profiles').delete().eq('id', userId).eq('organization_id', organizationId);
 }
 

@@ -6,7 +6,6 @@ import { useTranslations } from 'next-intl';
 import {
   LayoutDashboard,
   Settings,
-  FileText,
   BarChart3,
   Users,
   ShieldCheck // <--- Icona per Admin
@@ -35,12 +34,6 @@ export function Sidebar({ userRole = 'client' }: SidebarProps) {
       href: '/admin',       // <--- La ruta on vols anar
       icon: ShieldCheck,
       roles: ['admin'],     // <--- NOMÉS ADMIN
-    },
-    {
-      label: t('projects'),
-      href: '/dashboard/projects',
-      icon: FileText,
-      roles: ['admin', 'client'],
     },
     {
       label: t('analytics'),

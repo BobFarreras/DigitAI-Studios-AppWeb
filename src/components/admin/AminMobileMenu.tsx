@@ -14,10 +14,8 @@ import {
   Users, 
   Home, 
   BookOpenCheck, 
-  FlaskConical, 
   Inbox, 
   MoreHorizontal, // Icona per al menú "Més"
-  Briefcase // Icona per a Projectes
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -46,19 +44,9 @@ export function AdminBottomNav() {
       icon: BarChart3
     },
     {
-      href: '/admin/projects', // NOVA SECCIÓ
-      label: 'Projectes',
-      icon: Briefcase 
-    },
-    {
       href: '/admin/users',
       label: 'Usuaris',
       icon: Users
-    },
-    {
-      href: '/admin/tests',
-      label: 'Tests',
-      icon: FlaskConical
     },
   ];
 

@@ -31,6 +31,10 @@ Scope actual confirmat a `AGENTS.md`, `ARCHITECTURE.md` i `README.md`:
 - `organizations` encara es FK de `profiles`, `posts`, `web_audits`, `social_connections`, `projects`, `services`, `bookings`, etc.
 - `projects` encara es FK de `project_members` i `test_campaigns`.
 
+Estat 2026-05-15:
+- `services`, `bookings`, `projects`, `project_members` i taules QA ja no existeixen a `public`.
+- `organizations` es manté perquè continua sent FK de `profiles`, `posts`, `web_audits`, `content_queue` i `social_connections`.
+
 ## Regla Important Sobre Carpeta `legacy`
 El `tsconfig.json` actual inclou `**/*.ts` i `**/*.tsx`. Si es mou codi React a una carpeta `legacy/`, TypeScript el seguira compilant.
 
@@ -43,6 +47,7 @@ Estructura recomanada:
 - `legacy/public-blog/`
 - `legacy/public-projects/`
 - `legacy/factory/`
+- `legacy/qa-projects/`
 
 No crear carpetes `legacy` disperses dins de cada modul. Una carpeta general a l'arrel fa mes facil auditar que no queda cap import actiu cap al codi retirat.
 
@@ -187,6 +192,35 @@ Opcio B: mantenir QA pero sense factory.
 
 Recomanacio:
 - Si no s'utilitza QA, Opcio A. Es mes neta i redueix molt deute.
+
+Estat 2026-05-15:
+- Decisio presa: no s'utilitzaran projectes/tests antics.
+- Els projectes de landing futurs es crearan com a codi dins la landing, no amb la BD `projects`.
+- Arxivat a `legacy/qa-projects`:
+  - rutes admin `/admin/projects/*` i `/admin/tests/*`
+  - rutes dashboard `/dashboard/projects/*` i `/dashboard/tests`
+  - `src/features/projects/*`
+  - `src/features/tests/*`
+  - repositoris `DashboardProjectRepository`, `SupabaseProjectRepository`, `SupabaseTestRepository`
+  - serveis `DashboardProjectService`, `GamificationService`
+  - actions vinculades a projectes/tests
+- Retirada navegacio admin/dashboard cap a projectes/tests.
+- `deleteUserFromOrg` ja no intenta eliminar dades de projectes/tests.
+- Eliminada de `public` la BD legacy:
+  - `test_results`
+  - `test_assignments`
+  - `test_tasks`
+  - `test_campaigns`
+  - `project_members`
+  - `projects`
+- Abans del `DROP`, s'ha creat copia de seguretat a `legacy_backup`:
+  - `test_results_20260515`
+  - `test_assignments_20260515`
+  - `test_tasks_20260515`
+  - `test_campaigns_20260515`
+  - `project_members_20260515`
+  - `projects_20260515`
+- Regenerat `src/types/database.types.ts` amb Supabase CLI.
 
 ### Fase 5 - Retirar Blog Public i decidir RRSS
 Objectiu: no barrejar blog public legacy amb admin RRSS si aquest encara aporta valor.

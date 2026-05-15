@@ -1,7 +1,6 @@
 src/actions/social-media.ts
 src/adapters/GooglePageSpeedAdapter.ts
 src/app/[locale]/admin/blog/[slug]/page.tsx
-src/app/[locale]/admin/projects/[id]/page.tsx
 src/app/[locale]/admin/users/page.tsx
 src/app/api/oauth/callback/route.ts
 src/components/admin/AminMobileMenu.tsx
@@ -21,12 +20,9 @@ src/features/auth/ui/RegisterForm.tsx
 src/features/blog/ui/AdminPostList.tsx
 src/features/blog/ui/EditPostForm.tsx
 src/features/email/templates/AuditReadyEmail.tsx
-src/features/tests/actions/admin-actions.ts
-src/features/tests/ui/CampaignAnalytics.tsx
 src/repositories/supabase/SupabaseAnalyticsRepository.ts
 src/repositories/supabase/SupabaseAuditRepository.ts
 src/repositories/supabase/SupabasePostRepository.ts
-src/repositories/supabase/SupabaseTestRepository.ts
 src/services/ai/providers/GeminiProvider.ts
 src/services/publishers/instagram.ts
 src/services/publishers/linkedin.ts

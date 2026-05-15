@@ -11,7 +11,6 @@ import { Link } from '@/routing';
 import { 
   LayoutDashboard, 
   FileText, 
-  FolderKanban, 
   ShieldAlert, 
   Home
 } from 'lucide-react';
@@ -34,7 +33,6 @@ export function MobileBottomBar({ userRole }: MobileBottomBarProps) {
   const MENU_ITEMS = [
     { icon: LayoutDashboard, label: t('summary'), href: '/dashboard' },
     { icon: FileText, label: t('audits'), href: '/dashboard/audits' }, 
-    { icon: FolderKanban, label: t('projects'), href: '/dashboard/projects' },
   ];
 
   const handleClick = (e: React.MouseEvent, href: string, label: string) => {

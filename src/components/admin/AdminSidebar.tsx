@@ -15,9 +15,7 @@ import {
   BarChart3,
   Users,
   BookOpenCheck,
-  FlaskConical,
   Home,
-  Briefcase,
   Settings,
   Inbox
 } from 'lucide-react';
@@ -28,8 +26,6 @@ export function AdminSidebar() {
   const NAV_ITEMS = [
     { label: 'Analítiques', href: '/admin/analytics', icon: BarChart3 },
     { label: 'Usuaris', href: '/admin/users', icon: Users },
-    { label: 'Projectes', href: '/admin/projects', icon: Briefcase },
-    { label: 'QA / Tests', href: '/admin/tests', icon: FlaskConical },
     { label: 'Blog', href: '/admin/blog', icon: BookOpenCheck },
     { label: 'Configuració', href: '/admin/settings', icon: Settings },
     { label: 'Missatges', href: '/admin/missatges', icon: Inbox},
