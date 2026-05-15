@@ -116,6 +116,12 @@ Done:
 - Cap import trencat.
 - Quality gates verds.
 
+Estat 2026-05-15:
+- `legacy/**/*` queda exclos de TypeScript i ESLint.
+- Landing v1 moguda a `legacy/landing-v1/components/landing`.
+- Components publics de projectes moguts a `legacy/public-projects`.
+- `src/components/landing` queda nomes amb `v2`.
+
 ### Fase 3 - Desactivar Factory a l'admin
 Objectiu: eliminar la capacitat de crear webs/client factory des del compte admin.
 
@@ -144,6 +150,17 @@ Done:
 - No existeix cap CTA o ruta funcional per generar webs.
 - No queden imports de `services/factory`.
 - Quality gates verds.
+
+Estat 2026-05-15:
+- `/admin/projects/new` retorna `notFound()` despres del check admin.
+- El llistat d'admin projectes ja no mostra CTA per generar webs.
+- El detall d'admin projectes ja no exposa l'accio de destruccio factory.
+- La logica factory s'ha mogut a `legacy/factory`:
+  - creacio automatica de repos/deploy,
+  - tenant/seeding DB,
+  - formulari de nova web,
+  - destruccio GitHub/Vercel/Supabase,
+  - script d'integracio factory.
 
 ### Fase 4 - Separar QA/tests de Projectes
 Objectiu: decidir si QA intern continua o si tambe es legacy.

@@ -5,7 +5,6 @@ import { Github, Globe, Server, LayoutDashboard, FlaskConical, ArrowLeft } from 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ProjectCampaignsList } from '@/features/projects/ui/ProjectCampaignsList';
 import { ProjectTeamManager } from '@/features/projects/ui/ProjectTeamManager';
-import { DestructionButton } from '@/features/projects/ui/DeleteProjectButton';
 import { getAdminProjectPageData } from '@/actions/admin/project-page';
 
 type Props = {
@@ -17,7 +16,7 @@ export default async function ProjectDetailPage({ params }: Props) {
     const { id } = await params;
     const result = await getAdminProjectPageData(id);
     if (!result.success) notFound();
-    const { project, campaigns, members, candidates, cleanRepoName } = result;
+    const { project, campaigns, members, candidates } = result;
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 md:p-10">
             <div className="max-w-6xl mx-auto">
@@ -56,16 +55,6 @@ export default async function ProjectDetailPage({ params }: Props) {
                                 <Globe className="w-4 h-4" /> Web
                             </a>
                         )}
-                        {/* 👇 PASSEM EL NOM NETEJAT AL BOTÓ */}
-                        <div className="ml-2 pl-2 border-l border-slate-300 dark:border-slate-700">
-                            {cleanRepoName ? (
-                                <DestructionButton repoName={cleanRepoName} />
-                            ) : (
-                                <span className="text-xs text-red-400 px-2">
-                                    ⚠️ No puc destruir (falta Repo Name)
-                                </span>
-                            )}
-                        </div>
                     </div>
                 </div>
 
