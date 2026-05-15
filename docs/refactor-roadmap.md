@@ -1,8 +1,9 @@
 # Refactor Roadmap
 
-## Baseline (2026-05-07)
-- Architecture boundary exceptions: 33 files (`scripts/architecture-db-allowlist.txt`).
-- File-size exceptions (>150 lines): 50 files (`scripts/line-limit-allowlist.txt`).
+## Baseline (updated 2026-05-15)
+- Legacy public blog, public projects, factory, project dashboard and QA/tests are archived under `legacy/`.
+- Booking/ecommerce, project/QA and public reaction tables were removed from `public` with locked backups in `legacy_backup`.
+- Current refactor work should focus only on active runtime code.
 
 ## Phase A - High Risk First
 Objective: remove DB access from UI-heavy paths and centralize into actions/services/repositories.
@@ -11,13 +12,7 @@ Objective: remove DB access from UI-heavy paths and centralize into actions/serv
 - Move storage upload/delete and DB writes into server actions.
 - Keep component presentation-only.
 
-2. `src/app/[locale]/dashboard/projects/page.tsx`
-- Move Supabase membership/project queries into repository + service.
-
-3. `src/app/[locale]/admin/projects/[id]/page.tsx`
-- Extract data loading to service layer.
-
-4. `src/features/blog/actions.ts`
+2. `src/features/blog/actions.ts`
 - Normalize through service/repository contracts.
 
 Done criteria:
@@ -28,11 +23,10 @@ Done criteria:
 Objective: reduce maintainability risk and enforce 150-line policy incrementally.
 
 Priority candidates:
-1. `src/repositories/supabase/SupabaseTestRepository.ts` (422)
-2. `src/repositories/supabase/SupabasePostRepository.ts` (265)
-3. `src/components/admin/socials/SocialPostCard.tsx` (287)
-4. `src/features/email/templates/AuditReadyEmail.tsx` (244)
-5. `src/components/landing/solutions/mockups/MockupFinance.tsx` (232)
+1. `src/repositories/supabase/SupabasePostRepository.ts`
+2. `src/components/admin/socials/SocialPostCard.tsx`
+3. `src/features/email/templates/AuditReadyEmail.tsx`
+4. `src/actions/social-media.ts`
 
 Split rules:
 - One responsibility per file.

@@ -1,105 +1,40 @@
 // ==========================================
-// MODELS DEL MASTER TEMPLATE (Còpia per compatibilitat)
+// MODELS ACTIUS
 // ==========================================
 
-// 1. Landing Sections (IA & Visuals)
-export type SectionType = 
-  | 'hero' | 'services' | 'contact' | 'stats' | 'testimonials' 
-  | 'map' | 'faq' | 'cta_banner' | 'featured_products' | 'about';
-
-export interface BaseSectionContent {
-  title?: string;
-  subtitle?: string;
-}
-
-export interface HeroContent extends BaseSectionContent {
-  ctaText?: string;
-  companyName: string;
-}
-
-export interface ServiceContent extends BaseSectionContent {
-  headlinePrefix?: string;
-  headlineHighlight?: string;
-  emptyState?: { title: string; text: string };
-  // ✅ CORREGIT: Tipat correcte per als items de la IA
-  items?: Array<{ title: string; description: string }>;      
-}
-
-export interface AboutContent extends BaseSectionContent {
-  badge?: string;
-  description: string;
-  imageUrl?: string; 
-  features?: string[];
-  stats?: Array<{ label: string; value: string }>;
-  card?: { title: string; subtitle: string };
-}
-
-export interface StatsContent {
-  items: Array<{ value: string; label: string }>;
-}
-
-export interface TestimonialsContent extends BaseSectionContent {
-  reviews: Array<{
-    author: string;
-    role: string;
-    text: string;
-    rating: number;
-  }>;
-}
-
-// 2. E-commerce (Client)
-export interface Product {
+export type AuditDTO = {
   id: string;
-  organization_id: string;
-  slug: string;
-  name: string;
-  description: string | null;
-  price: number;
-  stock: number;
-  active: boolean;
-  images: string[];
-  category_id?: string;
-  created_at?: Date;
+  url: string;
+  email: string | null;
+  status: 'processing' | 'completed' | 'failed';
+  seoScore: number | null;
+  performanceScore: number | null;
+  createdAt: Date;
+  reportData: Record<string, unknown> | null;
+};
+
+export interface IAuditRepository {
+  getAuditsByUserEmail(email: string): Promise<AuditDTO[]>;
+  getAuditById(id: string): Promise<AuditDTO | null>;
+  createAudit(url: string, email: string): Promise<AuditDTO>;
+  updateStatus(
+    id: string,
+    status: AuditDTO['status'],
+    results?: { seoScore?: number; performanceScore?: number; reportData?: Record<string, unknown> }
+  ): Promise<void>;
 }
 
-export interface CartItem {
-  id: string;
-  organization_id: string;
-  name: string;
-  price: number;
-  stock: number;
-  slug: string;
-  image?: string;
-  quantity: number;
-}
+export type AnalyticsEventDTO = {
+  event_name: string;
+  path: string;
+  session_id: string;
+  duration?: number;
+  referrer?: string;
+  meta?: Record<string, unknown>;
+  geo?: { country: string | null; city: string | null };
+  device?: { type: string; browser: string; os: string };
+};
 
-// 3. Booking & Serveis (Client)
-export interface ServiceDTO {
-  id: string;
-  title: string;
-  description: string;
-  price?: number;
-  currency?: string;
-  image_url?: string;
-  // ✅ UNIFICAT: Fem servir sempre duration_minutes
-  duration_minutes?: number; 
-}
-// Alias
-export type Service = ServiceDTO;
-
-export interface Booking {
-  id: string;
-  organization_id: string;
-  service_id: string;
-  user_id: string | null;
-  start_time: Date;
-  end_time: Date;
-  status: 'pending' | 'confirmed' | 'cancelled';
-  // Relació opcional
-  services?: { title: string; duration_minutes?: number } | null;
-}
-
-// 4. Blog (Client)
 export type PostStatus = 'draft' | 'published' | 'archived';
 
 export interface BlogPostDTO {

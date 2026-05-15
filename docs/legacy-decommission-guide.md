@@ -18,18 +18,17 @@ Scope actual confirmat a `AGENTS.md`, `ARCHITECTURE.md` i `README.md`:
 - `src/components/landing/v2/ContactSectionV2.tsx` manté el formulari comercial actual.
 - Analytics, missatges i auth encara formen part de l'admin.
 
-### Legacy candidat
-- Landing antiga: `src/components/landing/*.tsx`, `src/components/landing/services/*`, `src/components/landing/solutions/*`, excepte `src/components/landing/v2/*`.
-- Blog public: `src/app/[locale]/(marketing)/blog/*`, `src/features/blog/ui/ReactionDock.tsx`, `content/posts/*`.
-- Blog public arxivat: `legacy/public-blog/*`.
-- Projectes public/admin factory: `src/app/[locale]/admin/projects/*`, `src/features/projects/*`, `src/services/factory/*`, `src/services/TenantService.ts`, `scripts/test-factory-integration.ts`.
-- Dashboard project/test client si es decideix retirar QA lligat a projectes: `src/app/[locale]/dashboard/projects/*`, `src/app/[locale]/dashboard/tests/*`, `src/repositories/supabase/SupabaseTestRepository.ts`.
+### Legacy arxivat
+- Landing antiga: `legacy/landing-v1/*`.
+- Blog public: `legacy/public-blog/*`.
+- Projectes publics: `legacy/public-projects/*`.
+- Factory: `legacy/factory/*`.
+- Projectes dashboard i QA/tests: `legacy/qa-projects/*`.
 
 ### No eliminar sense decisio explicita
 - Admin blog pot ser legacy o pot ser eina interna de RRSS. Depen de si es mantindra la generacio/publicacio social basada en posts.
 - `posts` i `social_posts` estan relacionats amb el flux RRSS actual.
-- `organizations` encara es FK de `profiles`, `posts`, `web_audits`, `social_connections`, `projects`, `services`, `bookings`, etc.
-- `projects` encara es FK de `project_members` i `test_campaigns`.
+- `organizations` encara es FK de `profiles`, `posts`, `web_audits`, `content_queue` i `social_connections`.
 
 Estat 2026-05-15:
 - `services`, `bookings`, `projects`, `project_members` i taules QA ja no existeixen a `public`.
@@ -356,3 +355,8 @@ Per canvis DB:
 - `get_advisors('security')` sense nous warnings.
 - Snapshot abans de `DROP TABLE`.
 - Migration separada i revisable.
+
+## Estat Final
+- Desmantellament legacy funcional completat.
+- El runtime actiu ja no depen de factory, projectes, QA/tests, booking/ecommerce, blog public ni reaccions publiques.
+- Les properes millores son de manteniment ordinari: split de fitxers grans, normalitzacio de noms i enduriment de tests.

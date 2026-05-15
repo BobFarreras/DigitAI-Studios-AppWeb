@@ -2,13 +2,14 @@
 
 ## 1. Product Scope (Current)
 - Public app: Modern marketing landing only.
-- Private app: Internal admin workspace for content, RRSS and operational tools.
-- Out of public navigation scope: blog public, projects public, web audit flow.
+- Private app: Internal admin workspace for analytics, users, messages, content and RRSS.
+- Retired: public blog, public projects, factory, booking/ecommerce, project dashboard and QA/tests.
 
 ## 2. Bounded Contexts
 - `marketing-site`: landing sections, CTA, contact, legal pages.
 - `admin-console`: private tools, social content, internal workflows.
 - `shared-platform`: i18n, auth/session infra, UI primitives, telemetry, error handling.
+- `legacy-archive`: non-runtime reference code under `legacy/`, excluded from TypeScript and ESLint.
 
 ## 3. Mandatory Layering
 All business flows must follow this path:
@@ -32,20 +33,27 @@ Forbidden:
 - `src/repositories`: data access only.
 - `src/adapters`: third-party API boundaries.
 - `src/lib`: shared infra helpers.
+- `legacy`: archived code only; active runtime must not import from it.
 
-## 5. Security Baseline
+## 5. Active Data Scope
+- Keep `organizations` while it remains the ownership boundary for profiles, posts, audits, content queue and social connections.
+- Keep `posts`, `social_posts` and `social_connections` for admin content/RRSS.
+- Keep `web_audits`, `analytics_events`, `analytics_visitors` and `contact_leads` for active product operations.
+- Retired tables live only as locked backups in `legacy_backup`.
+
+## 6. Security Baseline
 - Service role keys only on server runtime.
 - No sensitive env vars in client components.
 - Validate all action input with Zod.
 - Authorization checks before mutating actions.
 - Fail closed: default deny when user/role is missing.
 
-## 6. Testing and TDD Policy
+## 7. Testing and TDD Policy
 - New logic starts with a failing unit/integration test.
 - Refactors must preserve behavior via tests.
 - Minimum PR checks: `pnpm lint`, `pnpm test -- --run`, architecture guards.
 
-## 7. Quality Gates
+## 8. Quality Gates
 - Max 150 lines per file (except generated typings, migrations, and explicit allowlist).
 - Every new/refactored non-trivial file includes a short header comment:
   - `@file` relative path
@@ -54,7 +62,7 @@ Forbidden:
   - `@scope` responsibility boundary
 - No `any` unless documented with rationale.
 
-## 8. Refactor Strategy
+## 9. Refactor Strategy
 - Incremental, feature by feature.
 - Keep app deployable after each PR.
 - Prioritize high-risk modules: direct DB access from UI and oversized files.
