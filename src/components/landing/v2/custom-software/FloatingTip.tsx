@@ -23,6 +23,11 @@ export function FloatingTip({ text, children, className }: Props) {
       className={className ?? 'inline-flex'}
       onBlur={() => setPosition(null)}
       onFocus={(event) => open(event.currentTarget)}
+      onClick={(event) => {
+        event.stopPropagation();
+        if (position) setPosition(null);
+        else open(event.currentTarget);
+      }}
       onMouseEnter={(event) => open(event.currentTarget)}
       onMouseLeave={() => setPosition(null)}
       tabIndex={0}

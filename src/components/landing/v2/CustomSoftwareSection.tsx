@@ -17,6 +17,7 @@ import { CrmView } from './custom-software/CrmView';
 import { DashboardView } from './custom-software/DashboardView';
 import { InventoryView } from './custom-software/InventoryView';
 import { PipelineView } from './custom-software/PipelineView';
+import { CustomSoftwareMobileDemo } from './custom-software/CustomSoftwareMobileDemo';
 import { startClients, startJobs, startMaterial, startTeam, toStockState, views, type JobState, type LeadStage, type NewMaterial, type NewSatOrder, type ViewId } from './custom-software/model';
 import { useSoftwareText } from './custom-software/software-i18n';
 
@@ -67,7 +68,8 @@ export function CustomSoftwareSection() {
         <motion.div variants={titleReveal} initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.34, margin: '-4% 0px -20% 0px' }} className="mx-auto mb-6 max-w-5xl text-center sm:mb-7 lg:mb-8">
           <h2 className="text-balance text-[clamp(31px,7.4vw,42px)] font-[590] leading-[1.03] text-[#08090a] dark:text-[#f7f8f8] sm:text-[clamp(42px,5vw,58px)] lg:text-[clamp(48px,4.1vw,66px)]">{ui.text('Tecnologia que s\'adapta al teu equip')}<BrandRevealText className="ml-1 text-[#383b3f] dark:text-[#8a8f98]">{ui.text('i creix amb el teu negoci.')}</BrandRevealText></h2>
         </motion.div>
-        <motion.div variants={appReveal} initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.24, margin: '-4% 0px -22% 0px' }} className="relative overflow-hidden rounded-[12px] border border-[#d0d6e0] bg-white/70 [filter:grayscale(1)_saturate(0)_contrast(.94)] transition-all duration-500 hover:[filter:grayscale(0)_saturate(1)_contrast(1)] dark:border-[#323334] dark:bg-[#0f1011]/95">
+        <CustomSoftwareMobileDemo view={view} clients={clients} jobs={jobs} material={material} team={team} onOpenView={openView} onAddClient={addClient} onAddJob={addJob} onAddMaterial={addMaterial} onSetStage={(id, stage) => setClients((p) => p.map((x) => (x.id === id ? { ...x, stage } : x)))} onSetJobState={(id, state) => setJobs((p) => p.map((x) => (x.id === id ? { ...x, state } : x)))} onIncrement={(id) => setMaterial((p) => p.map((x) => (x.id === id ? { ...x, qty: x.qty + 1, state: toStockState(x.qty + 1, x.min) } : x)))} onToggle={(id) => setTeam((p) => p.map((x) => (x.id === id ? { ...x, enabled: !x.enabled } : x)))} />
+        <motion.div variants={appReveal} initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.24, margin: '-4% 0px -22% 0px' }} className="relative hidden overflow-hidden rounded-[12px] border border-[#d0d6e0] bg-white/70 [filter:grayscale(1)_saturate(0)_contrast(.94)] transition-all duration-500 hover:[filter:grayscale(0)_saturate(1)_contrast(1)] dark:border-[#323334] dark:bg-[#0f1011]/95 md:block">
           <div className="flex min-h-[clamp(560px,73svh,760px)] flex-col md:flex-row">
             <motion.aside variants={railReveal} className="w-full border-b border-[#d0d6e0] bg-white/78 md:w-[240px] md:border-b-0 md:border-r dark:border-[#23252a] dark:bg-[#08090a]/90">
               <div className="flex h-14 items-center gap-3 px-4"><div className="flex h-7 w-7 items-center justify-center rounded-[5px] bg-gradient-to-br from-[#5e6ad2] to-[#27a644]"><Database className="h-4 w-4 text-white" /></div><span className="text-[14px] font-[590]">Lampisteria Costa Brava</span></div>
