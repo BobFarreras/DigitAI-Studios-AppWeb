@@ -9,6 +9,7 @@ Data d'actualització: 2026-05-08
 
 ## Operativa de Neteja
 - `root-cleanup-inventory.md`: inventari de fitxers root i criteris de decisió.
+- `legacy-decommission-guide.md`: pla incremental per arxivar landing antiga, factory, blog public, projectes i taules associades.
 
 ## Històric Arxivat
 - `archive/`: documents i artefactes no actius al runtime (coneixement històric).
