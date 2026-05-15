@@ -390,6 +390,133 @@ img {
     animation: brand-gradient-pan 5s ease-in-out infinite alternate;
   }
 
+  .auth-float-chip {
+    opacity: 0;
+    animation: auth-chip-in 520ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  .auth-scope input:focus-visible {
+    --tw-ring-color: rgba(98, 102, 109, 0.28);
+    --tw-ring-offset-color: transparent;
+    border-color: rgba(98, 102, 109, 0.46);
+    box-shadow: 0 0 0 1px rgba(98, 102, 109, 0.2), 0 0 0 4px rgba(98, 102, 109, 0.1);
+  }
+
+  .dark .auth-scope input:focus-visible {
+    --tw-ring-color: rgba(138, 143, 152, 0.22);
+    border-color: rgba(138, 143, 152, 0.4);
+    box-shadow: 0 0 0 1px rgba(138, 143, 152, 0.18), 0 0 0 4px rgba(138, 143, 152, 0.08);
+  }
+
+  .auth-build-brand,
+  .auth-build-back,
+  .auth-build-title,
+  .auth-build-description,
+  .auth-build-card,
+  .auth-build-item {
+    opacity: 0;
+    animation: auth-build-side-in var(--auth-duration, 820ms) cubic-bezier(0.2, 0.92, 0.2, 1) forwards;
+    will-change: transform, opacity, filter;
+  }
+
+  .auth-build-brand {
+    --auth-x: -112vw;
+    --auth-y: -42vh;
+    --auth-rotate: -8deg;
+    --auth-duration: 760ms;
+    animation-delay: 20ms;
+  }
+
+  .auth-build-back {
+    --auth-x: 110vw;
+    --auth-y: -24vh;
+    --auth-rotate: 7deg;
+    --auth-duration: 680ms;
+    animation-delay: 80ms;
+  }
+
+  .auth-build-title {
+    --auth-x: -104vw;
+    --auth-y: 18vh;
+    --auth-rotate: -5deg;
+    --auth-duration: 920ms;
+    animation-delay: 130ms;
+  }
+
+  .auth-build-description {
+    --auth-x: 96vw;
+    --auth-y: -18vh;
+    --auth-rotate: 4deg;
+    --auth-duration: 780ms;
+    animation-delay: 210ms;
+  }
+
+  .auth-build-card {
+    --auth-x: 0;
+    --auth-y: 96vh;
+    --auth-rotate: 0deg;
+    --auth-duration: 980ms;
+    animation-delay: 300ms;
+  }
+
+  .auth-build-from-left { --auth-x: -110vw; --auth-y: 0; --auth-rotate: -4deg; }
+  .auth-build-from-right { --auth-x: 110vw; --auth-y: 0; --auth-rotate: 4deg; }
+  .auth-build > .auth-build-item:nth-child(1) { --auth-y: -34vh; --auth-duration: 720ms; animation-delay: 410ms; }
+  .auth-build > .auth-build-item:nth-child(2) { --auth-y: 28vh; --auth-duration: 880ms; animation-delay: 500ms; }
+  .auth-build > .auth-build-item:nth-child(3) { --auth-x: -86vw; --auth-y: 44vh; --auth-duration: 760ms; animation-delay: 590ms; }
+  .auth-build > .auth-build-item:nth-child(4) { --auth-x: 92vw; --auth-y: -38vh; --auth-duration: 940ms; animation-delay: 680ms; }
+  .auth-build > .auth-build-item:nth-child(5) { --auth-y: 62vh; --auth-duration: 820ms; animation-delay: 770ms; }
+  .auth-build form > .auth-build-item:nth-child(1) { --auth-x: -96vw; --auth-y: -28vh; --auth-duration: 840ms; animation-delay: 610ms; }
+  .auth-build form > .auth-build-item:nth-child(2) { --auth-x: 104vw; --auth-y: 20vh; --auth-duration: 720ms; animation-delay: 700ms; }
+  .auth-build form > .auth-build-item:nth-child(3) { --auth-x: -108vw; --auth-y: 34vh; --auth-duration: 900ms; animation-delay: 790ms; }
+  .auth-build form > .auth-build-item:nth-child(4) { --auth-x: 88vw; --auth-y: -30vh; --auth-duration: 780ms; animation-delay: 880ms; }
+  .auth-build form > .auth-build-item:nth-child(5) { --auth-x: 0; --auth-y: 88vh; --auth-duration: 980ms; animation-delay: 970ms; }
+
+  @keyframes auth-build-side-in {
+    from {
+      opacity: 0;
+      transform: translate3d(var(--auth-x, -110vw), var(--auth-y, 0), 0) rotate(var(--auth-rotate, 0deg));
+      filter: blur(16px);
+    }
+    66% {
+      opacity: 1;
+      filter: blur(0);
+    }
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0) rotate(0deg);
+      filter: blur(0);
+    }
+  }
+
+  @keyframes auth-chip-in {
+    from {
+      opacity: 0;
+      transform: translateY(12px) scale(0.96);
+      filter: blur(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      filter: blur(0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .auth-build-brand,
+    .auth-build-back,
+    .auth-build-title,
+    .auth-build-description,
+    .auth-build-card,
+    .auth-build-item,
+    .auth-float-chip {
+      animation: none;
+      opacity: 1;
+      transform: none;
+      filter: none;
+    }
+  }
+
   @keyframes brand-gradient-pan {
     from {
       background-position: 0% 50%;
