@@ -11,6 +11,7 @@ import { Activity, Boxes, CheckCircle2, CircleAlert, Plus, ShieldCheck, Users, W
 import { useState } from 'react';
 import type { Client, Job, JobState, LeadStage, Material, Member, ViewId } from './model';
 import { views } from './model';
+import { MobileDashboardCharts } from './MobileDashboardCharts';
 import { MobileSoftwareDetail } from './MobileSoftwareDetail';
 import { MobileSoftwareTable, type MobileSoftwareSelection } from './MobileSoftwareTable';
 import { useSoftwareText } from './software-i18n';
@@ -62,6 +63,7 @@ export function CustomSoftwareMobileDemo(props: Props) {
               <div className="min-w-0"><p className="text-[9px] font-[650] uppercase text-[#62666d] dark:text-[#8a8f98]">{labelFor(activeView.id, activeView.label, ui)}</p><p className="truncate text-[14px] font-[760] leading-tight">{titleFor(view, ui)}</p></div>
               <Summary view={view} clients={clients} jobs={jobs} material={material} team={team} />
             </section>
+            {view === 'dashboard' ? <MobileDashboardCharts /> : null}
             <MobileSoftwareTable {...props} onOpenDetail={setSelected} />
           </main>
           <nav className="grid grid-cols-5 border-t border-[#d0d6e0] bg-white px-1 py-1.5 dark:border-[#23252a] dark:bg-[#08090a]">

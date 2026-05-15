@@ -56,7 +56,7 @@ export function MobileSoftwareTable({ view, clients, jobs, material, team, onSet
               <motion.tr key={row.id} onClick={() => openDetail(row)} className="cursor-pointer" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25, delay: index * 0.04 }}>
                 {row.cells.map((cell, cellIndex) => <td key={`${row.id}-${cellIndex}`} className="border-b border-[#eceff4] px-2 py-2 text-[10px] font-[590] text-[#383b3f] dark:border-[#23252a] dark:text-[#d0d6e0]"><CellView cell={cell} /></td>)}
                 <td className="border-b border-[#eceff4] px-2 py-2 dark:border-[#23252a]"><span className={`inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[8.5px] font-[780] ${row.tone}`}>{row.statusIcon ? <row.statusIcon className="h-3 w-3" /> : null}{row.badge}</span></td>
-                <td className="border-b border-[#eceff4] px-2 py-2 dark:border-[#23252a]">{row.action ? <button onClick={(event) => { event.stopPropagation(); row.onAction?.(); }} className="rounded-[5px] bg-[#08090a] px-1.5 py-1 text-[9px] font-[720] text-white dark:bg-[#f7f8f8] dark:text-[#08090a]">{row.action}</button> : null}</td>
+                <td className="border-b border-[#eceff4] px-2 py-2 dark:border-[#23252a]">{row.action ? <button onClick={() => row.onAction?.()} className="rounded-[5px] bg-[#08090a] px-1.5 py-1 text-[9px] font-[720] text-white dark:bg-[#f7f8f8] dark:text-[#08090a]">{row.action}</button> : null}</td>
               </motion.tr>
             ))}
           </tbody>

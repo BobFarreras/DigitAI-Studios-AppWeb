@@ -5,7 +5,7 @@
  * @scope Mostrar ajuda contextual sense quedar retallada per overflow.
  */
 'use client';
-import { useState, type ReactNode } from 'react';
+import { useRef, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 
 type Props = { text: string; children: ReactNode; className?: string };
@@ -13,24 +13,45 @@ type Position = { left: number; top: number } | null;
 
 export function FloatingTip({ text, children, className }: Props) {
   const [position, setPosition] = useState<Position>(null);
+  const pressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const suppressClick = useRef(false);
+  const close = () => setPosition(null);
+  const clearPressTimer = () => {
+    if (!pressTimer.current) return;
+    clearTimeout(pressTimer.current);
+    pressTimer.current = null;
+  };
   const open = (target: EventTarget & HTMLElement) => {
     const rect = target.getBoundingClientRect();
     setPosition({ left: rect.left + rect.width / 2, top: rect.bottom + 8 });
+  };
+  const startLongPress = (target: EventTarget & HTMLElement) => {
+    clearPressTimer();
+    suppressClick.current = false;
+    pressTimer.current = setTimeout(() => {
+      suppressClick.current = true;
+      open(target);
+    }, 700);
+  };
+  const endLongPress = () => {
+    clearPressTimer();
+    close();
   };
 
   return (
     <span
       className={className ?? 'inline-flex'}
-      onBlur={() => setPosition(null)}
-      onFocus={(event) => open(event.currentTarget)}
+      onBlur={close}
       onClick={(event) => {
+        if (!suppressClick.current) return;
+        event.preventDefault();
         event.stopPropagation();
-        if (position) setPosition(null);
-        else open(event.currentTarget);
+        suppressClick.current = false;
       }}
-      onMouseEnter={(event) => open(event.currentTarget)}
-      onMouseLeave={() => setPosition(null)}
-      tabIndex={0}
+      onPointerCancel={endLongPress}
+      onPointerDown={(event) => startLongPress(event.currentTarget)}
+      onPointerLeave={endLongPress}
+      onPointerUp={endLongPress}
     >
       {children}
       {position
