@@ -28,11 +28,11 @@ Scope actual confirmat a `AGENTS.md`, `ARCHITECTURE.md` i `README.md`:
 ### No eliminar sense decisio explicita
 - Admin blog pot ser legacy o pot ser eina interna de RRSS. Depen de si es mantindra la generacio/publicacio social basada en posts.
 - `posts` i `social_posts` estan relacionats amb el flux RRSS actual.
-- `organizations` encara es FK de `profiles`, `posts`, `web_audits`, `content_queue` i `social_connections`.
+- `organizations` encara es FK de `profiles`, `posts`, `web_audits` i `social_connections`.
 
 Estat 2026-05-15:
 - `services`, `bookings`, `projects`, `project_members` i taules QA ja no existeixen a `public`.
-- `organizations` es manté perquè continua sent FK de `profiles`, `posts`, `web_audits`, `content_queue` i `social_connections`.
+- `organizations` es manté perquè continua sent FK de `profiles`, `posts`, `web_audits` i `social_connections`.
 
 ## Regla Important Sobre Carpeta `legacy`
 El `tsconfig.json` actual inclou `**/*.ts` i `**/*.tsx`. Si es mou codi React a una carpeta `legacy/`, TypeScript el seguira compilant.
@@ -220,6 +220,9 @@ Estat 2026-05-15:
   - `project_members_20260515`
   - `projects_20260515`
 - Regenerat `src/types/database.types.ts` amb Supabase CLI.
+- Eliminada de `public` la taula `content_queue`.
+- Abans del `DROP`, s'ha creat copia de seguretat a `legacy_backup.content_queue_20260515`.
+- Regenerat `src/types/database.types.ts` amb Supabase CLI.
 
 ### Fase 5 - Retirar Blog Public i decidir RRSS
 Objectiu: no barrejar blog public legacy amb admin RRSS si aquest encara aporta valor.
@@ -290,7 +293,6 @@ Ordre segur de retirada si es retira factory/ecommerce/booking/QA:
    - `profiles.organization_id`
    - `posts.organization_id`
    - `web_audits.organization_id`
-   - `content_queue.organization_id`
    - `social_connections.organization_id`
 4. No eliminar `organizations` fins que auth/profile i admin multi-tenant estiguin simplificats.
 

@@ -179,50 +179,6 @@ export type Database = {
         }
         Relationships: []
       }
-      content_queue: {
-        Row: {
-          created_at: string | null
-          generated_mdx: string | null
-          id: string
-          image_prompt: string | null
-          organization_id: string
-          prompt_context: string | null
-          status: Database["public"]["Enums"]["content_status"] | null
-          target_keywords: string[] | null
-          topic: string
-        }
-        Insert: {
-          created_at?: string | null
-          generated_mdx?: string | null
-          id?: string
-          image_prompt?: string | null
-          organization_id: string
-          prompt_context?: string | null
-          status?: Database["public"]["Enums"]["content_status"] | null
-          target_keywords?: string[] | null
-          topic: string
-        }
-        Update: {
-          created_at?: string | null
-          generated_mdx?: string | null
-          id?: string
-          image_prompt?: string | null
-          organization_id?: string
-          prompt_context?: string | null
-          status?: Database["public"]["Enums"]["content_status"] | null
-          target_keywords?: string[] | null
-          topic?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "content_queue_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       n8n_chat_histories1: {
         Row: {
           fecha_mensaje: string | null
