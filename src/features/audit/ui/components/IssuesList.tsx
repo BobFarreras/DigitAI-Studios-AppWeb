@@ -1,3 +1,9 @@
+/**
+ * @file src/features/audit/ui/components/IssuesList.tsx
+ * @updated 2026-05-08
+ * @summary Feature module: src/features/audit/ui/components/IssuesList.tsx
+ * @scope UI o logica de feature encapsulada dins del domini corresponent.
+ */
 'use client'; // Important: useTranslations funciona en Client Components o Server Components, però aquí ja és client.
 
 import { Card, CardContent } from '@/components/ui/card';

@@ -1,3 +1,9 @@
+/**
+ * @file src/features/tests/actions.ts
+ * @updated 2026-05-08
+ * @summary Feature module: src/features/tests/actions.ts
+ * @scope UI o logica de feature encapsulada dins del domini corresponent.
+ */
 'use server';
 
 import { SupabaseTestRepository } from '@/repositories/supabase/SupabaseTestRepository';

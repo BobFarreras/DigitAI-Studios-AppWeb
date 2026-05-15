@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { Wifi, TrendingUp, ArrowDownLeft, ArrowUpRight, CreditCard, Layers, DollarSign, Wallet, Bell } from 'lucide-react';
+import { Wifi, TrendingUp, ArrowDownLeft, ArrowUpRight, CreditCard, Layers, DollarSign, Wallet } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState, useEffect } from 'react';
 

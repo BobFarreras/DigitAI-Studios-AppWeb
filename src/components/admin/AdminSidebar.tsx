@@ -1,3 +1,9 @@
+/**
+ * @file src/components/admin/AdminSidebar.tsx
+ * @updated 2026-05-08
+ * @summary Component UI admin: src/components/admin/AdminSidebar.tsx
+ * @scope Presentacio i interaccio de la UI d'admin, sense acces directe a dades.
+ */
 // src/components/admin/AdminSidebar.tsx
 'use client';
 

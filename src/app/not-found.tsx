@@ -1,3 +1,9 @@
+/**
+ * @file src/app/not-found.tsx
+ * @updated 2026-05-08
+ * @summary Route module: src/app/not-found.tsx
+ * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
+ */
 'use client';
 import Link from 'next/link';
 

@@ -1,3 +1,9 @@
+/**
+ * @file src/components/admin/socials/ConnectSocials.tsx
+ * @updated 2026-05-08
+ * @summary Component UI admin: src/components/admin/socials/ConnectSocials.tsx
+ * @scope Presentacio i interaccio de la UI d'admin, sense acces directe a dades.
+ */
 'use client'
 
 import { Button } from '@/components/ui/button';

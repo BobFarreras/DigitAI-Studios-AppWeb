@@ -1,7 +1,14 @@
+/**
+ * @file src/actions/audit.ts
+ * @updated 2026-05-08
+ * @summary Server actions per src/actions/audit.ts
+ * @scope Operacions de servidor, validacio i orquestracio de capa aplicacio.
+ */
 'use server';
 
 import { auditService } from '@/services/container';
 import { auditSchema } from '@/lib/validations/audit';
+import { getServerEnv } from '@/config/server-env';
 import { redirect } from 'next/navigation';
 import { getLocale } from 'next-intl/server';
 import { createClient, createAdminClient } from '@/lib/supabase/server';
@@ -15,7 +22,9 @@ export type FormState = {
   };
 };
 
-const MAIN_ORG_ID = process.env.NEXT_PUBLIC_MAIN_ORG_ID;
+function getMainOrgId() {
+  return getServerEnv().NEXT_PUBLIC_MAIN_ORG_ID;
+}
 
 // ==========================================
 // 1️⃣ ACTION PÚBLICA (Landing Page)
@@ -55,21 +64,23 @@ export async function processWebAudit(
     console.log("✅ [Audit] Servei d'auditoria completat."); // LOG 4
 
     if (email) {
-      if (!MAIN_ORG_ID) {
+      const mainOrgId = getMainOrgId();
+
+      if (!mainOrgId) {
         console.error("❌ [Audit] FATAL: Manca MAIN_ORG_ID a les variables d'entorn.");
         throw new Error("Configuració incorrecta");
       }
 
       const supabaseAdmin = createAdminClient();
 
-      console.log(`🏢 [Audit] Buscant usuari a la taula profiles. OrgID: ${MAIN_ORG_ID}, Email: ${email}`); // LOG 5
+      console.log(`🏢 [Audit] Buscant usuari a la taula profiles. OrgID: ${mainOrgId}, Email: ${email}`); // LOG 5
 
       // Comprovem si l'usuari existeix A AQUESTA ORGANITZACIÓ
       const { data: existingProfile, error: dbError } = await supabaseAdmin
         .from('profiles')
         .select('id')
         .ilike('email', email)
-        .eq('organization_id', MAIN_ORG_ID)
+        .eq('organization_id', mainOrgId)
         .maybeSingle();
 
       if (dbError) console.error("❌ [Audit] Error DB cercant profile:", dbError); // LOG 6
@@ -147,3 +158,4 @@ export async function createAuditAction(url: string) {
 
   return { success: false, message: 'No s\'ha pogut crear l\'auditoria.' };
 }
+

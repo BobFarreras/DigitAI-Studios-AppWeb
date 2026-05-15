@@ -1,18 +1,22 @@
-import { createClient } from '@/lib/supabase/server';
+/**
+ * @file src/app/[locale]/dashboard/new-audit/page.tsx
+ * @updated 2026-05-08
+ * @summary Route module: src/app/[locale]/dashboard/new-audit/page.tsx
+ * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
+ */
 import { redirect } from 'next/navigation';
 import { getLocale, getTranslations } from 'next-intl/server'; // Importem getTranslations
 import { CreateAuditForm } from '@/features/audit/ui/components/CreateAuditForm';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import { hasAuthenticatedSession } from '@/actions/auth-session';
 
 export default async function NewAuditPage() {
-  const supabase = await createClient();
+  const session = await hasAuthenticatedSession();
   const locale = await getLocale();
   const t = await getTranslations('NewAudit'); // Namespace NewAudit
-  
-  const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user) {
+  if (!session.hasSession) {
     redirect(`/${locale}/auth/login`);
   }
 
@@ -42,3 +46,4 @@ export default async function NewAuditPage() {
     </div>
   );
 }
+

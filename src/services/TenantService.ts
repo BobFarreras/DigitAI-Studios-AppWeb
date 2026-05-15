@@ -129,6 +129,7 @@ export class TenantService {
         return { org, project };
     }
     async inviteOrLinkUser(email: string, orgId: string, projectId: string) {
+        void projectId;
         console.log(`🔍 [Tenant] Gestionant usuari: ${email}`);
 
         // 1. Busquem si ja té perfil

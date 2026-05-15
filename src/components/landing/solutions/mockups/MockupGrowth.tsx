@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { TrendingUp, Activity, DollarSign, Zap } from 'lucide-react';
+import { TrendingUp, Activity, DollarSign } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 export function MockupGrowth() {

@@ -1,3 +1,9 @@
+/**
+ * @file src/features/projects/actions/destroy-actions.ts
+ * @updated 2026-05-08
+ * @summary Feature module: src/features/projects/actions/destroy-actions.ts
+ * @scope UI o logica de feature encapsulada dins del domini corresponent.
+ */
 'use server';
 
 import { requireAdmin } from '@/lib/auth/admin-guard';

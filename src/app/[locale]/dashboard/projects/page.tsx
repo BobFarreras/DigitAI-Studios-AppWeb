@@ -1,10 +1,16 @@
-import { createClient } from '@/lib/supabase/server';
+/**
+ * @file src/app/[locale]/dashboard/projects/page.tsx
+ * @updated 2026-05-08
+ * @summary Route module: src/app/[locale]/dashboard/projects/page.tsx
+ * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
+ */
 import { Link } from '@/routing';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { FolderGit2, FlaskConical, Globe, Clock } from 'lucide-react';
 import { redirect } from 'next/navigation';
 import { getTranslations, getFormatter } from 'next-intl/server';
+import { getDashboardProjects } from '@/actions/dashboard-projects';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -13,27 +19,11 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 }
 
 export default async function ProjectsListPage() {
-  const supabase = await createClient();
   const t = await getTranslations('Dashboard.projects');
   const format = await getFormatter();
-
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect('/auth/login');
-
-  // 1. Busquem IDs on és membre
-  const { data: memberships } = await supabase
-    .from('project_members')
-    .select('project_id')
-    .eq('user_id', user.id);
-
-  const memberProjectIds = memberships?.map(m => m.project_id) || [];
-
-  // 2. Busquem projectes
-  const { data: projects } = await supabase
-    .from('projects')
-    .select(`*, test_campaigns(count)`)
-    .or(`client_id.eq.${user.id},id.in.(${memberProjectIds.join(',') || '00000000-0000-0000-0000-000000000000'})`)
-    .order('created_at', { ascending: false });
+  const result = await getDashboardProjects();
+  if (!result.success && result.authRequired) redirect('/auth/login');
+  const projects = result.success ? result.projects : [];
 
   return (
     <div className="space-y-8 p-6 md:p-8">
@@ -111,3 +101,4 @@ export default async function ProjectsListPage() {
     </div>
   );
 }
+

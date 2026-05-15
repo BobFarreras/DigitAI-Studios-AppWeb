@@ -1,3 +1,9 @@
+/**
+ * @file src/features/audit/ui/AuditForm.tsx
+ * @updated 2026-05-08
+ * @summary Feature module: src/features/audit/ui/AuditForm.tsx
+ * @scope UI o logica de feature encapsulada dins del domini corresponent.
+ */
 'use client';
 
 import { useActionState } from 'react'; // Next.js 15+ (si uses 14, canvia a useFormState)

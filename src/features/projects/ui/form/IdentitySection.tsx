@@ -4,6 +4,7 @@ import { Github, Globe, Upload, AlertCircle, CheckCircle2, Loader2 } from 'lucid
 import { FormSection } from './FormSection';
 import { RefObject, useRef, useState } from 'react';
 import imageCompression from 'browser-image-compression';
+import Image from 'next/image';
 
 interface Props {
   defaultName?: string;
@@ -162,10 +163,13 @@ export function IdentitySection({ defaultName, defaultSlug, slugRef }: Props) {
             {/* 👇 AQUÍ ESTAVA L'ERROR. Usem <img> normal, no <Image> */}
             {preview && (
                 <div className="w-12 h-12 rounded-lg border border-slate-200 overflow-hidden shrink-0 relative bg-white">
-                    <img 
-                        src={preview} 
-                        alt="Logo Preview" 
-                        className="w-full h-full object-cover" 
+                    <Image
+                        src={preview}
+                        alt="Logo Preview"
+                        width={48}
+                        height={48}
+                        unoptimized
+                        className="w-full h-full object-cover"
                     />
                 </div>
             )}

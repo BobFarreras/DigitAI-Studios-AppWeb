@@ -1,11 +1,15 @@
-import { createClient } from '@/lib/supabase/server';
+/**
+ * @file src/app/[locale]/dashboard/projects/[id]/page.tsx
+ * @updated 2026-05-13
+ * @summary Route module: src/app/[locale]/dashboard/projects/[id]/page.tsx
+ * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
+ */
 import { notFound, redirect } from 'next/navigation';
 import { Layout, ArrowRight, Target, FlaskConical, Trophy } from 'lucide-react';
-import { GamificationService } from '@/services/GamificationService';
-import { SupabaseTestRepository } from '@/repositories/supabase/SupabaseTestRepository';
 import { MissionCard } from '@/features/tests/ui/MissionCard';
 import { Progress } from '@/components/ui/progress';
 import { getTranslations } from 'next-intl/server';
+import { getDashboardProjectDetail } from '@/actions/dashboard-projects';
 
 type Props = {
     params: Promise<{ id: string }>
@@ -22,22 +26,13 @@ const RANK_EMOJIS: Record<string, string> = {
 export default async function ProjectDetailPage({ params }: Props) {
     const { id } = await params;
     const t = await getTranslations('Dashboard.project_detail');
-    const supabase = await createClient();
-
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) redirect('/auth/login');
-
-    const gameService = new GamificationService();
-    const testRepo = new SupabaseTestRepository();
-
-    const [projectRes, stats, missions] = await Promise.all([
-        supabase.from('projects').select('name, domain, repository_url').eq('id', id).single(),
-        gameService.getUserStats(user.id),
-        testRepo.getActiveMissionsForUser(user.id, id)
-    ]);
-
-    const project = projectRes.data;
+    const result = await getDashboardProjectDetail(id);
+    if (!result.success && result.authRequired) redirect('/auth/login');
+    const project = 'project' in result ? result.project : null;
+    const stats = 'stats' in result ? result.stats : null;
+    const missions = 'missions' in result ? result.missions : [];
     if (!project) return notFound();
+    if (!stats) return notFound();
 
     const currentEmoji = RANK_EMOJIS[stats.rankName] || '🌱';
 
@@ -123,3 +118,4 @@ export default async function ProjectDetailPage({ params }: Props) {
         </div>
     );
 }
+

@@ -1,3 +1,9 @@
+/**
+ * @file src/features/analytics/ui/UnifiedStatBar.tsx
+ * @updated 2026-05-08
+ * @summary Feature module: src/features/analytics/ui/UnifiedStatBar.tsx
+ * @scope UI o logica de feature encapsulada dins del domini corresponent.
+ */
 import { Card } from '@/components/ui/card';
 import { Users, Eye, MousePointerClick, Clock, TrendingUp } from 'lucide-react';
 

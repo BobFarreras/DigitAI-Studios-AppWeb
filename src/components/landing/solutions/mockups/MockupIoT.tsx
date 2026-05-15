@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { QrCode, Lock, Unlock, ScanLine } from 'lucide-react';
+import { QrCode, Unlock, ScanLine } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 export function MockupIoT() {

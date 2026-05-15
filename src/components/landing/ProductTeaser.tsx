@@ -82,7 +82,7 @@ export function ProductTeaser() {
                             br: () => <br />
                         })}
                     </p>
-                    <Link href="/projectes" className="inline-flex items-center font-bold text-foreground hover:text-primary transition-colors group">
+                    <Link href="/#contact" className="inline-flex items-center font-bold text-foreground hover:text-primary transition-colors group">
                         {t('cta')}
                         <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </Link>
@@ -128,7 +128,7 @@ export function ProductTeaser() {
                                             `}
                                         >
                                             {/* LINK REAL (Només carta central) */}
-                                            {isActive && <Link href="/projectes" className="absolute inset-0 " />}
+                                            {isActive && <Link href="/#contact" className="absolute inset-0 " />}
 
                                             {/* GLOW (Només activa) */}
                                             {isActive && (

@@ -1,3 +1,9 @@
+/**
+ * @file src/features/audit/ui/components/MobilePreviw.tsx
+ * @updated 2026-05-08
+ * @summary Feature module: src/features/audit/ui/components/MobilePreviw.tsx
+ * @scope UI o logica de feature encapsulada dins del domini corresponent.
+ */
 import Image from 'next/image';
 
 export function MobilePreview({ screenshot }: { screenshot: string }) {

@@ -1,3 +1,9 @@
+/**
+ * @file src/app/[locale]/dashboard/MobilBottomBar.tsx
+ * @updated 2026-05-08
+ * @summary Route module: src/app/[locale]/dashboard/MobilBottomBar.tsx
+ * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
+ */
 'use client';
 
 import { usePathname } from 'next/navigation';

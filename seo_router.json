@@ -1,0 +1,63 @@
+{
+  "/[lang]": {
+    "page_file": "src/app/[locale]/(marketing)/page.tsx",
+    "metadata_file": "src/app/[locale]/layout.tsx",
+    "translation_file_pattern": "messages/[lang].json",
+    "seo_keys_location": "Seo.home.title and Seo.home.description",
+    "content_keys_location": "LandingV2",
+    "notes": "Active LandingV2 home. SEO is localized through next-intl in src/app/[locale]/layout.tsx generateMetadata."
+  },
+  "/[lang]/projectes": {
+    "page_file": "src/app/[locale]/(marketing)/projectes/page.tsx",
+    "translation_file_pattern": "messages/[lang].json",
+    "seo_keys_location": "not active; add Seo.projects.title and Seo.projects.description only when the page returns",
+    "content_keys_location": "Projects and related feature namespaces",
+    "status": "inactive_for_current_landing",
+    "notes": "Projectes is not operational for now. It is excluded from sitemap and marked noindex in the page metadata. If re-enabled, add route-level generateMetadata and include it again in src/app/sitemap.ts."
+  },
+  "/[lang]/legal/avis-legal": {
+    "page_file": "src/app/[locale]/(marketing)/legal/avis-legal/page.tsx",
+    "translation_file_pattern": "messages/[lang].json",
+    "seo_keys_location": "Seo.legal.avis_legal.title and Seo.legal.avis_legal.description",
+    "notes": "The visible content is under Legal.avis_legal. The SEO title and description are localized under Seo.legal.avis_legal and read by generateMetadata."
+  },
+  "/[lang]/legal/privacitat": {
+    "page_file": "src/app/[locale]/(marketing)/legal/privacitat/page.tsx",
+    "translation_file_pattern": "messages/[lang].json",
+    "seo_keys_location": "Seo.legal.privacitat.title and Seo.legal.privacitat.description",
+    "notes": "The visible content is under Legal.privacitat. The SEO title and description are localized under Seo.legal.privacitat and read by generateMetadata."
+  },
+  "/[lang]/legal/cookies": {
+    "page_file": "src/app/[locale]/(marketing)/legal/cookies/page.tsx",
+    "translation_file_pattern": "messages/[lang].json",
+    "seo_keys_location": "Seo.legal.cookies.title and Seo.legal.cookies.description",
+    "notes": "The visible content is under Legal.cookies. The SEO title and description are localized under Seo.legal.cookies and read by generateMetadata."
+  },
+  "/[lang]/blog": {
+    "page_file": "src/app/[locale]/(marketing)/blog/page.tsx",
+    "translation_file_pattern": "messages/[lang].json",
+    "seo_keys_location": "BlogIndex; add meta_title and meta_description if the blog is re-enabled",
+    "status": "inactive_for_current_landing",
+    "notes": "The blog route still exists in code, but it is currently removed from the LandingV2 flow. It is excluded from sitemap and marked noindex. The index page has translated visible copy in BlogIndex but no active SEO metadata."
+  },
+  "/[lang]/blog/[slug]": {
+    "page_file": "src/app/[locale]/(marketing)/blog/[slug]/page.tsx",
+    "translation_file_pattern": null,
+    "seo_keys_location": "database post fields: title, description, coverImage, tags, date",
+    "status": "inactive_for_current_landing",
+    "notes": "Dynamic blog post SEO is generated from postService.getPost(slug), not from messages/[lang].json. It is marked noindex while the blog is inactive. If multilingual posts are needed later, the database content model must store per-locale title and description."
+  },
+  "/[lang]/auth/*": {
+    "page_file": "src/app/[locale]/auth/layout.tsx",
+    "translation_file_pattern": "messages/[lang].json",
+    "seo_keys_location": "no SEO copy; auth routes are marked noindex",
+    "status": "noindex",
+    "notes": "Login, register, forgot-password and reset-password are utility screens, not SEO landing pages."
+  },
+  "/[lang]/*": {
+    "page_file": "src/app/[locale]/layout.tsx",
+    "translation_file_pattern": "messages/[lang].json",
+    "seo_keys_location": "fallback metadata currently hardcoded in generateMetadata",
+    "notes": "Global fallback for locale pages. next-intl uses locales ca, es, en and it with localePrefix as-needed: ca normally has no URL prefix, while es/en/it use /es, /en and /it. The sitemap currently indexes only home and legal pages for all four locales."
+  }
+}

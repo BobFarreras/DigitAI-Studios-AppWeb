@@ -1,11 +1,29 @@
+/**
+ * @file src/app/[locale]/(marketing)/legal/cookies/page.tsx
+ * @updated 2026-05-08
+ * @summary Route module: src/app/[locale]/(marketing)/legal/cookies/page.tsx
+ * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
+ */
 import LegalLayout from '@/components/layout/LegalLayout';
 import { Cookie, Settings, BarChart3, XCircle } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
+import type { Metadata } from 'next';
+import { getLocalizedAlternates } from '@/lib/seo';
 
-export const metadata = {
-  title: 'Política de Cookies | DigitAI Studios',
-  description: 'Informació sobre l\'ús de cookies a DigitAI Studios.',
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'Seo.legal.cookies' });
+
+  return {
+    title: t('title'),
+    description: t('description'),
+    alternates: getLocalizedAlternates(locale, '/legal/cookies'),
+  };
+}
 
 export default async function CookiesPage() {
   const t = await getTranslations('Legal.cookies');

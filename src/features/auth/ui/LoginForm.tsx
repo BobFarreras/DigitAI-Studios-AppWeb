@@ -4,16 +4,16 @@ import { useState, useActionState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { createClient } from '@/lib/supabase/client';
-import Link from 'next/link';
+import { Link } from '@/routing';
 import { AlertCircle, LogIn, Loader2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { GoogleIcon } from '@/components/icons/GoogleIcon';
 import { toast } from 'sonner';
-// Assegura't d'importar el tipus també per coherència
 import { loginAction, type AuthFormState } from '@/features/auth/actions/auth';
 
 interface LoginFormProps {
   prefilledEmail?: string;
+  showHeader?: boolean;
 }
 
 const initialState: AuthFormState = {
@@ -22,13 +22,10 @@ const initialState: AuthFormState = {
   errors: {}
 };
 
-export function LoginForm({ prefilledEmail }: LoginFormProps) {
-  // ✅ CORRECCIÓ: Usem el namespace 'Auth' que coincideix amb el teu JSON
+export function LoginForm({ prefilledEmail, showHeader = true }: LoginFormProps) {
   const t = useTranslations('Auth');
-  
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const supabase = createClient();
-
   const [state, formAction, isPending] = useActionState(loginAction, initialState);
 
   const handleGoogleLogin = async () => {
@@ -44,31 +41,29 @@ export function LoginForm({ prefilledEmail }: LoginFormProps) {
       if (error) throw error;
     } catch (error) {
       if (error instanceof Error) {
-        toast.error(t('error.technical') || 'Error amb Google', { description: error.message });
+        toast.error(t('error.technical'), { description: error.message });
       } else {
-        toast.error('Error desconegut al connectar amb Google');
+        toast.error(t('error.technical'));
       }
       setIsGoogleLoading(false);
     }
   };
 
   return (
-    <div className="w-full max-w-md mx-auto space-y-6">
-
-      {/* Header Mobile Only */}
-      <div className="lg:hidden text-center space-y-2 mb-8">
-        <h1 className="text-3xl font-bold">{t('login_title')}</h1>
-        <p className="text-muted-foreground">{t('login_subtitle')}</p>
-      </div>
-
-      {/* Botó Google */}
-      <div className="grid grid-cols-1 gap-4">
+    <div className="auth-build w-full space-y-4 sm:space-y-5">
+      {showHeader && (
+        <div className="space-y-2 text-center">
+          <h1 className="text-2xl font-bold tracking-tight">{t('login_title')}</h1>
+          <p className="text-muted-foreground">{t('login_subtitle')}</p>
+        </div>
+      )}
+      <div className="auth-build-item auth-build-from-left grid gap-3">
         <Button
           variant="outline"
           onClick={handleGoogleLogin}
           disabled={isGoogleLoading || isPending}
           type="button"
-          className="w-full h-12 gap-3 font-medium bg-background"
+          className="h-11 w-full gap-3 rounded-[6px] bg-background font-semibold"
         >
           {isGoogleLoading ? (
             <Loader2 className="w-5 h-5 animate-spin" />
@@ -79,8 +74,7 @@ export function LoginForm({ prefilledEmail }: LoginFormProps) {
         </Button>
       </div>
 
-      {/* Separador */}
-      <div className="relative">
+      <div className="auth-build-item auth-build-from-right relative">
         <div className="absolute inset-0 flex items-center">
           <span className="w-full border-t border-border" />
         </div>
@@ -91,26 +85,21 @@ export function LoginForm({ prefilledEmail }: LoginFormProps) {
         </div>
       </div>
 
-      {/* Formulari */}
       <form action={formAction} className="space-y-4">
-
-        {/* Gestió d'errors generals */}
         {state?.message && !state.success && (
-          <div className="p-3 rounded-md bg-destructive/15 text-destructive text-sm flex items-center gap-2">
+          <div className="auth-build-item auth-build-from-left flex items-center gap-2 rounded-[6px] bg-destructive/15 p-3 text-sm text-destructive">
             <AlertCircle className="w-4 h-4 shrink-0" />
             <span>{state.message}</span>
           </div>
         )}
 
-        {/* Email */}
-        <div className="space-y-2">
-          {/* ✅ CORRECCIÓ: Usem t('label_email') */}
+        <div className="auth-build-item auth-build-from-left space-y-2">
           <label className="text-sm font-medium ml-1" htmlFor="email">{t('label_email')}</label>
           <Input
             id="email"
             type="email"
             name="email"
-            placeholder="nom@empresa.com"
+            placeholder={t('email_placeholder')}
             defaultValue={prefilledEmail}
             className={state?.errors?.email ? "border-destructive focus-visible:ring-destructive" : ""}
             required
@@ -120,12 +109,10 @@ export function LoginForm({ prefilledEmail }: LoginFormProps) {
           )}
         </div>
 
-        {/* Password */}
-        <div className="space-y-2">
+        <div className="auth-build-item auth-build-from-right space-y-2">
           <div className="flex justify-between items-center">
-             {/* ✅ CORRECCIÓ: Usem t('label_password') */}
             <label className="text-sm font-medium ml-1" htmlFor="password">{t('label_password')}</label>
-            <Link href="/auth/forgot-password" className="text-xs text-primary hover:underline">
+            <Link href="/auth/forgot-password" className="text-xs font-medium text-[#62666d] transition-colors hover:text-[#08090a] dark:text-[#8a8f98] dark:hover:text-[#f7f8f8]">
               {t('forgot_password')}
             </Link>
           </div>
@@ -137,26 +124,22 @@ export function LoginForm({ prefilledEmail }: LoginFormProps) {
           />
         </div>
 
-        {/* Submit */}
         <Button
           type="submit"
           disabled={isPending || isGoogleLoading}
-          className="w-full h-12 font-bold bg-primary hover:bg-primary/90 transition-all"
+          className="auth-build-item auth-build-from-left group relative h-11 w-full overflow-hidden rounded-[6px] border border-[#d0d6e0] bg-[#08090a] font-bold text-[#f7f8f8] transition-colors hover:border-[#8b5cf6]/40 disabled:bg-[#f7f8f8] disabled:text-[#8a8f98] dark:border-[#323334] dark:bg-[#f7f8f8] dark:text-[#08090a] dark:disabled:bg-[#161718] dark:disabled:text-[#62666d]"
         >
-          {isPending ? (
-            <Loader2 className="animate-spin mr-2" />
-          ) : (
-            <LogIn className="w-4 h-4 mr-2" />
-          )}
-          {/* ✅ CORRECCIÓ: Usem t('cta_login') */}
-          {t('cta_login')}
+          <span className="absolute inset-0 bg-[linear-gradient(110deg,#a855f7_0%,#8b5cf6_42%,#6366f1_100%)] opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-disabled:opacity-0" />
+          <span className="relative z-10 inline-flex items-center justify-center">
+            {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <LogIn className="mr-2 h-4 w-4" />}
+            {t('cta_login')}
+          </span>
         </Button>
 
       </form>
 
-      <div className="text-center text-sm text-muted-foreground mt-6">
-        {/* ✅ CORRECCIÓ: Usem t('no_account_prefix') i t('register_link') */}
-        {t('no_account_prefix')} <Link href="/auth/register" className="text-primary hover:underline font-medium">{t('register_link')}</Link>
+      <div className="auth-build-item auth-build-from-right mt-5 text-center text-sm text-muted-foreground">
+        {t('no_account_prefix')} <Link href="/auth/register" className="font-medium text-[#62666d] transition-colors hover:text-[#08090a] dark:text-[#8a8f98] dark:hover:text-[#f7f8f8]">{t('register_link')}</Link>
       </div>
     </div>
   );

@@ -1,3 +1,9 @@
+/**
+ * @file src/features/projects/data/projects-data.ts
+ * @updated 2026-05-08
+ * @summary Feature module: src/features/projects/data/projects-data.ts
+ * @scope UI o logica de feature encapsulada dins del domini corresponent.
+ */
 
 // 1️⃣ IMPORTA EL TIPUS ORIGINAL (No el re-defineixis aquí)
 import { Project } from '@/types/models'; 

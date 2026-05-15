@@ -1,10 +1,16 @@
+/**
+ * @file src/app/[locale]/dashboard/audits/[id]/page.tsx
+ * @updated 2026-05-08
+ * @summary Route module: src/app/[locale]/dashboard/audits/[id]/page.tsx
+ * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
+ */
 import { notFound } from 'next/navigation';
-import { auditRepository } from '@/services/container';
+import { getDashboardAuditDetail } from '@/actions/dashboard-audit-details';
 import { AuditHeader } from '@/features/audit/ui/components/AuditHeader';
 import { ScoreGrid } from '@/features/audit/ui/components/ScoreGrid';
 import { CoreVitalsGrid, AuditMetric } from '@/features/audit/ui/components/CoreVitalsGrid';
 import { IssuesList } from '@/features/audit/ui/components/IssuesList';
-import { MobilePreview } from '@/features/audit/ui/components/MobilePreviw';
+import { MobilePreview } from '@/features/audit/ui/components/MobilePreview';
 import { AuditIssue } from '@/adapters/IWebScanner';
 import { getTranslations } from 'next-intl/server'; // Importem el hook de servidor
 import { BusinessOpportunities } from '@/features/audit/ui/components/BusinessOpportunities'; // 👈 IMPORT NOU
@@ -34,9 +40,9 @@ type Props = {
 export default async function AuditDetailsPage({ params }: Props) {
   const { id } = await params;
   const t = await getTranslations('AuditDetails'); // Namespace AuditDetails
-  const audit = await auditRepository.getAuditById(id);
-
-  if (!audit) notFound();
+  const result = await getDashboardAuditDetail(id);
+  if (!result.success) notFound();
+  const audit = result.audit;
 
   if (audit.status === 'processing') {
     return <div className="p-12 text-center text-foreground">{t('processing_message')}</div>;
@@ -137,3 +143,4 @@ export default async function AuditDetailsPage({ params }: Props) {
     </div>
   );
 }
+

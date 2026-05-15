@@ -1,23 +1,12 @@
 import { requireAdmin } from '@/lib/auth/admin-guard';
-import { createClient } from '@/lib/supabase/server';
-import { SupabaseTestRepository } from '@/repositories/supabase/SupabaseTestRepository';
 import { notFound } from 'next/navigation';
 import { Link } from '@/routing';
 import { Github, Globe, Server, LayoutDashboard, FlaskConical, ArrowLeft } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ProjectCampaignsList } from '@/features/projects/ui/ProjectCampaignsList';
-import { ProjectTeamManager } from '@/features/projects/ui/ProjectTeamManeger';
-// 👇 1. IMPORTEM EL TIPUS DEL REPOSITORI
-import { SupabaseProjectRepository, ProjectMember } from '@/repositories/supabase/SupabaseProjectRepository';
+import { ProjectTeamManager } from '@/features/projects/ui/ProjectTeamManager';
 import { DestructionButton } from '@/features/projects/ui/DeleteProjectButton';
-
-// 👇 2. DEFINIM EL TIPUS PER ALS CANDIDATS (Còpia de l'estructura de 'profiles')
-type Candidate = {
-    id: string;
-    email: string;
-    full_name: string | null;
-    avatar_url: string | null;
-};
+import { getAdminProjectPageData } from '@/actions/admin/project-page';
 
 type Props = {
     params: Promise<{ id: string }>;
@@ -26,54 +15,9 @@ type Props = {
 export default async function ProjectDetailPage({ params }: Props) {
     await requireAdmin();
     const { id } = await params;
-    const supabase = await createClient();
-
-    // Instanciem repositoris
-    const testRepo = new SupabaseTestRepository();
-    const projectRepo = new SupabaseProjectRepository();
-
-    // 1. Dades del Projecte + Campanyes en paral·lel
-    const [projectRes, campaigns] = await Promise.all([
-        supabase.from('projects').select('*, organizations(*)').eq('id', id).single(),
-        testRepo.getCampaignsByProject(id)
-    ]);
-
-    const project = projectRes.data;
-    if (!project) notFound();
-
-    // 2. 🔥 CÀRREGA DE DADES D'EQUIP (CORREGIT SENSE 'any')
-    // Inicialitzem amb arrays buits però TIPATS
-    let members: ProjectMember[] = [];
-    let candidates: Candidate[] = [];
-
-    if (project.organization_id) {
-        // Fem la crida
-        const [fetchedMembers, fetchedCandidates] = await Promise.all([
-            projectRepo.getMembers(id),
-            projectRepo.getAvailableCandidates(id, project.organization_id)
-        ]);
-
-        // Assignem els resultats
-        members = fetchedMembers;
-        // Fem un cast segur perquè sabem que la DB retorna aquesta estructura
-        candidates = fetchedCandidates as Candidate[];
-    }
-    // ✅ CORRECCIÓ 3: Extreure el nom del repo de la URL
-    // Si la URL és: https://github.com/ORG/NOM-DEL-REPO
-    // Volem: NOM-DEL-REPO
-    let cleanRepoName = '';
-
-    if (project.repository_url) {
-        const parts = project.repository_url.split('/');
-        // Agafem l'última part que no sigui buida
-        cleanRepoName = parts.filter(Boolean).pop() || '';
-    }
-
-    // Fallback de seguretat: Si no trobem URL, potser el slug del projecte serveix?
-    if (!cleanRepoName) {
-        // Assumeixo que potser tens un camp 'slug' o el pots treure del nom
-        cleanRepoName = project.name || '';
-    }
+    const result = await getAdminProjectPageData(id);
+    if (!result.success) notFound();
+    const { project, campaigns, members, candidates, cleanRepoName } = result;
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-slate-950 p-6 md:p-10">
             <div className="max-w-6xl mx-auto">

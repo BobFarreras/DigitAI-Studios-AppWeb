@@ -1,3 +1,9 @@
+/**
+ * @file src/features/projects/ui/ProjectList.tsx
+ * @updated 2026-05-08
+ * @summary Feature module: src/features/projects/ui/ProjectList.tsx
+ * @scope UI o logica de feature encapsulada dins del domini corresponent.
+ */
 import { PROJECTS } from '../data/projects-data';
 import { ProjectCard } from './ProjectCard';
 

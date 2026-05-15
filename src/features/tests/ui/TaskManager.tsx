@@ -1,3 +1,9 @@
+/**
+ * @file src/features/tests/ui/TaskManager.tsx
+ * @updated 2026-05-08
+ * @summary Feature module: src/features/tests/ui/TaskManager.tsx
+ * @scope UI o logica de feature encapsulada dins del domini corresponent.
+ */
 // fitxer: src/features/tests/ui/TaskManager.tsx
 
 'use client';
@@ -21,7 +27,7 @@ export function TaskManager({ campaignId, tasks }: { campaignId: string, tasks: 
     // 2. CORRECCIÓ: Tipem 'prev' i usem '_' per 'state' si no el pintem a la UI
     // (O millor, fem servir state.message si volem mostrar errors en text vermell)
     // De moment, per treure l'error de "unused", el renomenem a "_state"
-    const [_state, action, isPending] = useActionState(async (prev: TaskActionState, formData: FormData) => {
+    const [, action, isPending] = useActionState(async (prev: TaskActionState, formData: FormData) => {
         const result = await addTaskAction(prev, formData);
         if (result.success) {
             formRef.current?.reset();

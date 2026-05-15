@@ -1,9 +1,10 @@
 import { postService } from '@/services/container';
 import { Link } from '@/routing';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import { DiaryStack } from './diary/DiaryStack';
 import { Reveal } from '@/components/animations/Reveal';
+import Image from 'next/image';
 
 export async function LatestPostsSection() {
   const posts = await postService.getLatestPosts();
@@ -50,7 +51,14 @@ export async function LatestPostsSection() {
                  <div className="flex -space-x-4 rtl:space-x-reverse">
                    {[...Array(4)].map((_, i) => (
                       <div key={i} className="w-10 h-10 rounded-full border-2 border-background bg-muted flex items-center justify-center overflow-hidden relative shadow-sm">
-                         <img src={`https://api.dicebear.com/7.x/notionists/svg?seed=${i}&backgroundColor=transparent`} alt="avatar" loading="lazy" className="w-full h-full object-cover"/>
+                         <Image
+                           src={`https://api.dicebear.com/7.x/notionists/svg?seed=${i}&backgroundColor=transparent`}
+                           alt="avatar"
+                           width={40}
+                           height={40}
+                           unoptimized
+                           className="w-full h-full object-cover"
+                         />
                       </div>
                    ))}
                  </div>
@@ -62,7 +70,7 @@ export async function LatestPostsSection() {
             
             <Reveal delay={0.4} direction="left">
                <div className="pt-4">
-                  <Link href="/blog" className="group inline-flex items-center gap-2 text-foreground font-bold hover:text-primary transition-colors border-b-2 border-transparent hover:border-primary pb-0.5">
+                  <Link href="/#contact" className="group inline-flex items-center gap-2 text-foreground font-bold hover:text-primary transition-colors border-b-2 border-transparent hover:border-primary pb-0.5">
                     {t('cta')} <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                   </Link>
                </div>

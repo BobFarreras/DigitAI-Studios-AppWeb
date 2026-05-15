@@ -1,20 +1,22 @@
+/**
+ * @file src/app/[locale]/admin/tests/new/page.tsx
+ * @updated 2026-05-08
+ * @summary Route module: src/app/[locale]/admin/tests/new/page.tsx
+ * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
+ */
 // src/app/[locale]/admin/tests/new/page.tsx
 import { requireAdmin } from '@/lib/auth/admin-guard';
-import { createClient } from '@/lib/supabase/server';
 import { Link } from '@/routing';
 import { ArrowLeft } from 'lucide-react';
+import { getAdminProjectOptions } from '@/actions/admin/projects';
 
 // 👇 IMPORT CRÍTIC: Ha de ser entre claus { }
 import { CreateCampaignForm } from '@/features/tests/ui/CreateCampaignForm';
 
 export default async function NewCampaignPage() {
   await requireAdmin();
-  const supabase = await createClient();
-
-  const { data: projects } = await supabase
-    .from('projects')
-    .select('id, name')
-    .order('created_at', { ascending: false });
+  const result = await getAdminProjectOptions();
+  const projects = result.projects;
 
   return (
     <div className="max-w-2xl mx-auto p-8">
@@ -28,3 +30,4 @@ export default async function NewCampaignPage() {
     </div>
   );
 }
+

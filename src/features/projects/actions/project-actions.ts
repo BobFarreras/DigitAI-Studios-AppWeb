@@ -1,3 +1,9 @@
+/**
+ * @file src/features/projects/actions/project-actions.ts
+ * @updated 2026-05-08
+ * @summary Feature module: src/features/projects/actions/project-actions.ts
+ * @scope UI o logica de feature encapsulada dins del domini corresponent.
+ */
 'use server';
 
 import { SupabaseProjectRepository } from '@/repositories/supabase/SupabaseProjectRepository';

@@ -1,29 +1,16 @@
-import { requireAdmin } from '@/lib/auth/admin-guard';
-import { SupabaseTestRepository } from '@/repositories/supabase/SupabaseTestRepository';
+/**
+ * @file src/app/[locale]/admin/tests/page.tsx
+ * @updated 2026-05-10
+ * @summary Route module: src/app/[locale]/admin/tests/page.tsx
+ * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
+ */
+import { getAdminCampaignsView } from '@/features/tests/actions/query-actions';
 import { Link } from '@/routing';
 import { Button } from '@/components/ui/button';
 import { Plus, FlaskConical, ExternalLink } from 'lucide-react';
 
-// Tipus local per a la vista (amb les dades ja processades pel repo)
-type AdminCampaignView = {
-  id: string;
-  title: string;
-  description: string | null;
-  status: string;
-  created_at: string;
-  projects: { name: string } | null;
-  stats: {
-    total_tasks: number;
-    total_results: number;
-  };
-};
-
 export default async function AdminTestsPage() {
-  await requireAdmin();
-  const repo = new SupabaseTestRepository();
-  
-  // Fem servir el tipus nou
-  const campaigns = (await repo.getAllCampaignsForAdmin()) as unknown as AdminCampaignView[];
+  const campaigns = await getAdminCampaignsView();
 
   return (
     <div className="p-8">

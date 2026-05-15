@@ -1,18 +1,19 @@
+/**
+ * @file src/app/[locale]/admin/projects/page.tsx
+ * @updated 2026-05-08
+ * @summary Route module: src/app/[locale]/admin/projects/page.tsx
+ * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
+ */
 import { requireAdmin } from '@/lib/auth/admin-guard';
-import { createClient } from '@/lib/supabase/server';
 import { Link } from '@/routing';
 import { Plus, Github, ExternalLink, Clock, CheckCircle, AlertCircle, LayoutGrid } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { getAdminProjectsOverview } from '@/actions/admin/projects';
 
 export default async function AdminProjectsPage() {
   await requireAdmin();
-  const supabase = await createClient();
-
-  // Obtenim projectes i la seva organització vinculada
-  const { data: projects } = await supabase
-    .from('projects')
-    .select('*, organizations(plan)')
-    .order('created_at', { ascending: false });
+  const result = await getAdminProjectsOverview();
+  const projects = result.projects;
 
   return (
     <div className="min-h-screen bg-background p-8">
@@ -135,3 +136,4 @@ function StatusBadge({ status }: { status: string }) {
     </span>
   );
 }
+

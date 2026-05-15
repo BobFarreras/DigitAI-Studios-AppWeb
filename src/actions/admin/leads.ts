@@ -1,3 +1,9 @@
+/**
+ * @file src/actions/admin/leads.ts
+ * @updated 2026-05-08
+ * @summary Server actions per src/actions/admin/leads.ts
+ * @scope Operacions de servidor, validacio i orquestracio de capa aplicacio.
+ */
 'use server';
 
 import { createClient } from '@/lib/supabase/server';

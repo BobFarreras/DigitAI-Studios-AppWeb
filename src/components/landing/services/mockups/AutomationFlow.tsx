@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { MessageSquare, Zap, Database, Mail, Slack, BrainCircuit, CheckCircle2, LucideIcon } from 'lucide-react';
+import { MessageSquare, Database, Mail, Slack, BrainCircuit, CheckCircle2, LucideIcon } from 'lucide-react';
 
 // 1. Definim els tipus per a les Props
 interface NodeProps {

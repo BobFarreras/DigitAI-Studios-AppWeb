@@ -1,3 +1,9 @@
+/**
+ * @file src/features/analytics/ui/TrafficChart.tsx
+ * @updated 2026-05-08
+ * @summary Feature module: src/features/analytics/ui/TrafficChart.tsx
+ * @scope UI o logica de feature encapsulada dins del domini corresponent.
+ */
 'use client';
 
 import { AreaChart, Area, XAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';

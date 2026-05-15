@@ -13,11 +13,11 @@ export function ThemeToggle() {
       variant="ghost"
       size="icon"
       onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-      className="relative rounded-full hover:bg-muted transition-colors"
+      className="group relative rounded-full text-[#8a8f98] transition-colors hover:bg-muted"
       aria-label="Canviar tema"
     >
-      <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 text-orange-500" />
-      <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 text-blue-400" />
+      <Sun className="h-5 w-5 rotate-0 scale-100 text-current transition-all group-hover:text-orange-500 dark:-rotate-90 dark:scale-0" />
+      <Moon className="absolute h-5 w-5 rotate-90 scale-0 text-current transition-all group-hover:text-blue-400 dark:rotate-0 dark:scale-100" />
     </Button>
   )
 }

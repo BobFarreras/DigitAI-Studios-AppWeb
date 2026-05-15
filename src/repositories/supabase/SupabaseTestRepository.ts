@@ -497,6 +497,18 @@ export class SupabaseTestRepository {
       tasks: tasks // Retornem també l'estructura per si cal
     };
   }
+
+  async getProjectOrganizationId(projectId: string): Promise<string | null> {
+    const supabase = createAdminClient();
+    const { data, error } = await supabase
+      .from('projects')
+      .select('organization_id')
+      .eq('id', projectId)
+      .single();
+
+    if (error || !data?.organization_id) return null;
+    return data.organization_id;
+  }
 }
 
 

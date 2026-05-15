@@ -1,3 +1,9 @@
+/**
+ * @file src/features/projects/ui/ProjectCampaignsList.tsx
+ * @updated 2026-05-08
+ * @summary Feature module: src/features/projects/ui/ProjectCampaignsList.tsx
+ * @scope UI o logica de feature encapsulada dins del domini corresponent.
+ */
 'use client';
 
 import { Link } from '@/routing';

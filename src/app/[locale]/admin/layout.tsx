@@ -1,6 +1,12 @@
+/**
+ * @file src/app/[locale]/admin/layout.tsx
+ * @updated 2026-05-08
+ * @summary Route module: src/app/[locale]/admin/layout.tsx
+ * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
+ */
 // src/app/[locale]/admin/layout.tsx
 import { requireAdmin } from '@/lib/auth/admin-guard';
-import { AdminBottomNav } from '@/components/admin/AminMobileMenu'; // Assegura't del nom correcte (AminMobileMenu o AdminMobileMenu)
+import { AdminBottomNav } from '@/components/admin/AdminMobileMenu';
 import { AdminSidebar } from '@/components/admin/AdminSidebar'; // 👈 El nou component
 import { ShieldAlert } from 'lucide-react';
 
@@ -40,3 +46,4 @@ export default async function AdminLayout({
     </div>
   );
 }
+

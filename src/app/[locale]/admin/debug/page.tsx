@@ -1,16 +1,13 @@
+/**
+ * @file src/app/[locale]/admin/debug/page.tsx
+ * @updated 2026-05-08
+ * @summary Route module: src/app/[locale]/admin/debug/page.tsx
+ * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
+ */
 'use client';
 
-import { useState, useEffect } from 'react';
-import { createClient } from '@/lib/supabase/client';
-
-// Definim una interfície simple per al resultat que esperem de Supabase
-interface SupabaseCountResult {
-  count: number | null;
-  error: {
-    message: string;
-    code?: string;
-  } | null;
-}
+import { useState } from 'react';
+import { testAnalyticsConnectionAction } from '@/actions/admin/debug';
 
 export default function DebugAnalyticsPage() {
   const [logs, setLogs] = useState<string[]>([]);
@@ -34,26 +31,10 @@ export default function DebugAnalyticsPage() {
     }
 
     try {
-      addLog('1. Creant client Supabase...');
-      const supabase = createClient();
-      
-      addLog('2. Enviant petició (SELECT)...');
-      
-      // Fem un timeout manual per si es queda penjat
-      const timeoutPromise = new Promise<never>((_, reject) => 
-        setTimeout(() => reject(new Error("Timeout: La xarxa està bloquejada (AdBlock?)")), 5000)
-      );
-
-      const dbPromise = supabase
-        .from('analytics_events')
-        .select('count', { count: 'exact', head: true });
-
-      // Cursa entre la DB i el Timeout. Forcem el tipus a 'unknown' primer i després al nostre tipus.
-      const result = await Promise.race([dbPromise, timeoutPromise]) as unknown as SupabaseCountResult;
-
-      if (result.error) {
-        addLog(`❌ ERROR DB: ${result.error.message}`);
-        console.error(result.error);
+      addLog('1. Enviant test al servidor...');
+      const result = await testAnalyticsConnectionAction();
+      if (!result.success) {
+        addLog(`❌ ERROR DB: ${result.error || 'Error desconegut'}`);
       } else {
         addLog(`✅ CONNEXIÓ CORRECTA! Files a la taula: ${result.count}`);
       }
@@ -104,3 +85,4 @@ export default function DebugAnalyticsPage() {
     </div>
   );
 }
+

@@ -1,3 +1,9 @@
+/**
+ * @file src/features/audit/ui/components/DownloadAuditButton.tsx
+ * @updated 2026-05-08
+ * @summary Feature module: src/features/audit/ui/components/DownloadAuditButton.tsx
+ * @scope UI o logica de feature encapsulada dins del domini corresponent.
+ */
 'use client';
 
 import React from 'react';
@@ -9,7 +15,10 @@ import { AuditPDFDocument } from '@/features/audit/ui/pdf/AuditPdfDocument';
 import { AuditIssue } from '@/adapters/IWebScanner';
 
 const PDFDownloadLink = dynamic(
-  () => import('@react-pdf/renderer').then((mod) => mod.PDFDownloadLink),
+  async () => {
+    const mod = await import('@react-pdf/renderer');
+    return mod.PDFDownloadLink;
+  },
   { 
     ssr: false,
     loading: () => (
