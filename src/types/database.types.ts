@@ -274,38 +274,6 @@ export type Database = {
         }
         Relationships: []
       }
-      post_reactions: {
-        Row: {
-          created_at: string | null
-          id: string
-          post_slug: string
-          reaction_type: string
-          visitor_id: string
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          post_slug: string
-          reaction_type: string
-          visitor_id: string
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          post_slug?: string
-          reaction_type?: string
-          visitor_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "post_reactions_post_slug_fkey"
-            columns: ["post_slug"]
-            isOneToOne: false
-            referencedRelation: "posts"
-            referencedColumns: ["slug"]
-          },
-        ]
-      }
       posts: {
         Row: {
           content_mdx: string | null

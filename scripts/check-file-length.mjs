@@ -7,7 +7,11 @@ const allowlistPath = 'scripts/line-limit-allowlist.txt';
 
 function parseFilesFromGit() {
   const out = execSync(`git ls-files ${target}`, { encoding: 'utf8' });
-  return out.split('\n').filter(Boolean).filter((f) => /\.(ts|tsx)$/.test(f));
+  return out
+    .split('\n')
+    .filter(Boolean)
+    .filter((f) => /\.(ts|tsx)$/.test(f))
+    .filter((f) => existsSync(f));
 }
 
 function getAllowlist(path) {

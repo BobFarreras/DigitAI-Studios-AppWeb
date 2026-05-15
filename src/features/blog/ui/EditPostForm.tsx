@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
-import { Save, Eye, PenTool, ExternalLink, Loader2, CheckCircle2, ArrowLeft } from 'lucide-react';
+import { Save, Eye, PenTool, Loader2, CheckCircle2, ArrowLeft } from 'lucide-react';
 import { Link } from '@/routing';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
@@ -62,16 +62,6 @@ export function EditPostForm({ post }: { post: BlogPostDTO }) {
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2 w-full md:w-auto justify-end">
-                    {post.published && (
-                        <Link href={`/blog/${post.slug}`} target="_blank" className="w-full sm:w-auto">
-                            <Button variant="outline" size="sm" type="button" className="w-full gap-2">
-                                <ExternalLink className="w-4 h-4" /> 
-                                <span className="hidden sm:inline">Veure Web</span>
-                                <span className="sm:hidden">Web</span>
-                            </Button>
-                        </Link>
-                    )}
-                    
                     <Button type="submit" disabled={isPending} className="w-full sm:w-auto bg-primary text-primary-foreground hover:bg-primary/90 gap-2 min-w-[140px]">
                         {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                         {isPending ? 'Guardant...' : 'Guardar Canvis'}

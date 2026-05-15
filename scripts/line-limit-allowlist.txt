@@ -20,7 +20,6 @@ src/features/auth/ui/LoginForm.tsx
 src/features/auth/ui/RegisterForm.tsx
 src/features/blog/ui/AdminPostList.tsx
 src/features/blog/ui/EditPostForm.tsx
-src/features/blog/ui/ReactionDock.tsx
 src/features/email/templates/AuditReadyEmail.tsx
 src/features/tests/actions/admin-actions.ts
 src/features/tests/ui/CampaignAnalytics.tsx

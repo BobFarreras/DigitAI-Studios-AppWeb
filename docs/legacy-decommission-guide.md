@@ -21,6 +21,7 @@ Scope actual confirmat a `AGENTS.md`, `ARCHITECTURE.md` i `README.md`:
 ### Legacy candidat
 - Landing antiga: `src/components/landing/*.tsx`, `src/components/landing/services/*`, `src/components/landing/solutions/*`, excepte `src/components/landing/v2/*`.
 - Blog public: `src/app/[locale]/(marketing)/blog/*`, `src/features/blog/ui/ReactionDock.tsx`, `content/posts/*`.
+- Blog public arxivat: `legacy/public-blog/*`.
 - Projectes public/admin factory: `src/app/[locale]/admin/projects/*`, `src/features/projects/*`, `src/services/factory/*`, `src/services/TenantService.ts`, `scripts/test-factory-integration.ts`.
 - Dashboard project/test client si es decideix retirar QA lligat a projectes: `src/app/[locale]/dashboard/projects/*`, `src/app/[locale]/dashboard/tests/*`, `src/repositories/supabase/SupabaseTestRepository.ts`.
 
@@ -208,6 +209,21 @@ Opcio B: retirar blog complet.
 
 Recomanacio:
 - Opcio A primer. El blog public pot marxar ara; RRSS/admin content pot ser un context intern separat.
+
+Estat 2026-05-15:
+- El blog public continua retirat de rutes publiques.
+- S'ha arxivat a `legacy/public-blog`:
+  - `src/features/blog/ui/ReactionDock.tsx`
+  - `src/features/blog/ui/reaction-dock/*`
+  - `content/posts/*`
+- S'ha eliminat del runtime actiu:
+  - `toggleReactionAction`
+  - metodes publics/reaccions del repositori de posts
+  - enllacos admin cap a `/blog/[slug]`
+- Es mantenen actius `posts`, `social_posts`, `social_connections` i admin blog/RRSS.
+- Eliminada de `public` la taula `post_reactions`.
+- Abans del `DROP`, s'ha creat copia de seguretat a `legacy_backup.post_reactions_20260515`.
+- Regenerat `src/types/database.types.ts` amb Supabase CLI.
 
 ### Fase 6 - Neteja de Base de Dades
 Objectiu: eliminar taules nomes quan no hi ha codi actiu ni dades necessaries.

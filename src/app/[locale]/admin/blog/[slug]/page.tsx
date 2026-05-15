@@ -4,7 +4,7 @@ import { requireAdmin } from '@/lib/auth/admin-guard';
 import { notFound } from 'next/navigation';
 import { MDXContent } from '@/features/blog/ui/MDXContent';
 import { Link } from '@/routing';
-import { ArrowLeft, Save, Trash2, ExternalLink } from 'lucide-react';
+import { ArrowLeft, Save, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Image from 'next/image';
@@ -68,14 +68,6 @@ export default async function AdminPostDetailPage({ params }: Props) {
                     <Button variant="ghost" size="icon" className="text-destructive shrink-0">
                         <Trash2 className="w-5 h-5"/>
                     </Button>
-                    
-                    {post.published && (
-                        <Link href={`/blog/${post.slug}`} target="_blank">
-                            <Button variant="outline" size="icon" className="shrink-0">
-                                <ExternalLink className="w-5 h-5"/>
-                            </Button>
-                        </Link>
-                    )}
                     
                     {/* Separador vertical (només estètic) */}
                     <div className="h-6 w-px bg-border mx-1 hidden sm:block" />
