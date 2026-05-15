@@ -91,14 +91,10 @@ export function TerminalMockup() {
   const scenario = SCENARIOS[activeTab];
 
   useEffect(() => {
-    setText('');
-    setLogs([]);
-    setCompleted(false);
-    setIsTyping(true);
-
     let currentText = '';
     const fullCommand = scenario.command;
     let charIndex = 0;
+    const executionTimers: ReturnType<typeof setTimeout>[] = [];
 
     const typeInterval = setInterval(() => {
       if (charIndex < fullCommand.length) {
@@ -108,22 +104,28 @@ export function TerminalMockup() {
       } else {
         clearInterval(typeInterval);
         setIsTyping(false);
-        runExecution();
+        scenario.output.forEach((log, i) => {
+          const timer = setTimeout(() => {
+            setLogs(prev => [...prev, log]);
+            if (i === scenario.output.length - 1) setCompleted(true);
+          }, log.delay);
+          executionTimers.push(timer);
+        });
       }
     }, 50 + Math.random() * 50);
 
-    return () => clearInterval(typeInterval);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeTab]); // Afegim dependència correcta
+    return () => {
+      clearInterval(typeInterval);
+      executionTimers.forEach(clearTimeout);
+    };
+  }, [scenario]);
 
-  const runExecution = () => {
-    scenario.output.forEach((log, i) => {
-      setTimeout(() => {
-        // Ara TypeScript sap que 'log' és de tipus LogEntry
-        setLogs(prev => [...prev, log]);
-        if (i === scenario.output.length - 1) setCompleted(true);
-      }, log.delay);
-    });
+  const handleTabChange = (key: string) => {
+    setActiveTab(key);
+    setText('');
+    setLogs([]);
+    setCompleted(false);
+    setIsTyping(true);
   };
 
   return (
@@ -152,7 +154,7 @@ export function TerminalMockup() {
                     return (
                         <button
                             key={key}
-                            onClick={() => setActiveTab(key)}
+                            onClick={() => handleTabChange(key)}
                             className={cn(
                                 "flex items-center gap-2 px-4 py-2 rounded-t-lg text-xs font-bold font-mono transition-all duration-300 relative",
                                 activeTab === key 

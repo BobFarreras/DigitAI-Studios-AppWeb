@@ -18,7 +18,6 @@ const nextConfig: NextConfig = {
   },
   
   experimental: {
-    turbopackUseSystemTlsCerts: true,
     serverActions: {
       bodySizeLimit: '2mb',
     },
