@@ -315,6 +315,16 @@ Estat 2026-05-15:
 - Eliminada la funcio `public.decrement_stock(uuid, integer)`.
 - Regenerat `src/types/database.types.ts` amb Supabase CLI.
 
+### Fase 6.5 - Blindar Backups Legacy
+Objectiu: mantenir les copies historiques sense exposar-les via rols client.
+
+Estat 2026-05-15:
+- Activat RLS a totes les taules de `legacy_backup`.
+- Revocats permisos de schema/taules a `public`, `anon` i `authenticated`.
+- No s'han creat policies sobre backups: les copies queden tancades per defecte.
+- Security Advisor ja no mostra el warning critic de RLS desactivat a `legacy_backup`.
+- Queden avisos `INFO` esperats de `rls_enabled_no_policy` per backups tancats sense policies.
+
 ### Fase 7 - Tipus, policies i docs
 1. Regenerar `src/types/database.types.ts` despres de DDL.
 2. Retirar policies RLS de taules eliminades.
