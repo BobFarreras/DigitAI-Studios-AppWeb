@@ -1,6 +1,6 @@
 /**
  * @file src/actions/admin/users.ts
- * @updated 2026-05-08
+ * @updated 2026-05-15
  * @summary Server actions per src/actions/admin/users.ts
  * @scope Operacions de servidor, validacio i orquestracio de capa aplicacio.
  */
@@ -123,16 +123,6 @@ async function deleteUserData(userId: string, organizationId: string) {
     await supabase.from('projects').delete().in('id', projectIds);
   }
 
-  const { data: orders } = await supabase
-    .from('orders')
-    .select('id')
-    .eq('user_id', userId)
-    .eq('organization_id', organizationId);
-  const orderIds = orders?.map((order) => order.id) ?? [];
-  if (orderIds.length > 0) await supabase.from('order_items').delete().in('order_id', orderIds);
-
-  await supabase.from('orders').delete().eq('user_id', userId).eq('organization_id', organizationId);
-  await supabase.from('bookings').delete().eq('user_id', userId).eq('organization_id', organizationId);
   await supabase.from('web_audits').delete().eq('user_id', userId).eq('organization_id', organizationId);
   await supabase.from('social_connections').delete().eq('user_id', userId).eq('organization_id', organizationId);
   await supabase.from('test_results').delete().eq('user_id', userId);

@@ -250,6 +250,21 @@ Recomanacio:
 - Despres una migration separada per eliminar taules.
 - No barrejar refactor de codi i `DROP TABLE` en el mateix PR.
 
+Estat 2026-05-15:
+- Eliminades de `public` les taules legacy booking/ecommerce:
+  - `order_items`
+  - `bookings`
+  - `orders`
+  - `products`
+  - `schedules`
+  - `blocked_dates`
+  - `services`
+- Abans del `DROP`, s'ha creat copia de seguretat a `legacy_backup`:
+  - `*_20260515`
+- Actualitzada `public.admin_delete_public_user_data` per no referenciar taules eliminades.
+- Eliminada la funcio `public.decrement_stock(uuid, integer)`.
+- Regenerat `src/types/database.types.ts` amb Supabase CLI.
+
 ### Fase 7 - Tipus, policies i docs
 1. Regenerar `src/types/database.types.ts` despres de DDL.
 2. Retirar policies RLS de taules eliminades.
