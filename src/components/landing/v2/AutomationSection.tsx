@@ -110,7 +110,7 @@ function WorkflowNode({ node, index, flowId, showBubble, onHover }: { node: Node
   return (
     <motion.div custom={index} variants={nodeReveal} initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.22 }} className="group absolute w-[144px] -translate-x-1/2 -translate-y-1/2 text-center" onMouseEnter={() => onHover(index)} onMouseLeave={() => onHover(null)} style={{ left: `${node.x}%`, top: `${node.y}%` }}>
       {showBubble ? (
-        <motion.div initial={{ opacity: 0, y: 8, scale: 0.94 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.28 }} className="absolute bottom-[calc(100%+12px)] left-1/2 hidden w-[190px] -translate-x-1/2 rounded-[8px] border border-[#d0d6e0] bg-[#f7f8f8]/90 px-3 py-2 text-left text-[12px] leading-snug text-[#62666d] shadow-[0_12px_28px_rgba(8,9,10,0.08)] backdrop-blur-md dark:border-[#323334] dark:bg-[#161718]/92 dark:text-[#d0d6e0] lg:block">
+        <motion.div initial={{ opacity: 0, y: 8, scale: 0.94 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.28 }} className="absolute bottom-[calc(100%+12px)] left-1/2 hidden w-[230px] -translate-x-1/2 rounded-[8px] border border-[#c3cad6] bg-[#f7f8f8]/96 px-3.5 py-2.5 text-left text-[13.5px] font-[560] leading-[1.5] text-[#2f3338] shadow-[0_16px_36px_rgba(8,9,10,0.14)] backdrop-blur-md dark:border-[#4a4e57] dark:bg-[#1a1c1f]/96 dark:text-[#e2e6ec] lg:block">
           {t(`flows.${flowId}.nodes.${node.id}.explain`)}
         </motion.div>
       ) : null}
@@ -133,14 +133,7 @@ function WorkflowEdges({ workflow, hoveredNode }: { workflow: Workflow; hoveredN
         return (
           <g key={`${from.id}-${to.id}`}>
             <motion.path d={path} fill="none" stroke="currentColor" strokeWidth="0.18" className="text-[#62666d]/38 dark:text-[#8a8f98]/32" initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }} transition={{ duration: 1.15, delay: index * 0.12, ease: [0.22, 1, 0.36, 1] }} />
-            <motion.circle
-              r="0.55"
-              className="fill-[#8b5cf6]"
-              initial={false}
-              animate={{ opacity: isActive ? [0.25, 1, 0.25] : 0, offsetDistance: isActive ? ['0%', '100%'] : '0%' }}
-              transition={{ duration: 2.2, delay: isActive ? index * 0.08 : 0, repeat: isActive ? Infinity : 0, ease: 'linear' }}
-              style={{ offsetPath: `path("${path}")` }}
-            />
+            <motion.path d={path} fill="none" stroke="currentColor" strokeLinecap="round" strokeWidth="0.42" className="text-[#8b5cf6]" initial={false} animate={{ opacity: isActive ? [0.15, 0.95, 0.15] : 0, pathLength: isActive ? [0, 1] : 0 }} transition={{ duration: 1.55, delay: isActive ? index * 0.08 : 0, repeat: isActive ? Infinity : 0, ease: 'linear' }} />
           </g>
         );
       })}
