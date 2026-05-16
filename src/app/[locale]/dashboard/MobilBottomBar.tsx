@@ -12,7 +12,8 @@ import {
   LayoutDashboard, 
   BookOpenCheck, 
   ShieldAlert, 
-  Home
+  RotateCcw,
+  UserCircle
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
@@ -33,6 +34,8 @@ export function MobileBottomBar({ userRole }: MobileBottomBarProps) {
   const MENU_ITEMS = [
     { icon: LayoutDashboard, label: t('summary'), href: '/dashboard' },
     { icon: BookOpenCheck, label: 'Aprendre', href: '/dashboard/learn' }, 
+    { icon: RotateCcw, label: 'Repassar', href: '#review' },
+    { icon: UserCircle, label: 'Perfil', href: '#profile' },
   ];
 
   const handleClick = (e: React.MouseEvent, href: string, label: string) => {
@@ -98,20 +101,6 @@ export function MobileBottomBar({ userRole }: MobileBottomBarProps) {
                   </Link>
               )}
 
-              {/* SEPARADOR VERTICAL PETIT */}
-              <div className="h-8 w-px bg-border/50 mx-1"></div>
-
-              {/* 3. HOME (WEB PÚBLICA)  */}
-              <Link
-                  href="/"
-                  className="flex flex-col items-center justify-center w-full h-full gap-1 active:scale-95 transition-transform text-muted-foreground hover:text-foreground"
-              >
-                  <Home className="w-5 h-5" strokeWidth={2} />
-                  <span className="text-[10px] font-medium">{t('web')}</span>
-              </Link>
-
-              {/* 4. BOTÓ LOGOUT (REUTILITZAT) */}
-              {/* Passem minimal={true} i les classes per alinear-ho com els altres items */}
               <LogoutButton 
                 minimal={true} 
                 className="flex flex-col items-center justify-center w-full h-full gap-1 active:scale-95 transition-transform text-red-400 hover:text-red-500"

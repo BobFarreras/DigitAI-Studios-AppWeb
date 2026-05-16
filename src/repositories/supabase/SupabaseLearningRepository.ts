@@ -11,9 +11,11 @@ import type {
   LearningDashboardSnapshot,
   LearningLessonRecord,
   LearningModuleRecord,
+  LearningTrackRecord,
 } from '@/repositories/interfaces/ILearningRepository';
 import type { Tables } from '@/types/database.types';
 
+type TrackRow = Tables<'learning_tracks'>;
 type ModuleRow = Tables<'learning_modules'>;
 type LessonRow = Tables<'learning_lessons'>;
 type ProgressRow = Tables<'learning_progress'>;
@@ -25,7 +27,8 @@ export class SupabaseLearningRepository implements ILearningRepository {
     const supabase = createAdminClient();
     const weekStart = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
 
-    const [modules, lessons, progress, xp, streak, attempts] = await Promise.all([
+    const [tracks, modules, lessons, progress, xp, streak, attempts] = await Promise.all([
+      supabase.from('learning_tracks').select('*').eq('active', true).order('order_index'),
       supabase.from('learning_modules').select('*').eq('active', true).order('order_index'),
       supabase.from('learning_lessons').select('*').eq('active', true).order('order_index'),
       supabase.from('learning_progress').select('*').eq('user_id', userId),
@@ -38,6 +41,7 @@ export class SupabaseLearningRepository implements ILearningRepository {
         .gte('started_at', weekStart),
     ]);
 
+    assertNoError(tracks.error);
     assertNoError(modules.error);
     assertNoError(lessons.error);
     assertNoError(progress.error);
@@ -46,6 +50,7 @@ export class SupabaseLearningRepository implements ILearningRepository {
     assertNoError(attempts.error);
 
     return {
+      tracks: mapTracks(tracks.data ?? []),
       modules: mapModules(modules.data ?? [], lessons.data ?? []),
       progress: mapProgress(progress.data ?? []),
       xpTotal: sumXp(xp.data ?? []),
@@ -57,9 +62,22 @@ export class SupabaseLearningRepository implements ILearningRepository {
   }
 }
 
+function mapTracks(tracks: TrackRow[]): LearningTrackRecord[] {
+  return tracks.map((track) => ({
+    id: track.id,
+    slug: track.slug,
+    title: track.title,
+    description: track.description,
+    icon: track.icon,
+    color: track.color,
+    orderIndex: track.order_index,
+  }));
+}
+
 function mapModules(modules: ModuleRow[], lessons: LessonRow[]): LearningModuleRecord[] {
   return modules.map((module) => ({
     id: module.id,
+    trackId: module.track_id,
     slug: module.slug,
     title: module.title,
     description: module.description,

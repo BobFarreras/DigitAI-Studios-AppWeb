@@ -13,8 +13,19 @@ export type LearningLessonRecord = {
   orderIndex: number;
 };
 
+export type LearningTrackRecord = {
+  id: string;
+  slug: string;
+  title: string;
+  description: string | null;
+  icon: string | null;
+  color: string | null;
+  orderIndex: number;
+};
+
 export type LearningModuleRecord = {
   id: string;
+  trackId: string;
   slug: string;
   title: string;
   description: string | null;
@@ -30,6 +41,7 @@ export type LearningProgressRecord = {
 };
 
 export type LearningDashboardSnapshot = {
+  tracks: LearningTrackRecord[];
   modules: LearningModuleRecord[];
   progress: LearningProgressRecord[];
   xpTotal: number;

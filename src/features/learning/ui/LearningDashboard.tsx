@@ -6,9 +6,9 @@
  */
 import type { LearningDashboardData } from '@/services/learning/learning-dashboard-service';
 import { LearningHero } from './LearningHero';
-import { LearningPath } from './LearningPath';
 import { LearningReviewCard } from './LearningReviewCard';
 import { LearningStatsGrid } from './LearningStatsGrid';
+import { LearningTrackGrid } from './LearningTrackGrid';
 
 type Props = {
   data: LearningDashboardData;
@@ -20,7 +20,7 @@ export function LearningDashboard({ data }: Props) {
       <LearningHero data={data} />
       <LearningStatsGrid data={data} />
       <div className="grid gap-5 lg:grid-cols-[1fr_340px]">
-        <LearningPath modules={data.modules} />
+        <LearningTrackGrid tracks={data.tracks} />
         <LearningReviewCard items={data.reviewItems} accuracy={data.accuracy} />
       </div>
     </div>

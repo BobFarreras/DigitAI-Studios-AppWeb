@@ -28,7 +28,7 @@ export default async function LessonPage({ params }: Props) {
   return (
     <section className="mx-auto flex w-full max-w-3xl flex-col gap-5 pb-24 md:pb-8">
       <Button asChild variant="ghost" className="w-fit rounded-xl font-bold">
-        <Link href="/dashboard/learn">
+        <Link href={`/dashboard/learn/${moduleSlug}`}>
           <ArrowLeft className="mr-2 h-4 w-4" />
           Tornar al mapa
         </Link>

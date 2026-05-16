@@ -30,6 +30,7 @@ describe('mapDashboardData', () => {
       modules: [
         {
           id: 'module-1',
+          trackId: 'track-1',
           slug: 'fonaments',
           title: 'Fonaments',
           description: 'Base digital.',
@@ -38,6 +39,17 @@ describe('mapDashboardData', () => {
             { id: 'lesson-1', slug: 'intro', title: 'Intro', estimatedMinutes: 4, orderIndex: 1 },
             { id: 'lesson-2', slug: 'seguretat', title: 'Seguretat', estimatedMinutes: 6, orderIndex: 2 },
           ],
+        },
+      ],
+      tracks: [
+        {
+          id: 'track-1',
+          slug: 'iniciacio-digital',
+          title: 'Iniciacio Digital',
+          description: 'Base digital.',
+          icon: 'sparkles',
+          color: 'emerald',
+          orderIndex: 1,
         },
       ],
       progress: [{ lessonId: 'lesson-1', completed: true, needsReview: false, bestScore: 80 }],
@@ -51,12 +63,53 @@ describe('mapDashboardData', () => {
     const data = mapDashboardData('alumne@example.com', snapshot);
 
     expect(data.lessonsDone).toBe(1);
-    expect(data.modules[0].progress).toBe(50);
+    expect(data.tracks[0].progress).toBe(50);
     expect(data.continueLesson).toEqual({
       title: 'Seguretat',
-      module: 'Fonaments',
+      module: 'Iniciacio Digital',
       estimatedMinutes: 6,
-      href: '/dashboard/learn/fonaments/seguretat',
+      href: '/dashboard/learn/iniciacio-digital/seguretat',
     });
+  });
+
+  it('locks the next track until the current track is completed', () => {
+    const snapshot: LearningDashboardSnapshot = {
+      tracks: [
+        { id: 'track-1', slug: 'digital', title: 'Digital', description: null, icon: null, color: null, orderIndex: 1 },
+        { id: 'track-2', slug: 'sistemes', title: 'Sistemes', description: null, icon: null, color: null, orderIndex: 2 },
+      ],
+      modules: [
+        {
+          id: 'module-1',
+          trackId: 'track-1',
+          slug: 'base',
+          title: 'Base',
+          description: null,
+          orderIndex: 1,
+          lessons: [{ id: 'lesson-1', slug: 'intro', title: 'Intro', estimatedMinutes: 4, orderIndex: 1 }],
+        },
+        {
+          id: 'module-2',
+          trackId: 'track-2',
+          slug: 'xarxes',
+          title: 'Xarxes',
+          description: null,
+          orderIndex: 1,
+          lessons: [{ id: 'lesson-2', slug: 'ip', title: 'IP', estimatedMinutes: 5, orderIndex: 1 }],
+        },
+      ],
+      progress: [],
+      xpTotal: 0,
+      streakDays: 0,
+      weeklyMinutes: 0,
+      averageAccuracy: null,
+      reviewItems: [],
+    };
+
+    const data = mapDashboardData('a@b.cat', snapshot);
+
+    expect(data.tracks[0].status).toBe('active');
+    expect(data.tracks[1].status).toBe('locked');
+    expect(data.tracks[0].lessons[0].status).toBe('active');
   });
 });

@@ -405,6 +405,14 @@ Fase 2:
 - Afegir components mobile-first. Fet.
 - Mostrar progres fake o real segons DB inicial. Fet amb dades reals Supabase.
 
+### Fase 3.5 - Disseny producte i mapa
+- Separar `/dashboard` com a resum general. Fet.
+- Separar `/dashboard/learn` com a experiencia app/mapa. Fet.
+- Crear `/dashboard/learn/[moduleSlug]` per ruta formativa seleccionada. Fet.
+- Afegir bloqueig progressiu entre rutes i lliçons. Fet.
+- Adaptar mobile a top bar + bottom bar estil app. Fet.
+- Afegir animacions de nodes i recompensa. Fet.
+
 ### Fase 4 - Lesson runner MVP
 - Crear runner de lliço. Pendent; ruta placeholder creada.
 - Implementar multiple choice, true/false i order steps.
