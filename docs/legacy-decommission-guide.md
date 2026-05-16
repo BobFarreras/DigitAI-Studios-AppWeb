@@ -223,6 +223,8 @@ Estat 2026-05-15:
 - Eliminada de `public` la taula `content_queue`.
 - Abans del `DROP`, s'ha creat copia de seguretat a `legacy_backup.content_queue_20260515`.
 - Regenerat `src/types/database.types.ts` amb Supabase CLI.
+- Eliminada la view `public.users_summary`, que exposava dades de `auth.users` i no tenia consumidors actius.
+- Regenerat `src/types/database.types.ts` amb Supabase CLI.
 
 ### Fase 5 - Retirar Blog Public i decidir RRSS
 Objectiu: no barrejar blog public legacy amb admin RRSS si aquest encara aporta valor.

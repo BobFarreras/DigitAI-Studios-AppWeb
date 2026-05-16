@@ -325,13 +325,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "profiles_id_fkey"
-            columns: ["id"]
-            isOneToOne: false
-            referencedRelation: "users_summary"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "profiles_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
@@ -416,13 +409,6 @@ export type Database = {
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "social_connections_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users_summary"
             referencedColumns: ["id"]
           },
         ]
@@ -528,13 +514,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "web_audits_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users_summary"
-            referencedColumns: ["id"]
-          },
         ]
       }
     }
@@ -545,27 +524,6 @@ export type Database = {
           path: string | null
           unique_visitors: number | null
           visits: number | null
-        }
-        Relationships: []
-      }
-      users_summary: {
-        Row: {
-          avatar_url: string | null
-          email: string | null
-          full_name: string | null
-          id: string | null
-        }
-        Insert: {
-          avatar_url?: never
-          email?: string | null
-          full_name?: never
-          id?: string | null
-        }
-        Update: {
-          avatar_url?: never
-          email?: string | null
-          full_name?: never
-          id?: string | null
         }
         Relationships: []
       }
