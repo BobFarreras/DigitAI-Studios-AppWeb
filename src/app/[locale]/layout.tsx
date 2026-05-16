@@ -101,13 +101,14 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale} className={inter.variable} suppressHydrationWarning>
-      <body className="antialiased bg-background text-foreground overflow-x-hidden transition-colors duration-300">
+      <body
+        className="antialiased bg-background text-foreground overflow-x-hidden transition-colors duration-300"
+        suppressHydrationWarning
+      >
         <NextIntlClientProvider messages={messages}>
           <ThemeProvider
-            attribute="class"
             defaultTheme="system"
             enableSystem
-            disableTransitionOnChange
           >
             {/* Analítica sense bloquejar la càrrega */}
             <Suspense fallback={null}>

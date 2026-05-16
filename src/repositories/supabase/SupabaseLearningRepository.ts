@@ -8,19 +8,25 @@ import type { PostgrestError } from '@supabase/supabase-js';
 import { createAdminClient } from '@/lib/supabase/server';
 import type {
   ILearningRepository,
+  LearningAttemptCompletion,
+  LearningLessonDetailRecord,
   LearningDashboardSnapshot,
-  LearningLessonRecord,
-  LearningModuleRecord,
-  LearningTrackRecord,
 } from '@/repositories/interfaces/ILearningRepository';
 import type { Tables } from '@/types/database.types';
+import {
+  averageAccuracy,
+  mapLesson,
+  mapModules,
+  mapProgress,
+  mapReviewItems,
+  mapSteps,
+  mapTracks,
+  sumWeeklyMinutes,
+  sumXp,
+} from './learning-mappers';
+import { persistAttemptCompletion } from './learning-persistence';
 
-type TrackRow = Tables<'learning_tracks'>;
 type ModuleRow = Tables<'learning_modules'>;
-type LessonRow = Tables<'learning_lessons'>;
-type ProgressRow = Tables<'learning_progress'>;
-type AttemptRow = Tables<'learning_attempts'>;
-type XpRow = Pick<Tables<'learning_xp_events'>, 'xp'>;
 
 export class SupabaseLearningRepository implements ILearningRepository {
   async getDashboardSnapshot(userId: string): Promise<LearningDashboardSnapshot> {
@@ -60,76 +66,71 @@ export class SupabaseLearningRepository implements ILearningRepository {
       reviewItems: mapReviewItems(progress.data ?? [], lessons.data ?? []),
     };
   }
+
+  async getLessonDetail(
+    trackSlug: string,
+    lessonSlug: string
+  ): Promise<LearningLessonDetailRecord | null> {
+    const supabase = createAdminClient();
+    const track = await supabase
+      .from('learning_tracks')
+      .select('*')
+      .eq('slug', trackSlug)
+      .eq('active', true)
+      .maybeSingle();
+    assertNoError(track.error);
+    if (!track.data) return null;
+
+    const modules = await supabase
+      .from('learning_modules')
+      .select('*')
+      .eq('track_id', track.data.id)
+      .eq('active', true)
+      .order('order_index');
+    assertNoError(modules.error);
+
+    const lesson = await findLessonBySlug(modules.data ?? [], lessonSlug);
+    if (!lesson) return null;
+
+    const steps = await supabase
+      .from('learning_steps')
+      .select('*')
+      .eq('lesson_id', lesson.id)
+      .order('order_index');
+    assertNoError(steps.error);
+
+    return {
+      trackSlug: track.data.slug,
+      trackTitle: track.data.title,
+      moduleTitle: lesson.moduleTitle,
+      lesson: mapLesson(lesson),
+      steps: mapSteps(steps.data ?? []),
+    };
+  }
+
+  async completeAttempt(input: LearningAttemptCompletion): Promise<void> {
+    await persistAttemptCompletion(createAdminClient(), input);
+  }
 }
 
-function mapTracks(tracks: TrackRow[]): LearningTrackRecord[] {
-  return tracks.map((track) => ({
-    id: track.id,
-    slug: track.slug,
-    title: track.title,
-    description: track.description,
-    icon: track.icon,
-    color: track.color,
-    orderIndex: track.order_index,
-  }));
-}
+async function findLessonBySlug(modules: ModuleRow[], lessonSlug: string) {
+  const supabase = createAdminClient();
+  const moduleIds = modules.map((module) => module.id);
+  if (moduleIds.length === 0) return null;
 
-function mapModules(modules: ModuleRow[], lessons: LessonRow[]): LearningModuleRecord[] {
-  return modules.map((module) => ({
-    id: module.id,
-    trackId: module.track_id,
-    slug: module.slug,
-    title: module.title,
-    description: module.description,
-    orderIndex: module.order_index,
-    lessons: mapLessons(lessons.filter((lesson) => lesson.module_id === module.id)),
-  }));
-}
+  const lesson = await supabase
+    .from('learning_lessons')
+    .select('*')
+    .in('module_id', moduleIds)
+    .eq('slug', lessonSlug)
+    .eq('active', true)
+    .maybeSingle();
+  assertNoError(lesson.error);
+  if (!lesson.data) return null;
 
-function mapLessons(lessons: LessonRow[]): LearningLessonRecord[] {
-  return lessons.map((lesson) => ({
-    id: lesson.id,
-    slug: lesson.slug,
-    title: lesson.title,
-    estimatedMinutes: lesson.estimated_minutes,
-    orderIndex: lesson.order_index,
-  }));
-}
-
-function mapProgress(progress: ProgressRow[]) {
-  return progress.map((item) => ({
-    lessonId: item.lesson_id,
-    completed: item.completed,
-    needsReview: item.needs_review,
-    bestScore: item.best_score,
-  }));
-}
-
-function mapReviewItems(progress: ProgressRow[], lessons: LessonRow[]) {
-  const reviewLessonIds = new Set(
-    progress.filter((item) => item.needs_review).map((item) => item.lesson_id)
-  );
-  return lessons
-    .filter((lesson) => reviewLessonIds.has(lesson.id))
-    .map((lesson) => lesson.title)
-    .slice(0, 3);
-}
-
-function sumXp(events: XpRow[]) {
-  return events.reduce((total, event) => total + event.xp, 0);
-}
-
-function sumWeeklyMinutes(attempts: AttemptRow[]) {
-  const seconds = attempts.reduce((total, attempt) => total + attempt.time_spent_seconds, 0);
-  return Math.round(seconds / 60);
-}
-
-function averageAccuracy(attempts: AttemptRow[]) {
-  const values = attempts
-    .map((attempt) => attempt.accuracy)
-    .filter((value): value is number => value !== null);
-  if (values.length === 0) return null;
-  return Math.round(values.reduce((total, value) => total + value, 0) / values.length);
+  const lessonData = lesson.data;
+  const learningModule = modules.find((item) => item.id === lessonData.module_id);
+  return { ...lessonData, moduleTitle: learningModule?.title ?? 'Formacio' };
 }
 
 function assertNoError(error: PostgrestError | null) {

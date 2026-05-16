@@ -11,6 +11,7 @@ Data d'actualització: 2026-05-15
 - `root-cleanup-inventory.md`: inventari de fitxers root i criteris de decisió.
 - `legacy-decommission-guide.md`: estat de tancament del desmantellament legacy i backups DB.
 - `training-platform-guide.md`: guia de producte i arquitectura per la nova area de formacio gamificada.
+- `training-platform-status.md`: estat implementat, bugs corregits, tests i fases pendents de la plataforma formativa.
 
 ## Històric Arxivat
 - `archive/`: documents i artefactes no actius al runtime (coneixement històric).

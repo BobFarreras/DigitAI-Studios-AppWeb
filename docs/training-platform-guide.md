@@ -414,9 +414,9 @@ Fase 2:
 - Afegir animacions de nodes i recompensa. Fet.
 
 ### Fase 4 - Lesson runner MVP
-- Crear runner de lliço. Pendent; ruta placeholder creada.
-- Implementar multiple choice, true/false i order steps.
-- Persistir attempts i progress.
+- Crear runner de lliço. Fet.
+- Implementar multiple choice, true/false, scenario, order steps i match pairs. Fet.
+- Persistir attempts, answers, progress i XP. Fet.
 
 ### Fase 5 - Gamificacio
 - XP.

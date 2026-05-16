@@ -36,8 +36,8 @@ describe('mapDashboardData', () => {
           description: 'Base digital.',
           orderIndex: 1,
           lessons: [
-            { id: 'lesson-1', slug: 'intro', title: 'Intro', estimatedMinutes: 4, orderIndex: 1 },
-            { id: 'lesson-2', slug: 'seguretat', title: 'Seguretat', estimatedMinutes: 6, orderIndex: 2 },
+            { id: 'lesson-1', slug: 'intro', title: 'Intro', objective: null, estimatedMinutes: 4, xpReward: 10, orderIndex: 1 },
+            { id: 'lesson-2', slug: 'seguretat', title: 'Seguretat', objective: null, estimatedMinutes: 6, xpReward: 10, orderIndex: 2 },
           ],
         },
       ],
@@ -86,7 +86,7 @@ describe('mapDashboardData', () => {
           title: 'Base',
           description: null,
           orderIndex: 1,
-          lessons: [{ id: 'lesson-1', slug: 'intro', title: 'Intro', estimatedMinutes: 4, orderIndex: 1 }],
+          lessons: [{ id: 'lesson-1', slug: 'intro', title: 'Intro', objective: null, estimatedMinutes: 4, xpReward: 10, orderIndex: 1 }],
         },
         {
           id: 'module-2',
@@ -95,7 +95,7 @@ describe('mapDashboardData', () => {
           title: 'Xarxes',
           description: null,
           orderIndex: 1,
-          lessons: [{ id: 'lesson-2', slug: 'ip', title: 'IP', estimatedMinutes: 5, orderIndex: 1 }],
+          lessons: [{ id: 'lesson-2', slug: 'ip', title: 'IP', objective: null, estimatedMinutes: 5, xpReward: 10, orderIndex: 1 }],
         },
       ],
       progress: [],

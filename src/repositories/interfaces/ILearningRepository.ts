@@ -9,8 +9,35 @@ export type LearningLessonRecord = {
   id: string;
   slug: string;
   title: string;
+  objective: string | null;
   estimatedMinutes: number;
+  xpReward: number;
   orderIndex: number;
+};
+
+export type LearningStepType =
+  | 'multiple_choice'
+  | 'true_false'
+  | 'order_steps'
+  | 'match_pairs'
+  | 'scenario';
+
+export type LearningStepRecord = {
+  id: string;
+  lessonId: string;
+  type: LearningStepType;
+  prompt: string;
+  explanation: string | null;
+  config: Record<string, unknown>;
+  orderIndex: number;
+};
+
+export type LearningLessonDetailRecord = {
+  trackSlug: string;
+  trackTitle: string;
+  moduleTitle: string;
+  lesson: LearningLessonRecord;
+  steps: LearningStepRecord[];
 };
 
 export type LearningTrackRecord = {
@@ -51,6 +78,30 @@ export type LearningDashboardSnapshot = {
   reviewItems: string[];
 };
 
+export type LearningPersistedAnswer = {
+  stepId: string;
+  answer: unknown;
+  isCorrect: boolean;
+  hintUsed: boolean;
+  timeSpentSeconds: number;
+};
+
+export type LearningAttemptCompletion = {
+  userId: string;
+  lessonId: string;
+  status: 'completed' | 'needs_review';
+  score: number;
+  correctCount: number;
+  mistakeCount: number;
+  timeSpentSeconds: number;
+  requiresReview: boolean;
+  xpAwarded: number;
+  accuracy: number;
+  answers: LearningPersistedAnswer[];
+};
+
 export interface ILearningRepository {
   getDashboardSnapshot(userId: string): Promise<LearningDashboardSnapshot>;
+  getLessonDetail(trackSlug: string, lessonSlug: string): Promise<LearningLessonDetailRecord | null>;
+  completeAttempt(input: LearningAttemptCompletion): Promise<void>;
 }
