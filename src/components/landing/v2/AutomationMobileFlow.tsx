@@ -74,7 +74,7 @@ function NodeDetail({ open, align, above, children }: { open: boolean; align: 'l
           animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
           exit={{ opacity: 0, y: above ? 10 : -10, scale: 0.94, filter: 'blur(10px)' }}
           transition={{ duration: 0.34, ease: smoothEase }}
-          className={`absolute ${x} ${y} w-[252px] rounded-[8px] border border-[#c3cad6] bg-[#f7f8f8]/96 px-3.5 py-2.5 text-left text-[13px] font-[540] leading-[1.55] text-[#383b3f] shadow-[0_18px_44px_rgba(8,9,10,0.16)] backdrop-blur-md dark:border-[#4a4e57] dark:bg-[#1a1c1f]/96 dark:text-[#e2e6ec]`}
+          className={`absolute ${x} ${y} w-[268px] rounded-[8px] border border-[#c3cad6] bg-[#f7f8f8]/96 px-4 py-3 text-left text-[14px] font-[570] leading-[1.55] text-[#2f3338] shadow-[0_18px_44px_rgba(8,9,10,0.16)] backdrop-blur-md dark:border-[#4a4e57] dark:bg-[#1a1c1f]/96 dark:text-[#e2e6ec]`}
         >
           {children}
         </motion.div>
@@ -94,7 +94,7 @@ function MobileEdges({ workflow, activeNode }: { workflow: Workflow; activeNode:
         return (
           <g key={`${edge.from}-${edge.to}`}>
             <motion.path d={path} fill="none" stroke="currentColor" strokeWidth="0.24" className="text-[#4f5662]/54 dark:text-[#9aa2ad]/46" initial={{ pathLength: 0, opacity: 0 }} whileInView={{ pathLength: 1, opacity: 1 }} viewport={{ once: true }} transition={{ duration: 1.05, delay: index * 0.1, ease: smoothEase }} />
-            <motion.circle r="0.7" className="fill-[#8b5cf6]" animate={{ opacity: isActive ? [0.2, 1, 0.2] : 0, offsetDistance: isActive ? ['0%', '100%'] : '0%' }} transition={{ duration: 1.7, repeat: isActive ? Infinity : 0, ease: 'linear' }} style={{ offsetPath: `path("${path}")` }} />
+            <motion.path d={path} fill="none" stroke="currentColor" strokeLinecap="round" strokeWidth="0.55" className="text-[#8b5cf6]" initial={false} animate={{ opacity: isActive ? [0.18, 0.95, 0.18] : 0, pathLength: isActive ? [0, 1] : 0 }} transition={{ duration: 1.45, repeat: isActive ? Infinity : 0, ease: 'linear' }} />
           </g>
         );
       })}

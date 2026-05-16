@@ -1,13 +1,12 @@
 /**
  * @file src/app/[locale]/admin/projects/page.tsx
- * @updated 2026-05-08
+ * @updated 2026-05-15
  * @summary Route module: src/app/[locale]/admin/projects/page.tsx
  * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
  */
 import { requireAdmin } from '@/lib/auth/admin-guard';
 import { Link } from '@/routing';
-import { Plus, Github, ExternalLink, Clock, CheckCircle, AlertCircle, LayoutGrid } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Github, ExternalLink, Clock, CheckCircle, AlertCircle, LayoutGrid } from 'lucide-react';
 import { getAdminProjectsOverview } from '@/actions/admin/projects';
 
 export default async function AdminProjectsPage() {
@@ -23,13 +22,8 @@ export default async function AdminProjectsPage() {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
           <div>
             <h1 className="text-3xl font-bold text-foreground tracking-tight">Projectes Clients</h1>
-            <p className="text-muted-foreground">Gestió de les PWA generades ({projects?.length || 0})</p>
+            <p className="text-muted-foreground">Consulta de projectes existents ({projects?.length || 0})</p>
           </div>
-          <Link href="/admin/projects/new">
-            <Button className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg border-0 gap-2">
-              <Plus className="w-5 h-5" /> Generar Nova Web
-            </Button>
-          </Link>
         </div>
 
         {/* Grid de Projectes */}
@@ -94,10 +88,7 @@ export default async function AdminProjectsPage() {
                  <LayoutGrid className="w-8 h-8 text-muted-foreground opacity-50" />
               </div>
               <h3 className="text-lg font-medium text-foreground">Sense projectes</h3>
-              <p className="text-muted-foreground mt-1 mb-6">Encara no has creat cap projecte per a clients.</p>
-              <Link href="/admin/projects/new">
-                <Button variant="outline">Crear el primer</Button>
-              </Link>
+              <p className="text-muted-foreground mt-1">La factory de creacio automatica esta arxivada a legacy.</p>
             </div>
           )}
         </div>

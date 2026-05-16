@@ -3,9 +3,9 @@
 Modern landing + private admin workspace built with Next.js 16, TypeScript, Supabase and `next-intl`.
 
 ## Current Direction
-- Public focus: high-impact landing experience.
-- Private focus: internal admin tools (content, RRSS, operational workflows).
-- De-emphasized from public nav: blog, projects, audit flows.
+- Public focus: high-impact landing experience and legal pages.
+- Private focus: internal admin tools for analytics, users, messages and content/RRSS.
+- Retired to `legacy/`: landing v1, public blog, public projects, factory, booking/ecommerce, project dashboard and QA/tests.
 
 ## Tech Stack
 - Next.js 16 (App Router)
@@ -44,3 +44,8 @@ Every meaningful change should pass:
 - `src/services`: business logic
 - `src/repositories`: data access layer
 - `src/adapters`: external integrations
+- `legacy`: archived code kept for reference, excluded from TypeScript and ESLint
+
+## Active Supabase Scope
+- Active public schema: profiles, organizations, analytics, audits, contact leads, posts and social publishing tables.
+- Retired tables are backed up in `legacy_backup` with RLS enabled and no client policies.

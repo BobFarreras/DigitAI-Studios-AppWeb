@@ -76,55 +76,9 @@
   "Dashboard": {
     "welcome": "Bienvenido, {name}",
     "my_audits": "Mis Auditorías",
-    "projects": {
-      "meta_title": "Mis Proyectos",
-      "title": "Mis Proyectos",
-      "subtitle": "Gestiona tus aplicaciones y participa en las fases de test.",
-      "empty_title": "Aún no tienes proyectos",
-      "empty_desc": "Contacta con nosotros para empezar tu primer desarrollo.",
-      "btn_request": "Solicitar Proyecto",
-      "badge_beta": "BETA DISPONIBLE",
-      "status_configuring": "configurando...",
-      "status_pending": "PENDIENTE"
-    },
-    "test_runner": {
-      "badge_mode": "Modo Tester Activo",
-      "label_progress": "Progreso",
-      "card_instructions": "Instrucciones",
-      "no_instructions": "Sin instrucciones especiales. Valida cada punto de la lista.",
-      "checklist_title": "Lista de Verificación",
-      "success_title": "¡Felicidades!",
-      "success_msg": "Has completado todas las tareas de esta misión.",
-      "motivation_start": "¡Empecemos la misión! 🚀",
-      "motivation_early": "¡Buen comienzo! Continúa así. 💪",
-      "motivation_late": "¡Ya has pasado la mitad! Eres un crack. 🔥",
-      "motivation_done": "¡MISIÓN CUMPLIDA! 🎉 Gracias por tu tiempo."
-    },
-    "project_detail": {
-      "level_label": "Nivel",
-      "xp_label": "XP",
-      "next_label": "Siguiente",
-      "current_project_label": "Proyecto Actual",
-      "missions_title": "Misiones Disponibles",
-      "empty_missions_title": "Ninguna misión activa",
-      "empty_missions_desc": "No tienes pruebas asignadas para este proyecto ahora mismo."
-    },
-    "tester_dashboard": {
-      "error_no_user": "No se ha encontrado el usuario.",
-      "level_label": "Nivel {level}",
-      "xp_label": "XP",
-      "next_level_label": "Siguiente Nivel",
-      "motivation_text": "¡Completa tareas para ganar XP y subir de rango!",
-      "active_missions_title": "Misiones Activas",
-      "empty_state_title": "No tienes ninguna misión asignada todavía.",
-      "empty_state_desc": "¡Pide a tu Project Manager que te asigne!",
-      "no_description": "Sin descripción...",
-      "tasks_count": "{count} Tareas"
-    },
     "mobile_nav": {
       "summary": "Resumen",
       "audits": "Auditorías",
-      "projects": "Proyectos",
       "web": "Web",
       "logout_short": "Salir",
       "coming_soon": "¡estará disponible próximamente! 🚀"
@@ -292,7 +246,6 @@
     "pro_button": "Mejorar",
     "web": "Web",
     "overview": "Resumen General",
-    "projects": "Proyectos",
     "analytics": "Analítica Web",
     "users": "Usuarios",
     "settings": "Configuración",
@@ -314,11 +267,11 @@
     "kpi_seo": "SEO Medio",
     "kpi_system": "Estado del Sistema",
     "system_status": "Operativo",
-    "recent_projects": "Proyectos Recientes",
     "view_all": "Ver todo",
-    "empty_title": "Aún no tienes proyectos",
+    "empty_title": "Todavía no tienes auditorías",
     "empty_desc": "Analiza tu primera web para descubrir errores de SEO y rendimiento.",
-    "empty_button": "Empezar Auditoría"
+    "empty_button": "Empezar Auditoría",
+    "recent_audits": "Auditorías Recientes"
   },
   "AuditList": {
     "title": "Mis Auditorías",
@@ -754,48 +707,144 @@
           "name": "Leads",
           "summary": "Capta contactos, detecta interés, actualiza el CRM y programa seguimientos para que ninguna oportunidad quede parada.",
           "nodes": {
-            "campaign": { "title": "Primer contacto", "meta": "WhatsApp / email", "explain": "Se envía o entra un mensaje y el sistema registra el contacto." },
-            "interest": { "title": "Detectar interés", "meta": "respuesta e intención", "explain": "La IA separa curiosidad, urgencia y oportunidad comercial." },
-            "filter": { "title": "Filtrar lead", "meta": "calificación", "explain": "Solo avanza lo que encaja con los criterios del negocio." },
-            "crm": { "title": "Actualizar CRM", "meta": "historial vivo", "explain": "Guarda datos, estado, origen y siguiente acción en el CRM." },
-            "follow": { "title": "Follow-up 48h", "meta": "recordatorio", "explain": "Si no responde, programa un nuevo contacto sin perder el hilo." },
-            "team": { "title": "Avisar equipo", "meta": "contexto completo", "explain": "Cuando hay señal real, llega a la persona adecuada." }
+            "campaign": {
+              "title": "Primer contacto",
+              "meta": "WhatsApp / email",
+              "explain": "Se envía o entra un mensaje y el sistema registra el contacto."
+            },
+            "interest": {
+              "title": "Detectar interés",
+              "meta": "respuesta e intención",
+              "explain": "La IA separa curiosidad, urgencia y oportunidad comercial."
+            },
+            "filter": {
+              "title": "Filtrar lead",
+              "meta": "calificación",
+              "explain": "Solo avanza lo que encaja con los criterios del negocio."
+            },
+            "crm": {
+              "title": "Actualizar CRM",
+              "meta": "historial vivo",
+              "explain": "Guarda datos, estado, origen y siguiente acción en el CRM."
+            },
+            "follow": {
+              "title": "Follow-up 48h",
+              "meta": "recordatorio",
+              "explain": "Si no responde, programa un nuevo contacto sin perder el hilo."
+            },
+            "team": {
+              "title": "Avisar equipo",
+              "meta": "contexto completo",
+              "explain": "Cuando hay señal real, llega a la persona adecuada."
+            }
           }
         },
         "quotes": {
           "name": "Presupuestos",
           "summary": "Transforma solicitudes en datos ordenados, aplica criterios comerciales y prepara presupuestos o facturas para validar.",
           "nodes": {
-            "request": { "title": "Solicitud", "meta": "formulario o email", "explain": "Recoge datos del cliente, servicio y condiciones de venta." },
-            "clean": { "title": "Ordenar datos", "meta": "validación", "explain": "Detecta campos incompletos y normaliza la información." },
-            "rules": { "title": "Aplicar criterios", "meta": "precios y margen", "explain": "Aplica tarifas, descuentos, impuestos y márgenes pactados." },
-            "quote": { "title": "Presupuesto", "meta": "documento", "explain": "Genera un borrador listo para revisar y enviar." },
-            "invoice": { "title": "Factura", "meta": "cuando se acepta", "explain": "Cuando el cliente acepta, deja la factura preparada." },
-            "notify": { "title": "Validación", "meta": "responsable", "explain": "El equipo solo revisa decisiones, no vuelve a escribir datos." }
+            "request": {
+              "title": "Solicitud",
+              "meta": "formulario o email",
+              "explain": "Recoge datos del cliente, servicio y condiciones de venta."
+            },
+            "clean": {
+              "title": "Ordenar datos",
+              "meta": "validación",
+              "explain": "Detecta campos incompletos y normaliza la información."
+            },
+            "rules": {
+              "title": "Aplicar criterios",
+              "meta": "precios y margen",
+              "explain": "Aplica tarifas, descuentos, impuestos y márgenes pactados."
+            },
+            "quote": {
+              "title": "Presupuesto",
+              "meta": "documento",
+              "explain": "Genera un borrador listo para revisar y enviar."
+            },
+            "invoice": {
+              "title": "Factura",
+              "meta": "cuando se acepta",
+              "explain": "Cuando el cliente acepta, deja la factura preparada."
+            },
+            "notify": {
+              "title": "Validación",
+              "meta": "responsable",
+              "explain": "El equipo solo revisa decisiones, no vuelve a escribir datos."
+            }
           }
         },
         "social": {
           "name": "RRSS",
           "summary": "Convierte ideas en piezas adaptadas por canal, las envía a revisión y las deja programadas con control de resultados.",
           "nodes": {
-            "idea": { "title": "Idea o noticia", "meta": "entrada inicial", "explain": "Una idea, producto o noticia inicia el flujo de contenido." },
-            "copy": { "title": "Crear versiones", "meta": "tono y formato", "explain": "Adapta el mensaje para LinkedIn, Instagram, blog o email." },
-            "approve": { "title": "Revisar", "meta": "control humano", "explain": "Antes de publicar, el equipo puede validar el contenido." },
-            "calendar": { "title": "Programar", "meta": "calendario", "explain": "Decide día, hora y canal según la planificación." },
-            "publish": { "title": "Publicar", "meta": "canales", "explain": "Publica o deja preparadas las piezas en cada plataforma." },
-            "report": { "title": "Medir", "meta": "resultados", "explain": "Agrupa métricas y detecta qué ha funcionado mejor." }
+            "idea": {
+              "title": "Idea o noticia",
+              "meta": "entrada inicial",
+              "explain": "Una idea, producto o noticia inicia el flujo de contenido."
+            },
+            "copy": {
+              "title": "Crear versiones",
+              "meta": "tono y formato",
+              "explain": "Adapta el mensaje para LinkedIn, Instagram, blog o email."
+            },
+            "approve": {
+              "title": "Revisar",
+              "meta": "control humano",
+              "explain": "Antes de publicar, el equipo puede validar el contenido."
+            },
+            "calendar": {
+              "title": "Programar",
+              "meta": "calendario",
+              "explain": "Decide día, hora y canal según la planificación."
+            },
+            "publish": {
+              "title": "Publicar",
+              "meta": "canales",
+              "explain": "Publica o deja preparadas las piezas en cada plataforma."
+            },
+            "report": {
+              "title": "Medir",
+              "meta": "resultados",
+              "explain": "Agrupa métricas y detecta qué ha funcionado mejor."
+            }
           }
         },
         "support": {
           "name": "Soporte",
           "summary": "Responde preguntas habituales, consulta documentación y crea tickets con contexto cuando necesita intervención humana.",
           "nodes": {
-            "chat": { "title": "Pregunta cliente", "meta": "chat o web", "explain": "El cliente pregunta y recibe una primera respuesta inmediata." },
-            "kb": { "title": "Consultar base", "meta": "documentación", "explain": "Busca en manuales, FAQs, incidencias e historial." },
-            "resolve": { "title": "¿Puede resolver?", "meta": "decisión", "explain": "Si tiene confianza, responde; si no, prepara escalado." },
-            "answer": { "title": "Respuesta guiada", "meta": "paso a paso", "explain": "Da instrucciones claras para que el cliente avance." },
-            "ticket": { "title": "Crear ticket", "meta": "soporte técnico", "explain": "Si hace falta intervención, crea un ticket con contexto." },
-            "close": { "title": "Seguimiento", "meta": "estado y resumen", "explain": "Mantiene informado al cliente y al equipo hasta el cierre." }
+            "chat": {
+              "title": "Pregunta cliente",
+              "meta": "chat o web",
+              "explain": "El cliente pregunta y recibe una primera respuesta inmediata."
+            },
+            "kb": {
+              "title": "Consultar base",
+              "meta": "documentación",
+              "explain": "Busca en manuales, FAQs, incidencias e historial."
+            },
+            "resolve": {
+              "title": "¿Puede resolver?",
+              "meta": "decisión",
+              "explain": "Si tiene confianza, responde; si no, prepara escalado."
+            },
+            "answer": {
+              "title": "Respuesta guiada",
+              "meta": "paso a paso",
+              "explain": "Da instrucciones claras para que el cliente avance."
+            },
+            "ticket": {
+              "title": "Crear ticket",
+              "meta": "soporte técnico",
+              "explain": "Si hace falta intervención, crea un ticket con contexto."
+            },
+            "close": {
+              "title": "Seguimiento",
+              "meta": "estado y resumen",
+              "explain": "Mantiene informado al cliente y al equipo hasta el cierre."
+            }
           }
         }
       }

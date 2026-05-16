@@ -8,7 +8,7 @@
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { LayoutDashboard, LogOut, Loader2 } from 'lucide-react';
+import { LogOut, Loader2 } from 'lucide-react';
 import type { User } from '@supabase/supabase-js';
 import { useTranslations } from 'next-intl';
 import { Link, usePathname, useRouter } from '@/routing';
@@ -120,7 +120,7 @@ export function NavbarV2({ user }: Props) {
 
           {user ? (
             <div className="hidden items-center gap-2 sm:flex">
-              <Link href="/dashboard" className="linear-cta inline-flex h-9 items-center gap-2 rounded-[6px] px-3 text-[13px] font-[590]"><LayoutDashboard className="h-4 w-4" />{t('dashboard')}</Link>
+              <BrandRevealButton href="/dashboard" label={t('dashboard')} />
               <button
                 onClick={handleSignOut}
                 disabled={isSigningOut}

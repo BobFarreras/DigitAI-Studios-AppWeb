@@ -8,7 +8,6 @@ export type { Database };
 export type Audit = Database['public']['Tables']['web_audits']['Row'];
 export type NewAudit = Database['public']['Tables']['web_audits']['Insert']; // Per formularis
 export type Profile = Database['public']['Tables']['profiles']['Row'];
-export type Project = Database['public']['Tables']['projects']['Row'];
 
 // Tipus per als Enums (molt útil per dropdowns)
 export type UserRole = Database['public']['Enums']['user_role'];

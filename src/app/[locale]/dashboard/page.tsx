@@ -76,7 +76,7 @@ export default async function DashboardPage() {
             {audits.length > 0 ? (
                 <div>
                     <div className="flex items-center justify-between mb-6">
-                        <h2 className="text-xl font-bold text-foreground">{t('recent_projects')}</h2>
+                        <h2 className="text-xl font-bold text-foreground">{t('recent_audits')}</h2>
                         <Link href="/dashboard/audits" className="text-sm text-primary hover:underline font-medium">
                            {t('view_all')}
                         </Link>
