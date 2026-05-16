@@ -235,6 +235,61 @@ learning_streaks (
 )
 ```
 
+## Errors, Reforc i XP
+
+Decisio de producte:
+- No utilitzar vides amb espera obligatoria.
+- No bloquejar l'usuari per temps.
+- Evitar intents infinits sense reflexio.
+- Penalitzar menys XP quan hi ha errors, pero donar sempre una via de recuperacio.
+
+### Politica d'errors
+- `0-2 errors`: feedback normal i pot continuar.
+- `3-4 errors`: entra en mode reforc; abans de repetir ha de veure una pista, explicacio o pas mes facil.
+- `5+ errors`: la lliço queda marcada com `needs_review`; pot seguir practicant, pero no completa el progres net fins fer una mini-revisio.
+
+### XP decreixent
+L'XP base d'una lliço baixa segons els errors:
+- 0 errors: 100% XP.
+- 1 error: 85% XP.
+- 2 errors: 70% XP.
+- 3 errors: 55% XP i reforc obligatori.
+- 4 errors: 40% XP i reforc obligatori.
+- 5+ errors: 25% XP maxim i `needs_review`.
+
+Regla important:
+- L'usuari no perd tot el valor de la sessio.
+- Si vol XP complet, ha de repetir o superar la mini-revisio amb millor precisio.
+- La millor puntuacio historica actualitza el progres, aixi repetir be una lliço repara l'intent fluix.
+
+### Estat d'intent recomanat
+```ts
+type LearningAttemptStatus =
+  | 'started'
+  | 'completed'
+  | 'needs_review'
+  | 'abandoned';
+
+type LearningStepStatus =
+  | 'correct'
+  | 'incorrect'
+  | 'hint_required'
+  | 'review_required';
+```
+
+### Dades a guardar
+Afegir o tenir previst:
+- `learning_attempts.requires_review boolean not null default false`
+- `learning_attempts.xp_awarded int not null default 0`
+- `learning_attempts.accuracy numeric`
+- `learning_step_answers.hint_used boolean not null default false`
+- `learning_progress.needs_review boolean not null default false`
+
+Dashboard:
+- Mostrar errors repetits per concepte.
+- Mostrar lliçons en repàs com una accio positiva: "Reforça aquest punt".
+- No presentar-ho com a castig, sino com a cami curt per consolidar.
+
 ## RLS i Seguretat
 
 Regles:
@@ -335,22 +390,23 @@ Fase 2:
 ## Pla Incremental
 
 ### Fase 1 - Guia i arquitectura
-- Aprovar aquest document.
-- Decidir si es retira dashboard audit usuari ara o despres.
+- Aprovar aquest document. Fet.
+- Retirar dashboard audit d'usuari a `legacy/user-audits-dashboard/`. Fet.
+- Crear primer dashboard formatiu MVP amb dades locals. Fet.
 - Definir primer track i 10 lliçons MVP.
 
 ### Fase 2 - DB i seed inicial
-- Crear migracions `learning_*`.
-- Crear seed de tracks/modules/lessons/steps.
-- Generar tipus Supabase.
+- Crear migracions `learning_*`. Fet.
+- Crear seed de tracks/modules/lessons/steps. Fet.
+- Generar tipus Supabase. Fet.
 
 ### Fase 3 - Dashboard formatiu
-- Reemplaçar `/dashboard`.
-- Afegir components mobile-first.
-- Mostrar progres fake o real segons DB inicial.
+- Reemplaçar `/dashboard`. Fet.
+- Afegir components mobile-first. Fet.
+- Mostrar progres fake o real segons DB inicial. Fet amb dades reals Supabase.
 
 ### Fase 4 - Lesson runner MVP
-- Crear runner de lliço.
+- Crear runner de lliço. Pendent; ruta placeholder creada.
 - Implementar multiple choice, true/false i order steps.
 - Persistir attempts i progress.
 
@@ -380,4 +436,3 @@ Començar petit:
 3. Dashboard nou amb progres real.
 4. Runner amb 3 tipus d'exercici.
 5. Despres escalar a IA, ciberseguretat i programacio.
-

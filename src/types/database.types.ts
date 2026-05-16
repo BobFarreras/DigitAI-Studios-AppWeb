@@ -179,6 +179,358 @@ export type Database = {
         }
         Relationships: []
       }
+      learning_attempts: {
+        Row: {
+          accuracy: number | null
+          completed_at: string | null
+          correct_count: number
+          id: string
+          lesson_id: string
+          mistake_count: number
+          requires_review: boolean
+          score: number
+          started_at: string
+          status: string
+          time_spent_seconds: number
+          user_id: string
+          xp_awarded: number
+        }
+        Insert: {
+          accuracy?: number | null
+          completed_at?: string | null
+          correct_count?: number
+          id?: string
+          lesson_id: string
+          mistake_count?: number
+          requires_review?: boolean
+          score?: number
+          started_at?: string
+          status: string
+          time_spent_seconds?: number
+          user_id: string
+          xp_awarded?: number
+        }
+        Update: {
+          accuracy?: number | null
+          completed_at?: string | null
+          correct_count?: number
+          id?: string
+          lesson_id?: string
+          mistake_count?: number
+          requires_review?: boolean
+          score?: number
+          started_at?: string
+          status?: string
+          time_spent_seconds?: number
+          user_id?: string
+          xp_awarded?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "learning_attempts_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "learning_lessons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      learning_lessons: {
+        Row: {
+          active: boolean
+          estimated_minutes: number
+          id: string
+          module_id: string
+          objective: string | null
+          order_index: number
+          slug: string
+          title: string
+          xp_reward: number
+        }
+        Insert: {
+          active?: boolean
+          estimated_minutes?: number
+          id?: string
+          module_id: string
+          objective?: string | null
+          order_index?: number
+          slug: string
+          title: string
+          xp_reward?: number
+        }
+        Update: {
+          active?: boolean
+          estimated_minutes?: number
+          id?: string
+          module_id?: string
+          objective?: string | null
+          order_index?: number
+          slug?: string
+          title?: string
+          xp_reward?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "learning_lessons_module_id_fkey"
+            columns: ["module_id"]
+            isOneToOne: false
+            referencedRelation: "learning_modules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      learning_modules: {
+        Row: {
+          active: boolean
+          description: string | null
+          id: string
+          level: string
+          order_index: number
+          slug: string
+          title: string
+          track_id: string
+        }
+        Insert: {
+          active?: boolean
+          description?: string | null
+          id?: string
+          level: string
+          order_index?: number
+          slug: string
+          title: string
+          track_id: string
+        }
+        Update: {
+          active?: boolean
+          description?: string | null
+          id?: string
+          level?: string
+          order_index?: number
+          slug?: string
+          title?: string
+          track_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "learning_modules_track_id_fkey"
+            columns: ["track_id"]
+            isOneToOne: false
+            referencedRelation: "learning_tracks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      learning_progress: {
+        Row: {
+          attempts_count: number
+          best_score: number
+          completed: boolean
+          completed_at: string | null
+          lesson_id: string
+          needs_review: boolean
+          user_id: string
+        }
+        Insert: {
+          attempts_count?: number
+          best_score?: number
+          completed?: boolean
+          completed_at?: string | null
+          lesson_id: string
+          needs_review?: boolean
+          user_id: string
+        }
+        Update: {
+          attempts_count?: number
+          best_score?: number
+          completed?: boolean
+          completed_at?: string | null
+          lesson_id?: string
+          needs_review?: boolean
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "learning_progress_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "learning_lessons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      learning_step_answers: {
+        Row: {
+          answer: Json
+          attempt_id: string
+          created_at: string
+          hint_used: boolean
+          id: string
+          is_correct: boolean
+          step_id: string
+          time_spent_seconds: number
+        }
+        Insert: {
+          answer: Json
+          attempt_id: string
+          created_at?: string
+          hint_used?: boolean
+          id?: string
+          is_correct: boolean
+          step_id: string
+          time_spent_seconds?: number
+        }
+        Update: {
+          answer?: Json
+          attempt_id?: string
+          created_at?: string
+          hint_used?: boolean
+          id?: string
+          is_correct?: boolean
+          step_id?: string
+          time_spent_seconds?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "learning_step_answers_attempt_id_fkey"
+            columns: ["attempt_id"]
+            isOneToOne: false
+            referencedRelation: "learning_attempts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "learning_step_answers_step_id_fkey"
+            columns: ["step_id"]
+            isOneToOne: false
+            referencedRelation: "learning_steps"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      learning_steps: {
+        Row: {
+          config: Json
+          explanation: string | null
+          id: string
+          lesson_id: string
+          media: Json | null
+          order_index: number
+          prompt: string
+          type: string
+        }
+        Insert: {
+          config?: Json
+          explanation?: string | null
+          id?: string
+          lesson_id: string
+          media?: Json | null
+          order_index?: number
+          prompt: string
+          type: string
+        }
+        Update: {
+          config?: Json
+          explanation?: string | null
+          id?: string
+          lesson_id?: string
+          media?: Json | null
+          order_index?: number
+          prompt?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "learning_steps_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "learning_lessons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      learning_streaks: {
+        Row: {
+          current_streak: number
+          last_activity_date: string | null
+          longest_streak: number
+          user_id: string
+        }
+        Insert: {
+          current_streak?: number
+          last_activity_date?: string | null
+          longest_streak?: number
+          user_id: string
+        }
+        Update: {
+          current_streak?: number
+          last_activity_date?: string | null
+          longest_streak?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      learning_tracks: {
+        Row: {
+          active: boolean
+          color: string | null
+          created_at: string
+          description: string | null
+          icon: string | null
+          id: string
+          order_index: number
+          slug: string
+          title: string
+        }
+        Insert: {
+          active?: boolean
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          order_index?: number
+          slug: string
+          title: string
+        }
+        Update: {
+          active?: boolean
+          color?: string | null
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          order_index?: number
+          slug?: string
+          title?: string
+        }
+        Relationships: []
+      }
+      learning_xp_events: {
+        Row: {
+          created_at: string
+          id: string
+          source_id: string | null
+          source_type: string
+          user_id: string
+          xp: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          source_id?: string | null
+          source_type: string
+          user_id: string
+          xp: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          source_id?: string | null
+          source_type?: string
+          user_id?: string
+          xp?: number
+        }
+        Relationships: []
+      }
       n8n_chat_histories1: {
         Row: {
           fecha_mensaje: string | null

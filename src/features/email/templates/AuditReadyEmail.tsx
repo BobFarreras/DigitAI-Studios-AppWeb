@@ -50,7 +50,6 @@ export const AuditReadyEmail = ({
   url = "exemple.com",
   seoScore = 45,
   perfScore = 82,
-  auditId = "123",
   baseUrl = "https://digitai-studios.com", 
   suggestions = [],
 }: AuditReadyEmailProps) => {
@@ -169,8 +168,8 @@ export const AuditReadyEmail = ({
               SOL·LICITAR IMPLEMENTACIÓ →
             </Button>
              <Text style={{ textAlign: 'center', marginTop: '15px' }}>
-                <Link href={`${baseUrl}/dashboard/audits/${auditId}`} style={{ fontSize: '14px', color: '#64748b', textDecoration: 'underline' }}>
-                  O veure només l'informe tècnic
+                <Link href={`${baseUrl}/dashboard`} style={{ fontSize: '14px', color: '#64748b', textDecoration: 'underline' }}>
+                  O entrar al teu panell
                 </Link>
             </Text>
           </Section>

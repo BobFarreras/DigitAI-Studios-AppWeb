@@ -6,7 +6,7 @@ import { useTranslations } from 'next-intl';
 import {
   LayoutDashboard,
   Settings,
-  BarChart3,
+  BookOpenCheck,
   Users,
   ShieldCheck // <--- Icona per Admin
   
@@ -36,9 +36,9 @@ export function Sidebar({ userRole = 'client' }: SidebarProps) {
       roles: ['admin'],     // <--- NOMÉS ADMIN
     },
     {
-      label: t('analytics'),
-      href: '/dashboard/audits',
-      icon: BarChart3,
+      label: 'Aprendre',
+      href: '/dashboard/learn',
+      icon: BookOpenCheck,
       roles: ['admin', 'client'],
     },
     {

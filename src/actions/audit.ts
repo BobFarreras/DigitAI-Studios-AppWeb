@@ -153,7 +153,7 @@ export async function createAuditAction(url: string) {
   }
 
   if (auditId) {
-    redirect(`/${locale}/dashboard/audits/${auditId}`);
+    redirect(`/${locale}/dashboard`);
   }
 
   return { success: false, message: 'No s\'ha pogut crear l\'auditoria.' };

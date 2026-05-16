@@ -1,15 +1,24 @@
 /**
  * @file src/actions/dashboard-home.ts
- * @updated 2026-05-08
- * @summary Server actions per src/actions/dashboard-home.ts
- * @scope Operacions de servidor, validacio i orquestracio de capa aplicacio.
+ * @updated 2026-05-16
+ * @summary Server action for the user training dashboard.
+ * @scope Auth gate and application orchestration for dashboard home.
  */
 'use server';
 
 import { createClient } from '@/lib/supabase/server';
-import { auditRepository } from '@/services/container';
+import { SupabaseLearningRepository } from '@/repositories/supabase/SupabaseLearningRepository';
+import {
+  LearningDashboardService,
+  type LearningDashboardData,
+} from '@/services/learning/learning-dashboard-service';
 
-export async function getDashboardHomeData() {
+type DashboardHomeResult =
+  | { success: true; data: LearningDashboardData }
+  | { success: false; authRequired: true }
+  | { success: false; error: string };
+
+export async function getDashboardHomeData(): Promise<DashboardHomeResult> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -17,11 +26,13 @@ export async function getDashboardHomeData() {
     return { success: false, authRequired: true as const };
   }
 
-  const audits = await auditRepository.getAuditsByUserEmail(user.email);
-  return {
-    success: true,
-    userEmail: user.email,
-    audits,
-  };
+  try {
+    const service = new LearningDashboardService(new SupabaseLearningRepository());
+    const data = await service.getDashboardData(user.id, user.email);
+
+    return { success: true, data };
+  } catch {
+    return { success: false, error: 'No hem pogut carregar la formacio.' };
+  }
 }
 
