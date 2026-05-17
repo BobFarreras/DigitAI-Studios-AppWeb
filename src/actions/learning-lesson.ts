@@ -27,12 +27,23 @@ const submitSchema = z.object({
   answers: z.array(answerSchema).min(1).max(20),
 });
 
+const checkSchema = z.object({
+  trackSlug: z.string().min(1).max(80),
+  lessonSlug: z.string().min(1).max(80),
+  stepId: z.string().uuid(),
+  value: z.unknown(),
+});
+
 type RunnerResult =
   | { success: true; data: LearningRunnerData }
   | { success: false; authRequired?: true; error: string };
 
 type SubmitResult =
   | { success: true; data: Awaited<ReturnType<LearningLessonService['submitLesson']>> }
+  | { success: false; authRequired?: true; error: string };
+
+type CheckResult =
+  | { success: true; data: Awaited<ReturnType<LearningLessonService['checkAnswer']>> }
   | { success: false; authRequired?: true; error: string };
 
 export async function getLearningLessonRunner(
@@ -65,6 +76,24 @@ export async function submitLearningLesson(input: unknown): Promise<SubmitResult
   );
 
   return { success: true, data: result };
+}
+
+export async function checkLearningStepAnswer(input: unknown): Promise<CheckResult> {
+  const user = await getCurrentUser();
+  if (!user) return { success: false, authRequired: true as const, error: 'auth_required' };
+
+  const parsed = checkSchema.safeParse(input);
+  if (!parsed.success) return { success: false, error: 'invalid_payload' };
+
+  const service = new LearningLessonService(new SupabaseLearningRepository());
+  const result = await service.checkAnswer(
+    parsed.data.trackSlug,
+    parsed.data.lessonSlug,
+    parsed.data.stepId,
+    parsed.data.value
+  );
+
+  return result ? { success: true, data: result } : { success: false, error: 'step_not_found' };
 }
 
 async function getCurrentUser() {

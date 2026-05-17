@@ -1,11 +1,12 @@
 /**
  * @file tests/integration/learning-lesson-flow.test.tsx
- * @updated 2026-05-16
+ * @updated 2026-05-17
  * @summary Integration tests for the complete learning lesson service flow.
  * @scope Verifies runner loading, answer sanitization, grading and persistence contract.
  */
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import type React from 'react';
 import type {
   ILearningRepository,
@@ -15,6 +16,7 @@ import type {
 } from '@/repositories/interfaces/ILearningRepository';
 import { LearningLessonService } from '@/services/learning/learning-lesson-service';
 import { LearningLessonRunner } from '@/features/learning/ui/LearningLessonRunner';
+import { checkLearningStepAnswer, submitLearningLesson } from '@/actions/learning-lesson';
 
 vi.mock('@/routing', () => ({
   Link: ({ href, children, ...props }: React.AnchorHTMLAttributes<HTMLAnchorElement>) => (
@@ -23,6 +25,7 @@ vi.mock('@/routing', () => ({
 }));
 
 vi.mock('@/actions/learning-lesson', () => ({
+  checkLearningStepAnswer: vi.fn(),
   submitLearningLesson: vi.fn(),
 }));
 
@@ -92,6 +95,10 @@ const lessonDetail: LearningLessonDetailRecord = {
 };
 
 describe('LearningLessonService integration flow', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   it('loads a runner without leaking correct answers', async () => {
     const service = new LearningLessonService(new MemoryLearningRepository(lessonDetail));
     const runner = await service.getRunner('iniciacio-digital', 'que-es-un-sistema-operatiu');
@@ -117,9 +124,91 @@ describe('LearningLessonService integration flow', () => {
     expect(repository.completedAttempt?.xpAwarded).toBe(10);
   });
 
+  it('persists incorrect answers and marks a weak attempt for review', async () => {
+    const repository = new MemoryLearningRepository(lessonDetail);
+    const service = new LearningLessonService(repository);
+
+    const result = await service.submitLesson('user-1', 'iniciacio-digital', 'que-es-un-sistema-operatiu', [
+      { stepId: 'step-choice', value: 'Cafetera', hintUsed: false, timeSpentSeconds: 3 },
+      { stepId: 'step-order', value: ['SO', 'Hardware'], hintUsed: false, timeSpentSeconds: 8 },
+      { stepId: 'step-match', value: { SO: 'Cable' }, hintUsed: false, timeSpentSeconds: 7 },
+    ]);
+
+    expect(result.requiresReview).toBe(true);
+    expect(repository.completedAttempt?.status).toBe('needs_review');
+    expect(repository.completedAttempt?.answers.every((answer) => !answer.isCorrect)).toBe(true);
+  });
+
   it('does not crash when a lesson has no published steps', () => {
     render(<LearningLessonRunner data={{ ...lessonDetail, lesson: lessonDetail.lesson, steps: [] }} />);
 
     expect(screen.getByText('Llico en preparacio')).toBeInTheDocument();
+  });
+
+  it('shows server feedback when a selected answer is wrong', async () => {
+    vi.mocked(checkLearningStepAnswer).mockResolvedValue({
+      success: true,
+      data: {
+        stepId: 'step-choice',
+        isCorrect: false,
+        explanation: 'El sistema operatiu coordina recursos.',
+      },
+    });
+
+    render(<LearningLessonRunner data={lessonDetail} />);
+
+    await userEvent.click(screen.getByRole('button', { name: /Cafetera/i }));
+    await userEvent.click(screen.getByRole('button', { name: /Comprovar/i }));
+
+    expect(await screen.findByText('Incorrecte')).toBeInTheDocument();
+    expect(screen.getByText('El sistema operatiu coordina recursos.')).toBeInTheDocument();
+    expect(checkLearningStepAnswer).toHaveBeenCalledWith(expect.objectContaining({ value: 'Cafetera' }));
+  });
+
+  it('uses blue for selected answers, then completes with timed answers', async () => {
+    vi.mocked(checkLearningStepAnswer).mockResolvedValue({
+      success: true,
+      data: { stepId: 'step-choice', isCorrect: true, explanation: 'Resposta validada.' },
+    });
+    vi.mocked(submitLearningLesson).mockResolvedValue({
+      success: true,
+      data: {
+        score: 100,
+        correctCount: 1,
+        mistakeCount: 0,
+        accuracy: 100,
+        requiresReview: false,
+        xpAwarded: 10,
+        timeSpentSeconds: 1,
+        answers: [],
+      },
+    });
+
+    render(<LearningLessonRunner data={{ ...lessonDetail, steps: [lessonDetail.steps[0]] }} />);
+
+    const choice = screen.getByRole('button', { name: /Hardware/i });
+    await userEvent.click(choice);
+    expect(choice.className).toContain('border-[#1cb0f6]');
+
+    await userEvent.click(screen.getByRole('button', { name: /Comprovar/i }));
+    expect(await screen.findByText('Correcte')).toBeInTheDocument();
+    expect(choice.className).toContain('border-[#58cc02]');
+
+    await userEvent.click(screen.getByRole('button', { name: /Completar/i }));
+    expect(await screen.findByText('Llico completada')).toBeInTheDocument();
+
+    const submitted = vi.mocked(submitLearningLesson).mock.calls[0][0] as { answers: Array<{ timeSpentSeconds: number }> };
+    expect(submitted.answers[0].timeSpentSeconds).toBeGreaterThan(0);
+  });
+
+  it('shows a visible error when answer checking fails', async () => {
+    vi.mocked(checkLearningStepAnswer).mockResolvedValue({ success: false, error: 'server_error' });
+
+    render(<LearningLessonRunner data={{ ...lessonDetail, steps: [lessonDetail.steps[0]] }} />);
+
+    await userEvent.click(screen.getByRole('button', { name: /Hardware/i }));
+    await userEvent.click(screen.getByRole('button', { name: /Comprovar/i }));
+
+    expect(await screen.findByText('No hem pogut comprovar la resposta. Torna-ho a provar.')).toBeInTheDocument();
   });
 });

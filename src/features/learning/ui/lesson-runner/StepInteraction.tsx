@@ -1,30 +1,53 @@
 /**
  * @file src/features/learning/ui/lesson-runner/StepInteraction.tsx
- * @updated 2026-05-16
+ * @updated 2026-05-17
  * @summary Renders supported lesson exercise interactions.
  * @scope Client UI controls only; correctness is server-side.
  */
-import { CheckCircle2 } from 'lucide-react';
 import type { LearningRunnerStep } from '@/services/learning/learning-lesson-service';
-
+import { ChoiceButton, type FeedbackStatus } from './ChoiceButton';
 type Props = {
   step: LearningRunnerStep;
   value: unknown;
   onChange: (value: unknown) => void;
+  disabled?: boolean;
+  feedbackStatus?: FeedbackStatus;
 };
 
-export function StepInteraction({ step, value, onChange }: Props) {
+export function StepInteraction({ step, value, onChange, disabled, feedbackStatus }: Props) {
   if (step.type === 'order_steps') {
-    return <OrderSteps options={asStringArray(step.config.options)} value={asStringArray(value)} onChange={onChange} />;
+    return (
+      <OrderSteps
+        options={asStringArray(step.config.options)}
+        value={asStringArray(value)}
+        onChange={onChange}
+        disabled={disabled}
+        feedbackStatus={feedbackStatus}
+      />
+    );
   }
   if (step.type === 'match_pairs') {
-    return <MatchPairs pairs={asPairs(step.config.options)} value={asRecord(value)} onChange={onChange} />;
+    return (
+      <MatchPairs
+        pairs={asPairs(step.config.options)}
+        value={asRecord(value)}
+        onChange={onChange}
+        disabled={disabled}
+        feedbackStatus={feedbackStatus}
+      />
+    );
   }
 
   return (
     <div className="grid gap-3">
       {asStringArray(step.config.options).map((option) => (
-        <ChoiceButton key={option} active={value === option} onClick={() => onChange(option)}>
+        <ChoiceButton
+          key={option}
+          active={value === option}
+          disabled={disabled}
+          feedbackStatus={value === option ? feedbackStatus : undefined}
+          onClick={() => onChange(option)}
+        >
           {option}
         </ChoiceButton>
       ))}
@@ -36,10 +59,14 @@ function OrderSteps({
   options,
   value,
   onChange,
+  disabled,
+  feedbackStatus,
 }: {
   options: string[];
   value: string[];
   onChange: (value: string[]) => void;
+  disabled?: boolean;
+  feedbackStatus?: FeedbackStatus;
 }) {
   const remaining = options.filter((option) => !value.includes(option));
   return (
@@ -47,7 +74,13 @@ function OrderSteps({
       <div className="min-h-24 rounded-xl border-2 border-dashed border-[#e5e5e5] p-3">
         <div className="flex flex-wrap gap-2">
           {value.map((item) => (
-            <ChoiceButton key={item} active onClick={() => onChange(value.filter((current) => current !== item))}>
+            <ChoiceButton
+              key={item}
+              active
+              disabled={disabled}
+              feedbackStatus={feedbackStatus}
+              onClick={() => onChange(value.filter((current) => current !== item))}
+            >
               {item}
             </ChoiceButton>
           ))}
@@ -55,7 +88,7 @@ function OrderSteps({
       </div>
       <div className="grid gap-3">
         {remaining.map((option) => (
-          <ChoiceButton key={option} active={false} onClick={() => onChange([...value, option])}>
+          <ChoiceButton key={option} active={false} disabled={disabled} onClick={() => onChange([...value, option])}>
             {option}
           </ChoiceButton>
         ))}
@@ -68,10 +101,14 @@ function MatchPairs({
   pairs,
   value,
   onChange,
+  disabled,
+  feedbackStatus,
 }: {
   pairs: Array<{ left: string; right: string[] }>;
   value: Record<string, unknown>;
   onChange: (value: Record<string, unknown>) => void;
+  disabled?: boolean;
+  feedbackStatus?: FeedbackStatus;
 }) {
   return (
     <div className="space-y-5">
@@ -80,7 +117,13 @@ function MatchPairs({
           <p className="mb-2 text-sm font-black uppercase text-[#777777]">{pair.left}</p>
           <div className="grid gap-2">
             {pair.right.map((option) => (
-              <ChoiceButton key={option} active={value[pair.left] === option} onClick={() => onChange({ ...value, [pair.left]: option })}>
+              <ChoiceButton
+                key={option}
+                active={value[pair.left] === option}
+                disabled={disabled}
+                feedbackStatus={value[pair.left] === option ? feedbackStatus : undefined}
+                onClick={() => onChange({ ...value, [pair.left]: option })}
+              >
                 {option}
               </ChoiceButton>
             ))}
@@ -88,19 +131,6 @@ function MatchPairs({
         </div>
       ))}
     </div>
-  );
-}
-
-function ChoiceButton({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`flex min-h-14 items-center justify-between rounded-xl border-2 px-4 py-3 text-left text-base font-black transition active:translate-y-1 ${active ? 'border-[#58cc02] bg-[#d7ffb8] text-[#3c3c3c]' : 'border-[#e5e5e5] bg-white text-[#3c3c3c] shadow-[0_4px_0_#e5e5e5]'}`}
-    >
-      <span>{children}</span>
-      {active ? <CheckCircle2 className="h-5 w-5 text-[#58cc02]" /> : null}
-    </button>
   );
 }
 
@@ -114,7 +144,5 @@ function asRecord(value: unknown): Record<string, unknown> {
 
 function asPairs(value: unknown): Array<{ left: string; right: string[] }> {
   if (!Array.isArray(value)) return [];
-  return value.filter((item): item is { left: string; right: string[] } =>
-    typeof item?.left === 'string' && Array.isArray(item.right)
-  );
+  return value.filter((item): item is { left: string; right: string[] } => typeof item?.left === 'string' && Array.isArray(item.right));
 }

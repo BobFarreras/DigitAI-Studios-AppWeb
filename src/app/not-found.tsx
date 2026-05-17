@@ -1,6 +1,6 @@
 /**
  * @file src/app/not-found.tsx
- * @updated 2026-05-08
+ * @updated 2026-05-17
  * @summary Route module: src/app/not-found.tsx
  * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
  */
@@ -10,8 +10,8 @@ import Link from 'next/link';
 // This handles 404s that happen outside of the [locale] structure
 export default function GlobalNotFound() {
   return (
-    <html lang="en">
-      <body className="bg-white text-black dark:bg-black dark:text-white">
+    <html lang="en" suppressHydrationWarning>
+      <body className="bg-white text-black dark:bg-black dark:text-white" suppressHydrationWarning>
         <div className="flex min-h-screen flex-col items-center justify-center p-4 text-center font-sans">
           <h1 className="text-4xl font-bold mb-4">404</h1>
           <p className="mb-8">Page not found.</p>

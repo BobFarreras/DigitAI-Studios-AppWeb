@@ -6,6 +6,7 @@
  */
 import { describe, expect, it } from 'vitest';
 import { gradeLesson } from '../learning-lesson-service';
+import { checkStepAnswer } from '../learning-answer-grading';
 import type { LearningLessonDetailRecord } from '@/repositories/interfaces/ILearningRepository';
 
 const lesson: LearningLessonDetailRecord = {
@@ -73,5 +74,16 @@ describe('gradeLesson', () => {
     expect(result.score).toBe(0);
     expect(result.requiresReview).toBe(true);
     expect(result.xpAwarded).toBe(11);
+  });
+
+  it('checks a single step without exposing the correct answer', () => {
+    const check = checkStepAnswer(lesson.steps[0], 'b');
+
+    expect(check).toEqual({
+      stepId: 'step-1',
+      isCorrect: false,
+      explanation: null,
+    });
+    expect(check).not.toHaveProperty('correctAnswer');
   });
 });

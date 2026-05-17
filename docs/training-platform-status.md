@@ -1,6 +1,6 @@
 # Training Platform Status
 
-Data d'actualitzacio: 2026-05-16
+Data d'actualitzacio: 2026-05-17
 
 ## Objectiu del Document
 Aquest document deixa constancia de l'estat real de la plataforma de formacio DigitAI dins l'area d'usuari. Serveix com a referencia de continuacio per no dependre de la conversa i per evitar perdre decisions, fases, riscos o feina pendent.
@@ -19,15 +19,17 @@ Aquest document deixa constancia de l'estat real de la plataforma de formacio Di
 Commits fets:
 - `e69f0cb feat: add learning dashboard foundation`
 - `78ccf0d feat: refine learning map experience`
+- `787a4b4 feat: implement learning lesson runner`
 
 Canvis pendents de commit:
-- Fase 4 runner de llico.
-- Fixos de robustesa detectats en runtime:
-  - `Button asChild`.
-  - `ThemeProvider` sense scripts.
-  - Runner segur quan una llico no te steps.
-- Tests d'integracio nous.
-- Seeds extra per steps interactius i lliçons buides.
+- Fase 4.1 enduriment del runner:
+  - Feedback immediat server-side per step.
+  - Resposta seleccionada en blau abans de validar.
+  - Correcte en verd i incorrecte en vermell.
+  - `timeSpentSeconds` real per step.
+  - Errors visibles de server action.
+  - Proteccio contra doble check/submit.
+  - Tests d'integracio de lliço completa, errors i persistencia incorrecta.
 
 ## Implementat
 
@@ -114,7 +116,7 @@ Components:
 - `src/features/learning/ui/LearningTrackPage.tsx`
 
 ### Fase 4 - Lesson Runner
-Estat: implementat funcionalment, pendent de commit.
+Estat: fet.
 
 Interaccions suportades:
 - `multiple_choice`
@@ -235,16 +237,18 @@ Tests rellevants afegits:
 ## Fases Pendents
 
 ### Fase 4.1 - Enduriment del Runner
-Prioritat: alta.
+Estat: implementat, pendent de commit.
 
-Tasques:
-- Afegir feedback immediat per step abans de passar al següent.
-- Mostrar explicacio per resposta incorrecta.
-- Guardar `timeSpentSeconds` real per step.
-- Afegir estat de submit amb errors visibles si falla server action.
-- Evitar doble submit.
-- Afegir tests d'UI amb `userEvent` per fer una llico completa al client.
-- Afegir test que comprovi que una resposta incorrecta marca `needs_review` quan toca.
+Inclou:
+- Feedback immediat per step abans de passar al següent.
+- Seleccio inicial en blau estil Duolingo, sense donar sensacio de correcte.
+- Correcte en verd i incorrecte en vermell despres de validar.
+- Explicacio de resposta quan el server retorna feedback.
+- `timeSpentSeconds` real per step.
+- Errors visibles si falla `checkLearningStepAnswer` o `submitLearningLesson`.
+- Proteccio per evitar doble check/submit.
+- Tests UI amb `userEvent` per resposta incorrecta, lliço completa i error d'action.
+- Test de persistencia on respostes incorrectes queden `isCorrect=false` i `needs_review`.
 
 ### Fase 4.2 - Interaccions Avançades
 Prioritat: mitjana-alta.
@@ -327,11 +331,10 @@ Tasques:
 ## Riscos Oberts
 - El contingut seed actual es suficient per provar producte, pero no per produccio educativa completa.
 - Falta admin editor; escalar nomes amb SQL seeds generara friccio.
-- Falta feedback immediat per step.
 - Falta testing E2E real amb navegador contra Next dev server.
 - Cal revisar UX mobile amb screenshots abans de tancar Fase 4 com producte polit.
 
 ## Proper Pas Recomanat
-1. Commitar la Fase 4 i fixes associats quan el navegador ja no mostri errors.
-2. Implementar Fase 4.1: feedback immediat, errors visibles i test UI de llico completa.
+1. Commitar la Fase 4.1 quan el navegador confirmi el comportament.
+2. Implementar Fase 4.2: `multi_select`, `fill_blank` i `code_choice`.
 3. Despres Fase 5: gamificacio real amb streak i objectiu diari.
