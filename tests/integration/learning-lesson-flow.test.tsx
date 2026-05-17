@@ -130,6 +130,60 @@ const advancedSteps: LearningLessonDetailRecord['steps'] = [
   },
 ];
 
+const expertSteps: LearningLessonDetailRecord['steps'] = [
+  {
+    id: 'step-terminal',
+    lessonId: 'lesson-1',
+    type: 'terminal_simulation',
+    prompt: 'Quina comanda consulta DNS?',
+    explanation: 'nslookup consulta resolucio DNS per un domini.',
+    config: { promptLabel: 'dns lab', correctAnswer: 'nslookup digitai.studio' },
+    orderIndex: 7,
+  },
+  {
+    id: 'step-network',
+    lessonId: 'lesson-1',
+    type: 'network_diagram',
+    prompt: 'Quin node resol dominis?',
+    explanation: 'DNS tradueix dominis a adreces IP.',
+    config: {
+      options: [
+        { label: 'Router', description: 'Encamina paquets entre xarxes' },
+        { label: 'DNS', description: 'Resol noms de domini' },
+      ],
+      correctAnswer: 'DNS',
+    },
+    orderIndex: 8,
+  },
+  {
+    id: 'step-editor',
+    lessonId: 'lesson-1',
+    type: 'code_editor',
+    prompt: 'Escriu una validacio minima',
+    explanation: 'La validacio converteix input extern en dades fiables.',
+    config: { language: 'ts', correctAnswer: 'const safe = schema.parse(input);' },
+    orderIndex: 9,
+  },
+  {
+    id: 'step-ai',
+    lessonId: 'lesson-1',
+    type: 'ai_prompt_review',
+    prompt: 'Que falta al prompt?',
+    explanation: 'Un bon prompt defineix objectiu i format de sortida.',
+    config: { options: ['Objectiu concret', 'Format de sortida', 'Mes emojis'], correctAnswer: ['Objectiu concret', 'Format de sortida'] },
+    orderIndex: 10,
+  },
+  {
+    id: 'step-triage',
+    lessonId: 'lesson-1',
+    type: 'security_triage',
+    prompt: 'SSRF intern amb metadata cloud',
+    explanation: 'Accedir a metadata cloud pot exposar credencials temporals.',
+    config: { options: ['Baixa', 'Mitjana', 'Alta', 'Critica'], correctAnswer: 'Alta' },
+    orderIndex: 11,
+  },
+];
+
 describe('LearningLessonService integration flow', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -271,5 +325,40 @@ describe('LearningLessonService integration flow', () => {
     await userEvent.click(screen.getByRole('button', { name: /Snippet segur/i }));
     await userEvent.click(screen.getByRole('button', { name: /Comprovar/i }));
     expect(checkLearningStepAnswer).toHaveBeenCalledWith(expect.objectContaining({ value: 'Snippet segur' }));
+  });
+
+  it('supports terminal, network, code editor, prompt review and triage interactions', async () => {
+    vi.mocked(checkLearningStepAnswer).mockResolvedValue({
+      success: true,
+      data: { stepId: 'step-terminal', isCorrect: true, explanation: 'Validat.' },
+    });
+
+    render(<LearningLessonRunner data={{ ...lessonDetail, steps: expertSteps }} />);
+
+    await userEvent.type(screen.getByPlaceholderText('escriu una comanda'), 'nslookup digitai.studio');
+    await userEvent.click(screen.getByRole('button', { name: /Comprovar/i }));
+    expect(await screen.findByText('Correcte')).toBeInTheDocument();
+    expect(checkLearningStepAnswer).toHaveBeenCalledWith(expect.objectContaining({ value: 'nslookup digitai.studio' }));
+
+    await userEvent.click(screen.getByRole('button', { name: /Continuar/i }));
+    await userEvent.click(screen.getByRole('button', { name: /DNS/i }));
+    await userEvent.click(screen.getByRole('button', { name: /Comprovar/i }));
+    expect(checkLearningStepAnswer).toHaveBeenCalledWith(expect.objectContaining({ value: 'DNS' }));
+
+    await userEvent.click(screen.getByRole('button', { name: /Continuar/i }));
+    await userEvent.type(screen.getByPlaceholderText('escriu el snippet'), 'const safe = schema.parse(input);');
+    await userEvent.click(screen.getByRole('button', { name: /Comprovar/i }));
+    expect(checkLearningStepAnswer).toHaveBeenCalledWith(expect.objectContaining({ value: 'const safe = schema.parse(input);' }));
+
+    await userEvent.click(screen.getByRole('button', { name: /Continuar/i }));
+    await userEvent.click(screen.getByRole('button', { name: /Objectiu concret/i }));
+    await userEvent.click(screen.getByRole('button', { name: /Format de sortida/i }));
+    await userEvent.click(screen.getByRole('button', { name: /Comprovar/i }));
+    expect(checkLearningStepAnswer).toHaveBeenCalledWith(expect.objectContaining({ value: ['Objectiu concret', 'Format de sortida'] }));
+
+    await userEvent.click(screen.getByRole('button', { name: /Continuar/i }));
+    await userEvent.click(screen.getByRole('button', { name: /Alta/i }));
+    await userEvent.click(screen.getByRole('button', { name: /Comprovar/i }));
+    expect(checkLearningStepAnswer).toHaveBeenCalledWith(expect.objectContaining({ value: 'Alta' }));
   });
 });

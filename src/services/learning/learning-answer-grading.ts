@@ -63,9 +63,12 @@ export function checkStepAnswer(step: LearningStepRecord, value: unknown): StepA
 function isAnswerCorrect(step: LearningStepRecord, value: unknown) {
   const correct = step.config.correctAnswer;
   if (step.type === 'multi_select') return compareSets(value, correct);
+  if (step.type === 'ai_prompt_review') return compareSets(value, correct);
   if (step.type === 'order_steps') return compareArrays(value, correct);
   if (step.type === 'match_pairs') return compareRecords(value, correct);
   if (step.type === 'fill_blank') return compareText(value, correct);
+  if (step.type === 'terminal_simulation') return compareText(value, correct);
+  if (step.type === 'code_editor') return compareCode(value, correct);
   return value === correct;
 }
 
@@ -91,8 +94,16 @@ function compareText(value: unknown, correct: unknown) {
   return normalizeText(value) === normalizeText(correct);
 }
 
+function compareCode(value: unknown, correct: unknown) {
+  return normalizeCode(value) === normalizeCode(correct);
+}
+
 function normalizeText(value: unknown) {
   return typeof value === 'string' ? value.trim().toLocaleLowerCase('ca-ES') : '';
+}
+
+function normalizeCode(value: unknown) {
+  return typeof value === 'string' ? value.trim().replace(/\s+/g, ' ') : '';
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

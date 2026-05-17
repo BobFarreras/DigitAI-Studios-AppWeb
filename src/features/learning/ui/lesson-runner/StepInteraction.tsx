@@ -5,6 +5,7 @@
  * @scope Client UI controls only; correctness is server-side.
  */
 import type { LearningRunnerStep } from '@/services/learning/learning-lesson-service';
+import { AdvancedStepInteraction, isAdvancedStepType } from './AdvancedStepInteraction';
 import { CodeChoiceInteraction } from './CodeChoiceInteraction';
 import { ChoiceButton, type FeedbackStatus } from './ChoiceButton';
 import { FillBlankInteraction } from './FillBlankInteraction';
@@ -20,6 +21,9 @@ type Props = {
 };
 
 export function StepInteraction({ step, value, onChange, disabled, feedbackStatus }: Props) {
+  if (isAdvancedStepType(step.type)) {
+    return <AdvancedStepInteraction step={step} value={value} disabled={disabled} feedbackStatus={feedbackStatus} onChange={onChange} />;
+  }
   if (step.type === 'multi_select') {
     return (
       <MultiSelectInteraction

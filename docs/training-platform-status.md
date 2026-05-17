@@ -257,21 +257,22 @@ Tipus implementats:
 - `multi_select`
 - `fill_blank`
 - `code_choice`
-
-Inclou:
-- Validacio server-side per cada tipus.
-- UI propia per seleccio multiple, input de resposta i snippets de codi.
-- Tests de servei per grading de tots tres tipus.
-- Test d'integracio UI amb `userEvent` pels tres tipus.
-- Migracio local `supabase/migrations/202605171200_seed_advanced_learning_interactions.sql`.
-- Seed aplicat remotament via Supabase REST per bloqueig de `supabase db push` amb historial remot divergent.
-
-Tipus pendents:
 - `terminal_simulation`
 - `network_diagram`
 - `code_editor`
 - `ai_prompt_review`
 - `security_triage`
+
+Inclou:
+- Validacio server-side per cada tipus.
+- UI propia per seleccio multiple, input de resposta i snippets de codi.
+- UI propia per terminal, diagrama de xarxa, editor de codi, review de prompt IA i triatge de seguretat.
+- Tests de servei per grading de tots els tipus avançats.
+- Tests d'integracio UI amb `userEvent` per totes les interaccions avançades.
+- Migracio local `supabase/migrations/202605171200_seed_advanced_learning_interactions.sql`.
+- Migracio local `supabase/migrations/202605171230_seed_expert_learning_interactions.sql`.
+- Seed aplicat remotament via Supabase REST per bloqueig de `supabase db push` amb historial remot divergent.
+- Constraint i seed expert aplicats remotament amb `supabase db query --linked`.
 
 Requisit:
 - Cada tipus ha de tenir validacio server-side i test especific.

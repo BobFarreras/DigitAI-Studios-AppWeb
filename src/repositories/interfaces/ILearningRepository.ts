@@ -1,6 +1,6 @@
 /**
  * @file src/repositories/interfaces/ILearningRepository.ts
- * @updated 2026-05-16
+ * @updated 2026-05-17
  * @summary Repository contract for the user learning dashboard.
  * @scope Data shapes passed from persistence into learning services.
  */
@@ -23,6 +23,11 @@ export type LearningStepType =
   | 'match_pairs'
   | 'fill_blank'
   | 'code_choice'
+  | 'terminal_simulation'
+  | 'network_diagram'
+  | 'code_editor'
+  | 'ai_prompt_review'
+  | 'security_triage'
   | 'scenario';
 
 export type LearningStepRecord = {
