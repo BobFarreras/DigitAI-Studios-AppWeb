@@ -1,6 +1,6 @@
 /**
  * @file src/services/learning/__tests__/learning-lesson-service.test.ts
- * @updated 2026-05-16
+ * @updated 2026-05-17
  * @summary Tests for lesson runner grading and answer shapes.
  * @scope Verifies pure validation for interactive learning steps.
  */
@@ -50,15 +50,45 @@ const lesson: LearningLessonDetailRecord = {
       config: { correctAnswer: { dns: 'domini', ip: 'adreca' } },
       orderIndex: 3,
     },
+    {
+      id: 'step-4',
+      lessonId: 'lesson-1',
+      type: 'multi_select',
+      prompt: 'Selecciona',
+      explanation: null,
+      config: { correctAnswer: ['2FA', 'Contrasenya unica'] },
+      orderIndex: 4,
+    },
+    {
+      id: 'step-5',
+      lessonId: 'lesson-1',
+      type: 'fill_blank',
+      prompt: 'Omple',
+      explanation: null,
+      config: { correctAnswer: 'firewall' },
+      orderIndex: 5,
+    },
+    {
+      id: 'step-6',
+      lessonId: 'lesson-1',
+      type: 'code_choice',
+      prompt: 'Codi',
+      explanation: null,
+      config: { correctAnswer: 'Snippet segur' },
+      orderIndex: 6,
+    },
   ],
 };
 
 describe('gradeLesson', () => {
-  it('grades choice, order and match interactions', () => {
+  it('grades supported lesson interactions', () => {
     const result = gradeLesson(lesson, [
       { stepId: 'step-1', value: 'a', hintUsed: false, timeSpentSeconds: 4 },
       { stepId: 'step-2', value: ['check', 'login'], hintUsed: false, timeSpentSeconds: 8 },
       { stepId: 'step-3', value: { dns: 'domini', ip: 'adreca' }, hintUsed: false, timeSpentSeconds: 10 },
+      { stepId: 'step-4', value: ['Contrasenya unica', '2FA'], hintUsed: false, timeSpentSeconds: 6 },
+      { stepId: 'step-5', value: ' Firewall ', hintUsed: false, timeSpentSeconds: 5 },
+      { stepId: 'step-6', value: 'Snippet segur', hintUsed: false, timeSpentSeconds: 7 },
     ]);
 
     expect(result.score).toBe(100);
@@ -73,7 +103,7 @@ describe('gradeLesson', () => {
 
     expect(result.score).toBe(0);
     expect(result.requiresReview).toBe(true);
-    expect(result.xpAwarded).toBe(11);
+    expect(result.xpAwarded).toBe(5);
   });
 
   it('checks a single step without exposing the correct answer', () => {

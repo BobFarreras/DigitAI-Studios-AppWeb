@@ -251,12 +251,22 @@ Inclou:
 - Test de persistencia on respostes incorrectes queden `isCorrect=false` i `needs_review`.
 
 ### Fase 4.2 - Interaccions Avançades
-Prioritat: mitjana-alta.
+Estat: parcialment implementat.
 
-Tipus pendents:
+Tipus implementats:
 - `multi_select`
 - `fill_blank`
 - `code_choice`
+
+Inclou:
+- Validacio server-side per cada tipus.
+- UI propia per seleccio multiple, input de resposta i snippets de codi.
+- Tests de servei per grading de tots tres tipus.
+- Test d'integracio UI amb `userEvent` pels tres tipus.
+- Migracio local `supabase/migrations/202605171200_seed_advanced_learning_interactions.sql`.
+- Seed aplicat remotament via Supabase REST per bloqueig de `supabase db push` amb historial remot divergent.
+
+Tipus pendents:
 - `terminal_simulation`
 - `network_diagram`
 - `code_editor`

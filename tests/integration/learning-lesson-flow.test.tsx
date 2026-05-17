@@ -94,6 +94,42 @@ const lessonDetail: LearningLessonDetailRecord = {
   ],
 };
 
+const advancedSteps: LearningLessonDetailRecord['steps'] = [
+  {
+    id: 'step-multi',
+    lessonId: 'lesson-1',
+    type: 'multi_select',
+    prompt: 'Quins controls redueixen risc?',
+    explanation: 'Combinar contrasenya unica i 2FA redueix reutilitzacio i robatori.',
+    config: { options: ['2FA', 'Contrasenya unica', 'Compartir codis'], correctAnswer: ['2FA', 'Contrasenya unica'] },
+    orderIndex: 4,
+  },
+  {
+    id: 'step-blank',
+    lessonId: 'lesson-1',
+    type: 'fill_blank',
+    prompt: 'Quin component filtra transit?',
+    explanation: 'Un firewall aplica regles de filtratge sobre connexions.',
+    config: { placeholder: 'Nom del component', correctAnswer: 'firewall' },
+    orderIndex: 5,
+  },
+  {
+    id: 'step-code',
+    lessonId: 'lesson-1',
+    type: 'code_choice',
+    prompt: 'Quin snippet valida millor?',
+    explanation: 'Validar entrada abans de guardar evita estats invalids.',
+    config: {
+      options: [
+        { label: 'Snippet segur', code: 'const parsed = schema.parse(input)' },
+        { label: 'Snippet feble', code: 'save(input)' },
+      ],
+      correctAnswer: 'Snippet segur',
+    },
+    orderIndex: 6,
+  },
+];
+
 describe('LearningLessonService integration flow', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -210,5 +246,30 @@ describe('LearningLessonService integration flow', () => {
     await userEvent.click(screen.getByRole('button', { name: /Comprovar/i }));
 
     expect(await screen.findByText('No hem pogut comprovar la resposta. Torna-ho a provar.')).toBeInTheDocument();
+  });
+
+  it('supports multi-select, fill blank and code choice interactions', async () => {
+    vi.mocked(checkLearningStepAnswer).mockResolvedValue({
+      success: true,
+      data: { stepId: 'step-multi', isCorrect: true, explanation: 'Validat.' },
+    });
+
+    render(<LearningLessonRunner data={{ ...lessonDetail, steps: advancedSteps }} />);
+
+    await userEvent.click(screen.getByRole('button', { name: /2FA/i }));
+    await userEvent.click(screen.getByRole('button', { name: /Contrasenya unica/i }));
+    await userEvent.click(screen.getByRole('button', { name: /Comprovar/i }));
+    expect(await screen.findByText('Correcte')).toBeInTheDocument();
+    expect(checkLearningStepAnswer).toHaveBeenCalledWith(expect.objectContaining({ value: ['2FA', 'Contrasenya unica'] }));
+
+    await userEvent.click(screen.getByRole('button', { name: /Continuar/i }));
+    await userEvent.type(screen.getByRole('textbox'), 'firewall');
+    await userEvent.click(screen.getByRole('button', { name: /Comprovar/i }));
+    expect(checkLearningStepAnswer).toHaveBeenCalledWith(expect.objectContaining({ value: 'firewall' }));
+
+    await userEvent.click(screen.getByRole('button', { name: /Continuar/i }));
+    await userEvent.click(screen.getByRole('button', { name: /Snippet segur/i }));
+    await userEvent.click(screen.getByRole('button', { name: /Comprovar/i }));
+    expect(checkLearningStepAnswer).toHaveBeenCalledWith(expect.objectContaining({ value: 'Snippet segur' }));
   });
 });

@@ -62,8 +62,10 @@ export function checkStepAnswer(step: LearningStepRecord, value: unknown): StepA
 
 function isAnswerCorrect(step: LearningStepRecord, value: unknown) {
   const correct = step.config.correctAnswer;
+  if (step.type === 'multi_select') return compareSets(value, correct);
   if (step.type === 'order_steps') return compareArrays(value, correct);
   if (step.type === 'match_pairs') return compareRecords(value, correct);
+  if (step.type === 'fill_blank') return compareText(value, correct);
   return value === correct;
 }
 
@@ -76,6 +78,21 @@ function compareArrays(value: unknown, correct: unknown) {
 function compareRecords(value: unknown, correct: unknown) {
   if (!isRecord(value) || !isRecord(correct)) return false;
   return Object.keys(correct).every((key) => value[key] === correct[key]);
+}
+
+function compareSets(value: unknown, correct: unknown) {
+  if (!Array.isArray(value) || !Array.isArray(correct)) return false;
+  const selected = new Set(value.filter((item): item is string => typeof item === 'string'));
+  const expected = correct.filter((item): item is string => typeof item === 'string');
+  return selected.size === expected.length && expected.every((item) => selected.has(item));
+}
+
+function compareText(value: unknown, correct: unknown) {
+  return normalizeText(value) === normalizeText(correct);
+}
+
+function normalizeText(value: unknown) {
+  return typeof value === 'string' ? value.trim().toLocaleLowerCase('ca-ES') : '';
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

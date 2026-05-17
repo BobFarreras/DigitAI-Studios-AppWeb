@@ -111,6 +111,8 @@ function buildSubmitPayload(data: LearningRunnerData, answers: AnswerMap, stepTi
 function hasAnswer(type: string, options: unknown, value: unknown) {
   if (type === 'order_steps') return Array.isArray(value) && value.length === asArray(options).length;
   if (type === 'match_pairs') return isRecord(value) && Object.keys(value).length === asArray(options).length;
+  if (type === 'multi_select') return Array.isArray(value) && value.length > 0;
+  if (type === 'fill_blank') return typeof value === 'string' && value.trim().length > 0;
   return value !== undefined && value !== '';
 }
 

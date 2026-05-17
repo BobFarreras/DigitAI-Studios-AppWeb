@@ -17,9 +17,12 @@ export type LearningLessonRecord = {
 
 export type LearningStepType =
   | 'multiple_choice'
+  | 'multi_select'
   | 'true_false'
   | 'order_steps'
   | 'match_pairs'
+  | 'fill_blank'
+  | 'code_choice'
   | 'scenario';
 
 export type LearningStepRecord = {
