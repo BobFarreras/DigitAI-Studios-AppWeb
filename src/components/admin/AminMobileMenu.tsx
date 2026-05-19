@@ -1,6 +1,6 @@
 /**
  * @file src/components/admin/AminMobileMenu.tsx
- * @updated 2026-05-08
+ * @updated 2026-05-19
  * @summary Component UI admin: src/components/admin/AminMobileMenu.tsx
  * @scope Presentacio i interaccio de la UI d'admin, sense acces directe a dades.
  */
@@ -16,6 +16,7 @@ import {
   BookOpenCheck, 
   Inbox, 
   MoreHorizontal, // Icona per al menú "Més"
+  GraduationCap,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -56,6 +57,11 @@ export function AdminBottomNav() {
       href: '/admin/blog',
       label: 'Blog',
       icon: BookOpenCheck
+    },
+    {
+      href: '/admin/learning',
+      label: 'Formació',
+      icon: GraduationCap
     },
     {
       href: '/admin/missatges',

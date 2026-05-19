@@ -1,6 +1,6 @@
 /**
  * @file src/components/admin/AdminSidebar.tsx
- * @updated 2026-05-08
+ * @updated 2026-05-19
  * @summary Component UI admin: src/components/admin/AdminSidebar.tsx
  * @scope Presentacio i interaccio de la UI d'admin, sense acces directe a dades.
  */
@@ -17,7 +17,8 @@ import {
   BookOpenCheck,
   Home,
   Settings,
-  Inbox
+  Inbox,
+  GraduationCap
 } from 'lucide-react';
 
 export function AdminSidebar() {
@@ -27,6 +28,7 @@ export function AdminSidebar() {
     { label: 'Analítiques', href: '/admin/analytics', icon: BarChart3 },
     { label: 'Usuaris', href: '/admin/users', icon: Users },
     { label: 'Blog', href: '/admin/blog', icon: BookOpenCheck },
+    { label: 'Formació', href: '/admin/learning', icon: GraduationCap },
     { label: 'Configuració', href: '/admin/settings', icon: Settings },
     { label: 'Missatges', href: '/admin/missatges', icon: Inbox},
   ];

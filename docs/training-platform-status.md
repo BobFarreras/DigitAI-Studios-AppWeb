@@ -293,9 +293,16 @@ Implementat:
 - Test de servei que verifica que el dashboard incorpora gamificacio des de metriques persistides.
 
 ### Fase 6 - Admin de Contingut
-Prioritat: alta abans d'escalar contingut.
+Estat: en curs.
 
-Tasques:
+Implementat:
+- Ruta admin `/admin/learning` per inventari de contingut formatiu.
+- Lectura de tracks, modules, lessons i steps via Action -> Service -> Repository -> Supabase.
+- Preview read-only d'una llico amb steps.
+- Navegacio admin desktop/mobile cap a Formacio.
+- Test de servei per resum i preview.
+
+Pendent:
 - Admin per crear/editar tracks, modules, lessons i steps.
 - Preview de llico abans de publicar.
 - Validacio Zod per config de cada interaction type.
