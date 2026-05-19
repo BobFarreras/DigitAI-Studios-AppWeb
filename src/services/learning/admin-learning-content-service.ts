@@ -6,11 +6,27 @@
  */
 import type {
   AdminLearningLessonRecord,
+  AdminLearningLessonUpdate,
+  AdminLearningModuleRecord,
+  AdminLearningModuleUpdate,
+  AdminLearningStepUpdate,
   AdminLearningTrackRecord,
+  AdminLearningTrackUpdate,
   IAdminLearningContentRepository,
 } from '@/repositories/interfaces/IAdminLearningContentRepository';
+import type { LearningStepType } from '@/repositories/interfaces/ILearningRepository';
+import { assertValidStepConfig } from './admin-learning-content-validation';
 
-export type { AdminLearningLessonRecord, AdminLearningTrackRecord };
+export type {
+  AdminLearningLessonRecord,
+  AdminLearningLessonUpdate,
+  AdminLearningModuleRecord,
+  AdminLearningModuleUpdate,
+  AdminLearningStepUpdate,
+  AdminLearningTrackRecord,
+  AdminLearningTrackUpdate,
+  LearningStepType,
+};
 
 export type AdminLearningContentSummary = {
   tracks: number;
@@ -38,6 +54,23 @@ export class AdminLearningContentService {
       tracks,
       previewLesson: findPreviewLesson(tracks),
     };
+  }
+
+  async updateTrack(input: AdminLearningTrackUpdate) {
+    await this.repository.updateTrack(input);
+  }
+
+  async updateModule(input: AdminLearningModuleUpdate) {
+    await this.repository.updateModule(input);
+  }
+
+  async updateLesson(input: AdminLearningLessonUpdate) {
+    await this.repository.updateLesson(input);
+  }
+
+  async updateStep(input: AdminLearningStepUpdate) {
+    assertValidStepConfig(input.type, input.config);
+    await this.repository.updateStep(input);
   }
 }
 

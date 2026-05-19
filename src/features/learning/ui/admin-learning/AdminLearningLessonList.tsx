@@ -4,18 +4,27 @@
  * @summary Lesson rows for the admin learning content tree.
  * @scope Presentational lesson inventory only.
  */
+'use client';
+
 import { FileText, ListChecks } from 'lucide-react';
 import type { AdminLearningLessonRecord } from '@/services/learning/admin-learning-content-service';
 
 type Props = {
   lessons: AdminLearningLessonRecord[];
+  selection: { lessonId: string; stepId: string };
+  onSelect: (lesson: AdminLearningLessonRecord, stepId: string) => void;
 };
 
-export function AdminLearningLessonList({ lessons }: Props) {
+export function AdminLearningLessonList({ lessons, selection, onSelect }: Props) {
   return (
     <div className="mt-3 grid gap-2">
       {lessons.map((lesson) => (
-        <div key={lesson.id} className="grid gap-3 rounded-lg bg-card p-3 sm:grid-cols-[1fr_auto] sm:items-center">
+        <button
+          key={lesson.id}
+          type="button"
+          onClick={() => onSelect(lesson, lesson.steps[0]?.id ?? '')}
+          className={`grid gap-3 rounded-lg p-3 text-left sm:grid-cols-[1fr_auto] sm:items-center ${selection.lessonId === lesson.id ? 'bg-primary/10 ring-1 ring-primary' : 'bg-card'}`}
+        >
           <div className="min-w-0">
             <div className="flex items-center gap-2">
               <FileText className="h-4 w-4 shrink-0 text-primary" />
@@ -32,7 +41,7 @@ export function AdminLearningLessonList({ lessons }: Props) {
               {lesson.active ? 'Activa' : 'Inactiva'}
             </span>
           </div>
-        </div>
+        </button>
       ))}
     </div>
   );

@@ -5,9 +5,8 @@
  * @scope Presentational admin UI only; data comes from actions.
  */
 import type { AdminLearningContentData } from '@/services/learning/admin-learning-content-service';
-import { AdminLearningContentNavigator } from './admin-learning/AdminLearningContentNavigator';
-import { AdminLearningContentPreview } from './admin-learning/AdminLearningContentPreview';
 import { AdminLearningContentStats } from './admin-learning/AdminLearningContentStats';
+import { AdminLearningContentStudio } from './admin-learning/AdminLearningContentStudio';
 
 type Props = {
   data: AdminLearningContentData;
@@ -30,11 +29,7 @@ export function AdminLearningContentPage({ data }: Props) {
       </header>
 
       <AdminLearningContentStats summary={data.summary} />
-
-      <section className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_420px]">
-        <AdminLearningContentNavigator tracks={data.tracks} />
-        <AdminLearningContentPreview lesson={data.previewLesson} />
-      </section>
+      <AdminLearningContentStudio data={data} />
     </div>
   );
 }
