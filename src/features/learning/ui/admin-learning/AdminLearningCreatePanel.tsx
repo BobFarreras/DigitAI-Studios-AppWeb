@@ -51,12 +51,12 @@ function buildInput(kind: 'track' | 'module' | 'lesson' | 'step', selected: Prop
   if (kind === 'lesson' && selected.module) return { kind, ...base(`nova-llico-${suffix}`), moduleId: selected.module.id, objective: null, estimatedMinutes: 5, xpReward: 10 };
   if (kind === 'step' && selected.lesson) return {
     kind, lessonId: selected.lesson.id, type: 'multiple_choice',
-    prompt: 'Nova pregunta', explanation: null, orderIndex: selected.lesson.steps.length + 1,
+    prompt: 'Nova pregunta', explanation: null, publicationStatus: 'draft', orderIndex: selected.lesson.steps.length + 1,
     config: { options: ['Opcio A', 'Opcio B'], correctAnswer: 'Opcio A' },
   };
   return null;
 }
 
 function base(slug: string) {
-  return { slug, title: slug.replaceAll('-', ' '), active: false, orderIndex: 99 };
+  return { slug, title: slug.replaceAll('-', ' '), active: false, publicationStatus: 'draft', orderIndex: 99 };
 }

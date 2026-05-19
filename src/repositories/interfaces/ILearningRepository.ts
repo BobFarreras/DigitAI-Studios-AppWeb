@@ -15,6 +15,8 @@ export type LearningLessonRecord = {
   orderIndex: number;
 };
 
+export type LearningPublicationStatus = 'draft' | 'published';
+
 export type LearningStepType =
   | 'multiple_choice'
   | 'multi_select'

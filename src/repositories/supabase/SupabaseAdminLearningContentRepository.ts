@@ -49,6 +49,7 @@ export class SupabaseAdminLearningContentRepository implements IAdminLearningCon
       title: lesson.title,
       objective: lesson.objective,
       active: lesson.active,
+      publicationStatus: normalizeStatus(lesson.publication_status),
       xpReward: lesson.xp_reward,
       estimatedMinutes: lesson.estimated_minutes,
       orderIndex: lesson.order_index,
@@ -60,6 +61,7 @@ export class SupabaseAdminLearningContentRepository implements IAdminLearningCon
           prompt: step.prompt,
           explanation: step.explanation,
           config: step.config as Record<string, unknown>,
+          publicationStatus: normalizeStatus(step.publication_status),
           orderIndex: step.order_index,
         })),
     }));
@@ -71,6 +73,7 @@ export class SupabaseAdminLearningContentRepository implements IAdminLearningCon
       description: module.description,
       level: module.level,
       active: module.active,
+      publicationStatus: normalizeStatus(module.publication_status),
       orderIndex: module.order_index,
       lessons: lessonRecords.filter((lesson) =>
         (lessons.data ?? []).some((row) => row.id === lesson.id && row.module_id === module.id)
@@ -85,6 +88,7 @@ export class SupabaseAdminLearningContentRepository implements IAdminLearningCon
       icon: track.icon,
       color: track.color,
       active: track.active,
+      publicationStatus: normalizeStatus(track.publication_status),
       orderIndex: track.order_index,
       modules: moduleRecords.filter((module) =>
         (modules.data ?? []).some((row) => row.id === module.id && row.track_id === track.id)
@@ -127,4 +131,8 @@ export class SupabaseAdminLearningContentRepository implements IAdminLearningCon
 
 function assertNoError(error: PostgrestError | null) {
   if (error) throw new Error(error.message);
+}
+
+function normalizeStatus(value: string) {
+  return value === 'draft' ? 'draft' as const : 'published' as const;
 }

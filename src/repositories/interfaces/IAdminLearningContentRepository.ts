@@ -6,12 +6,15 @@
  */
 import type { LearningStepType } from './ILearningRepository';
 
+export type LearningPublicationStatus = 'draft' | 'published';
+
 export type AdminLearningStepRecord = {
   id: string;
   type: LearningStepType;
   prompt: string;
   explanation: string | null;
   config: Record<string, unknown>;
+  publicationStatus: LearningPublicationStatus;
   orderIndex: number;
 };
 
@@ -21,6 +24,7 @@ export type AdminLearningLessonRecord = {
   title: string;
   objective: string | null;
   active: boolean;
+  publicationStatus: LearningPublicationStatus;
   xpReward: number;
   estimatedMinutes: number;
   orderIndex: number;
@@ -34,6 +38,7 @@ export type AdminLearningModuleRecord = {
   description: string | null;
   level: string;
   active: boolean;
+  publicationStatus: LearningPublicationStatus;
   orderIndex: number;
   lessons: AdminLearningLessonRecord[];
 };
@@ -46,6 +51,7 @@ export type AdminLearningTrackRecord = {
   icon: string | null;
   color: string | null;
   active: boolean;
+  publicationStatus: LearningPublicationStatus;
   orderIndex: number;
   modules: AdminLearningModuleRecord[];
 };

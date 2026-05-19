@@ -41,7 +41,10 @@ export function AdminLearningFlowPreview({ lesson, selectedStepId, onSelectStep 
           >
             <div className="flex items-center justify-between gap-3">
               <p className="text-xs font-bold uppercase text-primary">Step {index + 1} · {step.type}</p>
-              <CheckCircle2 className="h-4 w-4 text-[#58cc02]" />
+              <span className="flex items-center gap-2 text-xs font-bold text-muted-foreground">
+                {step.publicationStatus}
+                <CheckCircle2 className="h-4 w-4 text-[#58cc02]" />
+              </span>
             </div>
             <p className="mt-2 text-sm leading-5 text-foreground">{step.prompt}</p>
             <StepAnswers step={step} />

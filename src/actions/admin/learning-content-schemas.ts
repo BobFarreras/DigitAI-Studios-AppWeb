@@ -13,13 +13,14 @@ const orderIndex = z.number().int().min(0).max(999);
 const active = z.boolean();
 const id = z.string().uuid();
 const level = z.enum(['initiation', 'basic', 'intermediate', 'advanced']);
+const publicationStatus = z.enum(['draft', 'published']);
 
 const stepTypes = ['multiple_choice', 'multi_select', 'true_false', 'order_steps', 'match_pairs',
   'fill_blank', 'code_choice', 'terminal_simulation', 'network_diagram', 'code_editor',
   'ai_prompt_review', 'security_triage', 'scenario'] as const;
 
-const baseUpdate = { id, slug, title, active, orderIndex };
-const baseCreate = { slug, title, active, orderIndex };
+const baseUpdate = { id, slug, title, active, publicationStatus, orderIndex };
+const baseCreate = { slug, title, active, publicationStatus, orderIndex };
 
 export const trackUpdateSchema = z.object({
   kind: z.literal('track'), ...baseUpdate,
@@ -48,12 +49,12 @@ export const lessonCreateSchema = z.object({
 export const stepUpdateSchema = z.object({
   kind: z.literal('step'), id, type: z.enum(stepTypes),
   prompt: z.string().min(1).max(4000), explanation: nullableText,
-  config: z.record(z.string(), z.unknown()), orderIndex,
+  config: z.record(z.string(), z.unknown()), publicationStatus, orderIndex,
 });
 export const stepCreateSchema = z.object({
   kind: z.literal('step'), lessonId: id, type: z.enum(stepTypes),
   prompt: z.string().min(1).max(4000), explanation: nullableText,
-  config: z.record(z.string(), z.unknown()), orderIndex,
+  config: z.record(z.string(), z.unknown()), publicationStatus, orderIndex,
 });
 
 export const updateSchema = z.discriminatedUnion('kind', [trackUpdateSchema, moduleUpdateSchema, lessonUpdateSchema, stepUpdateSchema]);

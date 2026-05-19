@@ -38,6 +38,7 @@ describe('AdminLearningContentService', () => {
       prompt: 'Pregunta?',
       explanation: null,
       config: { correctAnswer: 'A' },
+      publicationStatus: 'draft',
       orderIndex: 1,
     })).rejects.toThrow('invalid_options');
   });
@@ -50,6 +51,7 @@ const content: AdminLearningTrackRecord[] = [{
   description: null,
   icon: null,
   color: null,
+  publicationStatus: 'published',
   active: true,
   orderIndex: 1,
   modules: [{
@@ -58,6 +60,7 @@ const content: AdminLearningTrackRecord[] = [{
     title: 'Base',
     description: null,
     level: 'basic',
+    publicationStatus: 'published',
     active: true,
     orderIndex: 1,
     lessons: [
@@ -66,6 +69,7 @@ const content: AdminLearningTrackRecord[] = [{
         slug: 'intro',
         title: 'Intro',
         objective: null,
+        publicationStatus: 'published',
         active: true,
         xpReward: 10,
         estimatedMinutes: 5,
@@ -76,6 +80,7 @@ const content: AdminLearningTrackRecord[] = [{
           prompt: 'Pregunta?',
           explanation: null,
           config: { options: ['A', 'B'], correctAnswer: 'A' },
+          publicationStatus: 'published',
           orderIndex: 1,
         }],
       },
@@ -84,6 +89,7 @@ const content: AdminLearningTrackRecord[] = [{
         slug: 'draft',
         title: 'Draft',
         objective: null,
+        publicationStatus: 'draft',
         active: false,
         xpReward: 10,
         estimatedMinutes: 5,

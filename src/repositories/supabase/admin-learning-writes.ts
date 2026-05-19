@@ -22,7 +22,8 @@ type Client = SupabaseClient<Database>;
 export async function writeTrack(supabase: Client, input: AdminLearningTrackUpdate | AdminLearningTrackCreate) {
   const payload = {
     slug: input.slug, title: input.title, description: input.description,
-    icon: input.icon, color: input.color, active: input.active, order_index: input.orderIndex,
+    icon: input.icon, color: input.color, active: input.active,
+    publication_status: input.publicationStatus, order_index: input.orderIndex,
   };
   const result = 'id' in input
     ? await supabase.from('learning_tracks').update(payload).eq('id', input.id)
@@ -33,7 +34,8 @@ export async function writeTrack(supabase: Client, input: AdminLearningTrackUpda
 export async function writeModule(supabase: Client, input: AdminLearningModuleUpdate | AdminLearningModuleCreate) {
   const payload = {
     slug: input.slug, title: input.title, description: input.description,
-    level: input.level, active: input.active, order_index: input.orderIndex,
+    level: input.level, active: input.active,
+    publication_status: input.publicationStatus, order_index: input.orderIndex,
   };
   const result = 'id' in input
     ? await supabase.from('learning_modules').update(payload).eq('id', input.id)
@@ -45,7 +47,8 @@ export async function writeLesson(supabase: Client, input: AdminLearningLessonUp
   const payload = {
     slug: input.slug, title: input.title, objective: input.objective,
     active: input.active, estimated_minutes: input.estimatedMinutes,
-    xp_reward: input.xpReward, order_index: input.orderIndex,
+    xp_reward: input.xpReward, publication_status: input.publicationStatus,
+    order_index: input.orderIndex,
   };
   const result = 'id' in input
     ? await supabase.from('learning_lessons').update(payload).eq('id', input.id)
@@ -56,7 +59,8 @@ export async function writeLesson(supabase: Client, input: AdminLearningLessonUp
 export async function writeStep(supabase: Client, input: AdminLearningStepUpdate | AdminLearningStepCreate) {
   const payload = {
     type: input.type, prompt: input.prompt, explanation: input.explanation,
-    config: input.config as Json, order_index: input.orderIndex,
+    config: input.config as Json, publication_status: input.publicationStatus,
+    order_index: input.orderIndex,
   };
   const result = 'id' in input
     ? await supabase.from('learning_steps').update(payload).eq('id', input.id)

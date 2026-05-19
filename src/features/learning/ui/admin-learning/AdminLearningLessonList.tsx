@@ -37,6 +37,7 @@ export function AdminLearningLessonList({ lessons, selection, onSelect }: Props)
           <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground">
             <ListChecks className="h-4 w-4" />
             {lesson.steps.length} steps
+            <span className="rounded-full bg-muted px-2 py-1">{lesson.publicationStatus}</span>
             <span className={`rounded-full px-2 py-1 ${lesson.active ? 'bg-primary/10 text-primary' : 'bg-muted'}`}>
               {lesson.active ? 'Activa' : 'Inactiva'}
             </span>

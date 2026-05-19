@@ -29,6 +29,7 @@ import {
 import { persistAttemptCompletion } from './learning-persistence';
 
 type ModuleRow = Tables<'learning_modules'>;
+const publishedContent = { active: true, publication_status: 'published' };
 
 export class SupabaseLearningRepository implements ILearningRepository {
   async getDashboardSnapshot(userId: string): Promise<LearningDashboardSnapshot> {
@@ -37,9 +38,9 @@ export class SupabaseLearningRepository implements ILearningRepository {
     const todayStart = new Date().toISOString().slice(0, 10);
 
     const [tracks, modules, lessons, progress, xp, streak, attempts] = await Promise.all([
-      supabase.from('learning_tracks').select('*').eq('active', true).order('order_index'),
-      supabase.from('learning_modules').select('*').eq('active', true).order('order_index'),
-      supabase.from('learning_lessons').select('*').eq('active', true).order('order_index'),
+      supabase.from('learning_tracks').select('*').match(publishedContent).order('order_index'),
+      supabase.from('learning_modules').select('*').match(publishedContent).order('order_index'),
+      supabase.from('learning_lessons').select('*').match(publishedContent).order('order_index'),
       supabase.from('learning_progress').select('*').eq('user_id', userId),
       supabase
         .from('learning_xp_events')
@@ -85,7 +86,7 @@ export class SupabaseLearningRepository implements ILearningRepository {
       .from('learning_tracks')
       .select('*')
       .eq('slug', trackSlug)
-      .eq('active', true)
+      .match(publishedContent)
       .maybeSingle();
     assertNoError(track.error);
     if (!track.data) return null;
@@ -94,7 +95,7 @@ export class SupabaseLearningRepository implements ILearningRepository {
       .from('learning_modules')
       .select('*')
       .eq('track_id', track.data.id)
-      .eq('active', true)
+      .match(publishedContent)
       .order('order_index');
     assertNoError(modules.error);
 
@@ -105,6 +106,7 @@ export class SupabaseLearningRepository implements ILearningRepository {
       .from('learning_steps')
       .select('*')
       .eq('lesson_id', lesson.id)
+      .eq('publication_status', 'published')
       .order('order_index');
     assertNoError(steps.error);
 
@@ -132,7 +134,7 @@ async function findLessonBySlug(modules: ModuleRow[], lessonSlug: string) {
     .select('*')
     .in('module_id', moduleIds)
     .eq('slug', lessonSlug)
-    .eq('active', true)
+    .match(publishedContent)
     .maybeSingle();
   assertNoError(lesson.error);
   if (!lesson.data) return null;

@@ -52,6 +52,10 @@ export function AdminLearningStepEditor({ step, onSaved }: Props) {
         <Textarea value={draft.prompt} onChange={(e) => setDraft({ ...draft, prompt: e.target.value })} placeholder="Pregunta o enunciat" />
         <Textarea value={draft.explanation ?? ''} onChange={(e) => setDraft({ ...draft, explanation: e.target.value || null })} placeholder="Explicacio, formula o criteri pedagogic" />
         <Input type="number" value={draft.orderIndex} onChange={(e) => setDraft({ ...draft, orderIndex: Number(e.target.value) })} aria-label="Ordre del step" />
+        <Select value={draft.publicationStatus} onValueChange={(publicationStatus) => setDraft({ ...draft, publicationStatus: publicationStatus as 'draft' | 'published' })}>
+          <SelectTrigger className="w-full"><SelectValue /></SelectTrigger>
+          <SelectContent><SelectItem value="draft">Draft</SelectItem><SelectItem value="published">Published</SelectItem></SelectContent>
+        </Select>
         <Textarea value={config.optionsText} onChange={(e) => setConfig({ ...config, optionsText: e.target.value })} placeholder="Respostes/opcions: una per linia o JSON array" />
         <Textarea value={config.correctText} onChange={(e) => setConfig({ ...config, correctText: e.target.value })} placeholder="Resposta correcta: text, linies multiples o JSON" />
         <Textarea className="min-h-40 font-mono text-xs" value={config.jsonText} onChange={(e) => setConfig({ ...config, jsonText: e.target.value })} placeholder="Config JSON completa" />

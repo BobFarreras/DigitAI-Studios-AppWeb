@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import type {
   AdminLearningLessonRecord,
   AdminLearningModuleRecord,
@@ -59,10 +60,10 @@ function Block({ title, children, onSave, pending }: { title: string; children: 
   return <div className="space-y-3"><h3 className="font-bold text-foreground">{title}</h3>{children}<Button onClick={onSave} disabled={pending} size="sm">Guardar {title}</Button></div>;
 }
 
-function TextFields<T extends { title: string; slug: string; description: string | null; active: boolean; orderIndex: number }>(
+function TextFields<T extends { title: string; slug: string; description: string | null; active: boolean; publicationStatus: 'draft' | 'published'; orderIndex: number }>(
   { value, onChange }: { value: T; onChange: (next: T) => void }
 ) {
-  return <><Input value={value.title} onChange={(e) => onChange({ ...value, title: e.target.value })} placeholder="Titol" /><Input value={value.slug} onChange={(e) => onChange({ ...value, slug: e.target.value })} placeholder="slug" /><Textarea value={value.description ?? ''} onChange={(e) => onChange({ ...value, description: e.target.value || null })} placeholder="Descripcio" /><NumberInput value={value.orderIndex} onChange={(orderIndex) => onChange({ ...value, orderIndex })} /><Active value={value.active} onChange={(active) => onChange({ ...value, active })} /></>;
+  return <><Input value={value.title} onChange={(e) => onChange({ ...value, title: e.target.value })} placeholder="Titol" /><Input value={value.slug} onChange={(e) => onChange({ ...value, slug: e.target.value })} placeholder="slug" /><Textarea value={value.description ?? ''} onChange={(e) => onChange({ ...value, description: e.target.value || null })} placeholder="Descripcio" /><NumberInput value={value.orderIndex} onChange={(orderIndex) => onChange({ ...value, orderIndex })} /><Publication value={value.publicationStatus} onChange={(publicationStatus) => onChange({ ...value, publicationStatus })} /><Active value={value.active} onChange={(active) => onChange({ ...value, active })} /></>;
 }
 
 function ModuleFields(props: { value: AdminLearningModuleRecord; onChange: (next: AdminLearningModuleRecord) => void }) {
@@ -71,7 +72,7 @@ function ModuleFields(props: { value: AdminLearningModuleRecord; onChange: (next
 }
 
 function LessonFields({ value, onChange }: { value: AdminLearningLessonRecord; onChange: (next: AdminLearningLessonRecord) => void }) {
-  return <><Input value={value.title} onChange={(e) => onChange({ ...value, title: e.target.value })} /><Input value={value.slug} onChange={(e) => onChange({ ...value, slug: e.target.value })} /><Textarea value={value.objective ?? ''} onChange={(e) => onChange({ ...value, objective: e.target.value || null })} placeholder="Objectiu" /><NumberInput value={value.estimatedMinutes} label="Minuts" onChange={(estimatedMinutes) => onChange({ ...value, estimatedMinutes })} /><NumberInput value={value.xpReward} label="XP" onChange={(xpReward) => onChange({ ...value, xpReward })} /><NumberInput value={value.orderIndex} onChange={(orderIndex) => onChange({ ...value, orderIndex })} /><Active value={value.active} onChange={(active) => onChange({ ...value, active })} /></>;
+  return <><Input value={value.title} onChange={(e) => onChange({ ...value, title: e.target.value })} /><Input value={value.slug} onChange={(e) => onChange({ ...value, slug: e.target.value })} /><Textarea value={value.objective ?? ''} onChange={(e) => onChange({ ...value, objective: e.target.value || null })} placeholder="Objectiu" /><NumberInput value={value.estimatedMinutes} label="Minuts" onChange={(estimatedMinutes) => onChange({ ...value, estimatedMinutes })} /><NumberInput value={value.xpReward} label="XP" onChange={(xpReward) => onChange({ ...value, xpReward })} /><NumberInput value={value.orderIndex} onChange={(orderIndex) => onChange({ ...value, orderIndex })} /><Publication value={value.publicationStatus} onChange={(publicationStatus) => onChange({ ...value, publicationStatus })} /><Active value={value.active} onChange={(active) => onChange({ ...value, active })} /></>;
 }
 
 function NumberInput({ value, onChange, label = 'Ordre' }: { value: number; onChange: (value: number) => void; label?: string }) {
@@ -80,4 +81,13 @@ function NumberInput({ value, onChange, label = 'Ordre' }: { value: number; onCh
 
 function Active({ value, onChange }: { value: boolean; onChange: (value: boolean) => void }) {
   return <label className="flex items-center gap-2 text-sm font-bold"><Checkbox checked={value} onCheckedChange={(checked) => onChange(checked === true)} /> Actiu</label>;
+}
+
+function Publication({ value, onChange }: { value: 'draft' | 'published'; onChange: (value: 'draft' | 'published') => void }) {
+  return (
+    <Select value={value} onValueChange={(next) => onChange(next as 'draft' | 'published')}>
+      <SelectTrigger className="w-full"><SelectValue /></SelectTrigger>
+      <SelectContent><SelectItem value="draft">Draft</SelectItem><SelectItem value="published">Published</SelectItem></SelectContent>
+    </Select>
+  );
 }

@@ -40,7 +40,7 @@ export function AdminLearningContentNavigator({ tracks, selection, onSelect }: P
                   <p className="text-xs text-muted-foreground">{track.slug}</p>
                 </div>
               </button>
-              <Status active={track.active} />
+              <Status active={track.active} publicationStatus={track.publicationStatus} />
             </div>
             <div className="mt-4 grid gap-3">
               {track.modules.map((module) => (
@@ -73,10 +73,13 @@ function firstSelection(track: AdminLearningTrackRecord, module = track.modules[
   return { trackId: track.id, moduleId: module?.id ?? '', lessonId: lesson?.id ?? '', stepId: step?.id ?? '' };
 }
 
-function Status({ active }: { active: boolean }) {
+function Status({ active, publicationStatus }: { active: boolean; publicationStatus: string }) {
   return (
-    <span className={`rounded-full px-2 py-1 text-xs font-bold ${active ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'}`}>
-      {active ? 'Actiu' : 'Inactiu'}
-    </span>
+    <div className="flex gap-2">
+      <span className="rounded-full bg-muted px-2 py-1 text-xs font-bold text-muted-foreground">{publicationStatus}</span>
+      <span className={`rounded-full px-2 py-1 text-xs font-bold ${active ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'}`}>
+        {active ? 'Actiu' : 'Inactiu'}
+      </span>
+    </div>
   );
 }

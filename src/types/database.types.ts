@@ -243,6 +243,7 @@ export type Database = {
           module_id: string
           objective: string | null
           order_index: number
+          publication_status: string
           slug: string
           title: string
           xp_reward: number
@@ -254,6 +255,7 @@ export type Database = {
           module_id: string
           objective?: string | null
           order_index?: number
+          publication_status?: string
           slug: string
           title: string
           xp_reward?: number
@@ -265,6 +267,7 @@ export type Database = {
           module_id?: string
           objective?: string | null
           order_index?: number
+          publication_status?: string
           slug?: string
           title?: string
           xp_reward?: number
@@ -286,6 +289,7 @@ export type Database = {
           id: string
           level: string
           order_index: number
+          publication_status: string
           slug: string
           title: string
           track_id: string
@@ -296,6 +300,7 @@ export type Database = {
           id?: string
           level: string
           order_index?: number
+          publication_status?: string
           slug: string
           title: string
           track_id: string
@@ -306,6 +311,7 @@ export type Database = {
           id?: string
           level?: string
           order_index?: number
+          publication_status?: string
           slug?: string
           title?: string
           track_id?: string
@@ -415,6 +421,7 @@ export type Database = {
           media: Json | null
           order_index: number
           prompt: string
+          publication_status: string
           type: string
         }
         Insert: {
@@ -425,6 +432,7 @@ export type Database = {
           media?: Json | null
           order_index?: number
           prompt: string
+          publication_status?: string
           type: string
         }
         Update: {
@@ -435,6 +443,7 @@ export type Database = {
           media?: Json | null
           order_index?: number
           prompt?: string
+          publication_status?: string
           type?: string
         }
         Relationships: [
@@ -477,6 +486,7 @@ export type Database = {
           icon: string | null
           id: string
           order_index: number
+          publication_status: string
           slug: string
           title: string
         }
@@ -488,6 +498,7 @@ export type Database = {
           icon?: string | null
           id?: string
           order_index?: number
+          publication_status?: string
           slug: string
           title: string
         }
@@ -499,6 +510,7 @@ export type Database = {
           icon?: string | null
           id?: string
           order_index?: number
+          publication_status?: string
           slug?: string
           title?: string
         }

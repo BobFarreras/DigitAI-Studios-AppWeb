@@ -304,13 +304,22 @@ Implementat:
 - Inputs editables per rutes, moduls, llicons, preguntes, explicacions, opcions, config i resposta correcta.
 - Persistencia de canvis via server action amb validacio Zod i validacio server-side de `config` per tipus de step.
 - Creacio de rutes, moduls, llicons i steps amb defaults segurs i estat inicial inactiu.
+- Estat editorial `draft/published` a tracks, modules, lessons i steps.
+- Els alumnes nomes carreguen contingut `active=true` i `publication_status='published'`.
+- L'admin veu i pot editar tant drafts com publicats.
 - Navegacio admin desktop/mobile cap a Formacio.
 - Test de servei per resum i preview.
 
 Pendent:
-- Estat `draft/published`.
 - Permisos admin estrictes.
 - Tests d'actions admin.
+
+### Proper Pas Recomanat
+1. Afegir tests d'actions admin per create/update i errors de validacio.
+2. Afegir E2E de `/admin/learning` amb seleccio, preview i guardat.
+3. Implementar duplicar/reordenar steps i lessons.
+4. Afegir un indicador de "publicable" que bloquegi publicar lliçons sense steps o amb config invalida.
+5. Despres passar a Fase 7: perfil i repas avançat per l'alumne.
 
 ### Fase 7 - Perfil i Repàs
 Prioritat: mitjana.
