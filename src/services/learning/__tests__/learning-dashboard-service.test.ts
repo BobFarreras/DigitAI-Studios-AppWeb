@@ -1,6 +1,6 @@
 /**
  * @file src/services/learning/__tests__/learning-dashboard-service.test.ts
- * @updated 2026-05-16
+ * @updated 2026-05-17
  * @summary Tests for learning dashboard service rules.
  * @scope Verifies pure training domain calculations and mapping.
  */
@@ -54,6 +54,8 @@ describe('mapDashboardData', () => {
       ],
       progress: [{ lessonId: 'lesson-1', completed: true, needsReview: false, bestScore: 80 }],
       xpTotal: 25,
+      todayXp: 15,
+      xpEvents: [],
       streakDays: 2,
       weeklyMinutes: 18,
       averageAccuracy: 80,
@@ -100,6 +102,8 @@ describe('mapDashboardData', () => {
       ],
       progress: [],
       xpTotal: 0,
+      todayXp: 0,
+      xpEvents: [],
       streakDays: 0,
       weeklyMinutes: 0,
       averageAccuracy: null,

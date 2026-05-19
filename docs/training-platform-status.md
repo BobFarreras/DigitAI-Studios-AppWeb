@@ -278,16 +278,19 @@ Requisit:
 - Cada tipus ha de tenir validacio server-side i test especific.
 
 ### Fase 5 - Gamificacio
-Prioritat: alta.
+Estat: fet.
 
-Tasques:
-- Ratxa diaria real a `learning_streaks`.
-- Objectiu diari.
-- Achievements simples.
-- Recompenses/cofres reals del mapa.
-- Panell de repàs.
-- XP history visible.
-- No mostrar valors fake com energia fixa si no esta persistida.
+Implementat:
+- Ratxa diaria real actualitzada a `learning_streaks` quan es completa un intent.
+- Objectiu diari d'XP derivat de `learning_xp_events` del dia.
+- Achievements simples derivats de progres real: primera llico, 100 XP i ratxa de 3 dies.
+- Cards de dashboard per objectiu diari i medalles.
+- Historial XP visible derivat de `learning_xp_events`.
+- Recompenses/cofres del mapa derivats del progres real de cada ruta.
+- Panell de repas a `/dashboard/review` amb llicons `needs_review`.
+- Top bar sense energia fake; mostra progres real de l'objectiu diari.
+- Tests purs de ratxa, objectiu diari i achievements.
+- Test de servei que verifica que el dashboard incorpora gamificacio des de metriques persistides.
 
 ### Fase 6 - Admin de Contingut
 Prioritat: alta abans d'escalar contingut.

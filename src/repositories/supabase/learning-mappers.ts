@@ -10,6 +10,7 @@ import type {
   LearningProgressRecord,
   LearningStepRecord,
   LearningTrackRecord,
+  LearningXpEventRecord,
 } from '@/repositories/interfaces/ILearningRepository';
 import type { Tables } from '@/types/database.types';
 
@@ -19,7 +20,7 @@ type LessonRow = Tables<'learning_lessons'>;
 type ProgressRow = Tables<'learning_progress'>;
 type StepRow = Tables<'learning_steps'>;
 type AttemptRow = Tables<'learning_attempts'>;
-type XpRow = Pick<Tables<'learning_xp_events'>, 'xp'>;
+type XpRow = Pick<Tables<'learning_xp_events'>, 'id' | 'xp' | 'source_type' | 'created_at'>;
 
 export function mapTracks(tracks: TrackRow[]): LearningTrackRecord[] {
   return tracks.map((track) => ({
@@ -90,6 +91,21 @@ export function mapReviewItems(progress: ProgressRow[], lessons: LessonRow[]) {
 
 export function sumXp(events: XpRow[]) {
   return events.reduce((total, event) => total + event.xp, 0);
+}
+
+export function sumTodayXp(events: XpRow[], today: string) {
+  return events
+    .filter((event) => event.created_at.startsWith(today))
+    .reduce((total, event) => total + event.xp, 0);
+}
+
+export function mapXpEvents(events: XpRow[]): LearningXpEventRecord[] {
+  return events.slice(0, 5).map((event) => ({
+    id: event.id,
+    xp: event.xp,
+    sourceType: event.source_type,
+    createdAt: event.created_at,
+  }));
 }
 
 export function sumWeeklyMinutes(attempts: AttemptRow[]) {

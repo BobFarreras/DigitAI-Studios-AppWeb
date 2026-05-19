@@ -1,11 +1,12 @@
 /**
  * @file src/repositories/supabase/learning-persistence.ts
- * @updated 2026-05-16
+ * @updated 2026-05-17
  * @summary Persistence helpers for completed learning attempts.
  * @scope Supabase writes for attempts, answers, progress and XP.
  */
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { LearningAttemptCompletion } from '@/repositories/interfaces/ILearningRepository';
+import { calculateNextStreak } from '@/services/learning/learning-gamification-service';
 import type { Database, Json } from '@/types/database.types';
 
 export async function persistAttemptCompletion(
@@ -30,6 +31,7 @@ export async function persistAttemptCompletion(
   await persistAnswers(supabase, input, attempt.data.id);
   await persistProgress(supabase, input);
   await persistXp(supabase, input);
+  await persistStreak(supabase, input.userId);
 }
 
 async function persistAnswers(
@@ -84,4 +86,27 @@ async function persistXp(supabase: SupabaseClient<Database>, input: LearningAtte
     xp: input.xpAwarded,
   });
   if (result.error) throw new Error(result.error.message);
+}
+
+async function persistStreak(supabase: SupabaseClient<Database>, userId: string) {
+  const existing = await supabase.from('learning_streaks').select('*').eq('user_id', userId).maybeSingle();
+  if (existing.error) throw new Error(existing.error.message);
+
+  const next = calculateNextStreak(existing.data ? {
+    currentStreak: existing.data.current_streak,
+    longestStreak: existing.data.longest_streak,
+    lastActivityDate: existing.data.last_activity_date,
+  } : null, currentDate());
+
+  const result = await supabase.from('learning_streaks').upsert({
+    user_id: userId,
+    current_streak: next.currentStreak,
+    longest_streak: next.longestStreak,
+    last_activity_date: next.lastActivityDate,
+  });
+  if (result.error) throw new Error(result.error.message);
+}
+
+function currentDate() {
+  return new Date().toISOString().slice(0, 10);
 }

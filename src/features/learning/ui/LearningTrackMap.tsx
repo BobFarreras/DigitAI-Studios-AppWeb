@@ -1,6 +1,6 @@
 /**
  * @file src/features/learning/ui/LearningTrackMap.tsx
- * @updated 2026-05-16
+ * @updated 2026-05-19
  * @summary Duolingo-inspired lesson map for one learning track.
  * @scope Presentational path with locked/active/completed lesson nodes.
  */
@@ -27,7 +27,7 @@ export function LearningTrackMap({ track }: Props) {
         {track.lessons.map((lesson, index) => (
           <Node key={lesson.id} lesson={lesson} index={index} />
         ))}
-        <RewardNode />
+        {track.reward ? <RewardNode reward={track.reward} /> : null}
       </div>
     </section>
   );
@@ -60,15 +60,20 @@ function Node({ lesson, index }: { lesson: LearningTrackSummary['lessons'][numbe
   );
 }
 
-function RewardNode() {
+function RewardNode({ reward }: { reward: NonNullable<LearningTrackSummary['reward']> }) {
+  const unlocked = reward.status === 'unlocked';
   return (
-    <motion.div
-      initial={{ rotate: -4, scale: 0.94 }}
-      animate={{ rotate: [0, -4, 4, 0], scale: [1, 1.04, 1] }}
-      transition={{ duration: 2.8, repeat: Infinity, repeatDelay: 2 }}
-      className="flex h-20 w-20 items-center justify-center rounded-2xl bg-[#ffc700] text-amber-800 shadow-[0_8px_0_#d39a00]"
-    >
-      <Gift className="h-10 w-10" />
+    <motion.div className="flex flex-col items-center">
+      <motion.div
+        initial={{ rotate: -4, scale: 0.94 }}
+        animate={unlocked ? { rotate: [0, -4, 4, 0], scale: [1, 1.04, 1] } : { rotate: 0, scale: 1 }}
+        transition={{ duration: 2.8, repeat: unlocked ? Infinity : 0, repeatDelay: 2 }}
+        className={`flex h-20 w-20 items-center justify-center rounded-2xl text-amber-900 shadow-[0_8px_0_#d39a00] ${unlocked ? 'bg-[#ffc700]' : 'bg-[#e5e5e5] text-[#777777] shadow-[0_8px_0_#afafaf]'}`}
+      >
+        <Gift className="h-10 w-10" />
+      </motion.div>
+      <p className="mt-3 max-w-40 text-center text-sm font-black leading-4 text-[#777777]">{reward.label}</p>
+      <p className="mt-1 max-w-44 text-center text-xs font-bold leading-4 text-[#afafaf]">{reward.detail}</p>
     </motion.div>
   );
 }

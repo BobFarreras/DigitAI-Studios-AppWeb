@@ -1,6 +1,6 @@
 /**
  * @file src/app/[locale]/dashboard/MobilBottomBar.tsx
- * @updated 2026-05-08
+ * @updated 2026-05-19
  * @summary Route module: src/app/[locale]/dashboard/MobilBottomBar.tsx
  * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
  */
@@ -34,7 +34,7 @@ export function MobileBottomBar({ userRole }: MobileBottomBarProps) {
   const MENU_ITEMS = [
     { icon: LayoutDashboard, label: t('summary'), href: '/dashboard' },
     { icon: BookOpenCheck, label: 'Aprendre', href: '/dashboard/learn' }, 
-    { icon: RotateCcw, label: 'Repassar', href: '#review' },
+    { icon: RotateCcw, label: 'Repassar', href: '/dashboard/review' },
     { icon: UserCircle, label: 'Perfil', href: '#profile' },
   ];
 

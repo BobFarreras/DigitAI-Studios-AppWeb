@@ -5,10 +5,13 @@
  * @scope UI composition with no data fetching or business mutations.
  */
 import type { LearningDashboardData } from '@/services/learning/learning-dashboard-service';
+import { LearningAchievementsCard } from './LearningAchievementsCard';
+import { LearningDailyGoalCard } from './LearningDailyGoalCard';
 import { LearningHero } from './LearningHero';
 import { LearningReviewCard } from './LearningReviewCard';
 import { LearningStatsGrid } from './LearningStatsGrid';
 import { LearningTrackGrid } from './LearningTrackGrid';
+import { LearningXpHistoryCard } from './LearningXpHistoryCard';
 
 type Props = {
   data: LearningDashboardData;
@@ -21,7 +24,12 @@ export function LearningDashboard({ data }: Props) {
       <LearningStatsGrid data={data} />
       <div className="grid gap-5 lg:grid-cols-[1fr_340px]">
         <LearningTrackGrid tracks={data.tracks} />
-        <LearningReviewCard items={data.reviewItems} accuracy={data.accuracy} />
+        <div className="space-y-5">
+          <LearningDailyGoalCard goal={data.dailyGoal} />
+          <LearningAchievementsCard achievements={data.achievements} />
+          <LearningXpHistoryCard items={data.xpHistory} />
+          <LearningReviewCard items={data.reviewItems} queue={data.reviewQueue} accuracy={data.accuracy} />
+        </div>
       </div>
     </div>
   );

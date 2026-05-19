@@ -1,18 +1,22 @@
 /**
  * @file src/features/learning/ui/LearningReviewCard.tsx
- * @updated 2026-05-16
+ * @updated 2026-05-19
  * @summary Review queue card for weak learning concepts.
  * @scope Presentational reinforcement panel.
  */
 import { Brain, RotateCcw } from 'lucide-react';
+import { Link } from '@/routing';
 import { Button } from '@/components/ui/button';
+import type { LearningDashboardData } from '@/services/learning/learning-dashboard-service';
 
 type Props = {
   items: string[];
+  queue?: LearningDashboardData['reviewQueue'];
   accuracy: number;
 };
 
-export function LearningReviewCard({ items, accuracy }: Props) {
+export function LearningReviewCard({ items, queue = [], accuracy }: Props) {
+  const reviewHref = queue[0]?.href ?? '/dashboard/review';
   return (
     <aside className="space-y-4">
       <div className="rounded-[24px] border border-slate-200 bg-white p-5 shadow-sm dark:border-white/10 dark:bg-slate-950">
@@ -31,15 +35,18 @@ export function LearningReviewCard({ items, accuracy }: Props) {
         </p>
 
         <ul className="mt-4 space-y-2">
-          {items.map((item) => (
-            <li key={item} className="rounded-xl bg-slate-50 px-3 py-2 text-sm font-bold text-slate-700 dark:bg-white/5 dark:text-slate-200">
-              {item}
+          {(queue.length > 0 ? queue : items.map((title) => ({ id: title, title, trackTitle: 'Pendent', href: reviewHref }))).map((item) => (
+            <li key={item.id} className="rounded-xl bg-slate-50 px-3 py-2 text-sm font-bold text-slate-700 dark:bg-white/5 dark:text-slate-200">
+              {item.title}
+              <span className="block text-xs text-slate-500">{item.trackTitle}</span>
             </li>
           ))}
         </ul>
 
-        <Button variant="outline" className="mt-5 h-11 w-full rounded-xl font-black">
-          <RotateCcw className="mr-2 h-4 w-4" /> Repassar ara
+        <Button asChild variant="outline" className="mt-5 h-11 w-full rounded-xl font-black">
+          <Link href={reviewHref}>
+            <RotateCcw className="mr-2 h-4 w-4" /> Repassar ara
+          </Link>
         </Button>
       </div>
     </aside>

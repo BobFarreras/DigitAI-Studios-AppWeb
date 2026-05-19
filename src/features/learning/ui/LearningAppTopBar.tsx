@@ -1,14 +1,14 @@
 /**
  * @file src/features/learning/ui/LearningAppTopBar.tsx
- * @updated 2026-05-16
+ * @updated 2026-05-19
  * @summary Compact app-style stats bar for learning routes.
  * @scope Presentational top bar for mobile-first learning surfaces.
  */
-import { Flame, Gem, Shield, Zap } from 'lucide-react';
+import { Flame, Gem, Shield, Target } from 'lucide-react';
 import type { LearningDashboardData } from '@/services/learning/learning-dashboard-service';
 
 type Props = {
-  data: Pick<LearningDashboardData, 'xpTotal' | 'streakDays' | 'accuracy'>;
+  data: Pick<LearningDashboardData, 'xpTotal' | 'streakDays' | 'accuracy' | 'dailyGoal'>;
 };
 
 export function LearningAppTopBar({ data }: Props) {
@@ -18,7 +18,7 @@ export function LearningAppTopBar({ data }: Props) {
         <Stat icon={Flame} value={data.streakDays} color="text-orange-500" />
         <Stat icon={Shield} value={data.accuracy} color="text-sky-500" suffix="%" />
         <Stat icon={Gem} value={data.xpTotal} color="text-[#1cb0f6]" />
-        <Stat icon={Zap} value={24} color="text-[#cc348d]" />
+        <Stat icon={Target} value={data.dailyGoal.progress} color="text-[#cc348d]" suffix="%" />
       </div>
     </div>
   );

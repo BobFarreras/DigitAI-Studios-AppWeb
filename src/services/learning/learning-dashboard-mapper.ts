@@ -1,6 +1,6 @@
 /**
  * @file src/services/learning/learning-dashboard-mapper.ts
- * @updated 2026-05-16
+ * @updated 2026-05-17
  * @summary Pure mapping rules for learning dashboard and track states.
  * @scope Domain state derivation; no repository or UI dependencies.
  */
@@ -11,7 +11,7 @@ import type {
   LearningTrackRecord,
 } from '@/repositories/interfaces/ILearningRepository';
 import type {
-  LearningDashboardData,
+  LearningDashboardBaseData,
   LearningItemStatus,
   LearningLessonNode,
   LearningTrackSummary,
@@ -20,7 +20,7 @@ import type {
 export function mapDashboardData(
   email: string,
   snapshot: LearningDashboardSnapshot
-): LearningDashboardData {
+): LearningDashboardBaseData {
   const userName = email.split('@')[0] || 'alumne';
   const tracks = mapTracks(snapshot);
 

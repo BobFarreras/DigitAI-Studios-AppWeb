@@ -75,11 +75,20 @@ export type LearningProgressRecord = {
   bestScore: number;
 };
 
+export type LearningXpEventRecord = {
+  id: string;
+  xp: number;
+  sourceType: string;
+  createdAt: string;
+};
+
 export type LearningDashboardSnapshot = {
   tracks: LearningTrackRecord[];
   modules: LearningModuleRecord[];
   progress: LearningProgressRecord[];
   xpTotal: number;
+  todayXp: number;
+  xpEvents: LearningXpEventRecord[];
   streakDays: number;
   weeklyMinutes: number;
   averageAccuracy: number | null;

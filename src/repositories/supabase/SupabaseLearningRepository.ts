@@ -21,6 +21,8 @@ import {
   mapReviewItems,
   mapSteps,
   mapTracks,
+  mapXpEvents,
+  sumTodayXp,
   sumWeeklyMinutes,
   sumXp,
 } from './learning-mappers';
@@ -32,13 +34,18 @@ export class SupabaseLearningRepository implements ILearningRepository {
   async getDashboardSnapshot(userId: string): Promise<LearningDashboardSnapshot> {
     const supabase = createAdminClient();
     const weekStart = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+    const todayStart = new Date().toISOString().slice(0, 10);
 
     const [tracks, modules, lessons, progress, xp, streak, attempts] = await Promise.all([
       supabase.from('learning_tracks').select('*').eq('active', true).order('order_index'),
       supabase.from('learning_modules').select('*').eq('active', true).order('order_index'),
       supabase.from('learning_lessons').select('*').eq('active', true).order('order_index'),
       supabase.from('learning_progress').select('*').eq('user_id', userId),
-      supabase.from('learning_xp_events').select('xp').eq('user_id', userId),
+      supabase
+        .from('learning_xp_events')
+        .select('id, xp, source_type, created_at')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false }),
       supabase.from('learning_streaks').select('*').eq('user_id', userId).maybeSingle(),
       supabase
         .from('learning_attempts')
@@ -60,6 +67,8 @@ export class SupabaseLearningRepository implements ILearningRepository {
       modules: mapModules(modules.data ?? [], lessons.data ?? []),
       progress: mapProgress(progress.data ?? []),
       xpTotal: sumXp(xp.data ?? []),
+      todayXp: sumTodayXp(xp.data ?? [], todayStart),
+      xpEvents: mapXpEvents(xp.data ?? []),
       streakDays: streak.data?.current_streak ?? 0,
       weeklyMinutes: sumWeeklyMinutes(attempts.data ?? []),
       averageAccuracy: averageAccuracy(attempts.data ?? []),
