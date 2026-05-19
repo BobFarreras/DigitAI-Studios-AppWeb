@@ -9,6 +9,7 @@
 import { useMemo, useState } from 'react';
 import type { AdminLearningContentData } from '@/services/learning/admin-learning-content-service';
 import { AdminLearningContentNavigator } from './AdminLearningContentNavigator';
+import { AdminLearningCreatePanel } from './AdminLearningCreatePanel';
 import { AdminLearningEntityEditor } from './AdminLearningEntityEditor';
 import { AdminLearningFlowPreview } from './AdminLearningFlowPreview';
 import { AdminLearningStepEditor } from './AdminLearningStepEditor';
@@ -29,6 +30,7 @@ export function AdminLearningContentStudio({ data }: Props) {
         onSelect={setSelection}
       />
       <div className="space-y-4">
+        <AdminLearningCreatePanel selected={selected} />
         <AdminLearningEntityEditor
           key={`${selected.track?.id}-${selected.module?.id}-${selected.lesson?.id}`}
           selected={selected}

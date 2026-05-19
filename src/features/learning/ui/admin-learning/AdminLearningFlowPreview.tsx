@@ -8,6 +8,8 @@
 
 import { CheckCircle2, ClipboardList, Timer, Trophy } from 'lucide-react';
 import type { AdminLearningLessonRecord, AdminLearningStepUpdate } from '@/services/learning/admin-learning-content-service';
+import type { LearningRunnerStep } from '@/services/learning/learning-lesson-service';
+import { StepInteraction } from '../lesson-runner/StepInteraction';
 import { stringifyEditable } from './admin-learning-config';
 
 type Props = {
@@ -45,8 +47,25 @@ export function AdminLearningFlowPreview({ lesson, selectedStepId, onSelectStep 
             <StepAnswers step={step} />
           </button>
         ))}
+        {selectedStep(lesson, selectedStepId) ? <StudentPreview step={selectedStep(lesson, selectedStepId)!} /> : null}
       </div>
     </aside>
+  );
+}
+
+function StudentPreview({ step }: { step: AdminLearningStepUpdate }) {
+  const value = step.config.correctAnswer;
+  return (
+    <div className="rounded-lg border-2 border-primary bg-background p-4">
+      <p className="mb-3 text-xs font-bold uppercase text-primary">Com ho veu l'alumne</p>
+      <StepInteraction
+        step={toRunnerStep(step)}
+        value={value}
+        disabled
+        feedbackStatus="correct"
+        onChange={() => undefined}
+      />
+    </div>
   );
 }
 
@@ -69,4 +88,20 @@ function Fact({ icon: Icon, value }: { icon: typeof Timer; value: string }) {
 
 function EmptyPreview() {
   return <aside className="rounded-xl border border-border bg-card p-5 text-sm font-medium text-muted-foreground shadow-sm">Selecciona una llico.</aside>;
+}
+
+function selectedStep(lesson: AdminLearningLessonRecord, id: string) {
+  return lesson.steps.find((step) => step.id === id) ?? lesson.steps[0] ?? null;
+}
+
+function toRunnerStep(step: AdminLearningStepUpdate): LearningRunnerStep {
+  return {
+    id: step.id,
+    lessonId: '',
+    type: step.type,
+    prompt: step.prompt,
+    explanation: step.explanation,
+    config: step.config,
+    orderIndex: step.orderIndex,
+  };
 }

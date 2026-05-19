@@ -300,15 +300,14 @@ Implementat:
 - Lectura de tracks, modules, lessons i steps via Action -> Service -> Repository -> Supabase.
 - Content Studio amb seleccio de ruta, modul, llico i step.
 - Preview del flux de cada llico amb opcions i resposta correcta visible per admin.
+- Preview real "com alumne" reutilitzant el renderer de steps del runner sense crear attempts, XP ni progres.
 - Inputs editables per rutes, moduls, llicons, preguntes, explicacions, opcions, config i resposta correcta.
 - Persistencia de canvis via server action amb validacio Zod i validacio server-side de `config` per tipus de step.
+- Creacio de rutes, moduls, llicons i steps amb defaults segurs i estat inicial inactiu.
 - Navegacio admin desktop/mobile cap a Formacio.
 - Test de servei per resum i preview.
 
 Pendent:
-- Admin per crear/editar tracks, modules, lessons i steps.
-- Preview de llico abans de publicar.
-- Validacio Zod per config de cada interaction type.
 - Estat `draft/published`.
 - Permisos admin estrictes.
 - Tests d'actions admin.

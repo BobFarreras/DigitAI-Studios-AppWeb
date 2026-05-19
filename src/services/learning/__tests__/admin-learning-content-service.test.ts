@@ -97,6 +97,10 @@ const content: AdminLearningTrackRecord[] = [{
 class MemoryRepository implements IAdminLearningContentRepository {
   constructor(private tracks: AdminLearningTrackRecord[]) {}
   async listContent() { return this.tracks; }
+  async createTrack() {}
+  async createModule() {}
+  async createLesson() {}
+  async createStep() {}
   async updateTrack() {}
   async updateModule() {}
   async updateLesson() {}

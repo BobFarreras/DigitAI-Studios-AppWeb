@@ -6,10 +6,14 @@
  */
 import type {
   AdminLearningLessonRecord,
+  AdminLearningLessonCreate,
   AdminLearningLessonUpdate,
+  AdminLearningModuleCreate,
   AdminLearningModuleRecord,
   AdminLearningModuleUpdate,
+  AdminLearningStepCreate,
   AdminLearningStepUpdate,
+  AdminLearningTrackCreate,
   AdminLearningTrackRecord,
   AdminLearningTrackUpdate,
   IAdminLearningContentRepository,
@@ -19,10 +23,14 @@ import { assertValidStepConfig } from './admin-learning-content-validation';
 
 export type {
   AdminLearningLessonRecord,
+  AdminLearningLessonCreate,
   AdminLearningLessonUpdate,
+  AdminLearningModuleCreate,
   AdminLearningModuleRecord,
   AdminLearningModuleUpdate,
+  AdminLearningStepCreate,
   AdminLearningStepUpdate,
+  AdminLearningTrackCreate,
   AdminLearningTrackRecord,
   AdminLearningTrackUpdate,
   LearningStepType,
@@ -58,6 +66,23 @@ export class AdminLearningContentService {
 
   async updateTrack(input: AdminLearningTrackUpdate) {
     await this.repository.updateTrack(input);
+  }
+
+  async createTrack(input: AdminLearningTrackCreate) {
+    await this.repository.createTrack(input);
+  }
+
+  async createModule(input: AdminLearningModuleCreate) {
+    await this.repository.createModule(input);
+  }
+
+  async createLesson(input: AdminLearningLessonCreate) {
+    await this.repository.createLesson(input);
+  }
+
+  async createStep(input: AdminLearningStepCreate) {
+    assertValidStepConfig(input.type, input.config);
+    await this.repository.createStep(input);
   }
 
   async updateModule(input: AdminLearningModuleUpdate) {

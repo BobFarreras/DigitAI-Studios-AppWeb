@@ -8,16 +8,25 @@ import type { PostgrestError } from '@supabase/supabase-js';
 import { createAdminClient } from '@/lib/supabase/server';
 import type {
   AdminLearningLessonRecord,
+  AdminLearningLessonCreate,
   AdminLearningLessonUpdate,
+  AdminLearningModuleCreate,
   AdminLearningModuleRecord,
   AdminLearningModuleUpdate,
+  AdminLearningStepCreate,
   AdminLearningStepUpdate,
+  AdminLearningTrackCreate,
   AdminLearningTrackRecord,
   AdminLearningTrackUpdate,
   IAdminLearningContentRepository,
 } from '@/repositories/interfaces/IAdminLearningContentRepository';
 import type { LearningStepType } from '@/repositories/interfaces/ILearningRepository';
-import type { Json } from '@/types/database.types';
+import {
+  writeLesson,
+  writeModule,
+  writeStep,
+  writeTrack,
+} from './admin-learning-writes';
 
 export class SupabaseAdminLearningContentRepository implements IAdminLearningContentRepository {
   async listContent(): Promise<AdminLearningTrackRecord[]> {
@@ -84,52 +93,35 @@ export class SupabaseAdminLearningContentRepository implements IAdminLearningCon
   }
 
   async updateTrack(input: AdminLearningTrackUpdate) {
-    const result = await createAdminClient().from('learning_tracks').update({
-      slug: input.slug,
-      title: input.title,
-      description: input.description,
-      icon: input.icon,
-      color: input.color,
-      active: input.active,
-      order_index: input.orderIndex,
-    }).eq('id', input.id);
-    assertNoError(result.error);
+    await writeTrack(createAdminClient(), input);
+  }
+
+  async createTrack(input: AdminLearningTrackCreate) {
+    await writeTrack(createAdminClient(), input);
+  }
+
+  async createModule(input: AdminLearningModuleCreate) {
+    await writeModule(createAdminClient(), input);
+  }
+
+  async createLesson(input: AdminLearningLessonCreate) {
+    await writeLesson(createAdminClient(), input);
+  }
+
+  async createStep(input: AdminLearningStepCreate) {
+    await writeStep(createAdminClient(), input);
   }
 
   async updateModule(input: AdminLearningModuleUpdate) {
-    const result = await createAdminClient().from('learning_modules').update({
-      slug: input.slug,
-      title: input.title,
-      description: input.description,
-      level: input.level,
-      active: input.active,
-      order_index: input.orderIndex,
-    }).eq('id', input.id);
-    assertNoError(result.error);
+    await writeModule(createAdminClient(), input);
   }
 
   async updateLesson(input: AdminLearningLessonUpdate) {
-    const result = await createAdminClient().from('learning_lessons').update({
-      slug: input.slug,
-      title: input.title,
-      objective: input.objective,
-      active: input.active,
-      estimated_minutes: input.estimatedMinutes,
-      xp_reward: input.xpReward,
-      order_index: input.orderIndex,
-    }).eq('id', input.id);
-    assertNoError(result.error);
+    await writeLesson(createAdminClient(), input);
   }
 
   async updateStep(input: AdminLearningStepUpdate) {
-    const result = await createAdminClient().from('learning_steps').update({
-      type: input.type,
-      prompt: input.prompt,
-      explanation: input.explanation,
-      config: input.config as Json,
-      order_index: input.orderIndex,
-    }).eq('id', input.id);
-    assertNoError(result.error);
+    await writeStep(createAdminClient(), input);
   }
 }
 
