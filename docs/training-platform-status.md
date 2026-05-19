@@ -299,6 +299,7 @@ Implementat:
 - Ruta admin `/admin/learning` per inventari de contingut formatiu.
 - Lectura de tracks, modules, lessons i steps via Action -> Service -> Repository -> Supabase.
 - Preview read-only d'una llico amb steps.
+- Fase 6.1 Content Studio read-only amb metriques, navegador de rutes, llista de llicons i preview lateral.
 - Navegacio admin desktop/mobile cap a Formacio.
 - Test de servei per resum i preview.
 

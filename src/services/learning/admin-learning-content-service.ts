@@ -10,12 +10,16 @@ import type {
   IAdminLearningContentRepository,
 } from '@/repositories/interfaces/IAdminLearningContentRepository';
 
+export type { AdminLearningLessonRecord, AdminLearningTrackRecord };
+
 export type AdminLearningContentSummary = {
   tracks: number;
   modules: number;
   lessons: number;
   steps: number;
   inactiveLessons: number;
+  activeLessons: number;
+  averageStepsPerLesson: number;
 };
 
 export type AdminLearningContentData = {
@@ -40,12 +44,15 @@ export class AdminLearningContentService {
 function summarize(tracks: AdminLearningTrackRecord[]): AdminLearningContentSummary {
   const modules = tracks.flatMap((track) => track.modules);
   const lessons = modules.flatMap((module) => module.lessons);
+  const steps = lessons.reduce((total, lesson) => total + lesson.steps.length, 0);
   return {
     tracks: tracks.length,
     modules: modules.length,
     lessons: lessons.length,
-    steps: lessons.reduce((total, lesson) => total + lesson.steps.length, 0),
+    steps,
     inactiveLessons: lessons.filter((lesson) => !lesson.active).length,
+    activeLessons: lessons.filter((lesson) => lesson.active).length,
+    averageStepsPerLesson: lessons.length === 0 ? 0 : Math.round((steps / lessons.length) * 10) / 10,
   };
 }
 

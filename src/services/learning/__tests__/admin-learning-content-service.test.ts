@@ -22,6 +22,8 @@ describe('AdminLearningContentService', () => {
       lessons: 2,
       steps: 1,
       inactiveLessons: 1,
+      activeLessons: 1,
+      averageStepsPerLesson: 0.5,
     });
     expect(overview.previewLesson?.title).toBe('Intro');
   });
