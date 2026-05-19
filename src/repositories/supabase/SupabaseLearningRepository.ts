@@ -9,8 +9,8 @@ import { createAdminClient } from '@/lib/supabase/server';
 import type {
   ILearningRepository,
   LearningAttemptCompletion,
-  LearningLessonDetailRecord,
   LearningDashboardSnapshot,
+  LearningLessonDetailRecord,
 } from '@/repositories/interfaces/ILearningRepository';
 import type { Tables } from '@/types/database.types';
 import {
@@ -27,6 +27,7 @@ import {
   sumXp,
 } from './learning-mappers';
 import { persistAttemptCompletion } from './learning-persistence';
+import { readWeakSpots } from './learning-review-reads';
 
 type ModuleRow = Tables<'learning_modules'>;
 const publishedContent = { active: true, publication_status: 'published' };
@@ -77,10 +78,11 @@ export class SupabaseLearningRepository implements ILearningRepository {
     };
   }
 
-  async getLessonDetail(
-    trackSlug: string,
-    lessonSlug: string
-  ): Promise<LearningLessonDetailRecord | null> {
+  async getWeakSpots(userId: string) {
+    return readWeakSpots(createAdminClient(), userId);
+  }
+
+  async getLessonDetail(trackSlug: string, lessonSlug: string): Promise<LearningLessonDetailRecord | null> {
     const supabase = createAdminClient();
     const track = await supabase
       .from('learning_tracks')
@@ -102,12 +104,8 @@ export class SupabaseLearningRepository implements ILearningRepository {
     const lesson = await findLessonBySlug(modules.data ?? [], lessonSlug);
     if (!lesson) return null;
 
-    const steps = await supabase
-      .from('learning_steps')
-      .select('*')
-      .eq('lesson_id', lesson.id)
-      .eq('publication_status', 'published')
-      .order('order_index');
+    const steps = await supabase.from('learning_steps').select('*')
+      .eq('lesson_id', lesson.id).eq('publication_status', 'published').order('order_index');
     assertNoError(steps.error);
 
     return {

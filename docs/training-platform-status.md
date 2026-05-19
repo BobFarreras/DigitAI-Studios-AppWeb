@@ -332,9 +332,11 @@ Implementat:
 - Resum de ruta forta, rutes actives, rutes completades i llicons pendents de repas.
 - Navegacio mobile i sidebar apuntant a Perfil real.
 - Builder de servei testejat per derivar nivell, totals i ruta forta des de dades reals del dashboard.
+- `/dashboard/review` avançat amb preguntes prioritaries derivades de respostes incorrectes persistides.
+- Priorizacio de punts febles per nombre d'errors repetits i recencia.
+- Resum de cua de repas, errors repetits i temps setmanal.
 
 Tasques:
-- `/dashboard/review` o seccio de repàs.
 - Errors repetits per concepte.
 - Lliçons `needs_review`.
 - Mini-revisions per recuperar XP/progres net.

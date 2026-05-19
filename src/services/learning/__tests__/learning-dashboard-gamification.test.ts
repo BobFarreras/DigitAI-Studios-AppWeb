@@ -44,6 +44,7 @@ const snapshot: LearningDashboardSnapshot = {
 class MemoryLearningRepository implements ILearningRepository {
   constructor(private data: LearningDashboardSnapshot) {}
   async getDashboardSnapshot() { return this.data; }
+  async getWeakSpots() { return []; }
   async getLessonDetail() { return null; }
   async completeAttempt() {}
 }

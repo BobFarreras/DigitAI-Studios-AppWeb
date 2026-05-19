@@ -5,11 +5,11 @@
  * @scope Page composition only; data comes from server actions.
  */
 import { redirect } from 'next/navigation';
-import { getDashboardHomeData } from '@/actions/dashboard-home';
+import { getDashboardReviewData } from '@/actions/dashboard-review';
 import { LearningReviewPage } from '@/features/learning/ui/LearningReviewPage';
 
 export default async function ReviewPage() {
-  const result = await getDashboardHomeData();
+  const result = await getDashboardReviewData();
 
   if (!result.success && 'authRequired' in result) {
     redirect('/');

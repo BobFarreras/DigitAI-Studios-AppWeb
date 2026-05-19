@@ -42,6 +42,10 @@ class MemoryLearningRepository implements ILearningRepository {
     return this.detail;
   }
 
+  async getWeakSpots() {
+    return [];
+  }
+
   async completeAttempt(input: LearningAttemptCompletion) {
     this.completedAttempt = input;
   }

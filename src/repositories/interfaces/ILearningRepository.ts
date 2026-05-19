@@ -97,6 +97,19 @@ export type LearningDashboardSnapshot = {
   reviewItems: string[];
 };
 
+export type LearningWeakSpotRecord = {
+  stepId: string;
+  lessonId: string;
+  lessonSlug: string;
+  lessonTitle: string;
+  trackSlug: string;
+  trackTitle: string;
+  prompt: string;
+  type: LearningStepType;
+  wrongCount: number;
+  lastWrongAt: string;
+};
+
 export type LearningPersistedAnswer = {
   stepId: string;
   answer: unknown;
@@ -121,6 +134,7 @@ export type LearningAttemptCompletion = {
 
 export interface ILearningRepository {
   getDashboardSnapshot(userId: string): Promise<LearningDashboardSnapshot>;
+  getWeakSpots(userId: string): Promise<LearningWeakSpotRecord[]>;
   getLessonDetail(trackSlug: string, lessonSlug: string): Promise<LearningLessonDetailRecord | null>;
   completeAttempt(input: LearningAttemptCompletion): Promise<void>;
 }
