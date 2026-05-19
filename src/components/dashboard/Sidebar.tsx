@@ -7,7 +7,9 @@ import {
   LayoutDashboard,
   Settings,
   BookOpenCheck,
+  RotateCcw,
   Users,
+  UserCircle,
   ShieldCheck // <--- Icona per Admin
   
 } from 'lucide-react';
@@ -40,6 +42,18 @@ export function Sidebar({ userRole = 'client' }: SidebarProps) {
       href: '/dashboard/learn',
       icon: BookOpenCheck,
       roles: ['admin', 'client'],
+    },
+    {
+      label: 'Repassar',
+      href: '/dashboard/review',
+      icon: RotateCcw,
+      roles: ['admin', 'client'],
+    },
+    {
+      label: 'Perfil',
+      href: '/dashboard/profile',
+      icon: UserCircle,
+      roles: ['admin', 'client', 'lead'],
     },
     {
       label: t('users'),

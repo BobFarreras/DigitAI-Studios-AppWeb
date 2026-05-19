@@ -1,6 +1,6 @@
 # Training Platform Status
 
-Data d'actualitzacio: 2026-05-17
+Data d'actualitzacio: 2026-05-19
 
 ## Objectiu del Document
 Aquest document deixa constancia de l'estat real de la plataforma de formacio DigitAI dins l'area d'usuari. Serveix com a referencia de continuacio per no dependre de la conversa i per evitar perdre decisions, fases, riscos o feina pendent.
@@ -324,8 +324,16 @@ Pendent:
 ### Fase 7 - Perfil i Repàs
 Prioritat: mitjana.
 
+Estat: iniciada.
+
+Implementat:
+- `/dashboard/profile` real amb metriques de XP, nivell, ratxa, objectiu diari, precisio i temps setmanal.
+- Progres per ruta visible amb totals de llicons, estat i acces directe a cada ruta.
+- Resum de ruta forta, rutes actives, rutes completades i llicons pendents de repas.
+- Navegacio mobile i sidebar apuntant a Perfil real.
+- Builder de servei testejat per derivar nivell, totals i ruta forta des de dades reals del dashboard.
+
 Tasques:
-- `/dashboard/profile` real.
 - `/dashboard/review` o seccio de repàs.
 - Errors repetits per concepte.
 - Lliçons `needs_review`.

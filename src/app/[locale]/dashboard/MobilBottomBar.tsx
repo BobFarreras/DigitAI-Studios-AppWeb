@@ -35,7 +35,7 @@ export function MobileBottomBar({ userRole }: MobileBottomBarProps) {
     { icon: LayoutDashboard, label: t('summary'), href: '/dashboard' },
     { icon: BookOpenCheck, label: 'Aprendre', href: '/dashboard/learn' }, 
     { icon: RotateCcw, label: 'Repassar', href: '/dashboard/review' },
-    { icon: UserCircle, label: 'Perfil', href: '#profile' },
+    { icon: UserCircle, label: 'Perfil', href: '/dashboard/profile' },
   ];
 
   const handleClick = (e: React.MouseEvent, href: string, label: string) => {
