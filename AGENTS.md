@@ -1,86 +1,94 @@
-# AGENTS.md - Protocols Operatius DigitAI Studios
+# AGENTS.md — DigitAI Studios
 
-## 1) Rol de l'Agent
-Ets l'Arquitecte Sènior del projecte.
-Objectiu: mantenir una base de codi escalable, segura i modular centrada en:
-- Landing pública moderna.
-- Admin privat intern per eines i contingut.
+## Projecte
+Landing pública (marketing) + admin privat (analytics, contingut, RRSS, formació gamificada).
 
-## 2) Stack i Entorn
-- Package manager: `pnpm` (obligatori).
-- Framework: Next.js 16 (App Router).
-- Llenguatge: TypeScript strict.
-- Dades: Supabase.
-- Validació: Zod.
-- I18n: `next-intl`.
+## Stack
+- **Runtime:** Next.js 16 (App Router, Turbopack) · TypeScript strict · pnpm
+- **UI:** React 19 · Tailwind v4 · ShadcnUI · Framer Motion · next-intl (i18n)
+- **Dades:** Supabase (Postgres + Auth + SSR) · Zod (validació)
+- **Testing:** Vitest · Testing Library · `pnpm test -- --run`
+- **Deploy:** Vercel · GitHub Actions
+- **MCP:** Supabase (remote) · Engram (local, memòria persistent)
 
-## 3) Arquitectura Obligatòria
-Flux únic per a lògica de negoci:
-1. UI (`app/components/features/ui`)
-2. Action (`src/actions` o `src/features/*/actions`)
-3. Service (`src/services`)
-4. Repository (`src/repositories`)
-5. DB/Adapters (`src/lib/supabase`, `src/adapters`)
+## Arquitectura (flux obligatori)
+```
+UI (src/app, src/components, src/features/*/ui)
+  → Action (src/actions | src/features/*/actions)
+    → Service (src/services)
+      → Repository (src/repositories)
+        → DB/Adapter (src/lib/supabase, src/adapters)
+```
 
-Prohibit:
-- Fer `.from(...)` de Supabase dins `.tsx` de UI.
-- Saltar-se `services` en fluxos de negoci.
-- Barrejar lògica de domini a `page.tsx`.
+**Prohibit:** `.from()` en `.tsx` · skip service layer · lògica de domini a `page.tsx`
 
-## 4) Regles de Codi
-- Màxim 150 línies per fitxer (excepte generated i allowlist).
-- Sense `any` (si és imprescindible, documentar motiu en comentari curt).
-- Sense `.then()`: usar `async/await`.
-- Server actions: retorn normalitzat `{ success, data?, error? }`.
-- Nomenclatura:
-  - Components: `PascalCase`
-  - Funcions/variables: `camelCase`
-  - Arxius: `kebab-case` (excepte components React que ja siguin PascalCase)
+## Convencions
+- Màx 150 línies per fitxer (excepte generated/allowlist)
+- Cap `any` · Sempre `async/await` (no `.then()`)
+- Server actions retornen `{ success, data?, error? }`
+- Components `PascalCase` · Fitxers `kebab-case` · Funcions `camelCase`
+- Capçalera: `@file` · `@updated` · `@summary` · `@scope`
 
-## 5) Comentari de Capçalera (Fitxers Nous i Refactoritzats)
-Per fitxers no trivials, afegeix capçalera curta amb aquest format:
-- `@file`: ruta relativa del fitxer.
-- `@updated`: data de darrera modificació (`YYYY-MM-DD`).
-- `@summary`: descripció breu del que fa.
-- `@scope`: límit de responsabilitat del fitxer.
+## Seguretat
+- Claus sensibles només server runtime
+- Zod a tots els inputs externs
+- AuthZ abans de mutacions · Default deny
 
-## 6) Seguretat i Permisos
-- Claus sensibles només a server runtime.
-- Validació Zod a inputs externs.
-- Checks d'autenticació/autorització abans de mutacions.
-- Default deny si no hi ha sessió/rol vàlid.
+## Git Workflow
+- `feat/` · `fix/` · `refactor/` · `docs/` · `chore/`
+- Conventional commits en català o anglès
+- Una responsabilitat per PR · Rebase sobre main abans de merge
 
-## 7) TDD i Testing
-- Nova lògica: començar per test que falli.
-- Bugfix: crear test de regressió abans del fix.
-- Refactor: preservar comportament amb tests verds.
+## Qualitat (abans de tancar PR)
+```
+pnpm lint
+pnpm test -- --run
+pnpm check
+```
 
-Comandes mínimes abans de tancar canvis:
-- `pnpm lint`
-- `pnpm test -- --run`
-- `pnpm check`
+## Troubleshooting
+- **404 rutes i18n:** No crear `src/middleware.ts`. Middleware = `src/proxy.ts`. Si es toca: `rm -rf .next && pnpm dev`
+- **Cache corrupte:** Esborrar `.next` abans de diagnosticar.
 
-## 8) Documentació
-- `README.md` root: estat de producte i comandes.
-- `ARCHITECTURE.md`: blueprint de capes i boundaries.
-- `README.md` per mòdul a `src/` per indexar responsabilitats.
+## Com treballen els agents
+1. Llegeix `AGENTS.md` → identifica task type → carrega NOMÉS la skill necessària.
+2. Segueix el flux d'arquitectura estrictament.
+3. Desa decisions i aprenentatges a Engram (memòria persistent).
+4. Abans de respondre: verifica amb `lint`, `test`, `check`.
+5. Si trobes un error nou: afegeix-lo a Troubleshooting.
 
-## 9) Estratègia de Refactor
-- Incremental i reversible.
-- Una responsabilitat per PR.
-- Prioritat:
-  1. accessos DB fora repositori
-  2. fitxers >150 línies
-  3. noms inconsistents/typos
-  4. simplificació del scope públic
+## Engram (Memòria Persistent)
+- Engram v1.15.15 — MCP server per memòria entre sessions
+- Comandes clau:
+  - `engram save "titol" "contingut" --type decision --project digitai-studios`
+  - `engram search "query" --project digitai-studios`
+  - `engram context digitai-studios`
+- Quan completis una task important: desa què, per què, decisions i problemes
+- Els següents agents recuperen context directament des de memòria
 
-## 10) Troubleshooting / Errors Històrics
-### 10.1) 404 en totes les rutes i18n després de canvis al middleware
-- **Símptoma:** Després de modificar `src/proxy.ts` (o crear accidentalment `src/middleware.ts`), totes les rutes (`/dashboard`, `/dashboard/learn/...`) retornen 404.
-- **Causa real:** A Next.js 16, el fitxer de middleware s'anomena **`proxy.ts`** (a la carpeta `src/`). Crear `middleware.ts` està deprecated i trenca el routing de `next-intl`. A més, Turbopack manté un estat de cache a `.next` que es corrompia en detectar canvis al fitxer de middleware.
-- **Solució:**
-  1. Revertir qualsevol canvi a `src/proxy.ts` (ha de contenir `export async function proxy(...)`).
-  2. Assegurar-se que **NO** existeix `src/middleware.ts`.
-  3. Esborrar el cache: `rm -rf .next`.
-  4. Reiniciar: `pnpm dev`.
-- **Regla d'or:** Si es toca qualsevol cosa relacionada amb el middleware de `next-intl`, SEMPRE executar `rm -rf .next && pnpm dev` abans de diagnosticar altres causes.
+## Supabase MCP
+- Project ref: `ungftqhvwdxuconfqbgi`
+- Connexió remota via OAuth (browser auth)
+- Usar Supabase MCP per: migrations, SQL, RLS, branches, advisors, types
+- MAJUS modificar BD sense migration — usar `supabase_apply_migration`
+- Sempre verificar amb `supabase_get_advisors` després de canvis DDL
+
+## Estructura de Context
+```
+AGENTS.md              ← context base (aquest fitxer)
+.opencode/skill/       ← skills opencode (auto-detectades)
+  frontend/SKILL.md
+  backend/SKILL.md
+  design-rules/SKILL.md
+  github-workflow/SKILL.md
+  testing/SKILL.md
+  security/SKILL.md
+  n8n-rules/SKILL.md
+  database-rules/SKILL.md
+  performance/SKILL.md
+skills/                ← skills planes (referència ràpida)
+ARCHITECTURE.md        ← blueprint detallat de capes i boundaries
+DESIGN.md              ← sistema de disseny (colors, tipografia, components)
+PRD.md                 ← requeriments de producte
+docs/                  ← documentació operativa i guies
+```

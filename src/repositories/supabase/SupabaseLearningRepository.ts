@@ -1,10 +1,9 @@
 /**
  * @file src/repositories/supabase/SupabaseLearningRepository.ts
- * @updated 2026-05-16
+ * @updated 2026-05-20
  * @summary Supabase implementation for learning dashboard reads.
  * @scope Data access only; no learning progression business rules.
  */
-import type { PostgrestError } from '@supabase/supabase-js';
 import { createAdminClient } from '@/lib/supabase/server';
 import type {
   ILearningRepository,
@@ -28,10 +27,9 @@ import {
 } from './learning-mappers';
 import { persistAttemptCompletion } from './learning-persistence';
 import { readWeakSpots } from './learning-review-reads';
+import { publishedContent, findLessonBySlug, assertNoError } from './learning-query-helpers';
 
-type ModuleRow = Tables<'learning_modules'>;
 type LessonRow = Tables<'learning_lessons'>;
-const publishedContent = { active: true, publication_status: 'published' };
 
 export class SupabaseLearningRepository implements ILearningRepository {
   private locale: string;
@@ -137,33 +135,4 @@ export class SupabaseLearningRepository implements ILearningRepository {
   async completeAttempt(input: LearningAttemptCompletion): Promise<void> {
     await persistAttemptCompletion(createAdminClient(), input);
   }
-}
-
-async function findLessonBySlug(modules: ModuleRow[], lessonSlug: string, locale: string = 'ca') {
-  const supabase = createAdminClient();
-  const moduleIds = modules.map((module) => module.id);
-  if (moduleIds.length === 0) return null;
-
-  const lesson = await supabase
-    .from('learning_lessons')
-    .select('*')
-    .in('module_id', moduleIds)
-    .eq('slug', lessonSlug)
-    .match(publishedContent)
-    .maybeSingle();
-  assertNoError(lesson.error);
-  if (!lesson.data) return null;
-
-  const lessonData = lesson.data as Record<string, unknown>;
-  const learningModule = modules.find((item) => item.id === lessonData.module_id) as Record<string, unknown> | undefined;
-  
-  const moduleTitle = locale === 'ca'
-    ? (learningModule?.['title_ca'] as string | undefined) ?? (learningModule?.['title'] as string | undefined) ?? 'Formacio'
-    : (learningModule?.[`title_${locale}`] as string | undefined) ?? (learningModule?.['title_ca'] as string | undefined) ?? (learningModule?.['title'] as string | undefined) ?? 'Formacio';
-  
-  return { ...lesson.data, moduleTitle };
-}
-
-function assertNoError(error: PostgrestError | null) {
-  if (error) throw new Error(error.message);
 }

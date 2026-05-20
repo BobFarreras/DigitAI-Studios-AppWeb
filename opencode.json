@@ -1,0 +1,38 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "anthropic/claude-sonnet-4-6",
+  "instructions": [
+    "AGENTS.md"
+  ],
+  "skills": {
+    "paths": [
+      ".opencode/skill",
+      "skills"
+    ]
+  },
+  "mcp": {
+    "engram": {
+      "type": "local",
+      "command": ["engram", "mcp", "--tools=agent"],
+      "enabled": true
+    },
+    "supabase": {
+      "type": "remote",
+      "url": "https://mcp.supabase.com/mcp?project_ref=ungftqhvwdxuconfqbgi",
+      "enabled": true
+    }
+  },
+  "permission": {
+    "edit": "allow",
+    "bash": {
+      "git *": "allow",
+      "pnpm *": "allow",
+      "engram *": "allow",
+      "*": "ask"
+    }
+  },
+  "compaction": {
+    "auto": true,
+    "tail_turns": 15
+  }
+}
