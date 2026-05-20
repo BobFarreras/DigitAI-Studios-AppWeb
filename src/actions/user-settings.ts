@@ -6,6 +6,7 @@
  */
 'use server';
 
+import { SupabaseProfileRepository } from '@/repositories/supabase/SupabaseProfileRepository';
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
@@ -30,12 +31,8 @@ export async function updateUserLocale(input: unknown): Promise<SettingsResult> 
   }
 
   try {
-    const { data: profile } = await supabase
-      .from('profiles')
-      .update({ locale: parsed.data.locale } as Record<string, unknown>)
-      .eq('id', user.id)
-      .select()
-      .single();
+    const profileRepo = new SupabaseProfileRepository();
+    const profile = await profileRepo.updateLocale(user.id, parsed.data.locale);
 
     if (profile) {
       revalidatePath('/dashboard');

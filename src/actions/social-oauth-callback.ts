@@ -1,12 +1,14 @@
 /**
  * @file src/actions/social-oauth-callback.ts
- * @updated 2026-05-10
- * @summary Gestiona el callback OAuth social i desa la connexio al tenant.
- * @scope Resolucio del callback + exchange de token + persistencia a social_connections.
+ * @updated 2026-05-20
+ * @summary Handles social OAuth callback and persists connection to tenant.
+ * @scope OAuth resolution + token exchange + data persistence via repository.
  */
 'use server';
 
 import { createClient } from '@/lib/supabase/server';
+import { SupabaseProfileRepository } from '@/repositories/supabase/SupabaseProfileRepository';
+import { SupabaseSocialConnectionRepository } from '@/repositories/supabase/SupabaseSocialConnectionRepository';
 
 interface ConnectionData {
   provider: 'linkedin' | 'facebook';
@@ -35,43 +37,29 @@ export async function resolveSocialOauthCallback(
   const supabase = await createClient();
 
   const saveConnection = async (data: ConnectionData) => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('No user found in session');
 
-    const { data: profile, error: profileError } = await supabase
-      .from('profiles')
-      .select('organization_id')
-      .eq('id', user.id)
-      .maybeSingle();
+    const profileRepo = new SupabaseProfileRepository();
+    const profile = await profileRepo.findById(user.id);
 
-    if (profileError) {
-      throw new Error(`Error DB accedint al perfil: ${profileError.message}`);
-    }
     if (!profile) {
       throw new Error(`Perfil incomplet. Falta el registre a la taula 'profiles' per l'ID ${user.id}`);
     }
 
-    const { error } = await supabase.from('social_connections').upsert(
-      {
-        organization_id: profile.organization_id,
-        user_id: user.id,
-        provider: data.provider,
-        access_token: data.accessToken,
-        provider_account_id: data.providerAccountId,
-        provider_page_id: data.providerPageId,
-        provider_page_name: data.providerPageName,
-        provider_avatar_url: data.providerAvatar,
-        expires_at: data.expiresIn ? Date.now() + data.expiresIn * 1000 : null,
-        updated_at: new Date().toISOString(),
-      },
-      {
-        onConflict: 'organization_id, provider, provider_page_id',
-      }
-    );
-
-    if (error) throw error;
+    const connectionRepo = new SupabaseSocialConnectionRepository();
+    await connectionRepo.upsert({
+      organization_id: profile.organization_id,
+      user_id: user.id,
+      provider: data.provider,
+      access_token: data.accessToken,
+      provider_account_id: data.providerAccountId,
+      provider_page_id: data.providerPageId,
+      provider_page_name: data.providerPageName,
+      provider_avatar_url: data.providerAvatar,
+      expires_at: data.expiresIn ? Date.now() + data.expiresIn * 1000 : null,
+      updated_at: new Date().toISOString(),
+    });
   };
 
   try {
