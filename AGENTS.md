@@ -73,3 +73,14 @@ Comandes mínimes abans de tancar canvis:
   2. fitxers >150 línies
   3. noms inconsistents/typos
   4. simplificació del scope públic
+
+## 10) Troubleshooting / Errors Històrics
+### 10.1) 404 en totes les rutes i18n després de canvis al middleware
+- **Símptoma:** Després de modificar `src/proxy.ts` (o crear accidentalment `src/middleware.ts`), totes les rutes (`/dashboard`, `/dashboard/learn/...`) retornen 404.
+- **Causa real:** A Next.js 16, el fitxer de middleware s'anomena **`proxy.ts`** (a la carpeta `src/`). Crear `middleware.ts` està deprecated i trenca el routing de `next-intl`. A més, Turbopack manté un estat de cache a `.next` que es corrompia en detectar canvis al fitxer de middleware.
+- **Solució:**
+  1. Revertir qualsevol canvi a `src/proxy.ts` (ha de contenir `export async function proxy(...)`).
+  2. Assegurar-se que **NO** existeix `src/middleware.ts`.
+  3. Esborrar el cache: `rm -rf .next`.
+  4. Reiniciar: `pnpm dev`.
+- **Regla d'or:** Si es toca qualsevol cosa relacionada amb el middleware de `next-intl`, SEMPRE executar `rm -rf .next && pnpm dev` abans de diagnosticar altres causes.
