@@ -38,7 +38,7 @@ export function LearningReviewCard({ items, queue = [], accuracy }: Props) {
         </p>
 
         <ul className="mt-4 space-y-2">
-          {(queue.length > 0 ? queue : items.map((title) => ({ id: title, title, trackTitle: 'Pendent', href: reviewHref }))).map((item) => (
+          {(queue.length > 0 ? queue : items.map((title) => ({ id: title, title, trackTitle: t('encaraPendent'), href: reviewHref }))).map((item) => (
             <li key={item.id} className="rounded-xl bg-slate-50 px-3 py-2 text-sm font-bold text-slate-700 dark:bg-white/5 dark:text-slate-200">
               {item.title}
               <span className="block text-xs text-slate-500">{item.trackTitle}</span>
