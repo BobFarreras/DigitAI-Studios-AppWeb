@@ -1,6 +1,6 @@
 /**
  * @file src/actions/dashboard-profile.ts
- * @updated 2026-05-19
+ * @updated 2026-05-20
  * @summary Server action for the authenticated student profile screen.
  * @scope Auth gate and orchestration for profile learning metrics.
  */
@@ -19,7 +19,7 @@ type DashboardProfileResult =
   | { success: false; authRequired: true }
   | { success: false; error: string };
 
-export async function getDashboardProfileData(): Promise<DashboardProfileResult> {
+export async function getDashboardProfileData(locale: string = 'ca'): Promise<DashboardProfileResult> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -28,9 +28,9 @@ export async function getDashboardProfileData(): Promise<DashboardProfileResult>
   }
 
   try {
-    const service = new LearningDashboardService(new SupabaseLearningRepository());
+    const service = new LearningDashboardService(new SupabaseLearningRepository(locale));
     const dashboard = await service.getDashboardData(user.id, user.email);
-    return { success: true, data: buildLearningProfile(dashboard) };
+    return { success: true, data: buildLearningProfile(dashboard, locale) };
   } catch {
     return { success: false, error: 'No hem pogut carregar el perfil formatiu.' };
   }

@@ -1,9 +1,10 @@
 /**
  * @file src/features/learning/ui/lesson-runner/CodeEditorInteraction.tsx
- * @updated 2026-05-17
+ * @updated 2026-05-20
  * @summary Small code editor lesson interaction.
  * @scope Client code text area only; correctness remains server-side.
  */
+import { useTranslations } from 'next-intl';
 import type { FeedbackStatus } from './ChoiceButton';
 
 type Props = {
@@ -15,17 +16,19 @@ type Props = {
 };
 
 export function CodeEditorInteraction({ value, language, disabled, feedbackStatus, onChange }: Props) {
+  const t = useTranslations('Learning');
+
   return (
     <div className={`overflow-hidden rounded-xl border-2 bg-[#0f172a] text-white shadow-[0_4px_0_#020617] ${borderClass(feedbackStatus)}`}>
       <div className="border-b border-white/10 px-4 py-2 text-xs font-black uppercase text-[#93c5fd]">
-        {language ?? 'code'}
+        {language ?? t('code_label')}
       </div>
       <textarea
         value={value}
         disabled={disabled}
         onChange={(event) => onChange(event.target.value)}
         className="min-h-40 w-full resize-none bg-transparent p-4 font-mono text-sm font-bold leading-6 outline-none disabled:cursor-default"
-        placeholder="escriu el snippet"
+        placeholder={t('code_placeholder')}
       />
     </div>
   );

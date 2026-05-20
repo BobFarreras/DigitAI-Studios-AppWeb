@@ -1,6 +1,6 @@
 /**
  * @file src/app/[locale]/dashboard/learn/[moduleSlug]/[lessonSlug]/page.tsx
- * @updated 2026-05-16
+ * @updated 2026-05-20
  * @summary Interactive lesson runner route.
  * @scope Page composition only; data comes from server actions.
  */
@@ -12,12 +12,13 @@ type Props = {
   params: Promise<{
     moduleSlug: string;
     lessonSlug: string;
+    locale: string;
   }>;
 };
 
 export default async function LessonPage({ params }: Props) {
-  const { moduleSlug, lessonSlug } = await params;
-  const result = await getLearningLessonRunner(moduleSlug, lessonSlug);
+  const { moduleSlug, lessonSlug, locale } = await params;
+  const result = await getLearningLessonRunner(moduleSlug, lessonSlug, locale);
 
   if (!result.success && result.authRequired) {
     redirect('/');

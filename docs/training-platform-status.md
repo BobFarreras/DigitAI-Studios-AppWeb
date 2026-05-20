@@ -293,7 +293,7 @@ Implementat:
 - Test de servei que verifica que el dashboard incorpora gamificacio des de metriques persistides.
 
 ### Fase 6 - Admin de Contingut
-Estat: en curs.
+Estat: fet.
 
 Implementat:
 - Ruta admin `/admin/learning` per inventari de contingut formatiu.
@@ -309,22 +309,19 @@ Implementat:
 - L'admin veu i pot editar tant drafts com publicats.
 - Navegacio admin desktop/mobile cap a Formacio.
 - Test de servei per resum i preview.
-
-Pendent:
-- Permisos admin estrictes.
-- Tests d'actions admin.
+- Tests d'integracio per actions admin: get, create, update, validacio Zod i validacio server-side de config.
+- Permisos admin estrictes via `requireAdmin` amb verificacio de rol i fallback per ADMIN_EMAIL.
 
 ### Proper Pas Recomanat
-1. Afegir tests d'actions admin per create/update i errors de validacio.
-2. Afegir E2E de `/admin/learning` amb seleccio, preview i guardat.
-3. Implementar duplicar/reordenar steps i lessons.
-4. Afegir un indicador de "publicable" que bloquegi publicar lliçons sense steps o amb config invalida.
-5. Despres passar a Fase 7: perfil i repas avançat per l'alumne.
+1. Afegir E2E de `/admin/learning` amb seleccio, preview i guardat.
+2. Implementar duplicar/reordenar steps i lessons.
+3. Afegir un indicador de "publicable" que bloquegi publicar lliçons sense steps o amb config invalida.
+4. Despres passar a Fase 7: perfil i repas avançat per l'alumne.
 
 ### Fase 7 - Perfil i Repàs
 Prioritat: mitjana.
 
-Estat: iniciada.
+Estat: feta.
 
 Implementat:
 - `/dashboard/profile` real amb metriques de XP, nivell, ratxa, objectiu diari, precisio i temps setmanal.
@@ -335,22 +332,23 @@ Implementat:
 - `/dashboard/review` avançat amb preguntes prioritaries derivades de respostes incorrectes persistides.
 - Priorizacio de punts febles per nombre d'errors repetits i recencia.
 - Resum de cua de repas, errors repetits i temps setmanal.
-
-Tasques:
-- Errors repetits per concepte.
-- Lliçons `needs_review`.
-- Mini-revisions per recuperar XP/progres net.
+- Tests de servei per profile i review.
 
 ### Fase 8 - I18n del Contingut
 Prioritat: mitjana.
 
-Opcions:
-- Taules `learning_*_translations`.
-- JSONB per camps traduibles.
-- Contingut inicial en catala i traduccions posteriors.
+Estat: feta.
 
-Decision pendent:
-- Si el contingut formatiu ha de ser multiidioma des del DB o gestionat per seeds separats.
+Implementat:
+- Columnes `_ca`, `_es`, `_en`, `_it` afegides a `learning_tracks`, `learning_modules`, `learning_lessons`, `learning_steps`.
+- Contingut existent migrat a columnes `_ca`.
+- Views `v_learning_tracks`, `v_learning_modules`, `v_learning_lessons`, `v_learning_steps` per consultar contingut localitzat.
+- Repository `SupabaseLearningRepository` accepta `locale` al constructor.
+- Mappers actualitzats per retornar contingut segons l'idioma especificat.
+- Columna `locale` afegida a la taula `profiles` (default 'ca').
+- Repository i Service per a `UserSettings` (obtenir i actualitzar locale).
+- Selector d'idioma al perfil de l'alumne per canviar el seu idioma.
+- Tot seguint l'arquitectura: Action -> Service -> Repository -> Supabase.
 
 ### Fase 9 - Qualitat Visual i Assets
 Prioritat: mitjana.

@@ -66,7 +66,7 @@ export function useLessonAnswerChecks(data: LearningRunnerData) {
         lessonSlug: data.lesson.slug,
         stepId: step.id,
         value,
-      });
+      }, data.locale);
       if (!response.success || !response.data) return fail(showError);
       const feedback = { isCorrect: response.data.isCorrect, explanation: response.data.explanation };
       setCache((current) => ({ ...current, [step.id]: { key: answerKey(value), feedback } }));

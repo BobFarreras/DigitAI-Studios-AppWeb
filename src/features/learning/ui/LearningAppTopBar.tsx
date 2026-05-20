@@ -1,10 +1,11 @@
 /**
  * @file src/features/learning/ui/LearningAppTopBar.tsx
- * @updated 2026-05-19
+ * @updated 2026-05-20
  * @summary Compact app-style stats bar for learning routes.
  * @scope Presentational top bar for mobile-first learning surfaces.
  */
 import { Flame, Gem, Shield, Target } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import type { LearningDashboardData } from '@/services/learning/learning-dashboard-service';
 
 type Props = {
@@ -12,13 +13,15 @@ type Props = {
 };
 
 export function LearningAppTopBar({ data }: Props) {
+  const t = useTranslations('Learning');
+
   return (
     <div className="sticky top-0 z-20 -mx-4 mb-4 border-b-2 border-[#e5e5e5] bg-white/95 px-4 py-3 backdrop-blur md:static md:mx-0 md:rounded-xl md:border-2">
       <div className="mx-auto flex max-w-md items-center justify-between text-sm font-black">
         <Stat icon={Flame} value={data.streakDays} color="text-orange-500" />
-        <Stat icon={Shield} value={data.accuracy} color="text-sky-500" suffix="%" />
+        <Stat icon={Shield} value={data.accuracy} color="text-sky-500" suffix={t('app_topbar_percent')} />
         <Stat icon={Gem} value={data.xpTotal} color="text-[#1cb0f6]" />
-        <Stat icon={Target} value={data.dailyGoal.progress} color="text-[#cc348d]" suffix="%" />
+        <Stat icon={Target} value={data.dailyGoal.progress} color="text-[#cc348d]" suffix={t('app_topbar_percent')} />
       </div>
     </div>
   );

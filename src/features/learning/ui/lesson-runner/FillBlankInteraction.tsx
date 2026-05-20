@@ -1,9 +1,10 @@
 /**
  * @file src/features/learning/ui/lesson-runner/FillBlankInteraction.tsx
- * @updated 2026-05-17
+ * @updated 2026-05-20
  * @summary Fill-in-the-blank lesson interaction.
  * @scope Client text input only; correctness remains server-side.
  */
+import { useTranslations } from 'next-intl';
 import type { FeedbackStatus } from './ChoiceButton';
 
 type Props = {
@@ -15,11 +16,13 @@ type Props = {
 };
 
 export function FillBlankInteraction({ value, disabled, feedbackStatus, placeholder, onChange }: Props) {
+  const t = useTranslations('Learning');
+
   return (
     <input
       value={value}
       disabled={disabled}
-      placeholder={placeholder ?? 'Escriu la resposta'}
+      placeholder={placeholder ?? t('fill_blank_placeholder')}
       onChange={(event) => onChange(event.target.value)}
       className={`min-h-14 w-full rounded-xl border-2 px-4 text-base font-black outline-none transition disabled:cursor-default ${inputStateClass(feedbackStatus)}`}
     />

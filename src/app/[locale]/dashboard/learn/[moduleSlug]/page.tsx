@@ -1,6 +1,6 @@
 /**
  * @file src/app/[locale]/dashboard/learn/[moduleSlug]/page.tsx
- * @updated 2026-05-16
+ * @updated 2026-05-20
  * @summary Selected learning track map route.
  * @scope Page composition only; data comes from server actions.
  */
@@ -10,11 +10,12 @@ import { LearningTrackPage } from '@/features/learning/ui/LearningTrackPage';
 import { getTrackDetail } from '@/services/learning/learning-dashboard-service';
 
 type Props = {
-  params: Promise<{ moduleSlug: string }>;
+  params: Promise<{ moduleSlug: string; locale: string }>;
 };
 
 export default async function TrackPage({ params }: Props) {
-  const [{ moduleSlug }, result] = await Promise.all([params, getDashboardHomeData()]);
+  const { moduleSlug, locale } = await params;
+  const result = await getDashboardHomeData(locale);
 
   if (!result.success && 'authRequired' in result) {
     redirect('/');

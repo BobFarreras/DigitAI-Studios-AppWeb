@@ -1,6 +1,6 @@
 /**
  * @file src/actions/dashboard-home.ts
- * @updated 2026-05-16
+ * @updated 2026-05-20
  * @summary Server action for the user training dashboard.
  * @scope Auth gate and application orchestration for dashboard home.
  */
@@ -15,10 +15,10 @@ import {
 
 type DashboardHomeResult =
   | { success: true; data: LearningDashboardData }
-  | { success: false; authRequired: true }
+  | { success: false, authRequired: true }
   | { success: false; error: string };
 
-export async function getDashboardHomeData(): Promise<DashboardHomeResult> {
+export async function getDashboardHomeData(locale: string = 'ca'): Promise<DashboardHomeResult> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -27,7 +27,7 @@ export async function getDashboardHomeData(): Promise<DashboardHomeResult> {
   }
 
   try {
-    const service = new LearningDashboardService(new SupabaseLearningRepository());
+    const service = new LearningDashboardService(new SupabaseLearningRepository(locale));
     const data = await service.getDashboardData(user.id, user.email);
 
     return { success: true, data };

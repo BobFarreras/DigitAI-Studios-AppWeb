@@ -1,12 +1,13 @@
 /**
  * @file src/features/learning/ui/LearningLessonRunner.tsx
- * @updated 2026-05-17
+ * @updated 2026-05-20
  * @summary Interactive lesson runner with several exercise dynamics.
  * @scope Client-side lesson interaction; scoring is submitted to server actions.
  */
 'use client';
 
 import { ArrowLeft, Check, ChevronRight } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { Link } from '@/routing';
 import { Button } from '@/components/ui/button';
 import type { LearningRunnerData } from '@/services/learning/learning-lesson-service';
@@ -25,6 +26,7 @@ type Props = {
 };
 
 export function LearningLessonRunner({ data }: Props) {
+  const t = useTranslations('Learning');
   const runner = useLessonRunnerState(data);
   if (data.steps.length === 0) return <EmptyLesson data={data} />;
   if (runner.result) return <LessonResult data={data} score={runner.result.score} xp={runner.result.xpAwarded} />;
@@ -65,7 +67,7 @@ export function LearningLessonRunner({ data }: Props) {
           onClick={runner.checkOrContinue}
           className="h-12 w-full rounded-xl bg-[#58cc02] text-base font-black text-white shadow-[0_5px_0_#3f8f01] hover:bg-[#58cc02]"
         >
-          {buttonLabel(Boolean(runner.currentFeedback), runner.isLast)}
+          {buttonLabel(t, Boolean(runner.currentFeedback), runner.isLast)}
           {runner.isLast ? <Check className="ml-2 h-5 w-5" /> : <ChevronRight className="ml-2 h-5 w-5" />}
         </Button>
       </div>
@@ -78,7 +80,7 @@ function feedbackStatus(feedback: StepFeedback | undefined) {
   return feedback.isCorrect ? 'correct' as const : 'incorrect' as const;
 }
 
-function buttonLabel(hasFeedback: boolean, isLast: boolean) {
-  if (!hasFeedback) return 'Comprovar';
-  return isLast ? 'Completar' : 'Continuar';
+function buttonLabel(t: ReturnType<typeof useTranslations>, hasFeedback: boolean, isLast: boolean) {
+  if (!hasFeedback) return t('lesson_check');
+  return isLast ? t('lesson_complete_btn') : t('lesson_continue');
 }

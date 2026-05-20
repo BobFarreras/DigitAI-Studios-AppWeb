@@ -1,6 +1,6 @@
 /**
  * @file src/actions/learning-lesson.ts
- * @updated 2026-05-16
+ * @updated 2026-05-20
  * @summary Server actions for learning lesson runner.
  * @scope Auth, input validation and service orchestration only.
  */
@@ -48,26 +48,27 @@ type CheckResult =
 
 export async function getLearningLessonRunner(
   trackSlug: string,
-  lessonSlug: string
+  lessonSlug: string,
+  locale: string = 'ca'
 ): Promise<RunnerResult> {
   const user = await getCurrentUser();
   if (!user) return { success: false, authRequired: true, error: 'auth_required' };
 
-  const service = new LearningLessonService(new SupabaseLearningRepository());
-  const data = await service.getRunner(trackSlug, lessonSlug);
+  const service = new LearningLessonService(new SupabaseLearningRepository(locale));
+  const data = await service.getRunner(trackSlug, lessonSlug, locale);
   if (!data) return { success: false, error: 'lesson_not_found' };
 
   return { success: true, data };
 }
 
-export async function submitLearningLesson(input: unknown): Promise<SubmitResult> {
+export async function submitLearningLesson(input: unknown, locale: string = 'ca'): Promise<SubmitResult> {
   const user = await getCurrentUser();
   if (!user) return { success: false, authRequired: true as const, error: 'auth_required' };
 
   const parsed = submitSchema.safeParse(input);
   if (!parsed.success) return { success: false, error: 'invalid_payload' };
 
-  const service = new LearningLessonService(new SupabaseLearningRepository());
+  const service = new LearningLessonService(new SupabaseLearningRepository(locale));
   const result = await service.submitLesson(
     user.id,
     parsed.data.trackSlug,
@@ -78,14 +79,14 @@ export async function submitLearningLesson(input: unknown): Promise<SubmitResult
   return { success: true, data: result };
 }
 
-export async function checkLearningStepAnswer(input: unknown): Promise<CheckResult> {
+export async function checkLearningStepAnswer(input: unknown, locale: string = 'ca'): Promise<CheckResult> {
   const user = await getCurrentUser();
   if (!user) return { success: false, authRequired: true as const, error: 'auth_required' };
 
   const parsed = checkSchema.safeParse(input);
   if (!parsed.success) return { success: false, error: 'invalid_payload' };
 
-  const service = new LearningLessonService(new SupabaseLearningRepository());
+  const service = new LearningLessonService(new SupabaseLearningRepository(locale));
   const result = await service.checkAnswer(
     parsed.data.trackSlug,
     parsed.data.lessonSlug,

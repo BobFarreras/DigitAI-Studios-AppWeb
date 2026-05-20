@@ -66,7 +66,7 @@ export function useLessonRunnerState(data: LearningRunnerData) {
     busyRef.current = true;
     startTransition(async () => {
       try {
-        const response = await submitLearningLesson(buildSubmitPayload(data, answers, stepTimes));
+        const response = await submitLearningLesson(buildSubmitPayload(data, answers, stepTimes), data.locale);
         if (!response.success) {
           setSubmitError(SUBMIT_ERROR);
           return;

@@ -1,10 +1,11 @@
 /**
  * @file src/features/learning/ui/LearningTrackGrid.tsx
- * @updated 2026-05-16
+ * @updated 2026-05-20
  * @summary Dashboard grid of learning tracks with unlock state.
  * @scope Presentational track navigation; no progression business rules.
  */
 import { Bot, BrainCircuit, Code2, Cpu, Lock, ShieldCheck, Sparkles } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { Link } from '@/routing';
 import type { LearningTrackSummary } from '@/services/learning/learning-dashboard-service';
 
@@ -23,11 +24,13 @@ const icons = {
 };
 
 export function LearningTrackGrid({ tracks }: Props) {
+  const t = useTranslations('Learning');
+
   return (
     <section className="space-y-4">
       <div>
-        <p className="text-sm font-black uppercase text-[#58cc02]">Rutes formatives</p>
-        <h2 className="text-2xl font-black text-[#3c3c3c] dark:text-white">Tria el teu cami</h2>
+        <p className="text-sm font-black uppercase text-[#58cc02]">{t('track_grid_title')}</p>
+        <h2 className="text-2xl font-black text-[#3c3c3c] dark:text-white">{t('track_grid_subtitle')}</h2>
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         {tracks.map((track) => (

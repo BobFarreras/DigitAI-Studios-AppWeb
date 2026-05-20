@@ -33,9 +33,9 @@ export function MobileBottomBar({ userRole }: MobileBottomBarProps) {
 
   const MENU_ITEMS = [
     { icon: LayoutDashboard, label: t('summary'), href: '/dashboard' },
-    { icon: BookOpenCheck, label: 'Aprendre', href: '/dashboard/learn' }, 
-    { icon: RotateCcw, label: 'Repassar', href: '/dashboard/review' },
-    { icon: UserCircle, label: 'Perfil', href: '/dashboard/profile' },
+    { icon: BookOpenCheck, label: t('learn'), href: '/dashboard/learn' }, 
+    { icon: RotateCcw, label: t('review'), href: '/dashboard/review' },
+    { icon: UserCircle, label: t('profile'), href: '/dashboard/profile' },
   ];
 
   const handleClick = (e: React.MouseEvent, href: string, label: string) => {

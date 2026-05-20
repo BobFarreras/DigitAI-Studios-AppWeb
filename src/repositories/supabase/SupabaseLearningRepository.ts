@@ -30,9 +30,21 @@ import { persistAttemptCompletion } from './learning-persistence';
 import { readWeakSpots } from './learning-review-reads';
 
 type ModuleRow = Tables<'learning_modules'>;
+type LessonRow = Tables<'learning_lessons'>;
 const publishedContent = { active: true, publication_status: 'published' };
 
 export class SupabaseLearningRepository implements ILearningRepository {
+  private locale: string;
+
+  constructor(locale: string = 'ca') {
+    this.locale = locale;
+  }
+
+  private getLocalizedColumn(baseColumn: string): string {
+    if (this.locale === 'ca') return `${baseColumn}_ca`;
+    return `COALESCE(${baseColumn}_${this.locale}, ${baseColumn}_ca)`;
+  }
+
   async getDashboardSnapshot(userId: string): Promise<LearningDashboardSnapshot> {
     const supabase = createAdminClient();
     const weekStart = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
@@ -65,8 +77,8 @@ export class SupabaseLearningRepository implements ILearningRepository {
     assertNoError(attempts.error);
 
     return {
-      tracks: mapTracks(tracks.data ?? []),
-      modules: mapModules(modules.data ?? [], lessons.data ?? []),
+      tracks: mapTracks(tracks.data ?? [], this.locale),
+      modules: mapModules(modules.data ?? [], lessons.data ?? [], this.locale),
       progress: mapProgress(progress.data ?? []),
       xpTotal: sumXp(xp.data ?? []),
       todayXp: sumTodayXp(xp.data ?? [], todayStart),
@@ -74,7 +86,7 @@ export class SupabaseLearningRepository implements ILearningRepository {
       streakDays: streak.data?.current_streak ?? 0,
       weeklyMinutes: sumWeeklyMinutes(attempts.data ?? []),
       averageAccuracy: averageAccuracy(attempts.data ?? []),
-      reviewItems: mapReviewItems(progress.data ?? [], lessons.data ?? []),
+      reviewItems: mapReviewItems(progress.data ?? [], lessons.data ?? [], this.locale),
     };
   }
 
@@ -101,19 +113,24 @@ export class SupabaseLearningRepository implements ILearningRepository {
       .order('order_index');
     assertNoError(modules.error);
 
-    const lesson = await findLessonBySlug(modules.data ?? [], lessonSlug);
+    const lesson = await findLessonBySlug(modules.data ?? [], lessonSlug, this.locale);
     if (!lesson) return null;
 
     const steps = await supabase.from('learning_steps').select('*')
       .eq('lesson_id', lesson.id).eq('publication_status', 'published').order('order_index');
     assertNoError(steps.error);
 
+    const trackData = track.data as Record<string, unknown>;
+    const localizedTrack = this.locale === 'ca' 
+      ? (trackData['title_ca'] as string | undefined) ?? trackData['title'] as string ?? ''
+      : (trackData[`title_${this.locale}`] as string | undefined) ?? (trackData['title_ca'] as string | undefined) ?? (trackData['title'] as string | undefined) ?? '';
+
     return {
       trackSlug: track.data.slug,
-      trackTitle: track.data.title,
+      trackTitle: localizedTrack,
       moduleTitle: lesson.moduleTitle,
-      lesson: mapLesson(lesson),
-      steps: mapSteps(steps.data ?? []),
+      lesson: mapLesson(lesson as LessonRow, this.locale),
+      steps: mapSteps(steps.data ?? [], this.locale),
     };
   }
 
@@ -122,7 +139,7 @@ export class SupabaseLearningRepository implements ILearningRepository {
   }
 }
 
-async function findLessonBySlug(modules: ModuleRow[], lessonSlug: string) {
+async function findLessonBySlug(modules: ModuleRow[], lessonSlug: string, locale: string = 'ca') {
   const supabase = createAdminClient();
   const moduleIds = modules.map((module) => module.id);
   if (moduleIds.length === 0) return null;
@@ -137,9 +154,14 @@ async function findLessonBySlug(modules: ModuleRow[], lessonSlug: string) {
   assertNoError(lesson.error);
   if (!lesson.data) return null;
 
-  const lessonData = lesson.data;
-  const learningModule = modules.find((item) => item.id === lessonData.module_id);
-  return { ...lessonData, moduleTitle: learningModule?.title ?? 'Formacio' };
+  const lessonData = lesson.data as Record<string, unknown>;
+  const learningModule = modules.find((item) => item.id === lessonData.module_id) as Record<string, unknown> | undefined;
+  
+  const moduleTitle = locale === 'ca'
+    ? (learningModule?.['title_ca'] as string | undefined) ?? (learningModule?.['title'] as string | undefined) ?? 'Formacio'
+    : (learningModule?.[`title_${locale}`] as string | undefined) ?? (learningModule?.['title_ca'] as string | undefined) ?? (learningModule?.['title'] as string | undefined) ?? 'Formacio';
+  
+  return { ...lesson.data, moduleTitle };
 }
 
 function assertNoError(error: PostgrestError | null) {

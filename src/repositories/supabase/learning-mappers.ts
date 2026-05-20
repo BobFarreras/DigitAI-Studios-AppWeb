@@ -14,57 +14,124 @@ import type {
 } from '@/repositories/interfaces/ILearningRepository';
 import type { Tables } from '@/types/database.types';
 
-type TrackRow = Tables<'learning_tracks'>;
-type ModuleRow = Tables<'learning_modules'>;
-type LessonRow = Tables<'learning_lessons'>;
+type TrackRow = Tables<'learning_tracks'> & {
+  title_ca?: string;
+  title_es?: string;
+  title_en?: string;
+  title_it?: string;
+  description_ca?: string;
+  description_es?: string;
+  description_en?: string;
+  description_it?: string;
+};
+type ModuleRow = Tables<'learning_modules'> & {
+  title_ca?: string;
+  title_es?: string;
+  title_en?: string;
+  title_it?: string;
+  description_ca?: string;
+  description_es?: string;
+  description_en?: string;
+  description_it?: string;
+};
+type LessonRow = Tables<'learning_lessons'> & {
+  title_ca?: string;
+  title_es?: string;
+  title_en?: string;
+  title_it?: string;
+  objective_ca?: string;
+  objective_es?: string;
+  objective_en?: string;
+  objective_it?: string;
+};
 type ProgressRow = Tables<'learning_progress'>;
-type StepRow = Tables<'learning_steps'>;
+type StepRow = Tables<'learning_steps'> & {
+  prompt_ca?: string;
+  prompt_es?: string;
+  prompt_en?: string;
+  prompt_it?: string;
+  explanation_ca?: string;
+  explanation_es?: string;
+  explanation_en?: string;
+  explanation_it?: string;
+};
 type AttemptRow = Tables<'learning_attempts'>;
 type XpRow = Pick<Tables<'learning_xp_events'>, 'id' | 'xp' | 'source_type' | 'created_at'>;
 
-export function mapTracks(tracks: TrackRow[]): LearningTrackRecord[] {
+function localizedTitle(row: TrackRow | ModuleRow, locale: string): string {
+  if (locale === 'ca') return row.title_ca ?? row.title ?? '';
+  const langTitle = row[`title_${locale}` as keyof typeof row] as string | undefined;
+  return langTitle ?? row.title_ca ?? row.title ?? '';
+}
+
+function localizedDescription(row: TrackRow | ModuleRow, locale: string): string | null {
+  if (locale === 'ca') return row.description_ca ?? row.description ?? null;
+  const langDesc = row[`description_${locale}` as keyof typeof row] as string | undefined;
+  return langDesc ?? row.description_ca ?? row.description ?? null;
+}
+
+export function mapTracks(tracks: TrackRow[], locale: string = 'ca'): LearningTrackRecord[] {
   return tracks.map((track) => ({
     id: track.id,
     slug: track.slug,
-    title: track.title,
-    description: track.description,
+    title: localizedTitle(track, locale),
+    description: localizedDescription(track, locale),
     icon: track.icon,
     color: track.color,
     orderIndex: track.order_index,
   }));
 }
 
-export function mapModules(modules: ModuleRow[], lessons: LessonRow[]): LearningModuleRecord[] {
+export function mapModules(modules: ModuleRow[], lessons: LessonRow[], locale: string = 'ca'): LearningModuleRecord[] {
   return modules.map((module) => ({
     id: module.id,
     trackId: module.track_id,
     slug: module.slug,
-    title: module.title,
-    description: module.description,
+    title: localizedTitle(module, locale),
+    description: localizedDescription(module, locale),
     orderIndex: module.order_index,
-    lessons: lessons.filter((lesson) => lesson.module_id === module.id).map(mapLesson),
+    lessons: lessons.filter((lesson) => lesson.module_id === module.id).map((l) => mapLesson(l, locale)),
   }));
 }
 
-export function mapLesson(lesson: LessonRow): LearningLessonRecord {
+export function mapLesson(lesson: LessonRow, locale: string = 'ca'): LearningLessonRecord {
+  const title = locale === 'ca' 
+    ? (lesson.title_ca ?? lesson.title ?? '')
+    : (lesson[`title_${locale}` as keyof typeof lesson] as string | undefined) ?? lesson.title_ca ?? lesson.title ?? '';
+  const objective = locale === 'ca'
+    ? (lesson.objective_ca ?? lesson.objective ?? null)
+    : (lesson[`objective_${locale}` as keyof typeof lesson] as string | undefined) ?? lesson.objective_ca ?? lesson.objective ?? null;
+
   return {
     id: lesson.id,
     slug: lesson.slug,
-    title: lesson.title,
-    objective: lesson.objective,
+    title,
+    objective,
     estimatedMinutes: lesson.estimated_minutes,
     xpReward: lesson.xp_reward,
     orderIndex: lesson.order_index,
   };
 }
 
-export function mapSteps(steps: StepRow[]): LearningStepRecord[] {
+function localizedPrompt(step: StepRow, locale: string): string {
+  if (locale === 'ca') return step.prompt_ca ?? step.prompt ?? '';
+  const langPrompt = step[`prompt_${locale}` as keyof typeof step] as string | undefined;
+  return langPrompt ?? step.prompt_ca ?? step.prompt ?? '';
+}
+
+function localizedExplanation(step: StepRow, locale: string): string | null {
+  if (locale === 'ca') return step.explanation_ca ?? step.explanation ?? null;
+  const langExpl = step[`explanation_${locale}` as keyof typeof step] as string | undefined;
+  return langExpl ?? step.explanation_ca ?? step.explanation ?? null;
+}
+
+export function mapSteps(steps: StepRow[], locale: string = 'ca'): LearningStepRecord[] {
   return steps.map((step) => ({
     id: step.id,
     lessonId: step.lesson_id,
     type: step.type as LearningStepRecord['type'],
-    prompt: step.prompt,
-    explanation: step.explanation,
+    prompt: localizedPrompt(step, locale),
+    explanation: localizedExplanation(step, locale),
     config: step.config as Record<string, unknown>,
     orderIndex: step.order_index,
   }));
@@ -79,13 +146,13 @@ export function mapProgress(progress: ProgressRow[]): LearningProgressRecord[] {
   }));
 }
 
-export function mapReviewItems(progress: ProgressRow[], lessons: LessonRow[]) {
-  const reviewLessonIds = new Set(
-    progress.filter((item) => item.needs_review).map((item) => item.lesson_id)
-  );
+export function mapReviewItems(progress: ProgressRow[], lessons: LessonRow[], locale: string = 'ca') {
+  const completedLessonIds = new Set(progress.filter((p) => p.completed).map((p) => p.lesson_id));
   return lessons
-    .filter((lesson) => reviewLessonIds.has(lesson.id))
-    .map((lesson) => lesson.title)
+    .filter((lesson) => !completedLessonIds.has(lesson.id))
+    .map((lesson) => locale === 'ca' 
+      ? (lesson.title_ca ?? lesson.title ?? '')
+      : (lesson[`title_${locale}` as keyof typeof lesson] as string | undefined) ?? lesson.title_ca ?? lesson.title ?? '')
     .slice(0, 3);
 }
 

@@ -24,12 +24,13 @@ export type LearningRunnerData = {
   moduleTitle: string;
   lesson: LearningLessonDetailRecord['lesson'];
   steps: LearningRunnerStep[];
+  locale: string;
 };
 
 export class LearningLessonService {
   constructor(private repository: ILearningRepository) {}
 
-  async getRunner(trackSlug: string, lessonSlug: string): Promise<LearningRunnerData | null> {
+  async getRunner(trackSlug: string, lessonSlug: string, locale: string = 'ca'): Promise<LearningRunnerData | null> {
     const detail = await this.repository.getLessonDetail(trackSlug, lessonSlug);
     if (!detail) return null;
 
@@ -39,6 +40,7 @@ export class LearningLessonService {
       moduleTitle: detail.moduleTitle,
       lesson: detail.lesson,
       steps: detail.steps.map(sanitizeStep),
+      locale,
     };
   }
 

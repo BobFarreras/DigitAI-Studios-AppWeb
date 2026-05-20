@@ -1,10 +1,11 @@
 /**
  * @file src/features/learning/ui/LearningStatsGrid.tsx
- * @updated 2026-05-16
+ * @updated 2026-05-20
  * @summary Compact KPI grid for training progress.
  * @scope Presentational dashboard metrics.
  */
 import { BookOpenCheck, Clock, Star, Target } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import type { LearningDashboardData } from '@/services/learning/learning-dashboard-service';
 
 type Props = {
@@ -12,11 +13,13 @@ type Props = {
 };
 
 export function LearningStatsGrid({ data }: Props) {
+  const t = useTranslations('Learning');
+
   const stats = [
-    { label: 'XP total', value: data.xpTotal.toString(), icon: Star, color: 'text-amber-500' },
-    { label: 'Llicons fetes', value: data.lessonsDone.toString(), icon: BookOpenCheck, color: 'text-emerald-500' },
-    { label: 'Temps setmanal', value: `${data.weeklyMinutes}m`, icon: Clock, color: 'text-sky-500' },
-    { label: 'Precisio', value: `${data.accuracy}%`, icon: Target, color: 'text-rose-500' },
+    { label: t('xpTotal'), value: data.xpTotal.toString(), icon: Star, color: 'text-amber-500' },
+    { label: t('stats_lessons_done'), value: data.lessonsDone.toString(), icon: BookOpenCheck, color: 'text-emerald-500' },
+    { label: t('stats_weekly_time'), value: `${data.weeklyMinutes}m`, icon: Clock, color: 'text-sky-500' },
+    { label: t('stats_accuracy'), value: `${data.accuracy}%`, icon: Target, color: 'text-rose-500' },
   ];
 
   return (

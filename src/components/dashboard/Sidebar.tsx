@@ -38,19 +38,19 @@ export function Sidebar({ userRole = 'client' }: SidebarProps) {
       roles: ['admin'],     // <--- NOMÉS ADMIN
     },
     {
-      label: 'Aprendre',
+      label: t('learn'),
       href: '/dashboard/learn',
       icon: BookOpenCheck,
       roles: ['admin', 'client'],
     },
     {
-      label: 'Repassar',
+      label: t('review'),
       href: '/dashboard/review',
       icon: RotateCcw,
       roles: ['admin', 'client'],
     },
     {
-      label: 'Perfil',
+      label: t('profile'),
       href: '/dashboard/profile',
       icon: UserCircle,
       roles: ['admin', 'client', 'lead'],

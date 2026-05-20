@@ -1,6 +1,6 @@
 /**
  * @file src/features/learning/ui/LearningTrackMap.tsx
- * @updated 2026-05-19
+ * @updated 2026-05-20
  * @summary Duolingo-inspired lesson map for one learning track.
  * @scope Presentational path with locked/active/completed lesson nodes.
  */
@@ -8,6 +8,7 @@
 
 import { motion } from 'framer-motion';
 import { Check, Gift, Lock, Play, RotateCcw } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { Link } from '@/routing';
 import type { LearningTrackSummary } from '@/services/learning/learning-dashboard-service';
 
@@ -16,10 +17,12 @@ type Props = {
 };
 
 export function LearningTrackMap({ track }: Props) {
+  const t = useTranslations('Learning');
+
   return (
     <section className="mx-auto flex max-w-md flex-col items-center pb-24">
       <div className="sticky top-[58px] z-10 w-full rounded-xl bg-[#58cc02] p-4 text-white shadow-[0_6px_0_#3f8f01] md:top-0">
-        <p className="text-xs font-black uppercase">Ruta {track.lessonsDone + 1}</p>
+        <p className="text-xs font-black uppercase">{t('track_map_prefix')}{track.lessonsDone + 1}</p>
         <h1 className="text-2xl font-black">{track.title}</h1>
       </div>
 

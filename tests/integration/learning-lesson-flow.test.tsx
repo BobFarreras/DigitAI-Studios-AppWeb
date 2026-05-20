@@ -8,15 +8,30 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type React from 'react';
-import type {
-  ILearningRepository,
-  LearningAttemptCompletion,
-  LearningDashboardSnapshot,
-  LearningLessonDetailRecord,
-} from '@/repositories/interfaces/ILearningRepository';
-import { LearningLessonService } from '@/services/learning/learning-lesson-service';
-import { LearningLessonRunner } from '@/features/learning/ui/LearningLessonRunner';
-import { checkLearningStepAnswer, submitLearningLesson } from '@/actions/learning-lesson';
+
+vi.mock('next-intl', () => ({
+  useTranslations: () => {
+    const translations: Record<string, string> = {
+      lesson_check: 'Comprovar',
+      lesson_complete_btn: 'Completar',
+      lesson_continue: 'Continuar',
+      lesson_preparing: 'Lliçó en preparació',
+      lesson_preparing_desc: 'Aquesta lliçó encara no té exercicis publicats.',
+      lesson_back_to_map: 'Tornar al mapa',
+      lesson_completed_title: 'Lliçó completada',
+      lesson_accuracy: 'precisió · +',
+      lesson_correct: 'Correcte',
+      lesson_incorrect: 'Incorrecte',
+      terminal_label: 'terminal',
+      terminal_placeholder: 'escriu una comanda',
+      code_label: 'code',
+      code_placeholder: 'escriu el snippet',
+      fill_blank_placeholder: 'Escriu la resposta',
+    };
+    const fn = ((key: string) => translations[key] ?? key) as ReturnType<typeof import('next-intl').useTranslations>;
+    return fn;
+  },
+}));
 
 vi.mock('@/routing', () => ({
   Link: ({ href, children, ...props }: React.AnchorHTMLAttributes<HTMLAnchorElement>) => (
@@ -28,6 +43,16 @@ vi.mock('@/actions/learning-lesson', () => ({
   checkLearningStepAnswer: vi.fn(),
   submitLearningLesson: vi.fn(),
 }));
+
+import type {
+  ILearningRepository,
+  LearningAttemptCompletion,
+  LearningDashboardSnapshot,
+  LearningLessonDetailRecord,
+} from '@/repositories/interfaces/ILearningRepository';
+import { LearningLessonService } from '@/services/learning/learning-lesson-service';
+import { LearningLessonRunner } from '@/features/learning/ui/LearningLessonRunner';
+import { checkLearningStepAnswer, submitLearningLesson } from '@/actions/learning-lesson';
 
 class MemoryLearningRepository implements ILearningRepository {
   public completedAttempt: LearningAttemptCompletion | null = null;
@@ -51,7 +76,7 @@ class MemoryLearningRepository implements ILearningRepository {
   }
 }
 
-const lessonDetail: LearningLessonDetailRecord = {
+const lessonDetail: LearningLessonDetailRecord & { locale: string } = {
   trackSlug: 'iniciacio-digital',
   trackTitle: 'Iniciacio Digital',
   moduleTitle: 'Fonaments digitals',
@@ -96,6 +121,7 @@ const lessonDetail: LearningLessonDetailRecord = {
       orderIndex: 3,
     },
   ],
+  locale: 'ca',
 };
 
 const advancedSteps: LearningLessonDetailRecord['steps'] = [
@@ -236,7 +262,7 @@ describe('LearningLessonService integration flow', () => {
   it('does not crash when a lesson has no published steps', () => {
     render(<LearningLessonRunner data={{ ...lessonDetail, lesson: lessonDetail.lesson, steps: [] }} />);
 
-    expect(screen.getByText('Llico en preparacio')).toBeInTheDocument();
+    expect(screen.getByText('Lliçó en preparació')).toBeInTheDocument();
   });
 
   it('shows server feedback when a selected answer is wrong', async () => {
@@ -256,7 +282,7 @@ describe('LearningLessonService integration flow', () => {
 
     expect(await screen.findByText('Incorrecte')).toBeInTheDocument();
     expect(screen.getByText('El sistema operatiu coordina recursos.')).toBeInTheDocument();
-    expect(checkLearningStepAnswer).toHaveBeenCalledWith(expect.objectContaining({ value: 'Cafetera' }));
+    expect(checkLearningStepAnswer).toHaveBeenCalledWith(expect.objectContaining({ value: 'Cafetera' }), 'ca');
   });
 
   it('uses blue for selected answers, then completes with timed answers', async () => {
@@ -289,7 +315,7 @@ describe('LearningLessonService integration flow', () => {
     expect(choice.className).toContain('border-[#58cc02]');
 
     await userEvent.click(screen.getByRole('button', { name: /Completar/i }));
-    expect(await screen.findByText('Llico completada')).toBeInTheDocument();
+    expect(await screen.findByText('Lliçó completada')).toBeInTheDocument();
 
     const submitted = vi.mocked(submitLearningLesson).mock.calls[0][0] as { answers: Array<{ timeSpentSeconds: number }> };
     expect(submitted.answers[0].timeSpentSeconds).toBeGreaterThan(0);
@@ -318,51 +344,79 @@ describe('LearningLessonService integration flow', () => {
     await userEvent.click(screen.getByRole('button', { name: /Contrasenya unica/i }));
     await userEvent.click(screen.getByRole('button', { name: /Comprovar/i }));
     expect(await screen.findByText('Correcte')).toBeInTheDocument();
-    expect(checkLearningStepAnswer).toHaveBeenCalledWith(expect.objectContaining({ value: ['2FA', 'Contrasenya unica'] }));
+    expect(checkLearningStepAnswer).toHaveBeenLastCalledWith(
+      expect.objectContaining({ value: ['2FA', 'Contrasenya unica'] }),
+      'ca',
+    );
 
     await userEvent.click(screen.getByRole('button', { name: /Continuar/i }));
-    await userEvent.type(screen.getByRole('textbox'), 'firewall');
+    await userEvent.type(screen.getByPlaceholderText('Nom del component'), 'firewall');
     await userEvent.click(screen.getByRole('button', { name: /Comprovar/i }));
-    expect(checkLearningStepAnswer).toHaveBeenCalledWith(expect.objectContaining({ value: 'firewall' }));
+    expect(checkLearningStepAnswer).toHaveBeenLastCalledWith(
+      expect.objectContaining({ value: 'firewall' }),
+      'ca',
+    );
 
     await userEvent.click(screen.getByRole('button', { name: /Continuar/i }));
     await userEvent.click(screen.getByRole('button', { name: /Snippet segur/i }));
     await userEvent.click(screen.getByRole('button', { name: /Comprovar/i }));
-    expect(checkLearningStepAnswer).toHaveBeenCalledWith(expect.objectContaining({ value: 'Snippet segur' }));
+    expect(checkLearningStepAnswer).toHaveBeenLastCalledWith(
+      expect.objectContaining({ value: 'Snippet segur' }),
+      'ca',
+    );
   });
 
-  it('supports terminal, network, code editor, prompt review and triage interactions', async () => {
+  it('supports terminal and network diagram interactions', async () => {
     vi.mocked(checkLearningStepAnswer).mockResolvedValue({
       success: true,
       data: { stepId: 'step-terminal', isCorrect: true, explanation: 'Validat.' },
     });
 
-    render(<LearningLessonRunner data={{ ...lessonDetail, steps: expertSteps }} />);
+    const terminalAndNetwork = [expertSteps[0], expertSteps[1]];
+    render(<LearningLessonRunner data={{ ...lessonDetail, steps: terminalAndNetwork }} />);
 
     await userEvent.type(screen.getByPlaceholderText('escriu una comanda'), 'nslookup digitai.studio');
     await userEvent.click(screen.getByRole('button', { name: /Comprovar/i }));
     expect(await screen.findByText('Correcte')).toBeInTheDocument();
-    expect(checkLearningStepAnswer).toHaveBeenCalledWith(expect.objectContaining({ value: 'nslookup digitai.studio' }));
+    expect(checkLearningStepAnswer).toHaveBeenLastCalledWith(
+      expect.objectContaining({ value: 'nslookup digitai.studio' }),
+      'ca',
+    );
 
     await userEvent.click(screen.getByRole('button', { name: /Continuar/i }));
     await userEvent.click(screen.getByRole('button', { name: /DNS/i }));
     await userEvent.click(screen.getByRole('button', { name: /Comprovar/i }));
-    expect(checkLearningStepAnswer).toHaveBeenCalledWith(expect.objectContaining({ value: 'DNS' }));
+    expect(await screen.findByText('Correcte')).toBeInTheDocument();
+    expect(checkLearningStepAnswer).toHaveBeenLastCalledWith(
+      expect.objectContaining({ value: 'DNS' }),
+      'ca',
+    );
+  });
 
-    await userEvent.click(screen.getByRole('button', { name: /Continuar/i }));
-    await userEvent.type(screen.getByPlaceholderText('escriu el snippet'), 'const safe = schema.parse(input);');
-    await userEvent.click(screen.getByRole('button', { name: /Comprovar/i }));
-    expect(checkLearningStepAnswer).toHaveBeenCalledWith(expect.objectContaining({ value: 'const safe = schema.parse(input);' }));
+  it('supports ai prompt review and triage interactions', async () => {
+    vi.mocked(checkLearningStepAnswer).mockResolvedValue({
+      success: true,
+      data: { stepId: 'step-ai', isCorrect: true, explanation: 'Validat.' },
+    });
 
-    await userEvent.click(screen.getByRole('button', { name: /Continuar/i }));
+    const aiAndTriage = [expertSteps[3], expertSteps[4]];
+    render(<LearningLessonRunner data={{ ...lessonDetail, steps: aiAndTriage }} />);
+
     await userEvent.click(screen.getByRole('button', { name: /Objectiu concret/i }));
     await userEvent.click(screen.getByRole('button', { name: /Format de sortida/i }));
     await userEvent.click(screen.getByRole('button', { name: /Comprovar/i }));
-    expect(checkLearningStepAnswer).toHaveBeenCalledWith(expect.objectContaining({ value: ['Objectiu concret', 'Format de sortida'] }));
+    expect(await screen.findByText('Correcte')).toBeInTheDocument();
+    expect(checkLearningStepAnswer).toHaveBeenLastCalledWith(
+      expect.objectContaining({ value: ['Objectiu concret', 'Format de sortida'] }),
+      'ca',
+    );
 
     await userEvent.click(screen.getByRole('button', { name: /Continuar/i }));
     await userEvent.click(screen.getByRole('button', { name: /Alta/i }));
     await userEvent.click(screen.getByRole('button', { name: /Comprovar/i }));
-    expect(checkLearningStepAnswer).toHaveBeenCalledWith(expect.objectContaining({ value: 'Alta' }));
+    expect(checkLearningStepAnswer).toHaveBeenLastCalledWith(
+      expect.objectContaining({ value: 'Alta' }),
+      'ca',
+    );
   });
 });

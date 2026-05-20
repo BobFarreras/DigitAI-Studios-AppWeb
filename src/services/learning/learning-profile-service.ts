@@ -37,11 +37,12 @@ export type LearningProfileData = {
   weeklyMinutes: number;
   strongestTrack: LearningProfileTrack | null;
   tracks: LearningProfileTrack[];
+  locale: string;
 };
 
 const levelSize = 100;
 
-export function buildLearningProfile(data: LearningDashboardData): LearningProfileData {
+export function buildLearningProfile(data: LearningDashboardData, locale: string = 'ca'): LearningProfileData {
   const tracks = data.tracks.map(toProfileTrack);
   const lessonsTotal = tracks.reduce((total, track) => total + track.lessonsTotal, 0);
   const level = Math.floor(data.xpTotal / levelSize) + 1;
@@ -64,6 +65,7 @@ export function buildLearningProfile(data: LearningDashboardData): LearningProfi
     weeklyMinutes: data.weeklyMinutes,
     strongestTrack: findStrongestTrack(tracks),
     tracks,
+    locale,
   };
 }
 

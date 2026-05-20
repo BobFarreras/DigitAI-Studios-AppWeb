@@ -1,6 +1,6 @@
 /**
  * @file src/actions/dashboard-review.ts
- * @updated 2026-05-19
+ * @updated 2026-05-20
  * @summary Server action for the advanced learning review screen.
  * @scope Auth gate and application orchestration for review data.
  */
@@ -18,7 +18,7 @@ type DashboardReviewResult =
   | { success: false; authRequired: true }
   | { success: false; error: string };
 
-export async function getDashboardReviewData(): Promise<DashboardReviewResult> {
+export async function getDashboardReviewData(locale: string = 'ca'): Promise<DashboardReviewResult> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -27,7 +27,7 @@ export async function getDashboardReviewData(): Promise<DashboardReviewResult> {
   }
 
   try {
-    const service = new LearningReviewService(new SupabaseLearningRepository());
+    const service = new LearningReviewService(new SupabaseLearningRepository(locale));
     const data = await service.getReviewData(user.id, user.email);
     return { success: true, data };
   } catch {
