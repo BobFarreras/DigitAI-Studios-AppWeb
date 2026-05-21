@@ -33,6 +33,7 @@ UI (src/app, src/components, src/features/*/ui)
 - Claus sensibles només server runtime
 - Zod a tots els inputs externs
 - AuthZ abans de mutacions · Default deny
+- **Prohibit:** npm executa scripts directament — usar `pnpm exec` o scripts de package.json. npm pot executar packages maliciosos amb el mateix nom que eines legítimes.
 
 ## Git Workflow
 - `feat/` · `fix/` · `refactor/` · `docs/` · `chore/`
