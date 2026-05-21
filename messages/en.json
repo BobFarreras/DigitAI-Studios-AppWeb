@@ -1134,5 +1134,10 @@
     "code_placeholder": "write the snippet",
     "fill_blank_placeholder": "Write the answer",
     "profile_language": "Language"
+  },
+  "Errors": {
+    "title": "Error",
+    "message": "An unexpected error occurred.",
+    "retry": "Try again"
   }
 }

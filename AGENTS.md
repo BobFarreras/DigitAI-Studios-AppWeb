@@ -57,13 +57,25 @@ pnpm check
 4. Abans de respondre: verifica amb `lint`, `test`, `check`.
 5. Si trobes un error nou: afegeix-lo a Troubleshooting.
 
-## Engram (Memòria Persistent)
+## Engram (Memòria Persistent) — AUTO-SAVE
 - Engram v1.15.15 — MCP server per memòria entre sessions
+- **Regla obligatoria: micro-guardats continus.** No esperar al final de sessió.
+- Guarda a Engram DESPRÉS de CADA acció significativa:
+  - Quan prens una decisió d'arquitectura o disseny → `type: decision`
+  - Quan corregiu un bug → `type: bugfix` (què fallava, per què, com s'ha arreglat)
+  - Quan descobreixes un gotcha o edge case → `type: discovery`
+  - Quan canvies config, env, infra → `type: config`
+  - Quan completes una feature o fase → `type: pattern` (què s'ha fet, on, decisions preses)
+- Format obligatori per cada save:
+  ```
+  title: curt i cercable (p.ex. "Error boundaries per totes les rutes")
+  content: **What** | **Why** | **Where** | **Learned**
+  project: digitai-studios
+  ```
 - Comandes clau:
   - `engram save "titol" "contingut" --type decision --project digitai-studios`
   - `engram search "query" --project digitai-studios`
   - `engram context digitai-studios`
-- Quan completis una task important: desa què, per què, decisions i problemes
 - Els següents agents recuperen context directament des de memòria
 
 ## Supabase MCP
