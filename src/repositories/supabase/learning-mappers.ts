@@ -11,7 +11,6 @@ import type {
   LearningStepRecord,
   LearningTrackRecord,
   LearningXpEventRecord,
-LearningXpEventRecord,
 } from '@/repositories/interfaces/ILearningRepository';
 import type { TrackRow, ModuleRow, LessonRow, ProgressRow, StepRow, AttemptRow, XpRow } from './learning-mappers-types';
 
