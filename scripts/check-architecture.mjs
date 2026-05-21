@@ -1,5 +1,5 @@
-import { readFileSync, existsSync } from 'node:fs';
-import { globSync } from 'node:fs';
+import { readFileSync, existsSync, readdirSync, statSync } from 'node:fs';
+import { join } from 'node:path';
 
 const allowlistPath = 'scripts/architecture-db-allowlist.txt';
 
@@ -7,6 +7,28 @@ function getAllowlist(path) {
   if (!existsSync(path)) return new Set();
   const content = readFileSync(path, 'utf8');
   return new Set(content.split('\n').map((v) => v.trim().replaceAll('\\', '/')).filter(Boolean));
+}
+
+function getTsxFiles(dir) {
+  const results = [];
+  function scan(currentDir) {
+    let entries;
+    try {
+      entries = readdirSync(currentDir, { withFileTypes: true });
+    } catch {
+      return;
+    }
+    for (const entry of entries) {
+      const fullPath = join(currentDir, entry.name).replaceAll('\\', '/');
+      if (entry.isDirectory()) {
+        scan(fullPath);
+      } else if (entry.isFile() && entry.name.endsWith('.tsx')) {
+        results.push(fullPath);
+      }
+    }
+  }
+  scan(dir);
+  return results;
 }
 
 const allowlist = getAllowlist(allowlistPath);
@@ -23,15 +45,14 @@ const targetDirs = ['src/app', 'src/components', 'src/features'];
 const violatingFiles = new Set();
 
 for (const dir of targetDirs) {
-  const files = globSync(`${dir}/**/*.tsx`, { exclude: () => false });
+  const files = getTsxFiles(dir);
   for (const file of files) {
-    const normalizedFile = file.replaceAll('\\', '/');
-    if (allowlist.has(normalizedFile)) continue;
-    
+    if (allowlist.has(file)) continue;
+
     const content = readFileSync(file, 'utf8');
     for (const pattern of forbiddenPatterns) {
       if (pattern.test(content)) {
-        violatingFiles.add(normalizedFile);
+        violatingFiles.add(file);
         break;
       }
     }
