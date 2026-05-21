@@ -1,68 +1,85 @@
 # ARCHITECTURE.md
 
-## 1. Product Scope (Current)
-- Public app: Modern marketing landing only.
-- Private app: Internal admin workspace for analytics, users, messages, content and RRSS.
-- Retired: public blog, public projects, factory, booking/ecommerce, project dashboard and QA/tests.
+## 1. Product Scope
+- **Landing pública:** Marketing modern, auditoria web, contacte.
+- **Admin privat:** Analytics, gestió de contingut, RRSS, formació gamificada (learning).
 
 ## 2. Bounded Contexts
-- `marketing-site`: landing sections, CTA, contact, legal pages.
-- `admin-console`: private tools, social content, internal workflows.
-- `shared-platform`: i18n, auth/session infra, UI primitives, telemetry, error handling.
-- `legacy-archive`: non-runtime reference code under `legacy/`, excluded from TypeScript and ESLint.
+- `marketing-site`: landing sections, CTA, contact, legal pages, web audit.
+- `admin-console`: dashboard, analytics, social content, learning platform, user settings.
+- `shared-platform`: i18n (ca/es/en/it), auth/session infra, UI primitives, error handling.
+- `legacy-archive`: codi retirat sota `legacy/`, exclòs de TypeScript i ESLint.
 
 ## 3. Mandatory Layering
-All business flows must follow this path:
-1. UI (`src/app`, `src/components`, `src/features/*/ui`)
-2. Action (`src/actions` or `src/features/*/actions`)
-3. Service (`src/services`)
-4. Repository (`src/repositories`)
-5. Supabase/External adapter (`src/lib/supabase`, `src/adapters`)
+```
+UI (src/app, src/components, src/features/*/ui)
+  → Action (src/actions | src/features/*/actions)
+    → Service (src/services)
+      → Repository (src/repositories)
+        → DB/Adapter (src/lib/supabase, src/adapters)
+```
 
-Forbidden:
-- DB queries in `.tsx` files.
-- Service logic in pages.
-- Repositories importing UI modules.
+**Forbidden:**
+- DB queries (`.from()`) in `.tsx` files
+- Service logic in pages
+- Repositories importing UI modules
 
 ## 4. Directory Ownership
-- `src/app`: routing, page composition, metadata.
-- `src/components`: reusable view components only.
-- `src/features`: feature UI + feature actions.
-- `src/actions`: cross-feature server actions.
-- `src/services`: business orchestration and rules.
-- `src/repositories`: data access only.
-- `src/adapters`: third-party API boundaries.
-- `src/lib`: shared infra helpers.
-- `legacy`: archived code only; active runtime must not import from it.
+| Directory | Responsibility |
+|-----------|---------------|
+| `src/app` | Routing, page composition, metadata |
+| `src/components` | Reusable view components |
+| `src/features` | Feature UI + feature actions |
+| `src/actions` | Cross-feature server actions |
+| `src/services` | Business orchestration and rules |
+| `src/repositories` | Data access only (Supabase queries live here) |
+| `src/adapters` | Third-party API boundaries |
+| `src/lib` | Shared infra helpers (supabase, auth, utils, schemas) |
+| `src/types` | Domain types and generated DB types |
+| `src/config` | Server env, site config |
+| `src/i18n` | Translations and i18n helpers |
+| `src/hooks` | Custom React hooks |
+| `legacy` | Archived code; active runtime MUST NOT import from it |
 
 ## 5. Active Data Scope
-- Keep `organizations` while it remains the ownership boundary for profiles, posts, audits, content queue and social connections.
-- Keep `posts`, `social_posts` and `social_connections` for admin content/RRSS.
-- Keep `web_audits`, `analytics_events`, `analytics_visitors` and `contact_leads` for active product operations.
-- Retired tables live only as locked backups in `legacy_backup`.
+- `organizations` — ownership boundary
+- `profiles` — extends `auth.users` with role and locale
+- `posts`, `social_posts`, `social_connections` — admin content/RRSS
+- `web_audits`, `analytics_events`, `analytics_visitors` — analytics
+- `contact_leads`, `contactos_cualificados` — lead management
+- `learning_*` — gamified learning platform (tracks, modules, lessons, steps, attempts, progress, streaks, xp_events)
 
 ## 6. Security Baseline
-- Service role keys only on server runtime.
-- No sensitive env vars in client components.
-- Validate all action input with Zod.
-- Authorization checks before mutating actions.
-- Fail closed: default deny when user/role is missing.
+- Service role keys only on server runtime (`src/config/server-env.ts`)
+- No sensitive env vars in client components
+- Zod validation on all external inputs
+- Auth checks before mutating actions; default deny
+- RLS enabled on all public tables
+- SQL views use `SECURITY INVOKER` (not `SECURITY DEFINER`)
+- No hardcoded emails in RLS policies; use `private.is_admin()`
 
 ## 7. Testing and TDD Policy
-- New logic starts with a failing unit/integration test.
-- Refactors must preserve behavior via tests.
-- Minimum PR checks: `pnpm lint`, `pnpm test -- --run`, architecture guards.
+- New logic: start with a failing test
+- Bugfix: create regression test before the fix
+- Refactor: preserve behavior via existing tests
+- Minimum PR checks: `pnpm lint`, `pnpm test -- --run`, `pnpm check`
+- CI: GitHub Actions runs lint + test + check on every push and PR
 
 ## 8. Quality Gates
-- Max 150 lines per file (except generated typings, migrations, and explicit allowlist).
-- Every new/refactored non-trivial file includes a short header comment:
+- Max 150 lines per file (except generated typings, migrations, and i18n locale files)
+- Every new/refactored non-trivial file includes a header comment:
   - `@file` relative path
   - `@updated` date (`YYYY-MM-DD`)
   - `@summary` file purpose
   - `@scope` responsibility boundary
-- No `any` unless documented with rationale.
+- No `any` unless documented with rationale
+- Server actions return `{ success, data?, error? }`
 
 ## 9. Refactor Strategy
-- Incremental, feature by feature.
-- Keep app deployable after each PR.
-- Prioritize high-risk modules: direct DB access from UI and oversized files.
+- Incremental, feature by feature
+- Keep app deployable after each PR
+- Priority: direct DB access from UI → oversized files → naming inconsistencies
+
+## 10. Design References
+- **Landing page:** Follow `DESIGN.md` (Linear-style dark UI)
+- **Learning platform (admin):** Follow `DUOLINGO.md` (Duolingo-style light gamified UI)

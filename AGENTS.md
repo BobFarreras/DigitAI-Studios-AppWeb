@@ -73,6 +73,10 @@ pnpm check
 - MAJUS modificar BD sense migration — usar `supabase_apply_migration`
 - Sempre verificar amb `supabase_get_advisors` després de canvis DDL
 
+## Disseny per Secció
+- **Landing pública + Admin privat:** Seguir `DESIGN.md` (Linear-style dark UI)
+- **Plataforma de formació (learning):** Seguir `DUOLINGO.md` (Duolingo-style light, gamified, playful)
+
 ## Estructura de Context
 ```
 AGENTS.md              ← context base (aquest fitxer)
@@ -89,6 +93,7 @@ AGENTS.md              ← context base (aquest fitxer)
 skills/                ← skills planes (referència ràpida)
 ARCHITECTURE.md        ← blueprint detallat de capes i boundaries
 DESIGN.md              ← sistema de disseny (colors, tipografia, components)
+DUOLINGO.md            ← sistema de disseny learning (light, gamified)
 PRD.md                 ← requeriments de producte
 docs/                  ← documentació operativa i guies
 ```
