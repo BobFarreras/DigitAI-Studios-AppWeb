@@ -1,4 +1,4 @@
-import { readFileSync, existsSync, readdirSync, statSync } from 'node:fs';
+import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 
 const allowlistPath = 'scripts/architecture-db-allowlist.txt';
