@@ -63,9 +63,11 @@ export type LearningTrackRecord = {
 export type LearningModuleRecord = {
   id: string;
   trackId: string;
+  parentModuleId: string | null;
   slug: string;
   title: string;
   description: string | null;
+  level: 'initiation' | 'basic' | 'intermediate' | 'advanced';
   orderIndex: number;
   lessons: LearningLessonRecord[];
 };
