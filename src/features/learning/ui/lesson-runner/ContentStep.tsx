@@ -29,7 +29,9 @@ type Props = {
 };
 
 export function ContentStep({ prompt, explanation }: Props) {
-  const blocks = parseContent(prompt);
+  // Fix: replace literal \n with actual newlines
+  const normalizedPrompt = prompt.replace(/\\n/g, '\n');
+  const blocks = parseContent(normalizedPrompt);
 
   return (
     <div className="space-y-6">
@@ -40,7 +42,7 @@ export function ContentStep({ prompt, explanation }: Props) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: index * 0.15, duration: 0.4 }}
         >
-          {renderBlock(block, index)}
+          {renderBlock(block)}
         </motion.div>
       ))}
 
@@ -169,7 +171,7 @@ function parseContent(prompt: string): ContentBlock[] {
   return blocks;
 }
 
-function renderBlock(block: ContentBlock, index: number) {
+function renderBlock(block: ContentBlock) {
   switch (block.type) {
     case 'heading':
       return (
@@ -180,7 +182,13 @@ function renderBlock(block: ContentBlock, index: number) {
       );
 
     case 'text':
-      return <p className="text-lg font-bold leading-relaxed text-[#3c3c3c]">{block.content as string}</p>;
+      return (
+        <div className="space-y-2">
+          {(block.content as string).split('\n').map((line, i) => (
+            <p key={i} className="text-lg font-bold leading-relaxed text-[#3c3c3c]">{renderFormattedText(line)}</p>
+          ))}
+        </div>
+      );
 
     case 'list':
       return (
@@ -219,7 +227,11 @@ function renderBlock(block: ContentBlock, index: number) {
         <div className="rounded-2xl bg-[#1cb0f6]/10 p-6 border-l-4 border-[#1cb0f6]">
           <div className="flex items-start gap-3">
             <Lightbulb className="mt-1 h-6 w-6 shrink-0 text-[#1cb0f6]" />
-            <p className="text-base font-bold text-[#1cb0f6]">{block.content as string}</p>
+            <div className="space-y-2">
+              {(block.content as string).split('\n').map((line, i) => (
+                <p key={i} className="text-base font-bold text-[#1cb0f6]">{line}</p>
+              ))}
+            </div>
           </div>
         </div>
       );
@@ -229,7 +241,11 @@ function renderBlock(block: ContentBlock, index: number) {
         <div className="rounded-2xl bg-amber-50 p-6 border-l-4 border-amber-400">
           <div className="flex items-start gap-3">
             <AlertTriangle className="mt-1 h-6 w-6 shrink-0 text-amber-600" />
-            <p className="text-base font-bold text-amber-900">{block.content as string}</p>
+            <div className="space-y-2">
+              {(block.content as string).split('\n').map((line, i) => (
+                <p key={i} className="text-base font-bold text-amber-900">{line}</p>
+              ))}
+            </div>
           </div>
         </div>
       );
@@ -303,6 +319,24 @@ function InteractiveFlow({ steps }: { steps: InteractiveFlowStep[] }) {
       </div>
     </div>
   );
+}
+
+function renderFormattedText(text: string): React.ReactNode {
+  // Split by markdown patterns: **bold**, *italic*, `code`
+  const parts = text.split(/(\*\*.*?\*\*|\*.*?\*|`.+?`)/g);
+  
+  return parts.map((part, i) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return <strong key={i} className="text-[#58cc02]">{part.slice(2, -2)}</strong>;
+    }
+    if (part.startsWith('*') && part.endsWith('*') && !part.startsWith('**')) {
+      return <em key={i} className="text-[#1cb0f6]">{part.slice(1, -1)}</em>;
+    }
+    if (part.startsWith('`') && part.endsWith('`')) {
+      return <code key={i} className="rounded bg-[#1f1f1f] px-2 py-0.5 text-sm font-mono text-[#58cc02]">{part.slice(1, -1)}</code>;
+    }
+    return part;
+  });
 }
 
 function getIcon(iconName: string) {

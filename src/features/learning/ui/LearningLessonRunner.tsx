@@ -39,7 +39,7 @@ export function LearningLessonRunner({ data }: Props) {
   const isContent = runner.step.type === 'content';
 
   return (
-    <div className="flex h-screen flex-col bg-[#f7f7f7]">
+    <div className="flex h-[100dvh] flex-col bg-[#f7f7f7]">
       {/* HEADER - Fixed top */}
       <header className="shrink-0 border-b-2 border-[#e5e5e5] bg-white px-4 py-3 shadow-sm">
         <div className="mx-auto flex max-w-5xl items-center gap-4">
@@ -75,7 +75,7 @@ export function LearningLessonRunner({ data }: Props) {
       </header>
 
       {/* CONTENT - Scrollable middle */}
-      <main className="flex-1 overflow-y-auto px-4 py-6">
+      <main className="flex-1 overflow-y-auto px-4 py-6 pb-32">
         <div className="mx-auto max-w-4xl">
           {/* Only show prompt as title for EXERCISE steps, not content steps */}
           {!isContent && (
@@ -97,7 +97,7 @@ export function LearningLessonRunner({ data }: Props) {
       </main>
 
       {/* FOOTER - Fixed bottom with button */}
-      <footer className="shrink-0 border-t-2 border-[#e5e5e5] bg-white px-4 py-4 shadow-[0_-4px_0_#e5e5e5]">
+      <footer className="fixed bottom-0 left-0 right-0 z-50 border-t-2 border-[#e5e5e5] bg-white px-4 py-4 shadow-[0_-4px_0_#e5e5e5]">
         <div className="mx-auto max-w-4xl">
           <FeedbackPanel feedback={runner.currentFeedback} />
 
