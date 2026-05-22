@@ -67,7 +67,7 @@ export function LearningLessonRunner({ data }: Props) {
           onClick={runner.checkOrContinue}
           className="h-12 w-full rounded-xl bg-[#58cc02] text-base font-black text-white shadow-[0_5px_0_#3f8f01] hover:bg-[#58cc02]"
         >
-          {buttonLabel(t, Boolean(runner.currentFeedback), runner.isLast)}
+          {buttonLabel(t, Boolean(runner.currentFeedback), runner.isLast, runner.step.type)}
           {runner.isLast ? <Check className="ml-2 h-5 w-5" /> : <ChevronRight className="ml-2 h-5 w-5" />}
         </Button>
       </div>
@@ -80,7 +80,15 @@ function feedbackStatus(feedback: StepFeedback | undefined) {
   return feedback.isCorrect ? 'correct' as const : 'incorrect' as const;
 }
 
-function buttonLabel(t: ReturnType<typeof useTranslations>, hasFeedback: boolean, isLast: boolean) {
+function buttonLabel(
+  t: ReturnType<typeof useTranslations>,
+  hasFeedback: boolean,
+  isLast: boolean,
+  stepType: string
+) {
+  if (stepType === 'content') {
+    return isLast ? t('lesson_complete_btn') : t('lesson_continue');
+  }
   if (!hasFeedback) return t('lesson_check');
   return isLast ? t('lesson_complete_btn') : t('lesson_continue');
 }

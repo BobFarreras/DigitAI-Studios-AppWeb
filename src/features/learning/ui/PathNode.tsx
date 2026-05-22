@@ -63,8 +63,13 @@ export function PathNode({ node, index, color }: Props) {
   if (isLocked || !isLeaf) return content;
 
   return (
-    <Link href={node.href} className="focus:outline-none focus:ring-2 focus:ring-[#58cc02]">
-      {content}
+    <Link 
+      href={node.href} 
+      className="group cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#58cc02]"
+    >
+      <div className="transition-transform duration-200 group-hover:scale-110">
+        {content}
+      </div>
     </Link>
   );
 }
