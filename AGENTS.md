@@ -48,8 +48,9 @@ pnpm check
 ```
 
 ## Troubleshooting
-- **404 rutes i18n:** No crear `src/middleware.ts`. Middleware = `src/proxy.ts`. Si es toca: `rm -rf .next && pnpm dev`
-- **Cache corrupte:** Esborrar `.next` abans de diagnosticar.
+- **404 rutes i18n després de canvis a `src/proxy.ts`:** Next.js 16 pot no invalidar la caché de resolució de rutes i18n quan es modifica el middleware. Les rutes estàtiques poden seguir funcionant, però les rutes dinàmiques (ex. `/dashboard/learn/[slug]`) tornen 404.
+  - **Solució:** `pnpm clean && pnpm dev` (esborra `.next` i reinicia). Sempre fer-ho després de tocar `src/proxy.ts` o `src/routing.ts`.
+- **Cache corrupte:** Esborrar `.next` abans de diagnosticar qualsevol error estrany de rutes o build.
 
 ## Com treballen els agents
 1. Llegeix `AGENTS.md` → identifica task type → carrega NOMÉS la skill necessària.

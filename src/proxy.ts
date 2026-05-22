@@ -3,6 +3,9 @@
  * @updated 2026-05-21
  * @summary Middleware: i18n routing + rate limiting + security headers.
  * @scope All public requests. Blocks abusive IPs, adds security headers, handles locale routing.
+ *
+ * ⚠️ AVÍS: Si modifiques aquest fitxer o `src/routing.ts`, fes SEMPRE `pnpm clean && pnpm dev`.
+ *    Next.js 16 pot no invalidar la caché de rutes i18n i les rutes dinàmiques fallaran amb 404.
  */
 import createMiddleware from 'next-intl/middleware';
 import { routing } from '@/routing';
