@@ -5,10 +5,11 @@
  * @scope Pure tree construction from flat module lists; no repository or UI deps.
  */
 
-import type {
-  LearningLessonNode,
-  LearningModuleRecord,
-} from '@/repositories/interfaces/ILearningRepository';
+import type { LearningModuleRecord } from '@/repositories/interfaces/ILearningRepository';
+import {
+  applySequentialUnlock,
+  resolveModuleStatus,
+} from './learning-module-tree-utils';
 
 export type LearningModuleTreeNode = {
   id: string;
@@ -18,10 +19,11 @@ export type LearningModuleTreeNode = {
   level: string;
   orderIndex: number;
   status: 'locked' | 'active' | 'completed';
-  lessons: LearningLessonNode[];
+  lessons: Array<{ id: string; slug: string; title: string; estimatedMinutes: number; status: string; href: string }>;
   children: LearningModuleTreeNode[];
   href: string;
   isLeaf: boolean;
+  parentModuleId?: string | null;
 };
 
 export type BranchUnlockMode = 'free' | 'sequential';
@@ -34,7 +36,6 @@ export function buildModuleTree(
 ): LearningModuleTreeNode[] {
   const moduleMap = new Map<string, LearningModuleTreeNode>();
 
-  // First pass: create nodes with raw status
   for (const mod of modules) {
     const isLeaf = mod.lessons.length > 0;
     const rawStatus = resolveModuleStatus(mod, activeModuleId, completedModuleIds);
@@ -49,13 +50,13 @@ export function buildModuleTree(
       lessons: mod.lessons,
       children: [],
       href: isLeaf
-        ? `/dashboard/learn/${trackSlug}/${mod.lessons[0]?.slug ?? mod.slug}`
-        : `/dashboard/learn/${trackSlug}/${mod.slug}`,
+        ? `/dashboard/learn/${mod.slug}/${mod.lessons[0]?.slug ?? mod.slug}`
+        : `/dashboard/learn/${mod.slug}`,
       isLeaf,
+      parentModuleId: mod.parentModuleId,
     });
   }
 
-  // Second pass: link children to parents
   const roots: LearningModuleTreeNode[] = [];
   for (const mod of modules) {
     const node = moduleMap.get(mod.id);
@@ -74,77 +75,14 @@ export function buildModuleTree(
     }
   }
 
-  // Sort roots and children by orderIndex
   roots.sort((a, b) => a.orderIndex - b.orderIndex);
   for (const node of moduleMap.values()) {
     node.children.sort((a, b) => a.orderIndex - b.orderIndex);
   }
 
-  // Third pass: enforce sequential unlock within each branch
-  // Roots (main branches) are always active
   for (const root of roots) {
     applySequentialUnlock(root, completedModuleIds);
   }
 
   return roots;
-}
-
-function applySequentialUnlock(
-  node: LearningModuleTreeNode,
-  completedModuleIds: Set<string>
-) {
-  // Branches (roots) are always accessible
-  if (node.parentModuleId === null) {
-    if (node.status === 'locked') node.status = 'active';
-  }
-
-  // Within a branch, children unlock sequentially
-  let previousCompleted = true;
-  for (const child of node.children) {
-    if (child.status === 'completed') {
-      previousCompleted = true;
-    } else if (previousCompleted) {
-      if (child.status === 'locked') child.status = 'active';
-      previousCompleted = false;
-    } else {
-      child.status = 'locked';
-    }
-    // Recursively apply to sub-children
-    applySequentialUnlock(child, completedModuleIds);
-  }
-}
-
-function resolveModuleStatus(
-  mod: LearningModuleRecord,
-  activeModuleId?: string,
-  completedModuleIds?: Set<string>
-): LearningModuleTreeNode['status'] {
-  if (activeModuleId === mod.id) return 'active';
-  if (completedModuleIds?.has(mod.id)) return 'completed';
-  // In dev/testing, default everything to active (no lock)
-  // In production, this returns 'locked' and applySequentialUnlock handles it
-  return process.env.NODE_ENV === 'production' ? 'locked' : 'active';
-}
-
-export function flattenModuleTree(
-  tree: LearningModuleTreeNode[],
-  result: LearningModuleTreeNode[] = []
-): LearningModuleTreeNode[] {
-  for (const node of tree) {
-    result.push(node);
-    flattenModuleTree(node.children, result);
-  }
-  return result;
-}
-
-export function findModuleInTree(
-  tree: LearningModuleTreeNode[],
-  slug: string
-): LearningModuleTreeNode | null {
-  for (const node of tree) {
-    if (node.slug === slug) return node;
-    const found = findModuleInTree(node.children, slug);
-    if (found) return found;
-  }
-  return null;
 }
