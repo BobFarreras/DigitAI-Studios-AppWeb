@@ -8,6 +8,7 @@ import type { LearningRunnerStep } from '@/services/learning/learning-lesson-ser
 import { AdvancedStepInteraction, isAdvancedStepType } from './AdvancedStepInteraction';
 import { CodeChoiceInteraction } from './CodeChoiceInteraction';
 import { ChoiceButton, type FeedbackStatus } from './ChoiceButton';
+import { ContentStep } from './ContentStep';
 import { FillBlankInteraction } from './FillBlankInteraction';
 import { MatchPairsInteraction } from './MatchPairsInteraction';
 import { MultiSelectInteraction } from './MultiSelectInteraction';
@@ -21,6 +22,9 @@ type Props = {
 };
 
 export function StepInteraction({ step, value, onChange, disabled, feedbackStatus }: Props) {
+  if (step.type === 'content') {
+    return <ContentStep prompt={step.prompt} explanation={step.explanation} />;
+  }
   if (isAdvancedStepType(step.type)) {
     return <AdvancedStepInteraction step={step} value={value} disabled={disabled} feedbackStatus={feedbackStatus} onChange={onChange} />;
   }
