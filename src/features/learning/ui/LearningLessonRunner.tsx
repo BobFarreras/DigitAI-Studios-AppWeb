@@ -32,7 +32,7 @@ export function LearningLessonRunner({ data }: Props) {
   if (runner.result) return <LessonResult data={data} score={runner.result.score} xp={runner.result.xpAwarded} />;
 
   return (
-    <section className="mx-auto flex min-h-[calc(100vh-96px)] max-w-2xl flex-col bg-white text-[#3c3c3c] dark:bg-slate-950">
+    <section className="mx-auto flex min-h-[calc(100vh-96px)] w-full max-w-5xl flex-col bg-white px-4 py-6 text-[#3c3c3c] dark:bg-slate-950 md:px-8">
       <div className="mb-5 flex items-center gap-3">
         <Button asChild variant="ghost" size="icon" className="rounded-full">
           <Link href={`/dashboard/learn/${data.trackSlug}`}>
