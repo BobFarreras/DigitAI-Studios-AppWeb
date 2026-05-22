@@ -96,23 +96,31 @@ export function LearningLessonRunner({ data }: Props) {
         </div>
       </main>
 
-      {/* FOOTER - Fixed bottom with button */}
-      <footer className="fixed bottom-0 left-0 right-0 z-50 border-t-2 border-[#e5e5e5] bg-white px-4 py-4 shadow-[0_-4px_0_#e5e5e5]">
-        <div className="mx-auto max-w-4xl">
-          <FeedbackPanel feedback={runner.currentFeedback} />
+      {/* FOOTER - Floating centered button */}
+      <footer className="fixed bottom-0 left-0 right-0 z-50 flex justify-center bg-gradient-to-t from-[#f7f7f7] via-[#f7f7f7]/90 to-transparent px-4 pb-6 pt-12 pointer-events-none">
+        <div className="pointer-events-auto w-full max-w-2xl">
+          {/* Only show feedback for exercises, not content steps */}
+          {!isContent && <FeedbackPanel feedback={runner.currentFeedback} />}
 
-          <Button
-            disabled={!runner.canContinue || runner.isPending}
-            onClick={runner.checkOrContinue}
-            className="mt-4 h-14 w-full rounded-2xl bg-[#58cc02] text-lg font-black text-white shadow-[0_6px_0_#3f8f01] transition-all hover:translate-y-1 hover:shadow-[0_2px_0_#3f8f01] active:translate-y-1.5 active:shadow-none disabled:bg-[#e5e5e5] disabled:text-[#afafaf] disabled:shadow-none"
+          <motion.div
+            initial={false}
+            animate={{ y: 0 }}
+            whileHover={{ scale: runner.canContinue && !runner.isPending ? 1.02 : 1 }}
+            className="mt-3"
           >
-            {buttonLabel(t, Boolean(runner.currentFeedback), runner.isLast, runner.step.type)}
-            {runner.isLast ? (
-              <Check className="ml-2 h-6 w-6" />
-            ) : (
-              <ChevronRight className="ml-2 h-6 w-6" />
-            )}
-          </Button>
+            <Button
+              disabled={!runner.canContinue || runner.isPending}
+              onClick={runner.checkOrContinue}
+              className="h-14 w-full rounded-2xl bg-[#58cc02] text-lg font-black text-white shadow-[0_8px_0_#3f8f01] transition-all hover:translate-y-1 hover:shadow-[0_4px_0_#3f8f01] active:translate-y-2 active:shadow-none disabled:bg-[#e5e5e5] disabled:text-[#afafaf] disabled:shadow-none"
+            >
+              {buttonLabel(t, Boolean(runner.currentFeedback), runner.isLast, runner.step.type)}
+              {runner.isLast ? (
+                <Check className="ml-2 h-6 w-6" />
+              ) : (
+                <ChevronRight className="ml-2 h-6 w-6" />
+              )}
+            </Button>
+          </motion.div>
         </div>
       </footer>
     </div>
