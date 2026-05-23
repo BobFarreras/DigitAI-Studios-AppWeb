@@ -26,7 +26,7 @@ export function BranchColumn({ branch, branchIndex, color }: Props) {
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: branchIndex * 0.15 }}
-        className="mb-6 w-full rounded-xl p-4 text-center text-white shadow-[0_6px_0_#3f8f01]"
+        className="mb-6 w-full rounded-xl p-4 text-center text-white shadow-[0_6px_0_#3f8f01] min-h-[100px] flex flex-col items-center justify-center"
         style={{ backgroundColor: color, boxShadow: `0 6px 0 ${darken(color, 30)}` }}
       >
         <h2 className="text-lg font-black">{branch.title}</h2>

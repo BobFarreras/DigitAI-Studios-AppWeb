@@ -36,7 +36,7 @@ export function resolveModuleStatus(
 ): LearningModuleTreeNode['status'] {
   if (activeModuleId === mod.id) return 'active';
   if (completedModuleIds?.has(mod.id)) return 'completed';
-  return process.env.NODE_ENV === 'production' ? 'locked' : 'active';
+  return 'locked';
 }
 
 export function flattenModuleTree(

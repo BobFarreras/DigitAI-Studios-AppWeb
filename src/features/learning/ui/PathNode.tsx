@@ -33,7 +33,7 @@ export function PathNode({ node, index, color }: Props) {
     ? sessionStorage.getItem(RECENTLY_COMPLETED_KEY) === node.slug
     : false;
 
-  const nodeSize = isLeaf ? 'h-14 w-14' : 'h-12 w-12';
+  const nodeSize = isLeaf ? 'h-16 w-16' : 'h-14 w-14';
   const nodeColors = isLocked
     ? 'bg-[#e5e5e5] text-[#afafaf]'
     : 'text-white';
@@ -48,14 +48,14 @@ export function PathNode({ node, index, color }: Props) {
       transition={{ delay: index * 0.08, type: 'spring', stiffness: 260, damping: 20 }}
       className="relative z-10 flex flex-col items-center"
     >
-      <div className="relative flex items-center justify-center" style={{ width: 76, height: 76 }}>
+      <div className="relative flex items-center justify-center" style={{ width: 84, height: 84 }}>
         {/* Progress donut — full size of container */}
         {hasProgress && isActive && (
           <div className="absolute inset-0">
             <ProgressPizza
               total={node.totalLessonCount}
               completed={node.completedLessonCount}
-              size={76}
+              size={84}
             />
           </div>
         )}
