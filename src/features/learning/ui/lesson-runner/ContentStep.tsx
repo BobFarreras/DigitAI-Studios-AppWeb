@@ -408,7 +408,7 @@ function renderFormattedText(text: string): React.ReactNode {
   const parts = text.split(/(\[.+?\]\(.+?\)|\*\*.*?\*\*|\*.*?\*|`.+?`)/g);
   
   return parts.map((part, i) => {
-    // [text](url) - external link
+    // [text](url) - external link pill
     const linkMatch = part.match(/^\[(.+?)\]\((.+?)\)$/);
     if (linkMatch) {
       return (
@@ -417,10 +417,10 @@ function renderFormattedText(text: string): React.ReactNode {
           href={linkMatch[2]}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1 text-[#1cb0f6] underline decoration-[#1cb0f6]/30 hover:text-[#0a8cd6] hover:decoration-[#1cb0f6] transition-colors"
+          className="inline-flex items-center gap-1.5 rounded-lg bg-[#1cb0f6]/10 px-2.5 py-1 text-sm font-black text-[#1cb0f6] hover:bg-[#1cb0f6] hover:text-white transition-all"
         >
-          {linkMatch[1]}
           <ExternalLink className="h-3.5 w-3.5" />
+          {linkMatch[1]}
         </a>
       );
     }

@@ -40,6 +40,18 @@ export function useLessonRunnerState(data: LearningRunnerData) {
   function checkOrContinue() {
     if (!step || busyRef.current) return;
     setSubmitError(null);
+
+    // Content steps advance directly — no answer to check
+    if (step.type === 'content') {
+      if (!isLast) {
+        setIndex((current) => current + 1);
+        setStartedAt(currentTimeMs());
+      } else {
+        submitLesson();
+      }
+      return;
+    }
+
     if (!currentFeedback) {
       revealCurrentStep();
       return;
