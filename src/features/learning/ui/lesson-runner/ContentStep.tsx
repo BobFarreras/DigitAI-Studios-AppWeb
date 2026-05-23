@@ -11,8 +11,8 @@ import { AlertTriangle, CheckCircle, ExternalLink, HelpCircle, ImageIcon, Info, 
 import NextImage from 'next/image';
 
 interface ContentBlock {
-  type: 'heading' | 'text' | 'list' | 'tip' | 'warning' | 'shortcut' | 'step' | 'code' | 'interactive-flow' | 'image-placeholder' | 'video-placeholder';
-  content: string | string[];
+  type: 'heading' | 'text' | 'list' | 'tip' | 'warning' | 'shortcut' | 'step' | 'code' | 'interactive-flow' | 'image-placeholder' | 'video-placeholder' | 'inline-image';
+  content: string | string[] | { url: string; caption: string };
   icon?: string;
   animation?: string;
 }
@@ -95,10 +95,10 @@ function renderMediaBlock(media: Record<string, unknown>) {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="overflow-hidden rounded-2xl border-2 border-[#e5e5e5] bg-white p-2 shadow-lg"
+      className="mx-auto max-w-lg overflow-hidden rounded-2xl border-2 border-[#e5e5e5] bg-white shadow-lg"
     >
-      <NextImage src={url} alt={alt} width={800} height={450} className="w-full rounded-xl" />
-      <p className="mt-2 text-center text-sm font-bold text-[#777777]">{alt}</p>
+      <NextImage src={url} alt={alt} width={640} height={360} className="w-full object-cover" />
+      <p className="px-4 py-2 text-center text-sm font-bold text-[#777777]">{alt}</p>
     </motion.div>
   );
 }
@@ -163,7 +163,17 @@ function parseContent(prompt: string): ContentBlock[] {
         currentList = [];
       }
       const match = trimmed.match(/^!\{(.+?)\}$/);
-      blocks.push({ type: 'image-placeholder', content: match ? match[1] : trimmed });
+      if (match) {
+        const inner = match[1];
+        // !{url|caption} → render real image inline
+        if (inner.includes('|')) {
+          const pipeIdx = inner.indexOf('|');
+          blocks.push({ type: 'inline-image', content: { url: inner.slice(0, pipeIdx), caption: inner.slice(pipeIdx + 1) } });
+        } else {
+          // !{caption} → placeholder for future image
+          blocks.push({ type: 'image-placeholder', content: inner });
+        }
+      }
       continue;
     }
 
@@ -343,24 +353,44 @@ function renderBlock(block: ContentBlock) {
         return <p className="text-sm text-red-500">Error parsing interactive flow</p>;
       }
 
+    case 'inline-image': {
+      const img = block.content as { url: string; caption: string };
+      return (
+        <figure className="mx-auto max-w-lg overflow-hidden rounded-2xl border-2 border-[#e5e5e5] bg-white shadow-lg">
+          <div className="relative">
+            <NextImage
+              src={img.url}
+              alt={img.caption}
+              width={640}
+              height={360}
+              className="w-full object-cover"
+            />
+          </div>
+          <figcaption className="px-4 py-2 text-center text-sm font-bold text-[#777777]">
+            {img.caption}
+          </figcaption>
+        </figure>
+      );
+    }
+
     case 'image-placeholder':
       return (
-        <div className="rounded-2xl border-2 border-dashed border-[#c0c0c0] bg-[#f0f0f0] p-10 text-center">
-          <ImageIcon className="mx-auto h-12 w-12 text-[#afafaf]" />
-          <p className="mt-3 text-sm font-bold text-[#afafaf]">{block.content as string}</p>
-          <span className="mt-2 inline-block rounded-full bg-[#e5e5e5] px-4 py-1 text-xs font-bold text-[#afafaf]">
-            Imatge d&apos;explicació
+        <div className="mx-auto max-w-sm rounded-2xl border-2 border-dashed border-[#d0d0d0] bg-[#f5f5f5] px-6 py-8 text-center">
+          <ImageIcon className="mx-auto h-8 w-8 text-[#c0c0c0]" />
+          <p className="mt-2 text-xs font-bold text-[#afafaf]">{block.content as string}</p>
+          <span className="mt-1 inline-block rounded-full bg-[#e5e5e5] px-3 py-0.5 text-[10px] font-bold text-[#afafaf]">
+            Pendents
           </span>
         </div>
       );
 
     case 'video-placeholder':
       return (
-        <div className="rounded-2xl border-2 border-dashed border-[#c0c0c0] bg-[#f0f0f0] p-10 text-center">
-          <Video className="mx-auto h-12 w-12 text-[#afafaf]" />
-          <p className="mt-3 text-sm font-bold text-[#afafaf]">{block.content as string}</p>
-          <span className="mt-2 inline-block rounded-full bg-[#e5e5e5] px-4 py-1 text-xs font-bold text-[#afafaf]">
-            Vídeo d&apos;explicació
+        <div className="mx-auto max-w-sm rounded-2xl border-2 border-dashed border-[#d0d0d0] bg-[#f5f5f5] px-6 py-8 text-center">
+          <Video className="mx-auto h-8 w-8 text-[#c0c0c0]" />
+          <p className="mt-2 text-xs font-bold text-[#afafaf]">{block.content as string}</p>
+          <span className="mt-1 inline-block rounded-full bg-[#e5e5e5] px-3 py-0.5 text-[10px] font-bold text-[#afafaf]">
+            Pendents
           </span>
         </div>
       );
