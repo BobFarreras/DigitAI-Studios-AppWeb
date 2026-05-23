@@ -224,11 +224,11 @@ import { z } from 'zod';
 
 const StepInsertSchema = z.object({
   lesson_id: z.string().uuid(),
-  type: z.enum(['multiple_choice', 'scenario', 'fill_blank', /* ... */]),
-  prompt: z.string().min(10).max(500),
+  type: z.enum(['content', 'multiple_choice', 'scenario', 'fill_blank', /* ... */]),
+  prompt: z.string().min(10).max(5000),
   config: z.object({
     // Depèn del type — veure CONTENT-SCHEMA.md
-  }),
+  }).optional(),
   order_index: z.number().int().min(0),
 });
 

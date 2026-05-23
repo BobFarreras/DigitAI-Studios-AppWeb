@@ -11,6 +11,7 @@
 
 ```typescript
 export type LearningStepType =
+  | 'content'              // Contingut educatiu visual (markdown enriquit)
   | 'multiple_choice'      // Una resposta correcta entre 4 opcions
   | 'multi_select'         // Múltiples respostes correctes
   | 'true_false'          // Cert/Fals amb justificació
@@ -24,6 +25,87 @@ export type LearningStepType =
   | 'code_editor'          // Escriure/debuggar codi
   | 'ai_prompt_review'     // Avaluar i millorar prompts d'IA
   | 'security_triage';     // Prioritzar incidents de seguretat
+```
+
+---
+
+## 1.1 Tipus `content` — Contingut Educatiu Visual
+
+El tipus `content` renderitza text enriquit amb suport per markdown, placeholders d'imatge/vídeo, i enllaços externs. **No requereix resposta de l'usuari** — botó "Següent" avança automàticament.
+
+### Sintaxi suportada al camp `prompt`:
+
+| Sintaxi | Descripció | Exemple |
+|---------|-----------|---------|
+| `## Títol` | Encapçalament de secció (verd, icona Zap) | `## Windows 11: Introducció` |
+| `**text**` | Negreta (verd `#58cc02`) | `**important**` |
+| `*text*` | Cursiva (blau `#1cb0f6`) | `*nota*` |
+| `` `codi` `` | Codi inline (fons fosc) | `` `tpm.msc` `` |
+| `[text](url)` | Enllaç extern amb icona | `[Microsoft](https://microsoft.com)` |
+| `1. text` | Llista numerada amb animació | `1. Primer pas` |
+| `- text` | Llista amb vinyetes | `- Element` |
+| `! text` | Avís/alerta (fons groc, icona ⚠️) | `! Sense TPM no funciona` |
+| `? text` | Tip/consell (fons blau, icona 💡) | `? Per instal·lacions massives usa MDT` |
+| `> text` | Drecera de teclat (fons negre, icona ⌨️) | `> Win + R: Executar` |
+| `$ text` | Terminal/CMD (fons negre, text verd) | `$ ipconfig /all` |
+| `!{descripció}` | Placeholder d'imatge (requadre puntejat) | `!{Captura de l'escriptori W11}` |
+| `!v{descripció}` | Placeholder de vídeo (requadre puntejat) | `!v{Tutorial d'instal·lació}` |
+| `@ [{...}]` | Diagrama de flux interactiu (JSON) | `@ [{"title":"Pas 1",...}]` |
+
+### Config:
+```json
+{}
+```
+(El tipus `content` no requereix config — el contingut va íntegrament al `prompt`.)
+
+### Media (opcional):
+```json
+{
+  "type": "image",
+  "url": "https://example.com/imatge.png",
+  "alt": "Descripció de la imatge"
+}
+```
+O per vídeo:
+```json
+{
+  "type": "video",
+  "url": "https://example.com/video.mp4",
+  "poster": "https://example.com/thumbnail.jpg",
+  "alt": "Descripció del vídeo"
+}
+```
+
+### Exemple de prompt complet:
+```
+## Instal·lació de Windows 11
+
+Segueix aquests passos per instal·lar Windows 11:
+
+1. Descarrega la ISO des del [web oficial](https://microsoft.com)
+2. Crea un USB amb [Rufus](https://rufus.ie)
+3. Configura la BIOS per arrencar des de USB
+
+! Sense TPM 2.0 no podràs continuar
+
+!{Esquema del procés d'instal·lació}
+
+$ diskpart
+$ list disk
+$ convert gpt
+
+? Per instal·lacions massives, considera usar MDT.
+```
+
+### Estructura recomanada per lliçó:
+```
+Lliçó:
+  Step 0: content — Introducció i conceptes
+  Step 1: content — Detall tècnic (versions, requisits, passos)
+  Step 2: content — Guia pràctica pas a pas
+  Step 3: exercici — Validació de comprensió
+  Step 4: exercici — Aplicació pràctica
+  Step 5: exercici — Reforç addicional
 ```
 
 ---
