@@ -86,7 +86,7 @@ export function StepInteraction({ step, value, onChange, disabled, feedbackStatu
   if (step.type === 'order_steps') {
     return (
       <OrderStepsInteraction
-        options={asStringArray(step.config.options)}
+        options={asStringArray(step.config.items)}
         value={asStringArray(value)}
         onChange={onChange}
         disabled={disabled}
