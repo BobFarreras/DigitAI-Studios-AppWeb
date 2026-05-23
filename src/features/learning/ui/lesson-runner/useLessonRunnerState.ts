@@ -34,7 +34,7 @@ export function useLessonRunnerState(data: LearningRunnerData) {
     setSubmitError(null);
     checks.clear(step.id);
     setAnswers((current) => ({ ...current, [step.id]: value }));
-    if (hasAnswer(step.type, step.config.options, value)) checks.precheck(step, value);
+    if (hasAnswer(step.type, step.config.items ?? step.config.options, value)) checks.precheck(step, value);
   }
 
   function checkOrContinue() {
@@ -99,7 +99,7 @@ export function useLessonRunnerState(data: LearningRunnerData) {
     result,
     error: checks.error ?? submitError,
     isPending,
-    canContinue: step ? hasAnswer(step.type, step.config.options, selected) : false,
+    canContinue: step ? hasAnswer(step.type, step.config.items ?? step.config.options, selected) : false,
     isLast,
     progress,
     updateAnswer,
@@ -120,10 +120,10 @@ function buildSubmitPayload(data: LearningRunnerData, answers: AnswerMap, stepTi
   };
 }
 
-function hasAnswer(type: string, options: unknown, value: unknown) {
+function hasAnswer(type: string, items: unknown, value: unknown) {
   if (type === 'content') return true;
-  if (type === 'order_steps') return Array.isArray(value) && value.length === asArray(options).length;
-  if (type === 'match_pairs') return isRecord(value) && Object.keys(value).length === asArray(options).length;
+  if (type === 'order_steps') return Array.isArray(value) && value.length >= asArray(items).length;
+  if (type === 'match_pairs') return isRecord(value) && Object.keys(value).length >= asArray(items).length;
   if (type === 'multi_select') return Array.isArray(value) && value.length > 0;
   if (type === 'ai_prompt_review') return Array.isArray(value) && value.length > 0;
   if (type === 'fill_blank') return typeof value === 'string' && value.trim().length > 0;
