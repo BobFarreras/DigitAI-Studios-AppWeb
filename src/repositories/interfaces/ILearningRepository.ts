@@ -39,6 +39,7 @@ export type LearningStepRecord = {
   prompt: string;
   explanation: string | null;
   config: Record<string, unknown>;
+  media: Record<string, unknown> | null;
   orderIndex: number;
 };
 

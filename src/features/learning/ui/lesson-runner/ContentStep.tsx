@@ -7,10 +7,11 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { AlertTriangle, CheckCircle, HelpCircle, Info, Keyboard, Lightbulb, Terminal, Zap } from 'lucide-react';
+import { AlertTriangle, CheckCircle, ExternalLink, HelpCircle, ImageIcon, Info, Keyboard, Lightbulb, Terminal, Video, Zap } from 'lucide-react';
+import NextImage from 'next/image';
 
 interface ContentBlock {
-  type: 'heading' | 'text' | 'list' | 'tip' | 'warning' | 'shortcut' | 'step' | 'code' | 'interactive-flow';
+  type: 'heading' | 'text' | 'list' | 'tip' | 'warning' | 'shortcut' | 'step' | 'code' | 'interactive-flow' | 'image-placeholder' | 'video-placeholder';
   content: string | string[];
   icon?: string;
   animation?: string;
@@ -26,15 +27,19 @@ interface InteractiveFlowStep {
 type Props = {
   prompt: string;
   explanation: string | null;
+  media?: Record<string, unknown> | null;
 };
 
-export function ContentStep({ prompt, explanation }: Props) {
+export function ContentStep({ prompt, explanation, media }: Props) {
   // Fix: replace literal \n with actual newlines
   const normalizedPrompt = prompt.replace(/\\n/g, '\n');
   const blocks = parseContent(normalizedPrompt);
 
   return (
     <div className="space-y-6">
+      {/* Actual media from database */}
+      {media && renderMediaBlock(media)}
+
       {blocks.map((block, index) => (
         <motion.div
           key={index}
@@ -60,6 +65,41 @@ export function ContentStep({ prompt, explanation }: Props) {
         </motion.div>
       ) : null}
     </div>
+  );
+}
+
+function renderMediaBlock(media: Record<string, unknown>) {
+  const url = typeof media.url === 'string' ? media.url : null;
+  const type = typeof media.type === 'string' ? media.type : 'image';
+  const alt = typeof media.alt === 'string' ? media.alt : 'Imatge de la lliçó';
+
+  if (!url) return null;
+
+  if (type === 'video') {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="overflow-hidden rounded-2xl border-2 border-[#e5e5e5] bg-black shadow-lg"
+      >
+        <video controls className="w-full" poster={typeof media.poster === 'string' ? media.poster : undefined}>
+          <source src={url} type="video/mp4" />
+          El teu navegador no suporta vídeos HTML5.
+        </video>
+        <p className="px-4 py-2 text-sm font-bold text-white">{alt}</p>
+      </motion.div>
+    );
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="overflow-hidden rounded-2xl border-2 border-[#e5e5e5] bg-white p-2 shadow-lg"
+    >
+      <NextImage src={url} alt={alt} width={800} height={450} className="w-full rounded-xl" />
+      <p className="mt-2 text-center text-sm font-bold text-[#777777]">{alt}</p>
+    </motion.div>
   );
 }
 
@@ -114,6 +154,26 @@ function parseContent(prompt: string): ContentBlock[] {
         currentList = [];
       }
       blocks.push({ type: 'tip', content: trimmed.replace('? ', '') });
+      continue;
+    }
+
+    if (trimmed.startsWith('!{')) {
+      if (currentList.length > 0) {
+        blocks.push({ type: 'list', content: currentList });
+        currentList = [];
+      }
+      const match = trimmed.match(/^!\{(.+?)\}$/);
+      blocks.push({ type: 'image-placeholder', content: match ? match[1] : trimmed });
+      continue;
+    }
+
+    if (trimmed.startsWith('!v{')) {
+      if (currentList.length > 0) {
+        blocks.push({ type: 'list', content: currentList });
+        currentList = [];
+      }
+      const match = trimmed.match(/^!v\{(.+?)\}$/);
+      blocks.push({ type: 'video-placeholder', content: match ? match[1] : trimmed });
       continue;
     }
 
@@ -283,6 +343,28 @@ function renderBlock(block: ContentBlock) {
         return <p className="text-sm text-red-500">Error parsing interactive flow</p>;
       }
 
+    case 'image-placeholder':
+      return (
+        <div className="rounded-2xl border-2 border-dashed border-[#c0c0c0] bg-[#f0f0f0] p-10 text-center">
+          <ImageIcon className="mx-auto h-12 w-12 text-[#afafaf]" />
+          <p className="mt-3 text-sm font-bold text-[#afafaf]">{block.content as string}</p>
+          <span className="mt-2 inline-block rounded-full bg-[#e5e5e5] px-4 py-1 text-xs font-bold text-[#afafaf]">
+            Imatge d&apos;explicació
+          </span>
+        </div>
+      );
+
+    case 'video-placeholder':
+      return (
+        <div className="rounded-2xl border-2 border-dashed border-[#c0c0c0] bg-[#f0f0f0] p-10 text-center">
+          <Video className="mx-auto h-12 w-12 text-[#afafaf]" />
+          <p className="mt-3 text-sm font-bold text-[#afafaf]">{block.content as string}</p>
+          <span className="mt-2 inline-block rounded-full bg-[#e5e5e5] px-4 py-1 text-xs font-bold text-[#afafaf]">
+            Vídeo d&apos;explicació
+          </span>
+        </div>
+      );
+
     default:
       return null;
   }
@@ -322,10 +404,26 @@ function InteractiveFlow({ steps }: { steps: InteractiveFlowStep[] }) {
 }
 
 function renderFormattedText(text: string): React.ReactNode {
-  // Split by markdown patterns: **bold**, *italic*, `code`
-  const parts = text.split(/(\*\*.*?\*\*|\*.*?\*|`.+?`)/g);
+  // Split by markdown patterns: [link](url), **bold**, *italic*, `code`
+  const parts = text.split(/(\[.+?\]\(.+?\)|\*\*.*?\*\*|\*.*?\*|`.+?`)/g);
   
   return parts.map((part, i) => {
+    // [text](url) - external link
+    const linkMatch = part.match(/^\[(.+?)\]\((.+?)\)$/);
+    if (linkMatch) {
+      return (
+        <a
+          key={i}
+          href={linkMatch[2]}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1 text-[#1cb0f6] underline decoration-[#1cb0f6]/30 hover:text-[#0a8cd6] hover:decoration-[#1cb0f6] transition-colors"
+        >
+          {linkMatch[1]}
+          <ExternalLink className="h-3.5 w-3.5" />
+        </a>
+      );
+    }
     if (part.startsWith('**') && part.endsWith('**')) {
       return <strong key={i} className="text-[#58cc02]">{part.slice(2, -2)}</strong>;
     }

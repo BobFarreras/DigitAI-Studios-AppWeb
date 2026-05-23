@@ -74,10 +74,10 @@ export function LearningLessonRunner({ data }: Props) {
         </div>
       </header>
 
-      {/* CONTENT - Scrollable middle */}
-      <main className="flex-1 overflow-y-auto px-4 py-6 pb-32">
-        <div className="mx-auto max-w-4xl">
-          {/* Only show prompt as title for EXERCISE steps, not content steps */}
+      {/* SCROLLABLE BODY with sticky footer */}
+      <div className="flex-1 overflow-y-auto px-4">
+        {/* CONTENT */}
+        <div className="mx-auto max-w-4xl py-6">
           {!isContent && (
             <h1 className="mb-6 text-2xl font-black leading-tight text-[#1f1f1f] md:text-3xl">
               {runner.step.prompt}
@@ -94,35 +94,34 @@ export function LearningLessonRunner({ data }: Props) {
 
           <ErrorPanel message={runner.error} />
         </div>
-      </main>
 
-      {/* FOOTER - Floating centered button */}
-      <footer className="fixed bottom-0 left-0 right-0 z-50 flex justify-center bg-gradient-to-t from-[#f7f7f7] via-[#f7f7f7]/90 to-transparent px-4 pb-6 pt-12 pointer-events-none">
-        <div className="pointer-events-auto w-full max-w-2xl">
-          {/* Only show feedback for exercises, not content steps */}
-          {!isContent && <FeedbackPanel feedback={runner.currentFeedback} />}
+        {/* STICKY FOOTER — positioned relative to content column, respects sidebar */}
+        <div className="sticky bottom-0 -mx-4 bg-gradient-to-t from-[#f7f7f7] via-[#f7f7f7]/95 to-transparent px-4 pb-6 pt-12 pointer-events-none">
+          <div className="pointer-events-auto mx-auto max-w-2xl">
+            {!isContent && <FeedbackPanel feedback={runner.currentFeedback} />}
 
-          <motion.div
-            initial={false}
-            animate={{ y: 0 }}
-            whileHover={{ scale: runner.canContinue && !runner.isPending ? 1.02 : 1 }}
-            className="mt-3"
-          >
-            <Button
-              disabled={!runner.canContinue || runner.isPending}
-              onClick={runner.checkOrContinue}
-              className="h-14 w-full rounded-2xl bg-[#58cc02] text-lg font-black text-white shadow-[0_8px_0_#3f8f01] transition-all hover:translate-y-1 hover:shadow-[0_4px_0_#3f8f01] active:translate-y-2 active:shadow-none disabled:bg-[#e5e5e5] disabled:text-[#afafaf] disabled:shadow-none"
+            <motion.div
+              initial={false}
+              animate={{ y: 0 }}
+              whileHover={{ scale: runner.canContinue && !runner.isPending ? 1.02 : 1 }}
+              className="mt-3"
             >
-              {buttonLabel(t, Boolean(runner.currentFeedback), runner.isLast, runner.step.type)}
-              {runner.isLast ? (
-                <Check className="ml-2 h-6 w-6" />
-              ) : (
-                <ChevronRight className="ml-2 h-6 w-6" />
-              )}
-            </Button>
-          </motion.div>
+              <Button
+                disabled={!runner.canContinue || runner.isPending}
+                onClick={runner.checkOrContinue}
+                className="h-14 w-full rounded-2xl bg-[#58cc02] text-lg font-black text-white shadow-[0_8px_0_#3f8f01] transition-all hover:translate-y-1 hover:shadow-[0_4px_0_#3f8f01] active:translate-y-2 active:shadow-none disabled:bg-[#e5e5e5] disabled:text-[#afafaf] disabled:shadow-none"
+              >
+                {buttonLabel(t, Boolean(runner.currentFeedback), runner.isLast, runner.step.type)}
+                {runner.isLast ? (
+                  <Check className="ml-2 h-6 w-6" />
+                ) : (
+                  <ChevronRight className="ml-2 h-6 w-6" />
+                )}
+              </Button>
+            </motion.div>
+          </div>
         </div>
-      </footer>
+      </div>
     </div>
   );
 }

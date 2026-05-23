@@ -91,6 +91,7 @@ export function mapSteps(steps: StepRow[], locale: string = 'ca'): LearningStepR
     prompt: localizedPrompt(step, locale),
     explanation: localizedExplanation(step, locale),
     config: step.config as Record<string, unknown>,
+    media: step.media as Record<string, unknown> | null,
     orderIndex: step.order_index,
   }));
 }

@@ -23,7 +23,7 @@ type Props = {
 
 export function StepInteraction({ step, value, onChange, disabled, feedbackStatus }: Props) {
   if (step.type === 'content') {
-    return <ContentStep prompt={step.prompt} explanation={step.explanation} />;
+    return <ContentStep prompt={step.prompt} explanation={step.explanation} media={step.media} />;
   }
   if (isAdvancedStepType(step.type)) {
     return <AdvancedStepInteraction step={step} value={value} disabled={disabled} feedbackStatus={feedbackStatus} onChange={onChange} />;
