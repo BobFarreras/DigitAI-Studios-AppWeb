@@ -22,6 +22,7 @@ interface InteractiveFlowStep {
   description: string;
   icon: string;
   color: string;
+  image?: string;
 }
 
 type Props = {
@@ -247,7 +248,7 @@ function renderBlock(block: ContentBlock) {
       return (
         <div className="flex items-center gap-3 border-b-2 border-[#58cc02] pb-3">
           <Zap className="h-8 w-8 text-[#58cc02]" />
-          <h2 className="text-2xl font-black text-[#1f1f1f]">{block.content as string}</h2>
+          <h2 className="text-2xl font-black text-[#1f1f1f]">{renderFormattedText(block.content as string)}</h2>
         </div>
       );
 
@@ -266,7 +267,7 @@ function renderBlock(block: ContentBlock) {
           {(block.content as string[]).map((item, i) => (
             <li key={i} className="flex items-start gap-3">
               <span className="mt-2 h-2.5 w-2.5 shrink-0 rounded-full bg-[#777777]" />
-              <span className="text-base font-bold text-[#3c3c3c]">{item}</span>
+              <span className="text-base font-bold text-[#3c3c3c]">{renderFormattedText(item)}</span>
             </li>
           ))}
         </ul>
@@ -286,7 +287,7 @@ function renderBlock(block: ContentBlock) {
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#58cc02] text-sm font-black text-white shadow-[0_4px_0_#3f8f01]">
                 {i + 1}
               </div>
-              <p className="mt-2 text-base font-bold leading-relaxed text-[#3c3c3c]">{item}</p>
+              <p className="mt-2 text-base font-bold leading-relaxed text-[#3c3c3c]">{renderFormattedText(item)}</p>
             </motion.div>
           ))}
         </div>
@@ -299,7 +300,7 @@ function renderBlock(block: ContentBlock) {
             <Lightbulb className="mt-1 h-6 w-6 shrink-0 text-[#1cb0f6]" />
             <div className="space-y-2">
               {(block.content as string).split('\n').map((line, i) => (
-                <p key={i} className="text-base font-bold text-[#1cb0f6]">{line}</p>
+                <p key={i} className="text-base font-bold text-[#1cb0f6]">{renderFormattedText(line)}</p>
               ))}
             </div>
           </div>
@@ -313,7 +314,7 @@ function renderBlock(block: ContentBlock) {
             <AlertTriangle className="mt-1 h-6 w-6 shrink-0 text-amber-600" />
             <div className="space-y-2">
               {(block.content as string).split('\n').map((line, i) => (
-                <p key={i} className="text-base font-bold text-amber-900">{line}</p>
+                <p key={i} className="text-base font-bold text-amber-900">{renderFormattedText(line)}</p>
               ))}
             </div>
           </div>
@@ -327,7 +328,7 @@ function renderBlock(block: ContentBlock) {
             <Keyboard className="mt-1 h-6 w-6 shrink-0 text-[#58cc02]" />
             <div className="space-y-2">
               {(block.content as string).split('\n').map((line, i) => (
-                <p key={i} className="text-base font-black text-white">{line}</p>
+                <p key={i} className="text-base font-black text-white">{renderFormattedText(line)}</p>
               ))}
             </div>
           </div>
@@ -424,7 +425,18 @@ function InteractiveFlow({ steps }: { steps: InteractiveFlowStep[] }) {
             </motion.div>
             <div className="flex-1 rounded-xl bg-white p-4 shadow-[0_4px_0_#e5e5e5] border-2 border-[#e5e5e5]">
               <h4 className="text-lg font-black text-[#1f1f1f]">{step.title}</h4>
-              <p className="mt-1 text-sm font-bold text-[#777777]">{step.description}</p>
+              <p className="mt-1 text-sm font-bold text-[#777777]">{renderFormattedText(step.description)}</p>
+              {step.image ? (
+                <div className="mt-3 overflow-hidden rounded-lg border border-[#e5e5e5]">
+                  <NextImage
+                    src={step.image}
+                    alt={step.title}
+                    width={400}
+                    height={225}
+                    className="w-full object-cover"
+                  />
+                </div>
+              ) : null}
             </div>
           </motion.div>
         ))}
