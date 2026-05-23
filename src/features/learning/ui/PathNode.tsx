@@ -44,22 +44,25 @@ export function PathNode({ node, index, color }: Props) {
   const content = (
     <motion.div
       initial={{ opacity: 0, scale: 0.8 }}
-      animate={recentlyCompleted ? { scale: [1, 1.2, 1], opacity: 1 } : { opacity: 1, scale: 1 }}
+      animate={recentlyCompleted ? { scale: [1, 1.25] } : { opacity: 1, scale: 1 }}
       transition={{ delay: index * 0.08, type: 'spring', stiffness: 260, damping: 20 }}
       className="relative z-10 flex flex-col items-center"
     >
-      <div className="relative">
-        {/* Progress donut for active leaf nodes with lessons */}
+      <div className="relative flex items-center justify-center" style={{ width: 76, height: 76 }}>
+        {/* Progress donut — full size of container */}
         {hasProgress && isActive && (
-          <ProgressPizza
-            total={node.totalLessonCount}
-            completed={node.completedLessonCount}
-            size={72}
-          />
+          <div className="absolute inset-0">
+            <ProgressPizza
+              total={node.totalLessonCount}
+              completed={node.completedLessonCount}
+              size={76}
+            />
+          </div>
         )}
 
+        {/* Node circle centered on top */}
         <div
-          className={`relative flex ${nodeSize} items-center justify-center rounded-full border-4 border-white shadow-[0_4px_0_#afafaf] ${nodeColors}`}
+          className={`relative z-10 flex ${nodeSize} items-center justify-center rounded-full border-4 border-white shadow-[0_4px_0_#afafaf] ${nodeColors}`}
           style={bgStyle}
         >
           <Icon className="h-6 w-6" />
