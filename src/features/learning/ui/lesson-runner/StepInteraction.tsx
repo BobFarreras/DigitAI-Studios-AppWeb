@@ -25,6 +25,28 @@ export function StepInteraction({ step, value, onChange, disabled, feedbackStatu
   if (step.type === 'content') {
     return <ContentStep prompt={step.prompt} explanation={step.explanation} media={step.media} />;
   }
+  if (step.type === 'true_false') {
+    return (
+      <div className="grid gap-3">
+        <ChoiceButton
+          active={value === true}
+          disabled={disabled}
+          feedbackStatus={value === true ? feedbackStatus : undefined}
+          onClick={() => onChange(true)}
+        >
+          Verdader
+        </ChoiceButton>
+        <ChoiceButton
+          active={value === false}
+          disabled={disabled}
+          feedbackStatus={value === false ? feedbackStatus : undefined}
+          onClick={() => onChange(false)}
+        >
+          Fals
+        </ChoiceButton>
+      </div>
+    );
+  }
   if (isAdvancedStepType(step.type)) {
     return <AdvancedStepInteraction step={step} value={value} disabled={disabled} feedbackStatus={feedbackStatus} onChange={onChange} />;
   }
@@ -101,8 +123,13 @@ export function StepInteraction({ step, value, onChange, disabled, feedbackStatu
   );
 }
 
-function asStringArray(value: unknown) {
-  return Array.isArray(value) ? value.filter((item): item is string => typeof item === 'string') : [];
+function asStringArray(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return value.map((item) => {
+    if (typeof item === 'string') return item;
+    if (typeof item === 'object' && item !== null && 'text' in item) return String((item as Record<string, unknown>).text);
+    return String(item);
+  });
 }
 
 function asRecord(value: unknown): Record<string, unknown> {
