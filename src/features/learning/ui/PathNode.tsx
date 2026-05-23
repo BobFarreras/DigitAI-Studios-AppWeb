@@ -79,9 +79,9 @@ export function PathNode({ node, index, color }: Props) {
           {node.level}
         </span>
       ) : null}
-      {hasProgress && isActive ? (
-        <span className="mt-0.5 text-[10px] font-bold text-[#58cc02]">
-          {node.completedLessonCount}/{node.totalLessonCount}
+      {hasProgress ? (
+        <span className={`mt-0.5 text-[10px] font-bold ${isActive ? 'text-[#58cc02]' : isCompleted ? 'text-[#58cc02]' : 'text-[#afafaf]'}`}>
+          {isCompleted ? '✓' : `${node.completedLessonCount}/${node.totalLessonCount}`}
         </span>
       ) : null}
     </motion.div>

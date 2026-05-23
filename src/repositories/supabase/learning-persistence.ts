@@ -65,7 +65,7 @@ async function persistProgress(
   if (existing.error) throw new Error(existing.error.message);
 
   const bestScore = Math.max(existing.data?.best_score ?? 0, input.score);
-  const completed = Boolean(existing.data?.completed) || (bestScore >= 70 && !input.requiresReview);
+  const completed = Boolean(existing.data?.completed) || (bestScore >= 60 && !input.requiresReview);
   const result = await supabase.from('learning_progress').upsert({
     user_id: input.userId,
     lesson_id: input.lessonId,

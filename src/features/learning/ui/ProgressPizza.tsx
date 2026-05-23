@@ -15,10 +15,10 @@ type Props = {
 export function ProgressPizza({ total, completed, size = 56 }: Props) {
   if (total <= 0) return null;
 
-  const strokeWidth = 4;
+  const strokeWidth = 5;
   const radius = (size - strokeWidth) / 2;
   const center = size / 2;
-  const gapAngle = (3 * Math.PI) / 180; // 3 degree gap
+  const gapAngle = (3 * Math.PI) / 180;
   const sliceAngle = (2 * Math.PI - gapAngle * total) / total;
 
   return (
@@ -38,7 +38,7 @@ export function ProgressPizza({ total, completed, size = 56 }: Props) {
             key={i}
             d={`M${x1},${y1} A${radius},${radius} 0 0,1 ${x2},${y2}`}
             fill="none"
-            stroke={filled ? '#58cc02' : '#e5e5e5'}
+            stroke={filled ? '#58cc02' : '#d5d5d5'}
             strokeWidth={strokeWidth}
             strokeLinecap="butt"
             initial={{ opacity: filled ? 0 : 1 }}
