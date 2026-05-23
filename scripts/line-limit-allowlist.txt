@@ -30,3 +30,4 @@ src/types/config.ts
 src/types/database.types.ts
 src/actions/audit.ts
 src/features/learning/ui/lesson-runner/ContentStep.tsx
+src/features/learning/ui/LearningLessonRunner.tsx
