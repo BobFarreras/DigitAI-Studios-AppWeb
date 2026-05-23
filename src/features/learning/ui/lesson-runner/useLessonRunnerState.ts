@@ -11,7 +11,7 @@ import { useLessonAnswerChecks } from './useLessonAnswerChecks';
 
 type AnswerMap = Record<string, unknown>;
 type TimeMap = Record<string, number>;
-type LessonResultState = { score: number; xpAwarded: number; mistakeCount: number; requiresReview: boolean };
+type LessonResultState = { score: number; xpAwarded: number; correctCount: number; mistakeCount: number; requiresReview: boolean };
 const SUBMIT_ERROR = 'No hem pogut guardar la llico. Torna-ho a provar.';
 export function useLessonRunnerState(data: LearningRunnerData) {
   const [index, setIndex] = useState(0);
@@ -80,7 +80,7 @@ export function useLessonRunnerState(data: LearningRunnerData) {
       try {
         const response = await submitLearningLesson(buildSubmitPayload(data, answers, stepTimes), data.locale);
         if (!response.success) {
-          setSubmitError(SUBMIT_ERROR);
+          setSubmitError(response.error ?? SUBMIT_ERROR);
           return;
         }
         setResult(response.data);

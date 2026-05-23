@@ -40,7 +40,7 @@ export function LearningLessonRunner({ data }: Props) {
   }, [runner.step?.id]);
 
   if (data.steps.length === 0) return <EmptyLesson data={data} />;
-  if (runner.result) return <LessonResult data={data} score={runner.result.score} xp={runner.result.xpAwarded} />;
+  if (runner.result) return <LessonResult data={data} score={runner.result.score} xp={runner.result.xpAwarded} correctCount={runner.result.correctCount} mistakeCount={runner.result.mistakeCount} />;
 
   const stepNumber = runner.step.orderIndex + 1;
   const totalSteps = data.steps.length;
