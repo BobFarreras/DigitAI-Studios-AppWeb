@@ -1,20 +1,21 @@
 /**
  * @file src/features/learning/ui/lesson-runner/OrderStepsInteraction.tsx
  * @updated 2026-05-23
- * @summary Ordered steps with vertical arrows between selected items.
+ * @summary Ordered steps with vertical arrows. Blue selected, green/red after feedback.
  * @scope Client ordering UI only; correctness remains server-side.
  */
 import { ArrowDown } from 'lucide-react';
-import { ChoiceButton } from './ChoiceButton';
+import { ChoiceButton, type FeedbackStatus } from './ChoiceButton';
 
 type Props = {
   options: string[];
   value: string[];
   disabled?: boolean;
+  feedbackStatus?: FeedbackStatus;
   onChange: (value: string[]) => void;
 };
 
-export function OrderStepsInteraction({ options, value, disabled, onChange }: Props) {
+export function OrderStepsInteraction({ options, value, disabled, feedbackStatus, onChange }: Props) {
   const remaining = options.filter((option) => !value.includes(option));
 
   function add(option: string) {
@@ -33,21 +34,30 @@ export function OrderStepsInteraction({ options, value, disabled, onChange }: Pr
           {value.map((item, index) => (
             <div key={item}>
               <div className="flex items-center gap-3">
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#58cc02] text-sm font-black text-white shadow-[0_3px_0_#3f8f01]">
+                <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-black text-white shadow-[0_3px_0_#00000020] ${
+                  feedbackStatus === 'correct' ? 'bg-[#58cc02] shadow-[0_3px_0_#3f8f01]' :
+                  feedbackStatus === 'incorrect' ? 'bg-[#ff4b4b] shadow-[0_3px_0_#c03030]' :
+                  'bg-[#1cb0f6] shadow-[0_3px_0_#0a8cd6]'
+                }`}>
                   {index + 1}
                 </span>
-                <button
-                  type="button"
+                <ChoiceButton
+                  key={item}
+                  active={!feedbackStatus}
                   disabled={disabled}
+                  feedbackStatus={feedbackStatus}
                   onClick={() => remove(item)}
-                  className="flex-1 rounded-xl border-2 border-[#58cc02] bg-[#58cc02]/5 px-4 py-3 text-left text-sm font-bold text-[#1f1f1f] hover:bg-[#58cc02]/10 disabled:opacity-50"
                 >
                   {item}
-                </button>
+                </ChoiceButton>
               </div>
               {index < value.length - 1 ? (
                 <div className="flex justify-center py-1">
-                  <ArrowDown className="h-5 w-5 text-[#58cc02]" />
+                  <ArrowDown className={`h-5 w-5 ${
+                    feedbackStatus === 'correct' ? 'text-[#58cc02]' :
+                    feedbackStatus === 'incorrect' ? 'text-[#ff4b4b]' :
+                    'text-[#1cb0f6]'
+                  }`} />
                 </div>
               ) : null}
             </div>
@@ -62,7 +72,7 @@ export function OrderStepsInteraction({ options, value, disabled, onChange }: Pr
       )}
 
       {/* Remaining options to pick from */}
-      {remaining.length > 0 ? (
+      {remaining.length > 0 && !disabled ? (
         <div>
           <p className="mb-3 text-xs font-black uppercase tracking-wider text-[#afafaf]">
             Passos disponibles
