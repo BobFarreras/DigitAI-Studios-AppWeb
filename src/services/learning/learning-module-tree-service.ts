@@ -24,6 +24,8 @@ export type LearningModuleTreeNode = {
   href: string;
   isLeaf: boolean;
   parentModuleId?: string | null;
+  completedLessonCount: number;
+  totalLessonCount: number;
 };
 
 export type BranchUnlockMode = 'free' | 'sequential';
@@ -31,6 +33,7 @@ export type BranchUnlockMode = 'free' | 'sequential';
 export function buildModuleTree(
   modules: LearningModuleRecord[],
   trackSlug: string,
+  completedLessonIds: Set<string> = new Set(),
   completedModuleIds: Set<string> = new Set(),
   activeModuleId?: string
 ): LearningModuleTreeNode[] {
@@ -38,7 +41,13 @@ export function buildModuleTree(
 
   for (const mod of modules) {
     const isLeaf = mod.lessons.length > 0;
-    const rawStatus = resolveModuleStatus(mod, activeModuleId, completedModuleIds);
+    const completedLessons = mod.lessons.filter((l) => completedLessonIds.has(l.id)).length;
+    const totalLessons = mod.lessons.length;
+
+    // Mark module as completed if all its lessons are done
+    const actualCompleted = completedModuleIds.has(mod.id) || (totalLessons > 0 && completedLessons >= totalLessons);
+    const rawStatus = actualCompleted ? 'completed' as const : resolveModuleStatus(mod, activeModuleId, completedModuleIds);
+
     moduleMap.set(mod.id, {
       id: mod.id,
       slug: mod.slug,
@@ -54,6 +63,8 @@ export function buildModuleTree(
         : `/dashboard/learn/${mod.slug}`,
       isLeaf,
       parentModuleId: mod.parentModuleId,
+      completedLessonCount: completedLessons,
+      totalLessonCount: totalLessons,
     });
   }
 

@@ -42,6 +42,16 @@ export function LessonResult({ data, score, xp, correctCount, mistakeCount }: {
   const t = useTranslations('Learning');
   const total = correctCount + mistakeCount;
 
+  // Store completion in sessionStorage for return animation
+  if (typeof window !== 'undefined') {
+    // Extract module slug from trackSlug (we need the actual module)
+    const urlParts = window.location.pathname.split('/');
+    const moduleSlug = urlParts[urlParts.indexOf('learn') + 1];
+    if (moduleSlug) {
+      sessionStorage.setItem('recently_completed_node', moduleSlug);
+    }
+  }
+
   return (
     <div className="flex h-full flex-col items-center justify-center px-4 py-8">
       <motion.div

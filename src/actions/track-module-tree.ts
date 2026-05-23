@@ -53,7 +53,18 @@ export async function getTrackModuleTree(
     // Filter modules to only those belonging to this track (including nested submodules)
     const trackModules = snapshot.modules.filter((m) => m.trackId === track.id);
 
-    const tree = buildModuleTree(trackModules, trackSlug);
+    const completedLessonIds = new Set(
+      snapshot.progress
+        .filter((p) => p.completed)
+        .map((p) => p.lessonId)
+    );
+    const completedModuleIds = new Set(
+      snapshot.modules
+        .filter((m) => m.lessons.length > 0 && m.lessons.every((l) => completedLessonIds.has(l.id)))
+        .map((m) => m.id)
+    );
+
+    const tree = buildModuleTree(trackModules, trackSlug, completedLessonIds, completedModuleIds);
 
     return { success: true, data, tree };
   } catch {
