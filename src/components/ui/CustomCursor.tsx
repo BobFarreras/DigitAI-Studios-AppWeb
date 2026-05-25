@@ -1,12 +1,12 @@
 /**
  * @file src/components/ui/CustomCursor.tsx
  * @updated 2026-05-25
- * @summary Cursor visual custom amb estats per click, accio i text. Zero React re-renders.
+ * @summary Cursor visual custom amb rendiment adaptatiu. Es desactiva si FPS < 45.
  * @scope Millora visual client-side sense lligam amb logica de negoci.
  */
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 type CursorMode = 'default' | 'action' | 'text';
 
@@ -17,17 +17,47 @@ function getCursorMode(target: EventTarget | null): CursorMode {
   return 'default';
 }
 
+function measureFps(): Promise<number> {
+  return new Promise((resolve) => {
+    let frames = 0;
+    const start = performance.now();
+    const tick = () => {
+      frames += 1;
+      if (performance.now() - start >= 1000) {
+        resolve(frames);
+      } else {
+        requestAnimationFrame(tick);
+      }
+    };
+    requestAnimationFrame(tick);
+  });
+}
+
 export function CustomCursor() {
+  const [enabled, setEnabled] = useState(false);
   const cursorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (typeof navigator !== 'undefined' && /jsdom/i.test(navigator.userAgent)) return;
     const canUseCursor = window.matchMedia('(pointer: fine)').matches;
     if (!canUseCursor) return;
 
-    document.body.classList.add('custom-cursor-enabled');
+    const hardwareOk = navigator.hardwareConcurrency
+      ? navigator.hardwareConcurrency >= 4
+      : true;
+    if (!hardwareOk) return;
+
+    measureFps().then((fps) => {
+      if (fps >= 45) setEnabled(true);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!enabled) return;
     const el = cursorRef.current;
     if (!el) return;
 
+    document.body.classList.add('custom-cursor-enabled');
     let mode: CursorMode = 'default';
     let pressed = false;
     let visible = false;
@@ -73,7 +103,9 @@ export function CustomCursor() {
       document.removeEventListener('mouseleave', hideCursor);
       document.removeEventListener('mouseenter', showCursor);
     };
-  }, []);
+  }, [enabled]);
+
+  if (!enabled) return null;
 
   return (
     <div ref={cursorRef} className="custom-cursor">
