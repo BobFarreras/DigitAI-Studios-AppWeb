@@ -6,7 +6,7 @@
  * @scope Orquestracio d'estat i navegacio entre vistes del simulador.
  */
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { AnimatePresence, motion, type Variants } from 'framer-motion';
 import { Database } from 'lucide-react';
 import { useLocale } from 'next-intl';
@@ -33,9 +33,9 @@ export function CustomSoftwareSection() {
   const [targetJob, setTargetJob] = useState<string | null>(null), [targetClient, setTargetClient] = useState<string | null>(null), [targetMaterial, setTargetMaterial] = useState<string | null>(null);
   const [clientName, setClientName] = useState(''), [jobTitle, setJobTitle] = useState(''), [materialName, setMaterialName] = useState(''), [userName, setUserName] = useState('');
   const [clients, setClients] = useState(startClients), [jobs, setJobs] = useState(startJobs), [material, setMaterial] = useState(startMaterial), [team, setTeam] = useState(startTeam);
-  const openView = (id: ViewId) => { setTargetJob(null); setTargetClient(null); setTargetMaterial(null); setView(id); };
-  const addClient = () => { const name = clientName.trim(); if (!name) return; setClients((p) => [{ id: Date.now(), name, segment: 'Nou servei', owner: 'Assignar', stage: 'Nou' }, ...p]); setClientName(''); };
-  const addJob = (input?: NewSatOrder) => {
+  const openView = useCallback((id: ViewId) => { setTargetJob(null); setTargetClient(null); setTargetMaterial(null); setView(id); }, []);
+  const addClient = useCallback(() => { const name = clientName.trim(); if (!name) return; setClients((p) => [{ id: Date.now(), name, segment: 'Nou servei', owner: 'Assignar', stage: 'Nou' }, ...p]); setClientName(''); }, [clientName]);
+  const addJob = useCallback((input?: NewSatOrder) => {
     const title = input?.title?.trim() || jobTitle.trim();
     if (!title) return;
     setJobs((p) => [{
@@ -58,9 +58,9 @@ export function CustomSoftwareSection() {
       photos: [],
     }, ...p]);
     if (!input) setJobTitle('');
-  };
-  const addMaterial = (input?: NewMaterial) => { const name = (input?.name ?? materialName).trim(); if (!name) return; const qty = input?.qty ?? 2, min = input?.min ?? 5; setMaterial((p) => [{ id: `MAT-${Math.floor(Math.random() * 900 + 100)}`, name, qty, min, category: input?.category, supplier: input?.supplier, supplierContact: input?.supplierContact, unitPrice: input?.unitPrice, leadTime: input?.leadTime, state: toStockState(qty, min) }, ...p]); setMaterialName(''); };
-  const addUser = (inputName?: string) => { const name = (inputName ?? userName).trim(); if (!name) return; setTeam((p) => [{ id: `USR-${Math.floor(Math.random() * 90 + 10)}`, name, role: 'Tècnic', zone: 'Nova zona', enabled: true }, ...p]); setUserName(''); };
+  }, [jobTitle, clients]);
+  const addMaterial = useCallback((input?: NewMaterial) => { const name = (input?.name ?? materialName).trim(); if (!name) return; const qty = input?.qty ?? 2, min = input?.min ?? 5; setMaterial((p) => [{ id: `MAT-${Math.floor(Math.random() * 900 + 100)}`, name, qty, min, category: input?.category, supplier: input?.supplier, supplierContact: input?.supplierContact, unitPrice: input?.unitPrice, leadTime: input?.leadTime, state: toStockState(qty, min) }, ...p]); setMaterialName(''); }, [materialName]);
+  const addUser = useCallback((inputName?: string) => { const name = (inputName ?? userName).trim(); if (!name) return; setTeam((p) => [{ id: `USR-${Math.floor(Math.random() * 90 + 10)}`, name, role: 'Tècnic', zone: 'Nova zona', enabled: true }, ...p]); setUserName(''); }, [userName]);
 
   return (
     <section id="software-a-mida" className="relative w-full px-4 pb-5 pt-[88px] md:px-6 md:pb-6 md:pt-[94px] lg:pb-8 lg:pt-[102px]">

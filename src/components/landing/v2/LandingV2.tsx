@@ -1,15 +1,17 @@
 /**
  * @file src/components/landing/v2/LandingV2.tsx
- * @updated 2026-05-13
- * @summary Landing principal estil Linear amb narrativa compacta.
+ * @updated 2026-05-25
+ * @summary Landing principal estil Linear amb narrativa compacta. Dynamic imports below-fold.
  * @scope Orquestrar seccions de marketing i contacte final.
  */
+import dynamic from 'next/dynamic';
 import { HeroLinear } from '@/components/landing/v2/HeroV2';
 import { HeroAmbientBackground } from './HeroAmbientBackground';
 import { AutomationSection } from './AutomationSection';
-import { ContactSectionV2 } from './ContactSectionV2';
-import { CustomSoftwareSection } from './CustomSoftwareSection';
-import { TrainingSection } from './TrainingSection';
+
+const CustomSoftwareSection = dynamic(() => import('./CustomSoftwareSection').then((m) => ({ default: m.CustomSoftwareSection })), { ssr: false });
+const TrainingSection = dynamic(() => import('./TrainingSection').then((m) => ({ default: m.TrainingSection })), { ssr: false });
+const ContactSectionV2 = dynamic(() => import('./ContactSectionV2').then((m) => ({ default: m.ContactSectionV2 })), { ssr: false });
 
 export function LandingV2() {
   return (

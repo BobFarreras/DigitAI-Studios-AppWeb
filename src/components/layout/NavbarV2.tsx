@@ -40,19 +40,13 @@ export function NavbarV2({ user }: Props) {
   const isHomePath = pathname === '/' || /^\/(ca|es|en|it)$/.test(pathname);
 
   useEffect(() => {
-    const syncState = () => {
-      setIsScrolled(window.scrollY > 16);
-      setActiveHref(window.location.hash ? `/${window.location.hash}` : '/');
-    };
-
+    let rafId = 0;
+    const syncState = () => { setIsScrolled(window.scrollY > 16); setActiveHref(window.location.hash ? `/${window.location.hash}` : '/'); };
+    const onScroll = () => { if (!rafId) rafId = requestAnimationFrame(() => { syncState(); rafId = 0; }); };
     syncState();
-    window.addEventListener('scroll', syncState, { passive: true });
+    window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('hashchange', syncState);
-
-    return () => {
-      window.removeEventListener('scroll', syncState);
-      window.removeEventListener('hashchange', syncState);
-    };
+    return () => { window.removeEventListener('scroll', onScroll); window.removeEventListener('hashchange', syncState); if (rafId) cancelAnimationFrame(rafId); };
   }, []);
 
   const handleAnchor = (event: React.MouseEvent<HTMLAnchorElement>, href: string) => {

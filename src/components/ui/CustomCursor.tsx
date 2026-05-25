@@ -1,26 +1,14 @@
 /**
  * @file src/components/ui/CustomCursor.tsx
- * @updated 2026-05-12
- * @summary Cursor visual custom amb estats per click, accio i text.
+ * @updated 2026-05-25
+ * @summary Cursor visual custom amb estats per click, accio i text. Zero React re-renders.
  * @scope Millora visual client-side sense lligam amb logica de negoci.
  */
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 type CursorMode = 'default' | 'action' | 'text';
-
-type CursorState = {
-  mode: CursorMode;
-  pressed: boolean;
-  visible: boolean;
-};
-
-const initialState: CursorState = {
-  mode: 'default',
-  pressed: false,
-  visible: false,
-};
 
 function getCursorMode(target: EventTarget | null): CursorMode {
   if (!(target instanceof Element)) return 'default';
@@ -30,7 +18,6 @@ function getCursorMode(target: EventTarget | null): CursorMode {
 }
 
 export function CustomCursor() {
-  const [state, setState] = useState(initialState);
   const cursorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -38,23 +25,37 @@ export function CustomCursor() {
     if (!canUseCursor) return;
 
     document.body.classList.add('custom-cursor-enabled');
+    const el = cursorRef.current;
+    if (!el) return;
 
-    const updatePosition = (event: PointerEvent) => {
-      if (cursorRef.current) {
-        cursorRef.current.style.setProperty('--cursor-x', `${event.clientX}px`);
-        cursorRef.current.style.setProperty('--cursor-y', `${event.clientY}px`);
-      }
-      setState((current) => ({
-        ...current,
-        mode: getCursorMode(event.target),
-        visible: true,
-      }));
+    let mode: CursorMode = 'default';
+    let pressed = false;
+    let visible = false;
+
+    const syncClasses = () => {
+      el.className = [
+        'custom-cursor',
+        `custom-cursor--${mode}`,
+        pressed ? 'is-pressed' : '',
+        visible ? 'is-visible' : '',
+      ].join(' ');
     };
 
-    const setPressed = () => setState((current) => ({ ...current, pressed: true }));
-    const unsetPressed = () => setState((current) => ({ ...current, pressed: false }));
-    const hideCursor = () => setState((current) => ({ ...current, visible: false }));
-    const showCursor = () => setState((current) => ({ ...current, visible: true }));
+    const updatePosition = (event: PointerEvent) => {
+      el.style.setProperty('--cursor-x', `${event.clientX}px`);
+      el.style.setProperty('--cursor-y', `${event.clientY}px`);
+      const newMode = getCursorMode(event.target);
+      if (newMode !== mode || !visible) {
+        mode = newMode;
+        visible = true;
+        syncClasses();
+      }
+    };
+
+    const setPressed = () => { pressed = true; syncClasses(); };
+    const unsetPressed = () => { pressed = false; syncClasses(); };
+    const hideCursor = () => { visible = false; syncClasses(); };
+    const showCursor = () => { visible = true; syncClasses(); };
 
     window.addEventListener('pointermove', updatePosition);
     window.addEventListener('pointerdown', setPressed);
@@ -74,15 +75,8 @@ export function CustomCursor() {
     };
   }, []);
 
-  const className = [
-    'custom-cursor',
-    `custom-cursor--${state.mode}`,
-    state.pressed ? 'is-pressed' : '',
-    state.visible ? 'is-visible' : '',
-  ].join(' ');
-
   return (
-    <div ref={cursorRef} className={className}>
+    <div ref={cursorRef} className="custom-cursor">
       <span className="custom-cursor__ring" />
       <span className="custom-cursor__dot" />
     </div>
