@@ -1,0 +1,371 @@
+flowchart LR
+
+%% =========================================================
+%% ESTILS
+%% =========================================================
+
+classDef so fill:#4F81BD,color:#fff,stroke:#2F5597,stroke-width:2px;
+classDef xarxes fill:#70AD47,color:#fff,stroke:#548235,stroke-width:2px;
+classDef cyber fill:#C00000,color:#fff,stroke:#7A0000,stroke-width:2px;
+classDef prog fill:#ED7D31,color:#fff,stroke:#C55A11,stroke-width:2px;
+classDef ia fill:#7030A0,color:#fff,stroke:#52226E,stroke-width:2px;
+classDef cloud fill:#00B0F0,color:#fff,stroke:#0070A0,stroke-width:2px;
+classDef hw fill:#A5A5A5,color:#fff,stroke:#7F7F7F,stroke-width:2px;
+classDef auto fill:#FFC000,color:#000,stroke:#BF9000,stroke-width:2px;
+classDef git fill:#F4B183,color:#000,stroke:#C27C0E,stroke-width:2px;
+classDef labs fill:#92D050,color:#000,stroke:#5B9B1E,stroke-width:2px;
+
+%% =========================================================
+%% LLEGENDA
+%% =========================================================
+
+subgraph LLEGENDA["🎨 Llegenda de Colors"]
+  L1[Sistemes Operatius]
+  L2[Xarxes]
+  L3[Ciberseguretat]
+  L4[Programació]
+  L5[IA]
+  L6[DevOps / Cloud]
+  L7[Hardware]
+  L8[Automatització]
+  L9[Git]
+  L10[Labs]
+end
+
+class L1 so;
+class L2 xarxes;
+class L3 cyber;
+class L4 prog;
+class L5 ia;
+class L6 cloud;
+class L7 hw;
+class L8 auto;
+class L9 git;
+class L10 labs;
+
+%% =========================================================
+%% SISTEMES OPERATIUS
+%% =========================================================
+
+subgraph SISTEMES["💻 Sistemes Operatius"]
+
+  SO[Sistemes Operatius]
+
+  WIN[Windows]
+  LINUX[Linux]
+  MAC[macOS]
+  ANDROID[Android]
+  IOS[iOS]
+
+  SO --> WIN
+  SO --> LINUX
+  SO --> MAC
+  SO --> ANDROID
+  SO --> IOS
+
+  WIN --> WIN10[Windows 10]
+  WIN --> WIN11[Windows 11]
+  WIN --> PS[PowerShell]
+  WIN --> AD[Active Directory]
+  WIN --> GPO[GPO]
+  WIN --> IIS[IIS]
+
+  LINUX --> UBUNTU[Ubuntu]
+  LINUX --> DEBIAN[Debian]
+  LINUX --> ARCH[Arch]
+  LINUX --> RHEL[RedHat]
+
+  UBUNTU --> NGINX[Nginx]
+  UBUNTU --> SSH[SSH]
+  UBUNTU --> BASH[Bash]
+  UBUNTU --> DOCKERL[Docker Linux]
+
+end
+
+class SO,WIN,LINUX,MAC,ANDROID,IOS,WIN10,WIN11,PS,AD,GPO,IIS,UBUNTU,DEBIAN,ARCH,RHEL,NGINX,SSH,BASH,DOCKERL so;
+
+%% =========================================================
+%% XARXES
+%% =========================================================
+
+subgraph XARXES["🌐 Xarxes"]
+
+  X[Xarxes]
+
+  OSI[Model OSI]
+  TCP[TCP/IP]
+  VLAN[VLANs]
+  VPN[VPN]
+  ROUTING[Routing]
+  SWITCHING[Switching]
+
+  CISCO[Cisco]
+  MIKRO[MikroTik]
+  WIFI[WiFi]
+  FIREWALLS[Firewalls]
+
+  X --> OSI
+  X --> TCP
+  X --> VLAN
+  X --> VPN
+  X --> ROUTING
+  X --> SWITCHING
+
+  X --> CISCO
+  X --> MIKRO
+  X --> WIFI
+  X --> FIREWALLS
+
+  CISCO --> CCNA[CCNA]
+  CISCO --> ACLS[ACLs]
+  CISCO --> OSPF[OSPF]
+
+  MIKRO --> ROS[RouterOS]
+  MIKRO --> QOS[QoS]
+
+end
+
+class X,OSI,TCP,VLAN,VPN,ROUTING,SWITCHING,CISCO,MIKRO,WIFI,FIREWALLS,CCNA,ACLS,OSPF,ROS,QOS xarxes;
+
+%% =========================================================
+%% CIBERSEGURETAT
+%% =========================================================
+
+subgraph CYBER["🔐 Ciberseguretat"]
+
+  CY[Ciberseguretat]
+
+  PENTEST[Pentesting]
+  BLUE[Blue Team]
+  FORENSE[Forense]
+  MALWARE[Malware]
+  WEBSEC[Web Security]
+
+  CY --> PENTEST
+  CY --> BLUE
+  CY --> FORENSE
+  CY --> MALWARE
+  CY --> WEBSEC
+
+  PENTEST --> NMAP[Nmap]
+  PENTEST --> METASPLOIT[Metasploit]
+  PENTEST --> BURP[BurpSuite]
+
+  WEBSEC --> SQLI[SQLi]
+  WEBSEC --> XSS[XSS]
+  WEBSEC --> CSRF[CSRF]
+
+  BLUE --> SIEM[SIEM]
+  BLUE --> SOC[SOC]
+
+  CY --> HTB[HackTheBox]
+  CY --> THM[TryHackMe]
+
+end
+
+class CY,PENTEST,BLUE,FORENSE,MALWARE,WEBSEC,NMAP,METASPLOIT,BURP,SQLI,XSS,CSRF,SIEM,SOC,HTB,THM cyber;
+
+%% =========================================================
+%% PROGRAMACIO
+%% =========================================================
+
+subgraph PROGRAMACIO["🧠 Programació"]
+
+  PR[Programació]
+
+  FRONT[Frontend]
+  BACK[Backend]
+  DB[Base de Dades]
+  API[APIs]
+  TEST[Testing]
+
+  PR --> FRONT
+  PR --> BACK
+  PR --> DB
+  PR --> API
+  PR --> TEST
+
+  FRONT --> HTML[HTML]
+  FRONT --> CSS[CSS]
+  FRONT --> JS[JavaScript]
+  FRONT --> REACT[React]
+  FRONT --> NEXT[NextJS]
+
+  BACK --> NODE[NodeJS]
+  BACK --> PYTHON[Python]
+  BACK --> JAVA[Java]
+  BACK --> GO[Go]
+
+  DB --> POSTGRES[PostgreSQL]
+  DB --> MYSQL[MySQL]
+  DB --> MONGO[MongoDB]
+
+  API --> REST[REST]
+  API --> GRAPHQL[GraphQL]
+  API --> JWT[JWT]
+
+end
+
+class PR,FRONT,BACK,DB,API,TEST,HTML,CSS,JS,REACT,NEXT,NODE,PYTHON,JAVA,GO,POSTGRES,MYSQL,MONGO,REST,GRAPHQL,JWT prog;
+
+%% =========================================================
+%% IA
+%% =========================================================
+
+subgraph IASEC["🤖 Intel·ligència Artificial"]
+
+  IA[IA]
+
+  LLM[Models LLM]
+  AGENTS[Agents]
+  RAG[RAG]
+  PROMPT[Prompt Engineering]
+  FRAMEWORKS[Frameworks]
+
+  IA --> LLM
+  IA --> AGENTS
+  IA --> RAG
+  IA --> PROMPT
+  IA --> FRAMEWORKS
+
+  LLM --> GPT[GPT]
+  LLM --> CLAUDE[Claude]
+  LLM --> GEMINI[Gemini]
+  LLM --> LLAMA[Llama]
+
+  FRAMEWORKS --> LANGCHAIN[LangChain]
+  FRAMEWORKS --> CREWAI[CrewAI]
+  FRAMEWORKS --> OLLAMA[Ollama]
+
+end
+
+class IA,LLM,AGENTS,RAG,PROMPT,FRAMEWORKS,GPT,CLAUDE,GEMINI,LLAMA,LANGCHAIN,CREWAI,OLLAMA ia;
+
+%% =========================================================
+%% DEVOPS
+%% =========================================================
+
+subgraph DEVOPS["☁️ DevOps i Cloud"]
+
+  DEV[DevOps]
+
+  DOCKER[Docker]
+  K8S[Kubernetes]
+  AWS[AWS]
+  AZURE[Azure]
+  TERRAFORM[Terraform]
+
+  DEV --> DOCKER
+  DEV --> K8S
+  DEV --> AWS
+  DEV --> AZURE
+  DEV --> TERRAFORM
+
+  AWS --> EC2[EC2]
+  AWS --> S3[S3]
+  AWS --> IAM[IAM]
+
+  K8S --> PODS[Pods]
+  K8S --> HELM[Helm]
+
+end
+
+class DEV,DOCKER,K8S,AWS,AZURE,TERRAFORM,EC2,S3,IAM,PODS,HELM cloud;
+
+%% =========================================================
+%% HARDWARE
+%% =========================================================
+
+subgraph HARDWARE["🖥️ Hardware"]
+
+  HW[Hardware]
+
+  CPU[CPU]
+  GPU[GPU]
+  RAM[RAM]
+  SSD[SSD]
+  PSU[PSU]
+  BIOS[BIOS]
+
+  HW --> CPU
+  HW --> GPU
+  HW --> RAM
+  HW --> SSD
+  HW --> PSU
+  HW --> BIOS
+
+end
+
+class HW,CPU,GPU,RAM,SSD,PSU,BIOS hw;
+
+%% =========================================================
+%% AUTOMATITZACIO
+%% =========================================================
+
+subgraph AUTOMATITZACIO["⚙️ Automatització"]
+
+  AUTO[Automatització]
+
+  N8N[n8n]
+  MAKE[Make]
+  ZAPIER[Zapier]
+  WEBHOOKS[Webhooks]
+  BOTS[Bots]
+
+  AUTO --> N8N
+  AUTO --> MAKE
+  AUTO --> ZAPIER
+  AUTO --> WEBHOOKS
+  AUTO --> BOTS
+
+end
+
+class AUTO,N8N,MAKE,ZAPIER,WEBHOOKS,BOTS auto;
+
+%% =========================================================
+%% GIT
+%% =========================================================
+
+subgraph GITSEC["🌳 Git i Versions"]
+
+  GIT[Git]
+
+  COMMIT[Commit]
+  BRANCH[Branch]
+  MERGE[Merge]
+  REBASE[Rebase]
+  WORKTREE[Worktrees]
+
+  GIT --> COMMIT
+  GIT --> BRANCH
+  GIT --> MERGE
+  GIT --> REBASE
+  GIT --> WORKTREE
+
+end
+
+class GIT,COMMIT,BRANCH,MERGE,REBASE,WORKTREE git;
+
+%% =========================================================
+%% LABS
+%% =========================================================
+
+subgraph LABSSEC["🧪 Labs i Projectes"]
+
+  LAB[Homelab]
+
+  NAS[NAS]
+  VPNCASA[VPN Casa]
+  CLOUDPRIVAT[Cloud Privat]
+  MONITORATGE[Monitoratge]
+  SERVIDOR[Servidor Media]
+
+  LAB --> NAS
+  LAB --> VPNCASA
+  LAB --> CLOUDPRIVAT
+  LAB --> MONITORATGE
+  LAB --> SERVIDOR
+
+end
+
+class LAB,NAS,VPNCASA,CLOUDPRIVAT,MONITORATGE,SERVIDOR labs;

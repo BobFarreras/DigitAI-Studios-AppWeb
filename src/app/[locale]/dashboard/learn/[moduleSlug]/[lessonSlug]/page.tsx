@@ -1,11 +1,11 @@
 /**
  * @file src/app/[locale]/dashboard/learn/[moduleSlug]/[lessonSlug]/page.tsx
- * @updated 2026-05-20
- * @summary Interactive lesson runner route.
+ * @updated 2026-05-22
+ * @summary Interactive lesson runner route (by module slug).
  * @scope Page composition only; data comes from server actions.
  */
 import { notFound, redirect } from 'next/navigation';
-import { getLearningLessonRunner } from '@/actions/learning-lesson';
+import { getLearningLessonByModule } from '@/actions/learning-lesson-by-module';
 import { LearningLessonRunner } from '@/features/learning/ui/LearningLessonRunner';
 
 type Props = {
@@ -18,7 +18,7 @@ type Props = {
 
 export default async function LessonPage({ params }: Props) {
   const { moduleSlug, lessonSlug, locale } = await params;
-  const result = await getLearningLessonRunner(moduleSlug, lessonSlug, locale);
+  const result = await getLearningLessonByModule(moduleSlug, lessonSlug, locale);
 
   if (!result.success && result.authRequired) {
     redirect('/');
