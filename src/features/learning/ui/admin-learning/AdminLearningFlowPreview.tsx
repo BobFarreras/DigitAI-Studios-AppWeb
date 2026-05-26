@@ -105,6 +105,7 @@ function toRunnerStep(step: AdminLearningStepUpdate): LearningRunnerStep {
     prompt: step.prompt,
     explanation: step.explanation,
     config: step.config,
+    media: null,
     orderIndex: step.orderIndex,
   };
 }

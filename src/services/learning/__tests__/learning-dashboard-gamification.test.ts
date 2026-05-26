@@ -25,9 +25,11 @@ const snapshot: LearningDashboardSnapshot = {
   modules: [{
     id: 'module-1',
     trackId: 'track-1',
+    parentModuleId: null,
     slug: 'base',
     title: 'Base',
     description: null,
+    level: 'basic',
     orderIndex: 1,
     lessons: [{ id: 'lesson-1', slug: 'intro', title: 'Intro', objective: null, estimatedMinutes: 4, xpReward: 10, orderIndex: 1 }],
   }],

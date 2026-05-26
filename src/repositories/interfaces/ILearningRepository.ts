@@ -18,6 +18,7 @@ export type LearningLessonRecord = {
 export type LearningPublicationStatus = 'draft' | 'published';
 
 export type LearningStepType =
+  | 'content'
   | 'multiple_choice'
   | 'multi_select'
   | 'true_false'

@@ -42,7 +42,7 @@ export function mapModules(modules: ModuleRow[], lessons: LessonRow[], locale: s
   return modules.map((module) => ({
     id: module.id,
     trackId: module.track_id,
-    parentModuleId: module.parent_module_id ?? null,
+    parentModuleId: (module as unknown as Record<string, unknown>).parent_module_id as string | null | undefined ?? null,
     slug: module.slug,
     title: localizedTitle(module, locale),
     description: localizedDescription(module, locale),
