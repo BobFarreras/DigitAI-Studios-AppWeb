@@ -30,6 +30,7 @@ const lesson: LearningLessonDetailRecord = {
       prompt: 'Pregunta',
       explanation: null,
       config: { correctAnswer: 'a' },
+      media: null,
       orderIndex: 1,
     },
     {
@@ -39,6 +40,7 @@ const lesson: LearningLessonDetailRecord = {
       prompt: 'Ordena',
       explanation: null,
       config: { correctAnswer: ['check', 'login'] },
+      media: null,
       orderIndex: 2,
     },
     {
@@ -48,6 +50,7 @@ const lesson: LearningLessonDetailRecord = {
       prompt: 'Relaciona',
       explanation: null,
       config: { correctAnswer: { dns: 'domini', ip: 'adreca' } },
+      media: null,
       orderIndex: 3,
     },
     {
@@ -57,6 +60,7 @@ const lesson: LearningLessonDetailRecord = {
       prompt: 'Selecciona',
       explanation: null,
       config: { correctAnswer: ['2FA', 'Contrasenya unica'] },
+      media: null,
       orderIndex: 4,
     },
     {
@@ -66,6 +70,7 @@ const lesson: LearningLessonDetailRecord = {
       prompt: 'Omple',
       explanation: null,
       config: { correctAnswer: 'firewall' },
+      media: null,
       orderIndex: 5,
     },
     {
@@ -75,6 +80,7 @@ const lesson: LearningLessonDetailRecord = {
       prompt: 'Codi',
       explanation: null,
       config: { correctAnswer: 'Snippet segur' },
+      media: null,
       orderIndex: 6,
     },
   ],

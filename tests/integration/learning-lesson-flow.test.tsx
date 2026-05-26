@@ -97,6 +97,7 @@ const lessonDetail: LearningLessonDetailRecord & { locale: string } = {
       prompt: 'Que coordina?',
       explanation: null,
       config: { options: ['Hardware', 'Cafetera'], correctAnswer: 'Hardware' },
+      media: null,
       orderIndex: 1,
     },
     {
@@ -106,6 +107,7 @@ const lessonDetail: LearningLessonDetailRecord & { locale: string } = {
       prompt: 'Ordena capes',
       explanation: null,
       config: { options: ['Hardware', 'SO'], correctAnswer: ['Hardware', 'SO'] },
+      media: null,
       orderIndex: 2,
     },
     {
@@ -118,6 +120,7 @@ const lessonDetail: LearningLessonDetailRecord & { locale: string } = {
         options: [{ left: 'SO', right: ['Coordinar recursos', 'Cable'] }],
         correctAnswer: { SO: 'Coordinar recursos' },
       },
+      media: null,
       orderIndex: 3,
     },
   ],
@@ -132,6 +135,7 @@ const advancedSteps: LearningLessonDetailRecord['steps'] = [
     prompt: 'Quins controls redueixen risc?',
     explanation: 'Combinar contrasenya unica i 2FA redueix reutilitzacio i robatori.',
     config: { options: ['2FA', 'Contrasenya unica', 'Compartir codis'], correctAnswer: ['2FA', 'Contrasenya unica'] },
+    media: null,
     orderIndex: 4,
   },
   {
@@ -141,6 +145,7 @@ const advancedSteps: LearningLessonDetailRecord['steps'] = [
     prompt: 'Quin component filtra transit?',
     explanation: 'Un firewall aplica regles de filtratge sobre connexions.',
     config: { placeholder: 'Nom del component', correctAnswer: 'firewall' },
+    media: null,
     orderIndex: 5,
   },
   {
@@ -156,6 +161,7 @@ const advancedSteps: LearningLessonDetailRecord['steps'] = [
       ],
       correctAnswer: 'Snippet segur',
     },
+    media: null,
     orderIndex: 6,
   },
 ];
@@ -168,6 +174,7 @@ const expertSteps: LearningLessonDetailRecord['steps'] = [
     prompt: 'Quina comanda consulta DNS?',
     explanation: 'nslookup consulta resolucio DNS per un domini.',
     config: { promptLabel: 'dns lab', correctAnswer: 'nslookup digitai.studio' },
+    media: null,
     orderIndex: 7,
   },
   {
@@ -183,6 +190,7 @@ const expertSteps: LearningLessonDetailRecord['steps'] = [
       ],
       correctAnswer: 'DNS',
     },
+    media: null,
     orderIndex: 8,
   },
   {
@@ -192,6 +200,7 @@ const expertSteps: LearningLessonDetailRecord['steps'] = [
     prompt: 'Escriu una validacio minima',
     explanation: 'La validacio converteix input extern en dades fiables.',
     config: { language: 'ts', correctAnswer: 'const safe = schema.parse(input);' },
+    media: null,
     orderIndex: 9,
   },
   {
@@ -201,6 +210,7 @@ const expertSteps: LearningLessonDetailRecord['steps'] = [
     prompt: 'Que falta al prompt?',
     explanation: 'Un bon prompt defineix objectiu i format de sortida.',
     config: { options: ['Objectiu concret', 'Format de sortida', 'Mes emojis'], correctAnswer: ['Objectiu concret', 'Format de sortida'] },
+    media: null,
     orderIndex: 10,
   },
   {
@@ -210,6 +220,7 @@ const expertSteps: LearningLessonDetailRecord['steps'] = [
     prompt: 'SSRF intern amb metadata cloud',
     explanation: 'Accedir a metadata cloud pot exposar credencials temporals.',
     config: { options: ['Baixa', 'Mitjana', 'Alta', 'Critica'], correctAnswer: 'Alta' },
+    media: null,
     orderIndex: 11,
   },
 ];
