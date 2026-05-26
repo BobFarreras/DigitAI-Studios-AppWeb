@@ -1,15 +1,13 @@
 /**
  * @file src/components/landing/v2/LandingV2.tsx
- * @updated 2026-05-13
+ * @updated 2026-05-25
  * @summary Landing principal estil Linear amb narrativa compacta.
  * @scope Orquestrar seccions de marketing i contacte final.
  */
 import { HeroLinear } from '@/components/landing/v2/HeroV2';
 import { HeroAmbientBackground } from './HeroAmbientBackground';
 import { AutomationSection } from './AutomationSection';
-import { ContactSectionV2 } from './ContactSectionV2';
-import { CustomSoftwareSection } from './CustomSoftwareSection';
-import { TrainingSection } from './TrainingSection';
+import { LazySections } from './LazySections';
 
 export function LandingV2() {
   return (
@@ -17,9 +15,7 @@ export function LandingV2() {
       <HeroAmbientBackground className="fixed inset-0" />
       <HeroLinear />
       <AutomationSection />
-      <CustomSoftwareSection />
-      <TrainingSection />
-      <ContactSectionV2 />
+      <LazySections />
     </div>
   );
 }

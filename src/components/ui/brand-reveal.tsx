@@ -1,12 +1,12 @@
 /**
  * @file src/components/ui/brand-reveal.tsx
- * @updated 2026-05-12
- * @summary Text i botons amb revelat radial del gradient de marca.
+ * @updated 2026-05-25
+ * @summary Text i botons amb revelat radial del gradient de marca. rAF-throttled mouse.
  * @scope Decoracio interactiva reutilitzable sense logica de negoci.
  */
 'use client';
 
-import { useState } from 'react';
+import { useRef, useCallback, useState } from 'react';
 import type { CSSProperties, MouseEvent, ReactNode } from 'react';
 import { Link } from '@/routing';
 import { cn } from '@/lib/utils';
@@ -14,15 +14,30 @@ import { cn } from '@/lib/utils';
 type PointerStyle = { '--x': string; '--y': string } & CSSProperties;
 
 function usePointerReveal() {
+  const rafId = useRef(0);
+  const pending = useRef<{ x: number; y: number } | null>(null);
   const [style, setStyle] = useState<PointerStyle>({ '--x': '50%', '--y': '50%' });
 
-  const onMouseMove = (event: MouseEvent<HTMLElement>) => {
-    const rect = event.currentTarget.getBoundingClientRect();
-    setStyle({
-      '--x': `${event.clientX - rect.left}px`,
-      '--y': `${event.clientY - rect.top}px`,
+  const flush = useCallback(() => {
+    rafId.current = 0;
+    if (!pending.current) return;
+    const { x, y } = pending.current;
+    setStyle((prev) => {
+      const nx = `${x}px`;
+      const ny = `${y}px`;
+      if (prev['--x'] === nx && prev['--y'] === ny) return prev;
+      return { '--x': nx, '--y': ny };
     });
-  };
+    pending.current = null;
+  }, []);
+
+  const onMouseMove = useCallback((event: MouseEvent<HTMLElement>) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    pending.current = { x: event.clientX - rect.left, y: event.clientY - rect.top };
+    if (!rafId.current) {
+      rafId.current = requestAnimationFrame(flush);
+    }
+  }, [flush]);
 
   return { style, onMouseMove };
 }
