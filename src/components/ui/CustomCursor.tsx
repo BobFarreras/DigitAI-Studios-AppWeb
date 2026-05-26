@@ -1,7 +1,7 @@
 /**
  * @file src/components/ui/CustomCursor.tsx
- * @updated 2026-05-12
- * @summary Cursor visual custom amb estats per click, accio i text.
+ * @updated 2026-05-25
+ * @summary Cursor visual custom amb rendiment adaptatiu. Es desactiva si FPS < 45.
  * @scope Millora visual client-side sense lligam amb logica de negoci.
  */
 'use client';
@@ -10,18 +10,6 @@ import { useEffect, useRef, useState } from 'react';
 
 type CursorMode = 'default' | 'action' | 'text';
 
-type CursorState = {
-  mode: CursorMode;
-  pressed: boolean;
-  visible: boolean;
-};
-
-const initialState: CursorState = {
-  mode: 'default',
-  pressed: false,
-  visible: false,
-};
-
 function getCursorMode(target: EventTarget | null): CursorMode {
   if (!(target instanceof Element)) return 'default';
   if (target.closest('input, textarea, [contenteditable="true"], [data-cursor="text"]')) return 'text';
@@ -29,32 +17,75 @@ function getCursorMode(target: EventTarget | null): CursorMode {
   return 'default';
 }
 
+function measureFps(): Promise<number> {
+  return new Promise((resolve) => {
+    let frames = 0;
+    const start = performance.now();
+    const tick = () => {
+      frames += 1;
+      if (performance.now() - start >= 1000) {
+        resolve(frames);
+      } else {
+        requestAnimationFrame(tick);
+      }
+    };
+    requestAnimationFrame(tick);
+  });
+}
+
 export function CustomCursor() {
-  const [state, setState] = useState(initialState);
+  const [enabled, setEnabled] = useState(false);
   const cursorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (typeof navigator !== 'undefined' && /jsdom/i.test(navigator.userAgent)) return;
     const canUseCursor = window.matchMedia('(pointer: fine)').matches;
     if (!canUseCursor) return;
 
-    document.body.classList.add('custom-cursor-enabled');
+    const hardwareOk = navigator.hardwareConcurrency
+      ? navigator.hardwareConcurrency >= 4
+      : true;
+    if (!hardwareOk) return;
 
-    const updatePosition = (event: PointerEvent) => {
-      if (cursorRef.current) {
-        cursorRef.current.style.setProperty('--cursor-x', `${event.clientX}px`);
-        cursorRef.current.style.setProperty('--cursor-y', `${event.clientY}px`);
-      }
-      setState((current) => ({
-        ...current,
-        mode: getCursorMode(event.target),
-        visible: true,
-      }));
+    measureFps().then((fps) => {
+      if (fps >= 45) setEnabled(true);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!enabled) return;
+    const el = cursorRef.current;
+    if (!el) return;
+
+    document.body.classList.add('custom-cursor-enabled');
+    let mode: CursorMode = 'default';
+    let pressed = false;
+    let visible = false;
+
+    const syncClasses = () => {
+      el.className = [
+        'custom-cursor',
+        `custom-cursor--${mode}`,
+        pressed ? 'is-pressed' : '',
+        visible ? 'is-visible' : '',
+      ].join(' ');
     };
 
-    const setPressed = () => setState((current) => ({ ...current, pressed: true }));
-    const unsetPressed = () => setState((current) => ({ ...current, pressed: false }));
-    const hideCursor = () => setState((current) => ({ ...current, visible: false }));
-    const showCursor = () => setState((current) => ({ ...current, visible: true }));
+    const updatePosition = (event: PointerEvent) => {
+      el.style.setProperty('--cursor-x', `${event.clientX}px`);
+      el.style.setProperty('--cursor-y', `${event.clientY}px`);
+      const newMode = getCursorMode(event.target);
+      if (newMode !== mode || !visible) {
+        mode = newMode;
+        visible = true;
+        syncClasses();
+      }
+    };
+
+    const setPressed = () => { pressed = true; syncClasses(); };
+    const unsetPressed = () => { pressed = false; syncClasses(); };
+    const hideCursor = () => { visible = false; syncClasses(); };
+    const showCursor = () => { visible = true; syncClasses(); };
 
     window.addEventListener('pointermove', updatePosition);
     window.addEventListener('pointerdown', setPressed);
@@ -72,17 +103,12 @@ export function CustomCursor() {
       document.removeEventListener('mouseleave', hideCursor);
       document.removeEventListener('mouseenter', showCursor);
     };
-  }, []);
+  }, [enabled]);
 
-  const className = [
-    'custom-cursor',
-    `custom-cursor--${state.mode}`,
-    state.pressed ? 'is-pressed' : '',
-    state.visible ? 'is-visible' : '',
-  ].join(' ');
+  if (!enabled) return null;
 
   return (
-    <div ref={cursorRef} className={className}>
+    <div ref={cursorRef} className="custom-cursor">
       <span className="custom-cursor__ring" />
       <span className="custom-cursor__dot" />
     </div>

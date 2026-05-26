@@ -112,8 +112,8 @@
   }
 
   @keyframes pulse-glow {
-    from { box-shadow: 0 0 20px rgba(168, 85, 247, 0.4); }
-    to { box-shadow: 0 0 40px rgba(168, 85, 247, 0.8); }
+    from { filter: drop-shadow(0 0 20px rgba(168, 85, 247, 0.4)); }
+    to { filter: drop-shadow(0 0 40px rgba(168, 85, 247, 0.8)); }
   }
 }
 
@@ -515,6 +515,12 @@ img {
       transform: none;
       filter: none;
     }
+
+    .animate-floating,
+    .animate-pulse-glow,
+    .brand-gradient-text {
+      animation: none;
+    }
   }
 
   @keyframes brand-gradient-pan {
@@ -528,16 +534,27 @@ img {
   }
 
   @media (pointer: fine) {
-    .custom-cursor-enabled,
-    .custom-cursor-enabled * {
-      cursor: none !important;
+    .custom-cursor-enabled {
+      cursor: none;
+    }
+
+    .custom-cursor-enabled a,
+    .custom-cursor-enabled button,
+    .custom-cursor-enabled select,
+    .custom-cursor-enabled summary,
+    .custom-cursor-enabled label,
+    .custom-cursor-enabled [role="button"],
+    .custom-cursor-enabled input,
+    .custom-cursor-enabled textarea,
+    .custom-cursor-enabled [data-cursor] {
+      cursor: none;
     }
 
     .custom-cursor-enabled ::-webkit-scrollbar,
     .custom-cursor-enabled ::-webkit-scrollbar-thumb,
     .custom-cursor-enabled ::-webkit-scrollbar-track,
     .custom-cursor-enabled ::-webkit-scrollbar-corner {
-      cursor: none !important;
+      cursor: none;
     }
 
     .custom-cursor {
