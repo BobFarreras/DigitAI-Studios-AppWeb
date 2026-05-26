@@ -16,6 +16,38 @@
 
 ---
 
+## Plantilla: content (Contingut Visual)
+
+```json
+{
+  "type": "content",
+  "prompt": "## [Títol de la secció]\n\nText introductori amb **conceptes clau en negreta** i *detalls en cursiva*.\n\n1. Primer pas del procediment\n2. Segon pas amb [enllaç extern](https://example.com)\n3. Tercer pas\n\n- Punt clau a recordar\n- Altre punt important\n\n! Avís o advertència important\n\n? Consell o tip professional\n\n$ comandament terminal\n\n!{Descripció de la imatge que aniria aquí}\n\n!v{Descripció del vídeo que aniria aquí}",
+  
+  "prompt_ca": "[Versió catalana]",
+  "prompt_es": "[Versió espanyola]",
+  "prompt_en": "[Versió anglesa]",
+  "prompt_it": "[Versió italiana]",
+  
+  "explanation": null,
+  "explanation_ca": null,
+  "explanation_es": null,
+  "explanation_en": null,
+  "explanation_it": null,
+  
+  "config": {},
+  
+  "media": {
+    "type": "image",
+    "url": "https://example.com/imatge.png",
+    "alt": "Descripció de la imatge"
+  }
+}
+```
+
+> **Nota:** El tipus `content` no requereix resposta. El botó mostra "Següent" i avança automàticament. Usa `!{desc}` i `!v{desc}` com a placeholders per quan tinguis imatges/vídeos reals, i `[text](url)` per enllaços externs.
+
+---
+
 ## Plantilla: multiple_choice (Concepte Simple)
 
 ```json

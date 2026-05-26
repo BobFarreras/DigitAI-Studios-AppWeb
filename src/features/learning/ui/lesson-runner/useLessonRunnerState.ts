@@ -11,7 +11,7 @@ import { useLessonAnswerChecks } from './useLessonAnswerChecks';
 
 type AnswerMap = Record<string, unknown>;
 type TimeMap = Record<string, number>;
-type LessonResultState = { score: number; xpAwarded: number; mistakeCount: number; requiresReview: boolean };
+type LessonResultState = { score: number; xpAwarded: number; correctCount: number; mistakeCount: number; requiresReview: boolean };
 const SUBMIT_ERROR = 'No hem pogut guardar la llico. Torna-ho a provar.';
 export function useLessonRunnerState(data: LearningRunnerData) {
   const [index, setIndex] = useState(0);
@@ -34,12 +34,24 @@ export function useLessonRunnerState(data: LearningRunnerData) {
     setSubmitError(null);
     checks.clear(step.id);
     setAnswers((current) => ({ ...current, [step.id]: value }));
-    if (hasAnswer(step.type, step.config.options, value)) checks.precheck(step, value);
+    if (hasAnswer(step.type, step.config.items ?? step.config.options, value)) checks.precheck(step, value);
   }
 
   function checkOrContinue() {
     if (!step || busyRef.current) return;
     setSubmitError(null);
+
+    // Content steps advance directly — no answer to check
+    if (step.type === 'content') {
+      if (!isLast) {
+        setIndex((current) => current + 1);
+        setStartedAt(currentTimeMs());
+      } else {
+        submitLesson();
+      }
+      return;
+    }
+
     if (!currentFeedback) {
       revealCurrentStep();
       return;
@@ -68,7 +80,7 @@ export function useLessonRunnerState(data: LearningRunnerData) {
       try {
         const response = await submitLearningLesson(buildSubmitPayload(data, answers, stepTimes), data.locale);
         if (!response.success) {
-          setSubmitError(SUBMIT_ERROR);
+          setSubmitError(response.error ?? SUBMIT_ERROR);
           return;
         }
         setResult(response.data);
@@ -87,7 +99,7 @@ export function useLessonRunnerState(data: LearningRunnerData) {
     result,
     error: checks.error ?? submitError,
     isPending,
-    canContinue: step ? hasAnswer(step.type, step.config.options, selected) : false,
+    canContinue: step ? hasAnswer(step.type, step.config.items ?? step.config.options, selected) : false,
     isLast,
     progress,
     updateAnswer,
@@ -108,9 +120,10 @@ function buildSubmitPayload(data: LearningRunnerData, answers: AnswerMap, stepTi
   };
 }
 
-function hasAnswer(type: string, options: unknown, value: unknown) {
-  if (type === 'order_steps') return Array.isArray(value) && value.length === asArray(options).length;
-  if (type === 'match_pairs') return isRecord(value) && Object.keys(value).length === asArray(options).length;
+function hasAnswer(type: string, items: unknown, value: unknown) {
+  if (type === 'content') return true;
+  if (type === 'order_steps') return Array.isArray(value) && value.length >= asArray(items).length;
+  if (type === 'match_pairs') return isRecord(value) && Object.keys(value).length >= asArray(items).length;
   if (type === 'multi_select') return Array.isArray(value) && value.length > 0;
   if (type === 'ai_prompt_review') return Array.isArray(value) && value.length > 0;
   if (type === 'fill_blank') return typeof value === 'string' && value.trim().length > 0;

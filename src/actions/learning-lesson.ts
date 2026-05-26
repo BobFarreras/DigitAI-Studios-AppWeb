@@ -69,14 +69,18 @@ export async function submitLearningLesson(input: unknown, locale: string = 'ca'
   if (!parsed.success) return { success: false, error: 'invalid_payload' };
 
   const service = new LearningLessonService(new SupabaseLearningRepository(locale));
-  const result = await service.submitLesson(
-    user.id,
-    parsed.data.trackSlug,
-    parsed.data.lessonSlug,
-    parsed.data.answers
-  );
-
-  return { success: true, data: result };
+  try {
+    const result = await service.submitLesson(
+      user.id,
+      parsed.data.trackSlug,
+      parsed.data.lessonSlug,
+      parsed.data.answers
+    );
+    return { success: true, data: result };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'submit_failed';
+    return { success: false, error: message };
+  }
 }
 
 export async function checkLearningStepAnswer(input: unknown, locale: string = 'ca'): Promise<CheckResult> {

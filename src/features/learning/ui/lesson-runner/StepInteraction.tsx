@@ -8,6 +8,7 @@ import type { LearningRunnerStep } from '@/services/learning/learning-lesson-ser
 import { AdvancedStepInteraction, isAdvancedStepType } from './AdvancedStepInteraction';
 import { CodeChoiceInteraction } from './CodeChoiceInteraction';
 import { ChoiceButton, type FeedbackStatus } from './ChoiceButton';
+import { ContentStep } from './ContentStep';
 import { FillBlankInteraction } from './FillBlankInteraction';
 import { MatchPairsInteraction } from './MatchPairsInteraction';
 import { MultiSelectInteraction } from './MultiSelectInteraction';
@@ -21,6 +22,31 @@ type Props = {
 };
 
 export function StepInteraction({ step, value, onChange, disabled, feedbackStatus }: Props) {
+  if (step.type === 'content') {
+    return <ContentStep prompt={step.prompt} explanation={step.explanation} media={step.media} />;
+  }
+  if (step.type === 'true_false') {
+    return (
+      <div className="grid gap-3">
+        <ChoiceButton
+          active={value === true}
+          disabled={disabled}
+          feedbackStatus={value === true ? feedbackStatus : undefined}
+          onClick={() => onChange(true)}
+        >
+          Verdader
+        </ChoiceButton>
+        <ChoiceButton
+          active={value === false}
+          disabled={disabled}
+          feedbackStatus={value === false ? feedbackStatus : undefined}
+          onClick={() => onChange(false)}
+        >
+          Fals
+        </ChoiceButton>
+      </div>
+    );
+  }
   if (isAdvancedStepType(step.type)) {
     return <AdvancedStepInteraction step={step} value={value} disabled={disabled} feedbackStatus={feedbackStatus} onChange={onChange} />;
   }
@@ -60,7 +86,7 @@ export function StepInteraction({ step, value, onChange, disabled, feedbackStatu
   if (step.type === 'order_steps') {
     return (
       <OrderStepsInteraction
-        options={asStringArray(step.config.options)}
+        options={asStringArray(step.config.items)}
         value={asStringArray(value)}
         onChange={onChange}
         disabled={disabled}
@@ -97,8 +123,13 @@ export function StepInteraction({ step, value, onChange, disabled, feedbackStatu
   );
 }
 
-function asStringArray(value: unknown) {
-  return Array.isArray(value) ? value.filter((item): item is string => typeof item === 'string') : [];
+function asStringArray(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return value.map((item) => {
+    if (typeof item === 'string') return item;
+    if (typeof item === 'object' && item !== null && 'text' in item) return String((item as Record<string, unknown>).text);
+    return String(item);
+  });
 }
 
 function asRecord(value: unknown): Record<string, unknown> {

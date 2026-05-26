@@ -39,6 +39,7 @@ export type LearningStepRecord = {
   prompt: string;
   explanation: string | null;
   config: Record<string, unknown>;
+  media: Record<string, unknown> | null;
   orderIndex: number;
 };
 
@@ -63,9 +64,11 @@ export type LearningTrackRecord = {
 export type LearningModuleRecord = {
   id: string;
   trackId: string;
+  parentModuleId: string | null;
   slug: string;
   title: string;
   description: string | null;
+  level: 'initiation' | 'basic' | 'intermediate' | 'advanced';
   orderIndex: number;
   lessons: LearningLessonRecord[];
 };

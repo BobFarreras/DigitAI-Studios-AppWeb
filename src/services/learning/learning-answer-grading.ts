@@ -24,20 +24,23 @@ export type StepAnswerCheck = {
 };
 
 export function gradeLesson(detail: LearningLessonDetailRecord, answers: LessonAnswerInput[]) {
-  const graded = detail.steps.map((step) => {
+  // Only grade exercise steps (skip content-only steps)
+  const exerciseSteps = detail.steps.filter((step) => step.type !== 'content');
+  const graded = exerciseSteps.map((step) => {
     const answer = answers.find((item) => item.stepId === step.id);
     const isCorrect = answer ? isAnswerCorrect(step, answer.value) : false;
     return {
       stepId: step.id,
-      answer: answer?.value ?? null,
+      answer: answer?.value ?? {},
       isCorrect,
       hintUsed: answer?.hintUsed ?? false,
       timeSpentSeconds: answer?.timeSpentSeconds ?? 0,
     };
   });
+  const totalSteps = exerciseSteps.length;
   const correctCount = graded.filter((item) => item.isCorrect).length;
-  const mistakeCount = detail.steps.length - correctCount;
-  const accuracy = Math.round((correctCount / Math.max(1, detail.steps.length)) * 100);
+  const mistakeCount = totalSteps - correctCount;
+  const accuracy = totalSteps > 0 ? Math.round((correctCount / totalSteps) * 100) : 100;
   const requiresReview = mistakeCount >= 5 || accuracy < 70;
 
   return {

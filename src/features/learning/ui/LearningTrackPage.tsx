@@ -1,26 +1,27 @@
 /**
  * @file src/features/learning/ui/LearningTrackPage.tsx
- * @updated 2026-05-20
- * @summary App-style page for one learning track.
- * @scope Presentational composition for a selected track path.
+ * @updated 2026-05-22
+ * @summary App-style page for one learning track with module hierarchy path.
+ * @scope Presentational composition for a selected track module tree.
  */
 import { ArrowLeft, Lock } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/routing';
 import { Button } from '@/components/ui/button';
 import { LearningAppTopBar } from './LearningAppTopBar';
-import { LearningTrackMap } from './LearningTrackMap';
-import type {
-  LearningDashboardData,
-  LearningTrackSummary,
-} from '@/services/learning/learning-dashboard-service';
+import { LearningModulePath } from './LearningModulePath';
+import type { LearningDashboardData } from '@/services/learning/learning-dashboard-service';
+import type { LearningModuleTreeNode } from '@/services/learning/learning-module-tree-service';
 
 type Props = {
   data: LearningDashboardData;
-  track: LearningTrackSummary;
+  tree: LearningModuleTreeNode[];
+  trackTitle: string;
+  trackColor?: string;
+  isLocked: boolean;
 };
 
-export function LearningTrackPage({ data, track }: Props) {
+export function LearningTrackPage({ data, tree, trackTitle, trackColor, isLocked }: Props) {
   const t = useTranslations('Learning');
 
   return (
@@ -32,12 +33,16 @@ export function LearningTrackPage({ data, track }: Props) {
           {t('track_page_tracks')}
         </Link>
       </Button>
-      {track.status === 'locked' ? <LockedTrack track={track} /> : <LearningTrackMap track={track} />}
+      {isLocked ? (
+        <LockedTrack title={trackTitle} />
+      ) : (
+        <LearningModulePath tree={tree} trackTitle={trackTitle} trackColor={trackColor} />
+      )}
     </div>
   );
 }
 
-function LockedTrack({ track }: { track: LearningTrackSummary }) {
+function LockedTrack({ title }: { title: string }) {
   const t = useTranslations('Learning');
 
   return (
@@ -45,7 +50,7 @@ function LockedTrack({ track }: { track: LearningTrackSummary }) {
       <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-[#e5e5e5] text-[#777777] shadow-[0_8px_0_#afafaf]">
         <Lock className="h-10 w-10" />
       </div>
-      <h1 className="mt-6 text-3xl font-black text-[#3c3c3c] dark:text-white">{track.title}</h1>
+      <h1 className="mt-6 text-3xl font-black text-[#3c3c3c] dark:text-white">{title}</h1>
       <p className="mt-3 text-base font-bold leading-6 text-[#777777]">
         {t('track_page_blocked_desc')}
       </p>
