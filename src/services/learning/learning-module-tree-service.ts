@@ -56,7 +56,14 @@ export function buildModuleTree(
       level: mod.level,
       orderIndex: mod.orderIndex,
       status: rawStatus,
-      lessons: mod.lessons,
+      lessons: mod.lessons.map((l) => ({
+        id: l.id,
+        slug: l.slug,
+        title: l.title,
+        estimatedMinutes: l.estimatedMinutes,
+        status: completedLessonIds.has(l.id) ? 'completed' : (mod.id === activeModuleId ? 'active' : 'locked'),
+        href: `/dashboard/learn/${trackSlug}/${mod.slug}/${l.slug}`,
+      })),
       children: [],
       href: isLeaf
         ? `/dashboard/learn/${mod.slug}/${mod.lessons[0]?.slug ?? mod.slug}`

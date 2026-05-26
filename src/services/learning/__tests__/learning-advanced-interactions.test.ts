@@ -15,6 +15,7 @@ const step = (id: string, type: LearningStepType, correctAnswer: unknown) => ({
   prompt: id,
   explanation: null,
   config: { correctAnswer },
+  media: null,
   orderIndex: Number(id.replace('step-', '')),
 });
 

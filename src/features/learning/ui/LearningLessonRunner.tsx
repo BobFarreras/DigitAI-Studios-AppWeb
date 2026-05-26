@@ -18,9 +18,9 @@ import {
   EmptyLesson,
   ErrorPanel,
   FeedbackPanel,
-  LessonResult,
   type StepFeedback,
 } from './lesson-runner/LessonRunnerPanels';
+import { LessonResult } from './lesson-runner/LessonResultPanel';
 import { useLessonRunnerState } from './lesson-runner/useLessonRunnerState';
 
 type Props = {
