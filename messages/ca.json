@@ -4,6 +4,10 @@
     "solutions": "Solucions",
     "projects": "Projectes",
     "blog": "Blog",
+    "automation": "Automatitzacions",
+    "software": "Software",
+    "training": "Formació",
+    "contact": "Contacte",
     "login": "Entrar",
     "register": "Registra't",
     "dashboard": "Dashboard",
@@ -49,59 +53,36 @@
     "cta": "Auditoria Gratuïta",
     "form_title": "Analitza la teva web en segons"
   },
+  "Seo": {
+    "home": {
+      "title": "DigitAI Studios | Automatitzacions IA i software a mida",
+      "description": "Automatitzem processos, creem software a mida i formem equips perquè empreses i negocis converteixin millor i estalviin hores cada setmana."
+    },
+    "legal": {
+      "avis_legal": {
+        "title": "Avís Legal",
+        "description": "Informació legal, dades identificatives i condicions d'ús del lloc web de DigitAI Studios."
+      },
+      "privacitat": {
+        "title": "Política de Privacitat",
+        "description": "Consulta quines dades recull DigitAI Studios, per què les utilitza i com pots exercir els teus drets."
+      },
+      "cookies": {
+        "title": "Política de Cookies",
+        "description": "Informació sobre les cookies necessàries i analítiques utilitzades al lloc web de DigitAI Studios."
+      }
+    }
+  },
   "Dashboard": {
     "welcome": "Benvingut, {name}",
     "my_audits": "Les meves Auditories",
-    "projects": {
-      "meta_title": "Els Meus Projectes",
-      "title": "Els Meus Projectes",
-      "subtitle": "Gestiona les teves aplicacions i participa en les fases de test.",
-      "empty_title": "Encara no tens projectes",
-      "empty_desc": "Contacta amb nosaltres per començar el teu primer desenvolupament.",
-      "btn_request": "Sol·licitar Projecte",
-      "badge_beta": "BETA DISPONIBLE",
-      "status_configuring": "configurant...",
-      "status_pending": "PENDENT"
-    },
-    "test_runner": {
-      "badge_mode": "Mode Tester Actiu",
-      "label_progress": "Progrés",
-      "card_instructions": "Instruccions",
-      "no_instructions": "Sense instruccions especials. Valida cada punt de la llista.",
-      "checklist_title": "Llista de Verificació",
-      "success_title": "Felicitats!",
-      "success_msg": "Has completat totes les tasques d'aquesta missió.",
-      "motivation_start": "Comencem la missió! 🚀",
-      "motivation_early": "Bon començament! Continua així. 💪",
-      "motivation_late": "Ja has passat la meitat! Ets un crack. 🔥",
-      "motivation_done": "MISSIÓ COMPLERTA! 🎉 Gràcies pel teu temps."
-    },
-    "project_detail": {
-      "level_label": "Nivell",
-      "xp_label": "XP",
-      "next_label": "Següent",
-      "current_project_label": "Projecte Actual",
-      "missions_title": "Missions Disponibles",
-      "empty_missions_title": "Cap missió activa",
-      "empty_missions_desc": "No tens proves assignades per a aquest projecte ara mateix."
-    },
-    "tester_dashboard": {
-      "error_no_user": "No s'ha trobat l'usuari.",
-      "level_label": "Nivell {level}",
-      "xp_label": "XP",
-      "next_level_label": "Següent Nivell",
-      "motivation_text": "Completa tasques per guanyar XP i pujar de rang!",
-      "active_missions_title": "Missions Actives",
-      "empty_state_title": "No tens cap missió assignada encara.",
-      "empty_state_desc": "Demana al teu Project Manager que t'assigni!",
-      "no_description": "Sense descripció...",
-      "tasks_count": "{count} Tasques"
-    },
     "mobile_nav": {
       "summary": "Resum",
       "audits": "Auditories",
-      "projects": "Projectes",
       "web": "Web",
+      "learn": "Aprendre",
+      "review": "Repassar",
+      "profile": "Perfil",
       "logout_short": "Sortir",
       "coming_soon": "estarà disponible properament! 🚀"
     }
@@ -257,8 +238,7 @@
     "legal_notice": "Avís Legal",
     "privacy": "Política de Privacitat",
     "cookies": "Política de Cookies",
-    "rights_reserved": "Tots els drets reservats.",
-    "made_with_love": "Fet amb ❤️ a Catalunya"
+    "rights_reserved": "Tots els drets reservats."
   },
   "Sidebar": {
     "platform": "Plataforma",
@@ -269,8 +249,10 @@
     "pro_button": "Millorar",
     "web": "Web",
     "overview": "Resum General",
-    "projects": "Projectes",
     "analytics": "Analítica Web",
+    "learn": "Aprendre",
+    "review": "Repassar",
+    "profile": "Perfil",
     "users": "Usuaris",
     "settings": "Configuració",
     "logout": "Tancar Sessió",
@@ -291,11 +273,11 @@
     "kpi_seo": "SEO Mitjà",
     "kpi_system": "Estat del Sistema",
     "system_status": "Operatiu",
-    "recent_projects": "Projectes Recents",
     "view_all": "Veure tot",
-    "empty_title": "Encara no tens projectes",
+    "empty_title": "Encara no tens auditories",
     "empty_desc": "Analitza la teva primera web per descobrir errors de SEO i rendiment.",
-    "empty_button": "Començar Auditoria"
+    "empty_button": "Començar Auditoria",
+    "recent_audits": "Auditories Recents"
   },
   "AuditList": {
     "title": "Les meves Auditories",
@@ -389,22 +371,32 @@
   },
   "AuthPages": {
     "login": {
-      "marketing_title": "Gestiona el teu ecosistema digital des d'un sol lloc.",
-      "marketing_subtitle": "Accedeix a les teves auditories, gestiona els teus projectes web i controla les teves automatitzacions.",
+      "marketing_badge": "Acces segur",
+      "marketing_title": "Torna a la teva formacio tecnica.",
+      "marketing_subtitle": "Accedeix al teu espai per continuar aprenent IA, sistemes informatics, automatitzacions i noves tecnologies amb practica guiada.",
+      "feature_1": "IA aplicada",
+      "feature_2": "Sistemes informatics",
+      "feature_3": "Noves tecnologies",
       "footer": "© DigitAI Studios. Tots els drets reservats.",
       "back_home": "Tornar a l'inici"
     },
     "register": {
-      "marketing_badge": "UNEIX-TE A LA REVOLUCIÓ",
-      "marketing_title": "Comença a construir el futur del teu negoci avui mateix.",
-      "feature_1": "Auditories web gratuïtes i il·limitades.",
-      "feature_2": "Accés al panell de control de projectes.",
-      "feature_3": "Suport prioritari per a digitalització.",
+      "marketing_badge": "Formació DigitAI",
+      "marketing_title": "Aprèn tecnologia real amb pràctica guiada.",
+      "marketing_subtitle": "Registra't per formar-te en sistemes informàtics, IA, automatitzacions, ciberseguretat i desenvolupament modern.",
+      "feature_1": "IA aplicada",
+      "feature_2": "Sistemes",
+      "feature_3": "Ciberseguretat",
       "back_home": "Inici"
     },
     "forgot_password": {
+      "badge": "Recuperacio segura",
       "title": "Recuperar compte",
       "subtitle": "Introdueix el teu email i t'enviarem les instruccions.",
+      "feature_1": "Enllac temporal enviat al teu correu.",
+      "feature_2": "El canvi es valida amb la teva sessio.",
+      "feature_3": "Les credencials no es comparteixen mai.",
+      "back_home": "Inici",
       "back_login": "Tornar al login"
     },
     "reset_password": {
@@ -598,7 +590,14 @@
     "login_subtitle": "Introdueix les teves credencials per accedir",
     "label_email": "Correu electrònic",
     "label_password": "Contrasenya",
+    "label_full_name": "Nom complet",
+    "placeholder_full_name": "Ex: Joan Garcia",
+    "email_placeholder": "tu@exemple.com",
     "cta_login": "Iniciar Sessió",
+    "cta_register": "Crear compte",
+    "reset_submit": "Enviar enllaç de recuperació",
+    "reset_success_hint": "Revisa la teva safata d'entrada.",
+    "back_login": "Tornar al login",
     "register_title": "Crea el teu compte",
     "register_subtitle": "Comença a automatitzar el teu negoci avui.",
     "social_google": "Continuar amb Google",
@@ -609,6 +608,9 @@
     "register_link": "Registra't",
     "already_have_account": "Ja tens compte?",
     "login_link": "Inicia sessió",
+    "privacy_accept": "Accepto la",
+    "privacy_link": "política de privacitat",
+    "privacy_required": "Has d'acceptar la política de privacitat.",
     "error": {
       "invalid_login": "El correu o la contrasenya són incorrectes.",
       "not_in_org": "Aquest usuari no pertany a aquesta organització.",
@@ -624,5 +626,518 @@
       "sent_to": "Hem enviat el resum executiu a <highlight>{email}</highlight>.",
       "unlock_report": "Registra't ara per veure l'informe tècnic complet i les oportunitats de negoci detectades per la IA."
     }
+  },
+  "LandingV2": {
+    "hero": {
+      "badge": "Creixement Digital Amb Resultats",
+      "title": "Passem de web bonica a motor real de vendes i automatitzacio.",
+      "titleStrong": "Automatitzem processos. Creem software a mida.",
+      "titleMuted": "I formem el teu equip perquè ho domini.",
+      "subtitle": "Dissenyem experiències que converteixen visites en oportunitats, amb IA i processos que estalvien hores cada setmana.",
+      "primaryCta": "Vull una proposta estratègica",
+      "secondaryCta": "Veure com treballem",
+      "kpi1": {
+        "value": "+137%",
+        "label": "Conversions mitjanes"
+      },
+      "kpi2": {
+        "value": "-42h",
+        "label": "Temps manual al mes"
+      },
+      "kpi3": {
+        "value": "3.4x",
+        "label": "Retorn estimat"
+      },
+      "chartTitle": "Impacte acumulat dels primers 90 dies",
+      "chartAxis": {
+        "start": "Setmana 1",
+        "end": "Setmana 12"
+      },
+      "chip1": "Automatitzacions IA",
+      "chip2": "App Web & SaaS",
+      "chip3": "Software a mida",
+      "outcome1": {
+        "title": "Menys tasca manual",
+        "desc": "Automatitzem passos repetitius del dia a dia."
+      },
+      "outcome2": {
+        "title": "Més velocitat operativa",
+        "desc": "Respostes i processos en segons, no en hores."
+      },
+      "outcome3": {
+        "title": "Software fet per tu",
+        "desc": "CRM, reserves, usuaris i app web a mida."
+      },
+      "proofLine": "Exemple real: lead capturat, CRM actualitzat i seguiment enviat automàticament.",
+      "pillars": [
+        {
+          "title": "Automatitzacions que treballen soles",
+          "desc": "Connectem formularis, WhatsApp, CRM, email i ERP perquè cada dada arribi on toca sense picar-la a mà."
+        },
+        {
+          "title": "Software pensat pel teu procés",
+          "desc": "AppWebs, portals, ERP, SAT i panells interns dissenyats al voltant de com treballa realment la teva empresa."
+        },
+        {
+          "title": "Formacio per dominar l'eina",
+          "desc": "Cybersecurity, programacio, sistemes, IA i automatitzacions explicades amb pràctica perquè l'equip les pugui aplicar."
+        }
+      ],
+      "console": {
+        "title": "Consola d Automatitzacio",
+        "live": "En viu",
+        "columns": {
+          "step": "Pas",
+          "status": "Estat",
+          "latency": "Temps"
+        },
+        "rows": {
+          "leadCapture": "Captura de lead",
+          "crmSync": "Sincronitzacio CRM",
+          "followUp": "Seguiment automatic",
+          "bookingUpdate": "Actualitzacio reserves"
+        },
+        "status": {
+          "captured": "capturat",
+          "synced": "sincronitzat",
+          "processing": "processant",
+          "completed": "completat"
+        }
+      }
+    },
+    "automation": {
+      "titleStrong": "Automatitzem processos repetitius perquè",
+      "titleMuted": "el negoci treballi sol.",
+      "flows": {
+        "leads": {
+          "name": "Leads",
+          "summary": "Capta contactes, detecta interès, actualitza el CRM i programa seguiments perquè cap oportunitat quedi parada.",
+          "nodes": {
+            "campaign": {
+              "title": "Primer contacte",
+              "meta": "WhatsApp / email",
+              "explain": "S’envia o entra un missatge i el sistema registra el contacte."
+            },
+            "interest": {
+              "title": "Detectar interès",
+              "meta": "resposta i intenció",
+              "explain": "La IA separa curiositat, urgència i oportunitat comercial."
+            },
+            "filter": {
+              "title": "Filtrar lead",
+              "meta": "qualificació",
+              "explain": "Només avança el que encaixa amb els criteris del negoci."
+            },
+            "crm": {
+              "title": "Actualitzar CRM",
+              "meta": "historial viu",
+              "explain": "Guarda dades, estat, origen i següent acció al CRM."
+            },
+            "follow": {
+              "title": "Follow-up 48h",
+              "meta": "recordatori",
+              "explain": "Si no respon, programa un nou contacte sense perdre el fil."
+            },
+            "team": {
+              "title": "Avisar equip",
+              "meta": "context complet",
+              "explain": "Quan hi ha senyal real, arriba a la persona adequada."
+            }
+          }
+        },
+        "quotes": {
+          "name": "Pressupostos",
+          "summary": "Transforma sol·licituds en dades ordenades, aplica criteris comercials i prepara pressupostos o factures per validar.",
+          "nodes": {
+            "request": {
+              "title": "Sol·licitud",
+              "meta": "formulari o email",
+              "explain": "Recull dades del client, servei i condicions de venda."
+            },
+            "clean": {
+              "title": "Ordenar dades",
+              "meta": "validació",
+              "explain": "Detecta camps incomplets i normalitza la informació."
+            },
+            "rules": {
+              "title": "Aplicar criteris",
+              "meta": "preus i marge",
+              "explain": "Aplica tarifes, descomptes, impostos i marges pactats."
+            },
+            "quote": {
+              "title": "Pressupost",
+              "meta": "document",
+              "explain": "Genera un esborrany llest per revisar i enviar."
+            },
+            "invoice": {
+              "title": "Factura",
+              "meta": "quan s’accepta",
+              "explain": "Quan el client accepta, deixa la factura preparada."
+            },
+            "notify": {
+              "title": "Validació",
+              "meta": "responsable",
+              "explain": "L’equip només revisa decisions, no torna a escriure dades."
+            }
+          }
+        },
+        "social": {
+          "name": "RRSS",
+          "summary": "Converteix idees en peces adaptades per canal, les envia a revisió i les deixa programades amb control de resultats.",
+          "nodes": {
+            "idea": {
+              "title": "Idea o notícia",
+              "meta": "entrada inicial",
+              "explain": "Una idea, producte o notícia inicia el flux de contingut."
+            },
+            "copy": {
+              "title": "Crear versions",
+              "meta": "to i format",
+              "explain": "Adapta el missatge per LinkedIn, Instagram, blog o email."
+            },
+            "approve": {
+              "title": "Revisar",
+              "meta": "control humà",
+              "explain": "Abans de publicar, l’equip pot validar el contingut."
+            },
+            "calendar": {
+              "title": "Programar",
+              "meta": "calendari",
+              "explain": "Decideix dia, hora i canal segons la planificació."
+            },
+            "publish": {
+              "title": "Publicar",
+              "meta": "canals",
+              "explain": "Publica o deixa preparades les peces a cada plataforma."
+            },
+            "report": {
+              "title": "Mesurar",
+              "meta": "resultats",
+              "explain": "Agrupa mètriques i detecta què ha funcionat millor."
+            }
+          }
+        },
+        "support": {
+          "name": "Suport",
+          "summary": "Respon preguntes habituals, consulta documentació i crea tickets amb context quan necessita intervenció humana.",
+          "nodes": {
+            "chat": {
+              "title": "Pregunta client",
+              "meta": "chat o web",
+              "explain": "El client pregunta i rep una primera resposta immediata."
+            },
+            "kb": {
+              "title": "Consultar base",
+              "meta": "documentació",
+              "explain": "Busca en manuals, FAQs, incidències i historial."
+            },
+            "resolve": {
+              "title": "Pot resoldre?",
+              "meta": "decisió",
+              "explain": "Si té confiança, respon; si no, prepara escalat."
+            },
+            "answer": {
+              "title": "Resposta guiada",
+              "meta": "pas a pas",
+              "explain": "Dona instruccions clares perquè el client avanci."
+            },
+            "ticket": {
+              "title": "Crear ticket",
+              "meta": "suport tècnic",
+              "explain": "Si cal intervenció, crea un ticket amb context."
+            },
+            "close": {
+              "title": "Seguiment",
+              "meta": "estat i resum",
+              "explain": "Manté informat el client i l’equip fins al tancament."
+            }
+          }
+        }
+      }
+    },
+    "pain": {
+      "badge": "Diagnosi Clara",
+      "title": "El problema no es tenir trànsit. El problema es no convertir-lo.",
+      "description": "Si la web no guia, no respon dubtes i no impulsa una accio clara, estàs perdent vendes cada dia.",
+      "pain1": "Missatges dispersos: l’usuari no entén què ofereixes en 5 segons.",
+      "pain2": "Excés de seccions: la decisió es dilueix i la conversió cau.",
+      "pain3": "Sense embut actiu: no hi ha recorregut clar cap al contacte."
+    },
+    "process": {
+      "title": "Metodologia en 3 fases per activar resultats ràpid.",
+      "steps": [
+        {
+          "title": "Focus de missatge",
+          "description": "Sintetitzem proposta de valor, oferta i CTA perquè el visitant entengui què guanya."
+        },
+        {
+          "title": "Execució visual",
+          "description": "Landing amb jerarquia, ritme i animació útil per retenir atenció i reforçar confiança."
+        },
+        {
+          "title": "Optimització continua",
+          "description": "Mesurem clics, scroll i formularis per iterar on realment impacta negoci."
+        }
+      ]
+    },
+    "services": {
+      "badge": "Execucio End-to-End",
+      "title": "Tot el que cal per passar de presència digital a sistema comercial.",
+      "cta": "Reservar sessio de valor",
+      "items": [
+        {
+          "tag": "Captacio",
+          "title": "Landing + Oferta",
+          "description": "Arquitectura de missatge, copy i disseny enfocat a decisio rapida.",
+          "points": [
+            "Hero de conversio",
+            "CTA estratègics",
+            "Narrativa de valor"
+          ]
+        },
+        {
+          "tag": "Automatitzacio",
+          "title": "Processos IA",
+          "description": "Fluxos connectats entre formularis, CRM i notificacions perquè no es perdi cap lead.",
+          "points": [
+            "Lead routing automàtic",
+            "Seguiment omnicanal",
+            "Qualificacio inicial IA"
+          ]
+        },
+        {
+          "tag": "Escalat",
+          "title": "Dades i Iteracio",
+          "description": "Quadre de comandament i experiments per augmentar conversio mes a mes.",
+          "points": [
+            "KPIs de captacio",
+            "Test A/B per blocs",
+            "Roadmap de millores"
+          ]
+        }
+      ],
+      "subtitle": "Fem automatitzacions, app webs i software a mida: ERP, registres d usuaris i qualsevol solucio digital que necessitis."
+    },
+    "finalCta": {
+      "title": "Si vols més clients qualificats, necessites una landing que guiï decisions.",
+      "description": "Et preparem una proposta concreta de millora amb prioritats, impacte estimat i pla d’implementació.",
+      "primaryCta": "Demanar diagnosi",
+      "secondaryCta": "Revisar serveis"
+    },
+    "whatWeBuild": {
+      "badge": "Que Fem Exactament",
+      "title": "Automatitzacions, app webs i software a mida per qualsevol necessitat digital del client.",
+      "description": "Des d un ERP intern fins a un registre d usuaris o fluxos comercials automatitzats. Construim la solucio que necessites, no una plantilla generica.",
+      "items": [
+        {
+          "title": "Automatitzacions IA",
+          "description": "Fluxos que connecten formularis, CRM, emails i tasques internes per reduir feina manual."
+        },
+        {
+          "title": "App Web i SaaS",
+          "description": "Plataformes web modernes per vendre, operar i escalar processos digitals."
+        },
+        {
+          "title": "Registre d Usuaris",
+          "description": "Sistemes de comptes, rols, permisos i panells d administracio segurs."
+        },
+        {
+          "title": "Software a Mida",
+          "description": "ERP, gestio interna i eines custom segons el teu model de negoci."
+        }
+      ],
+      "flow": {
+        "label": "Com Treballem",
+        "steps": [
+          "Diagnosi i objectius",
+          "Disseny i prototip",
+          "Desenvolupament modular",
+          "Posada en produccio"
+        ]
+      }
+    },
+    "training": {
+      "titleStrong": "Forma't per crear, automatitzar",
+      "titleMuted": "i dominar la tecnologia real.",
+      "registerCta": "Registrar-se",
+      "formats": {
+        "teams": {
+          "title": "Formació per equips",
+          "desc": "Sessions pràctiques per empreses que volen aplicar IA, automatitzacions i eines digitals amb criteri."
+        },
+        "private": {
+          "title": "Formació privada",
+          "desc": "Acompanyament directe per professionals, directius i autònoms que volen aprendre amb objectius concrets."
+        },
+        "academy": {
+          "title": "Acadèmia online",
+          "desc": "Itineraris digitals amb càpsules, exercicis i progrés per aprendre des de la web al teu ritme."
+        }
+      }
+    },
+    "contact": {
+      "titleStrong": "Hablemos de lo que necesitas.",
+      "titleMuted": "Y del mejor camino para conseguirlo.",
+      "lead": "Explica'ns què vols millorar i et respondrem amb una proposta concreta: automatització, software, formació o una combinació realista.",
+      "services": {
+        "automation": "Automatitzacions i IA",
+        "software": "Software a mida"
+      },
+      "proof": {
+        "response": "Resposta",
+        "responseValue": "En menys de 48 h laborables",
+        "privacy": "Privacitat",
+        "privacyValue": "Dades tractades amb criteri",
+        "next": "Següent pas",
+        "nextValue": "Diagnosi i proposta inicial"
+      },
+      "form": {
+        "name": "Nom complet",
+        "namePlaceholder": "Joan Garcia",
+        "email": "Email corporatiu",
+        "emailPlaceholder": "joan@empresa.com",
+        "message": "Què necessites construir o automatitzar?",
+        "messagePlaceholder": "Vull reduir feina manual, crear un CRM intern, formar l'equip...",
+        "submit": "Enviar missatge",
+        "sending": "Enviant...",
+        "sent": "Enviat correctament"
+      },
+      "privacy": "He llegit i accepto la <link>política de privacitat</link> i el tractament de les meves dades."
+    },
+    "explainer": {
+      "badge": "Per Que Funciona",
+      "title": "Automatitzacio = menys tasca manual, menys errors i molt mes temps per vendre.",
+      "subtitle": "Quan automatitzem processos repetitius, el teu equip deixa de fer feina mecànica i es concentra en clients, vendes i creixement.",
+      "automation": {
+        "title": "Impacte real de les automatitzacions",
+        "description": "Substituim passos manuals per fluxos automatics connectats amb CRM, email i notificacions.",
+        "beforeLabel": "Abans",
+        "beforeText": "Tasques manuals/setmana",
+        "afterLabel": "Despres",
+        "afterText": "Tasques manuals/setmana",
+        "points": [
+          "Captura automàtica de leads i dades",
+          "Seguiment automàtic sense oblidar clients",
+          "Menys errors humans en processos repetits"
+        ]
+      },
+      "software": {
+        "title": "Software a mida per necessitats reals",
+        "description": "No venem una plantilla tancada. Construim la teva eina: CRM, control de reserves, usuaris i app web personalitzada.",
+        "cases": [
+          "CRM intern per vendes i seguiment",
+          "Registre d usuaris amb rols i permisos",
+          "Control de reserves i disponibilitat en temps real",
+          "App web operativa per clients i equip intern"
+        ],
+        "flowLabel": "Flux de solucio",
+        "flow": [
+          "Necessitat",
+          "Disseny funcional",
+          "Desenvolupament",
+          "Resultat productiu"
+        ]
+      }
+    }
+  },
+  "Learning": {
+    "dashboard": "Resum",
+    "learn": "Aprendre",
+    "review": "Repassar",
+    "profile": "Perfil",
+    "training": "Formació",
+    "continueLearning": "Continuar aprenent",
+    "startReview": "Repassar ara",
+    "reviewCount": "Repassar {count}",
+    "formacioDigitAI": "Formació DigitAI",
+    "perfilFormatiu": "Perfil formatiu",
+    "level": "Nivell",
+    "proximNivel": "Pròxim nivell",
+    "xpTotal": "XP total",
+    "streak": "Ratxa",
+    "lessons": "Llicons",
+    "accuracy": "Precisió",
+    "progresPerRuta": "Progrés per ruta",
+    "rutaForta": "Ruta forta",
+    "objectiuDiari": "Objectiu diari",
+    "rutesActives": "Rutes actives",
+    "encaraPendent": "Encara pendent",
+    "completat": "completat",
+    "active": "Activa",
+    "completed": "Completada",
+    "blocked": "Bloquejada",
+    "noLessonsToReview": "No hi ha llicons pendents de repàs.",
+    "weakSpots": "Punts febles",
+    "repeatedMistakes": "Errors repetits",
+    "reviewQueue": "Cua de repàs",
+    "weeklyTime": "Temps setmana",
+    "questionsPrioritaries": "Preguntes prioritàries",
+    "lessonsToReview": "Llicons per reforçar",
+    "practicaErrors": "Practica errors",
+    "correctAnswer": "Resposta correcta",
+    "wrongAnswer": "Resposta incorrecta",
+    "lessonComplete": "Lliçó completada!",
+    "continueToNext": "Continuar a la següent",
+    "hero_subtitle": "Practica en sessions curtes, reforça errors i guanya XP sense quedar bloquejat.",
+    "hero_continue_prefix": "Continua aprenent, ",
+    "hero_next_lesson": "Següent lliçó",
+    "hero_minutes_suffix": " min",
+    "hero_start_prefix": "Començar ",
+    "hero_streak_suffix": "dies de ratxa",
+    "stats_lessons_done": "Lliçons fetes",
+    "stats_weekly_time": "Temps setmanal",
+    "stats_accuracy": "Precisió",
+    "track_grid_title": "Rutes formatives",
+    "track_grid_subtitle": "Tria el teu camí",
+    "track_page_tracks": "Rutes",
+    "track_page_blocked_desc": "Completa la ruta anterior per desbloquejar aquest camí.",
+    "track_map_prefix": "Ruta ",
+    "review_page_summary": "Resum",
+    "review_page_active_review": "Repàs actiu",
+    "review_page_practice_errors": "Practica errors",
+    "review_page_weak_questions": "preguntes febles. Precisió actual: ",
+    "review_page_percent": "%",
+    "review_page_lessons_reinforce": "Lliçons per reforçar",
+    "review_page_repeated_errors": "Errors repetits",
+    "review_page_review_queue": "Cua de repàs",
+    "review_page_weekly_time": "Temps setmana",
+    "review_page_priority_questions": "Preguntes prioritàries",
+    "review_page_errors": "errors",
+    "review_page_empty": "No hi ha lliçons pendents de repàs.",
+    "review_card_reinforce": "Reforç",
+    "review_card_practice_errors": "Practica errors",
+    "review_card_accuracy_prefix": "La precisió actual és ",
+    "review_card_accuracy_suffix": "%. Reforçar punts febles dóna XP i desbloqueja progrés net.",
+    "review_card_review_now": "Repassar ara",
+    "xp_history_title": "Historial XP",
+    "xp_history_suffix": " XP",
+    "xp_history_empty": "Completa una lliçó per veure l'historial.",
+    "achievements_title": "Medalles",
+    "daily_goal_title": "Objectiu diari",
+    "daily_goal_suffix": " XP",
+    "daily_goal_complete": "Objectiu completat avui.",
+    "daily_goal_empty": "Completa una lliçó per apropar-te al repte.",
+    "app_topbar_percent": "%",
+    "lesson_check": "Comprovar",
+    "lesson_complete_btn": "Completar",
+    "lesson_continue": "Continuar",
+    "lesson_preparing": "Lliçó en preparació",
+    "lesson_preparing_desc": "Aquesta lliçó encara no té exercicis publicats.",
+    "lesson_back_to_map": "Tornar al mapa",
+    "lesson_completed_title": "Lliçó completada",
+    "lesson_accuracy": "precisió · +",
+    "lesson_correct": "Correcte",
+    "lesson_incorrect": "Incorrecte",
+    "terminal_label": "terminal",
+    "terminal_placeholder": "escriu una comanda",
+    "code_label": "code",
+    "code_placeholder": "escriu el snippet",
+    "fill_blank_placeholder": "Escriu la resposta",
+    "profile_language": "Idioma"
+  },
+  "Errors": {
+    "title": "Error",
+    "message": "Error inesperat",
+    "retry": "Torna a provar"
   }
 }

@@ -6,9 +6,10 @@ import { useTranslations } from 'next-intl';
 import {
   LayoutDashboard,
   Settings,
-  FileText,
-  BarChart3,
+  BookOpenCheck,
+  RotateCcw,
   Users,
+  UserCircle,
   ShieldCheck // <--- Icona per Admin
   
 } from 'lucide-react';
@@ -37,16 +38,22 @@ export function Sidebar({ userRole = 'client' }: SidebarProps) {
       roles: ['admin'],     // <--- NOMÉS ADMIN
     },
     {
-      label: t('projects'),
-      href: '/dashboard/projects',
-      icon: FileText,
+      label: t('learn'),
+      href: '/dashboard/learn',
+      icon: BookOpenCheck,
       roles: ['admin', 'client'],
     },
     {
-      label: t('analytics'),
-      href: '/dashboard/audits',
-      icon: BarChart3,
+      label: t('review'),
+      href: '/dashboard/review',
+      icon: RotateCcw,
       roles: ['admin', 'client'],
+    },
+    {
+      label: t('profile'),
+      href: '/dashboard/profile',
+      icon: UserCircle,
+      roles: ['admin', 'client', 'lead'],
     },
     {
       label: t('users'),

@@ -4,6 +4,10 @@
     "solutions": "Solutions",
     "projects": "Projects",
     "blog": "Blog",
+    "automation": "Automations",
+    "software": "Software",
+    "training": "Training",
+    "contact": "Contact",
     "login": "Login",
     "register": "Sign Up",
     "dashboard": "Dashboard",
@@ -49,59 +53,36 @@
     "cta": "Free Audit",
     "form_title": "Analyze your website in seconds"
   },
+  "Seo": {
+    "home": {
+      "title": "DigitAI Studios | AI automations and custom software",
+      "description": "We automate workflows, build custom software and train teams so companies convert better and save hours every week."
+    },
+    "legal": {
+      "avis_legal": {
+        "title": "Legal Notice",
+        "description": "Legal information, company details and terms of use for the DigitAI Studios website."
+      },
+      "privacitat": {
+        "title": "Privacy Policy",
+        "description": "See what data DigitAI Studios collects, why it is used and how you can exercise your rights."
+      },
+      "cookies": {
+        "title": "Cookie Policy",
+        "description": "Information about the necessary and analytics cookies used on the DigitAI Studios website."
+      }
+    }
+  },
   "Dashboard": {
     "welcome": "Welcome, {name}",
     "my_audits": "My Audits",
-    "projects": {
-      "meta_title": "My Projects",
-      "title": "My Projects",
-      "subtitle": "Manage your applications and participate in testing phases.",
-      "empty_title": "You don't have projects yet",
-      "empty_desc": "Contact us to start your first development.",
-      "btn_request": "Request Project",
-      "badge_beta": "BETA AVAILABLE",
-      "status_configuring": "configuring...",
-      "status_pending": "PENDING"
-    },
-    "test_runner": {
-      "badge_mode": "Tester Mode Active",
-      "label_progress": "Progress",
-      "card_instructions": "Instructions",
-      "no_instructions": "No special instructions. Validate each point on the list.",
-      "checklist_title": "Checklist",
-      "success_title": "Congratulations!",
-      "success_msg": "You have completed all tasks in this mission.",
-      "motivation_start": "Let's start the mission! 🚀",
-      "motivation_early": "Great start! Keep it up. 💪",
-      "motivation_late": "You're halfway there! You're crushing it. 🔥",
-      "motivation_done": "MISSION ACCOMPLISHED! 🎉 Thanks for your time."
-    },
-    "project_detail": {
-      "level_label": "Level",
-      "xp_label": "XP",
-      "next_label": "Next",
-      "current_project_label": "Current Project",
-      "missions_title": "Available Missions",
-      "empty_missions_title": "No active missions",
-      "empty_missions_desc": "You don't have assigned tests for this project right now."
-    },
-    "tester_dashboard": {
-      "error_no_user": "User not found.",
-      "level_label": "Level {level}",
-      "xp_label": "XP",
-      "next_level_label": "Next Level",
-      "motivation_text": "Complete tasks to earn XP and rank up!",
-      "active_missions_title": "Active Missions",
-      "empty_state_title": "You don't have any assigned missions yet.",
-      "empty_state_desc": "Ask your Project Manager to assign you!",
-      "no_description": "No description...",
-      "tasks_count": "{count} Tasks"
-    },
     "mobile_nav": {
       "summary": "Summary",
       "audits": "Audits",
-      "projects": "Projects",
       "web": "Web",
+      "learn": "Learn",
+      "review": "Review",
+      "profile": "Profile",
       "logout_short": "Exit",
       "coming_soon": "coming soon! 🚀"
     }
@@ -257,8 +238,7 @@
     "legal_notice": "Legal Notice",
     "privacy": "Privacy Policy",
     "cookies": "Cookie Policy",
-    "rights_reserved": "All rights reserved.",
-    "made_with_love": "Made with ❤️ in Catalonia"
+    "rights_reserved": "All rights reserved."
   },
   "Sidebar": {
     "platform": "Platform",
@@ -269,8 +249,10 @@
     "pro_button": "Upgrade",
     "web": "Web",
     "overview": "Overview",
-    "projects": "Projects",
     "analytics": "Web Analytics",
+    "learn": "Learn",
+    "review": "Review",
+    "profile": "Profile",
     "users": "Users",
     "settings": "Settings",
     "logout": "Log Out",
@@ -291,11 +273,11 @@
     "kpi_seo": "Average SEO",
     "kpi_system": "System Status",
     "system_status": "Operational",
-    "recent_projects": "Recent Projects",
     "view_all": "View all",
-    "empty_title": "You don't have projects yet",
+    "empty_title": "You don't have audits yet",
     "empty_desc": "Analyze your first website to discover SEO and performance errors.",
-    "empty_button": "Start Audit"
+    "empty_button": "Start Audit",
+    "recent_audits": "Recent Audits"
   },
   "AuditList": {
     "title": "My Audits",
@@ -389,22 +371,32 @@
   },
   "AuthPages": {
     "login": {
-      "marketing_title": "Manage your digital ecosystem from one place.",
-      "marketing_subtitle": "Access your audits, manage your web projects, and control your automations.",
+      "marketing_badge": "Secure access",
+      "marketing_title": "Return to your technical training.",
+      "marketing_subtitle": "Access your space to keep learning AI, IT systems, automations and new technologies through guided practice.",
+      "feature_1": "Applied AI",
+      "feature_2": "IT systems",
+      "feature_3": "New technologies",
       "footer": "© DigitAI Studios. All rights reserved.",
       "back_home": "Back to Home"
     },
     "register": {
-      "marketing_badge": "JOIN THE REVOLUTION",
-      "marketing_title": "Start building the future of your business today.",
-      "feature_1": "Free and unlimited web audits.",
-      "feature_2": "Access to the project dashboard.",
-      "feature_3": "Priority support for digitalization.",
+      "marketing_badge": "DigitAI Training",
+      "marketing_title": "Learn real technology through guided practice.",
+      "marketing_subtitle": "Sign up to train in IT systems, AI, automations, cybersecurity and modern development.",
+      "feature_1": "Applied AI",
+      "feature_2": "Systems",
+      "feature_3": "Cybersecurity",
       "back_home": "Home"
     },
     "forgot_password": {
+      "badge": "Secure recovery",
       "title": "Recover Account",
       "subtitle": "Enter your email and we'll send you instructions.",
+      "feature_1": "Temporary link sent to your email.",
+      "feature_2": "The change is validated with your session.",
+      "feature_3": "Credentials are never shared.",
+      "back_home": "Home",
       "back_login": "Back to Login"
     },
     "reset_password": {
@@ -598,7 +590,14 @@
     "login_subtitle": "Enter your credentials to access",
     "label_email": "Email address",
     "label_password": "Password",
+    "label_full_name": "Full name",
+    "placeholder_full_name": "Ex: John Smith",
+    "email_placeholder": "you@example.com",
     "cta_login": "Sign in",
+    "cta_register": "Create account",
+    "reset_submit": "Send recovery link",
+    "reset_success_hint": "Check your inbox.",
+    "back_login": "Back to login",
     "register_title": "Create your account",
     "register_subtitle": "Start automating your business today.",
     "social_google": "Continue with Google",
@@ -609,6 +608,9 @@
     "register_link": "Sign up",
     "already_have_account": "Already have an account?",
     "login_link": "Sign in",
+    "privacy_accept": "I accept the",
+    "privacy_link": "privacy policy",
+    "privacy_required": "You must accept the privacy policy.",
     "error": {
       "invalid_login": "The email or password is incorrect.",
       "not_in_org": "This user does not belong to this organization.",
@@ -624,5 +626,518 @@
       "sent_to": "We have sent the executive summary to <highlight>{email}</highlight>.",
       "unlock_report": "Sign up now to view the full technical report and business opportunities detected by AI."
     }
+  },
+  "LandingV2": {
+    "hero": {
+      "badge": "Digital Growth with Real Outcomes",
+      "title": "We turn a nice website into a real sales and automation engine.",
+      "titleStrong": "We automate workflows. We build custom software.",
+      "titleMuted": "And train your team to master it.",
+      "subtitle": "We design experiences that convert traffic into opportunities, powered by AI and operational workflows.",
+      "primaryCta": "Get a strategic proposal",
+      "secondaryCta": "See our process",
+      "kpi1": {
+        "value": "+137%",
+        "label": "Average conversions"
+      },
+      "kpi2": {
+        "value": "-42h",
+        "label": "Manual work monthly"
+      },
+      "kpi3": {
+        "value": "3.4x",
+        "label": "Estimated ROI"
+      },
+      "chartTitle": "Cumulative impact in the first 90 days",
+      "chartAxis": {
+        "start": "Week 1",
+        "end": "Week 12"
+      },
+      "chip1": "AI Automations",
+      "chip2": "Web Apps & SaaS",
+      "chip3": "Custom Software",
+      "outcome1": {
+        "title": "Less manual work",
+        "desc": "We automate repetitive daily tasks."
+      },
+      "outcome2": {
+        "title": "Faster operations",
+        "desc": "Responses and workflows in seconds, not hours."
+      },
+      "outcome3": {
+        "title": "Software built for you",
+        "desc": "Custom CRM, bookings, user systems, and web apps."
+      },
+      "proofLine": "Real example: lead captured, CRM updated, and follow-up sent automatically.",
+      "pillars": [
+        {
+          "title": "Automations that run by themselves",
+          "desc": "We connect forms, WhatsApp, CRM, email, and ERP so every data point lands where it belongs without manual entry."
+        },
+        {
+          "title": "Software shaped around your process",
+          "desc": "Web apps, portals, ERP, SAT, and internal dashboards designed around how your company actually works."
+        },
+        {
+          "title": "Training to master the system",
+          "desc": "Cybersecurity, programming, systems, AI, and automations taught through practice so the team can apply them."
+        }
+      ],
+      "console": {
+        "title": "Automation Console",
+        "live": "Live",
+        "columns": {
+          "step": "Step",
+          "status": "Status",
+          "latency": "Latency"
+        },
+        "rows": {
+          "leadCapture": "Lead capture",
+          "crmSync": "CRM sync",
+          "followUp": "Auto follow-up",
+          "bookingUpdate": "Booking update"
+        },
+        "status": {
+          "captured": "captured",
+          "synced": "synced",
+          "processing": "processing",
+          "completed": "completed"
+        }
+      }
+    },
+    "automation": {
+      "titleStrong": "We automate repetitive workflows so",
+      "titleMuted": "the business runs on its own.",
+      "flows": {
+        "leads": {
+          "name": "Leads",
+          "summary": "Captures contacts, detects intent, updates the CRM and schedules follow-ups so no opportunity stalls.",
+          "nodes": {
+            "campaign": {
+              "title": "First contact",
+              "meta": "WhatsApp / email",
+              "explain": "A message is sent or received and the system records the contact."
+            },
+            "interest": {
+              "title": "Detect interest",
+              "meta": "reply and intent",
+              "explain": "AI separates curiosity, urgency and real sales opportunity."
+            },
+            "filter": {
+              "title": "Filter lead",
+              "meta": "qualification",
+              "explain": "Only leads that match business criteria move forward."
+            },
+            "crm": {
+              "title": "Update CRM",
+              "meta": "live history",
+              "explain": "Stores data, status, source and next action in the CRM."
+            },
+            "follow": {
+              "title": "48h follow-up",
+              "meta": "reminder",
+              "explain": "If there is no reply, it schedules another touchpoint automatically."
+            },
+            "team": {
+              "title": "Notify team",
+              "meta": "full context",
+              "explain": "When there is a real signal, it reaches the right person."
+            }
+          }
+        },
+        "quotes": {
+          "name": "Quotes",
+          "summary": "Turns requests into structured data, applies commercial rules and prepares quotes or invoices for review.",
+          "nodes": {
+            "request": {
+              "title": "Request",
+              "meta": "form or email",
+              "explain": "Collects customer, service and sales condition data."
+            },
+            "clean": {
+              "title": "Clean data",
+              "meta": "validation",
+              "explain": "Detects missing fields and normalizes information."
+            },
+            "rules": {
+              "title": "Apply rules",
+              "meta": "pricing and margin",
+              "explain": "Applies rates, discounts, taxes and agreed margins."
+            },
+            "quote": {
+              "title": "Quote",
+              "meta": "document",
+              "explain": "Generates a draft ready to review and send."
+            },
+            "invoice": {
+              "title": "Invoice",
+              "meta": "when accepted",
+              "explain": "When the customer accepts, the invoice is prepared."
+            },
+            "notify": {
+              "title": "Validation",
+              "meta": "owner",
+              "explain": "The team reviews decisions instead of retyping data."
+            }
+          }
+        },
+        "social": {
+          "name": "Social",
+          "summary": "Turns ideas into channel-specific assets, sends them for review and schedules them with result tracking.",
+          "nodes": {
+            "idea": {
+              "title": "Idea or news",
+              "meta": "initial input",
+              "explain": "An idea, product or update starts the content workflow."
+            },
+            "copy": {
+              "title": "Create versions",
+              "meta": "tone and format",
+              "explain": "Adapts the message for LinkedIn, Instagram, blog or email."
+            },
+            "approve": {
+              "title": "Review",
+              "meta": "human control",
+              "explain": "Before publishing, the team can validate the content."
+            },
+            "calendar": {
+              "title": "Schedule",
+              "meta": "calendar",
+              "explain": "Chooses day, time and channel based on the plan."
+            },
+            "publish": {
+              "title": "Publish",
+              "meta": "channels",
+              "explain": "Publishes or prepares assets for each platform."
+            },
+            "report": {
+              "title": "Measure",
+              "meta": "results",
+              "explain": "Aggregates metrics and detects what performed best."
+            }
+          }
+        },
+        "support": {
+          "name": "Support",
+          "summary": "Answers common questions, checks documentation and creates contextual tickets when human help is needed.",
+          "nodes": {
+            "chat": {
+              "title": "Customer question",
+              "meta": "chat or web",
+              "explain": "The customer asks and receives an immediate first response."
+            },
+            "kb": {
+              "title": "Search knowledge",
+              "meta": "documentation",
+              "explain": "Searches manuals, FAQs, incidents and history."
+            },
+            "resolve": {
+              "title": "Can solve?",
+              "meta": "decision",
+              "explain": "If confidence is high, it replies; otherwise it prepares escalation."
+            },
+            "answer": {
+              "title": "Guided answer",
+              "meta": "step by step",
+              "explain": "Gives clear instructions so the customer can move forward."
+            },
+            "ticket": {
+              "title": "Create ticket",
+              "meta": "technical support",
+              "explain": "If intervention is needed, it creates a ticket with context."
+            },
+            "close": {
+              "title": "Follow-up",
+              "meta": "status and summary",
+              "explain": "Keeps the customer and team informed until resolution."
+            }
+          }
+        }
+      }
+    },
+    "pain": {
+      "badge": "Clear Diagnosis",
+      "title": "Traffic is not the issue. Conversion is.",
+      "description": "If your site does not guide, clarify, and drive a clear next step, you lose revenue every day.",
+      "pain1": "Scattered messaging: visitors do not get your value in the first 5 seconds.",
+      "pain2": "Too many sections: decisions get delayed and conversion drops.",
+      "pain3": "No active funnel: no clear path from interest to contact."
+    },
+    "process": {
+      "title": "A 3-step method to unlock results fast.",
+      "steps": [
+        {
+          "title": "Message focus",
+          "description": "We sharpen value proposition, offer, and CTAs so visitors instantly understand the benefit."
+        },
+        {
+          "title": "Visual execution",
+          "description": "A landing with hierarchy, pace, and meaningful motion to increase trust and retention."
+        },
+        {
+          "title": "Continuous optimization",
+          "description": "We track clicks, scroll depth, and form actions to iterate where business impact is highest."
+        }
+      ]
+    },
+    "services": {
+      "badge": "End-to-End Delivery",
+      "title": "Everything you need to move from digital presence to revenue system.",
+      "cta": "Book strategy call",
+      "items": [
+        {
+          "tag": "Acquisition",
+          "title": "Landing + Offer",
+          "description": "Message architecture, conversion copy, and design for faster decisions.",
+          "points": [
+            "Conversion-focused hero",
+            "Strategic CTAs",
+            "Value narrative"
+          ]
+        },
+        {
+          "tag": "Automation",
+          "title": "AI Workflows",
+          "description": "Connected flows across forms, CRM, and notifications so no lead gets lost.",
+          "points": [
+            "Automated lead routing",
+            "Omnichannel follow-up",
+            "AI pre-qualification"
+          ]
+        },
+        {
+          "tag": "Scale",
+          "title": "Data & Iteration",
+          "description": "Dashboards and experiments to improve conversion month after month.",
+          "points": [
+            "Acquisition KPIs",
+            "Block-level A/B tests",
+            "Optimization roadmap"
+          ]
+        }
+      ],
+      "subtitle": "We build automations, web apps, and custom software: ERP workflows, user management, and any digital solution your business needs."
+    },
+    "finalCta": {
+      "title": "If you want more qualified leads, you need a landing that drives decisions.",
+      "description": "We deliver a concrete plan with priorities, expected impact, and implementation phases.",
+      "primaryCta": "Request diagnosis",
+      "secondaryCta": "View services"
+    },
+    "whatWeBuild": {
+      "badge": "What We Actually Build",
+      "title": "Automations, web apps, and custom software for real business operations.",
+      "description": "From internal ERP modules to user management systems and automated growth workflows. We build what your business needs, not generic templates.",
+      "items": [
+        {
+          "title": "AI Automations",
+          "description": "Connected workflows across forms, CRM, email, and operations to remove manual work."
+        },
+        {
+          "title": "Web Apps & SaaS",
+          "description": "Modern platforms to sell, manage operations, and scale digital processes."
+        },
+        {
+          "title": "User Registration Systems",
+          "description": "Secure account systems with roles, permissions, and admin panels."
+        },
+        {
+          "title": "Custom Software",
+          "description": "ERP modules, internal tools, and custom systems aligned to your business model."
+        }
+      ],
+      "flow": {
+        "label": "Delivery Flow",
+        "steps": [
+          "Discovery and goals",
+          "Design and prototype",
+          "Modular development",
+          "Production launch"
+        ]
+      }
+    },
+    "training": {
+      "titleStrong": "Train to build, automate",
+      "titleMuted": "and master real technology.",
+      "registerCta": "Sign up",
+      "formats": {
+        "teams": {
+          "title": "Team training",
+          "desc": "Practical sessions for companies that want to apply AI, automations and digital tools with clear criteria."
+        },
+        "private": {
+          "title": "Private training",
+          "desc": "Direct guidance for professionals, executives and freelancers who want to learn with concrete goals."
+        },
+        "academy": {
+          "title": "Online academy",
+          "desc": "Digital learning paths with lessons, exercises and progress tracking to learn from the web at your pace."
+        }
+      }
+    },
+    "contact": {
+      "titleStrong": "Tell us what you need.",
+      "titleMuted": "We will define the first step.",
+      "lead": "Tell us what you want to improve and we will reply with a concrete proposal: automation, software, training or a realistic combination.",
+      "services": {
+        "automation": "Automations and AI",
+        "software": "Custom software"
+      },
+      "proof": {
+        "response": "Response",
+        "responseValue": "Within 48 business hours",
+        "privacy": "Privacy",
+        "privacyValue": "Data handled carefully",
+        "next": "Next step",
+        "nextValue": "Diagnosis and initial proposal"
+      },
+      "form": {
+        "name": "Full name",
+        "namePlaceholder": "John Smith",
+        "email": "Work email",
+        "emailPlaceholder": "john@company.com",
+        "message": "What do you need to build or automate?",
+        "messagePlaceholder": "I want to reduce manual work, build an internal CRM, train the team...",
+        "submit": "Send message",
+        "sending": "Sending...",
+        "sent": "Sent successfully"
+      },
+      "privacy": "I have read and accept the <link>privacy policy</link> and the processing of my data."
+    },
+    "explainer": {
+      "badge": "Why It Works",
+      "title": "Automation means fewer manual tasks, fewer errors, and more time to grow revenue.",
+      "subtitle": "By automating repetitive workflows, your team stops doing mechanical work and focuses on clients, sales, and growth.",
+      "automation": {
+        "title": "Real automation impact",
+        "description": "We replace manual steps with connected workflows across CRM, email, and notifications.",
+        "beforeLabel": "Before",
+        "beforeText": "Manual tasks/week",
+        "afterLabel": "After",
+        "afterText": "Manual tasks/week",
+        "points": [
+          "Automatic lead and data capture",
+          "Automatic follow-up with no missed opportunities",
+          "Fewer human errors in repetitive operations"
+        ]
+      },
+      "software": {
+        "title": "Custom software for real business needs",
+        "description": "We do not sell fixed templates. We build your system: CRM, booking control, user management, and custom web apps.",
+        "cases": [
+          "Internal CRM for sales and follow-up",
+          "User registration with roles and permissions",
+          "Real-time booking and availability control",
+          "Operational web app for clients and internal teams"
+        ],
+        "flowLabel": "Solution flow",
+        "flow": [
+          "Need",
+          "Functional design",
+          "Development",
+          "Productive outcome"
+        ]
+      }
+    }
+  },
+  "Learning": {
+    "dashboard": "Dashboard",
+    "learn": "Learn",
+    "review": "Review",
+    "profile": "Profile",
+    "training": "Training",
+    "continueLearning": "Continue learning",
+    "startReview": "Start review",
+    "reviewCount": "Review {count}",
+    "formacioDigitAI": "DigitAI Training",
+    "perfilFormatiu": "Learning profile",
+    "level": "Level",
+    "proximNivel": "Next level",
+    "xpTotal": "Total XP",
+    "streak": "Streak",
+    "lessons": "Lessons",
+    "accuracy": "Accuracy",
+    "progresPerRuta": "Progress by track",
+    "rutaForta": "Strongest track",
+    "objectiuDiari": "Daily goal",
+    "rutesActives": "Active tracks",
+    "encaraPendent": "Not started yet",
+    "completat": "completed",
+    "active": "Active",
+    "completed": "Completed",
+    "blocked": "Locked",
+    "noLessonsToReview": "No lessons to review.",
+    "weakSpots": "Weak spots",
+    "repeatedMistakes": "Repeated mistakes",
+    "reviewQueue": "Review queue",
+    "weeklyTime": "Weekly time",
+    "questionsPrioritaries": "Priority questions",
+    "lessonsToReview": "Lessons to reinforce",
+    "practicaErrors": "Practice mistakes",
+    "correctAnswer": "Correct answer",
+    "wrongAnswer": "Wrong answer",
+    "lessonComplete": "Lesson completed!",
+    "continueToNext": "Continue to next",
+    "hero_subtitle": "Practice in short sessions, reinforce mistakes and earn XP without getting stuck.",
+    "hero_continue_prefix": "Keep learning, ",
+    "hero_next_lesson": "Next lesson",
+    "hero_minutes_suffix": " min",
+    "hero_start_prefix": "Start ",
+    "hero_streak_suffix": "day streak",
+    "stats_lessons_done": "Lessons done",
+    "stats_weekly_time": "Weekly time",
+    "stats_accuracy": "Accuracy",
+    "track_grid_title": "Learning tracks",
+    "track_grid_subtitle": "Choose your path",
+    "track_page_tracks": "Tracks",
+    "track_page_blocked_desc": "Complete the previous track to unlock this path.",
+    "track_map_prefix": "Track ",
+    "review_page_summary": "Summary",
+    "review_page_active_review": "Active review",
+    "review_page_practice_errors": "Practice mistakes",
+    "review_page_weak_questions": "weak questions. Current accuracy: ",
+    "review_page_percent": "%",
+    "review_page_lessons_reinforce": "Lessons to reinforce",
+    "review_page_repeated_errors": "Repeated mistakes",
+    "review_page_review_queue": "Review queue",
+    "review_page_weekly_time": "Weekly time",
+    "review_page_priority_questions": "Priority questions",
+    "review_page_errors": "mistakes",
+    "review_page_empty": "No lessons pending review.",
+    "review_card_reinforce": "Reinforce",
+    "review_card_practice_errors": "Practice mistakes",
+    "review_card_accuracy_prefix": "Current accuracy is ",
+    "review_card_accuracy_suffix": "%. Reinforcing weak spots gives XP and unlocks clean progress.",
+    "review_card_review_now": "Review now",
+    "xp_history_title": "XP History",
+    "xp_history_suffix": " XP",
+    "xp_history_empty": "Complete a lesson to see history.",
+    "achievements_title": "Badges",
+    "daily_goal_title": "Daily goal",
+    "daily_goal_suffix": " XP",
+    "daily_goal_complete": "Daily goal completed.",
+    "daily_goal_empty": "Complete a lesson to get closer to the challenge.",
+    "app_topbar_percent": "%",
+    "lesson_check": "Check",
+    "lesson_complete_btn": "Complete",
+    "lesson_continue": "Continue",
+    "lesson_preparing": "Lesson in preparation",
+    "lesson_preparing_desc": "This lesson doesn't have published exercises yet.",
+    "lesson_back_to_map": "Back to map",
+    "lesson_completed_title": "Lesson completed",
+    "lesson_accuracy": "accuracy · +",
+    "lesson_correct": "Correct",
+    "lesson_incorrect": "Incorrect",
+    "terminal_label": "terminal",
+    "terminal_placeholder": "type a command",
+    "code_label": "code",
+    "code_placeholder": "write the snippet",
+    "fill_blank_placeholder": "Write the answer",
+    "profile_language": "Language"
+  },
+  "Errors": {
+    "title": "Error",
+    "message": "An unexpected error occurred.",
+    "retry": "Try again"
   }
 }

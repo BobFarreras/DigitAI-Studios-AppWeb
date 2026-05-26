@@ -1,3 +1,9 @@
+/**
+ * @file src/components/admin/AdminSidebar.tsx
+ * @updated 2026-05-19
+ * @summary Component UI admin: src/components/admin/AdminSidebar.tsx
+ * @scope Presentacio i interaccio de la UI d'admin, sense acces directe a dades.
+ */
 // src/components/admin/AdminSidebar.tsx
 'use client';
 
@@ -9,11 +15,10 @@ import {
   BarChart3,
   Users,
   BookOpenCheck,
-  FlaskConical,
   Home,
-  Briefcase,
   Settings,
-  Inbox
+  Inbox,
+  GraduationCap
 } from 'lucide-react';
 
 export function AdminSidebar() {
@@ -22,9 +27,8 @@ export function AdminSidebar() {
   const NAV_ITEMS = [
     { label: 'Analítiques', href: '/admin/analytics', icon: BarChart3 },
     { label: 'Usuaris', href: '/admin/users', icon: Users },
-    { label: 'Projectes', href: '/admin/projects', icon: Briefcase },
-    { label: 'QA / Tests', href: '/admin/tests', icon: FlaskConical },
     { label: 'Blog', href: '/admin/blog', icon: BookOpenCheck },
+    { label: 'Formació', href: '/admin/learning', icon: GraduationCap },
     { label: 'Configuració', href: '/admin/settings', icon: Settings },
     { label: 'Missatges', href: '/admin/missatges', icon: Inbox},
   ];

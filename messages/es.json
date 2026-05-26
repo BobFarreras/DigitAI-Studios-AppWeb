@@ -4,6 +4,10 @@
     "solutions": "Soluciones",
     "projects": "Proyectos",
     "blog": "Blog",
+    "automation": "Automatizaciones",
+    "software": "Software",
+    "training": "Formación",
+    "contact": "Contacto",
     "login": "Entrar",
     "register": "Regístrate",
     "dashboard": "Dashboard",
@@ -49,59 +53,36 @@
     "cta": "Auditoría Gratuita",
     "form_title": "Analiza tu web en segundos"
   },
+  "Seo": {
+    "home": {
+      "title": "DigitAI Studios | Automatizaciones IA y software a medida",
+      "description": "Automatizamos procesos, creamos software a medida y formamos equipos para que empresas y negocios conviertan mejor y ahorren horas cada semana."
+    },
+    "legal": {
+      "avis_legal": {
+        "title": "Aviso Legal",
+        "description": "Información legal, datos identificativos y condiciones de uso del sitio web de DigitAI Studios."
+      },
+      "privacitat": {
+        "title": "Política de Privacidad",
+        "description": "Consulta qué datos recoge DigitAI Studios, por qué los utiliza y cómo puedes ejercer tus derechos."
+      },
+      "cookies": {
+        "title": "Política de Cookies",
+        "description": "Información sobre las cookies necesarias y analíticas utilizadas en el sitio web de DigitAI Studios."
+      }
+    }
+  },
   "Dashboard": {
     "welcome": "Bienvenido, {name}",
     "my_audits": "Mis Auditorías",
-    "projects": {
-      "meta_title": "Mis Proyectos",
-      "title": "Mis Proyectos",
-      "subtitle": "Gestiona tus aplicaciones y participa en las fases de test.",
-      "empty_title": "Aún no tienes proyectos",
-      "empty_desc": "Contacta con nosotros para empezar tu primer desarrollo.",
-      "btn_request": "Solicitar Proyecto",
-      "badge_beta": "BETA DISPONIBLE",
-      "status_configuring": "configurando...",
-      "status_pending": "PENDIENTE"
-    },
-    "test_runner": {
-      "badge_mode": "Modo Tester Activo",
-      "label_progress": "Progreso",
-      "card_instructions": "Instrucciones",
-      "no_instructions": "Sin instrucciones especiales. Valida cada punto de la lista.",
-      "checklist_title": "Lista de Verificación",
-      "success_title": "¡Felicidades!",
-      "success_msg": "Has completado todas las tareas de esta misión.",
-      "motivation_start": "¡Empecemos la misión! 🚀",
-      "motivation_early": "¡Buen comienzo! Continúa así. 💪",
-      "motivation_late": "¡Ya has pasado la mitad! Eres un crack. 🔥",
-      "motivation_done": "¡MISIÓN CUMPLIDA! 🎉 Gracias por tu tiempo."
-    },
-    "project_detail": {
-      "level_label": "Nivel",
-      "xp_label": "XP",
-      "next_label": "Siguiente",
-      "current_project_label": "Proyecto Actual",
-      "missions_title": "Misiones Disponibles",
-      "empty_missions_title": "Ninguna misión activa",
-      "empty_missions_desc": "No tienes pruebas asignadas para este proyecto ahora mismo."
-    },
-    "tester_dashboard": {
-      "error_no_user": "No se ha encontrado el usuario.",
-      "level_label": "Nivel {level}",
-      "xp_label": "XP",
-      "next_level_label": "Siguiente Nivel",
-      "motivation_text": "¡Completa tareas para ganar XP y subir de rango!",
-      "active_missions_title": "Misiones Activas",
-      "empty_state_title": "No tienes ninguna misión asignada todavía.",
-      "empty_state_desc": "¡Pide a tu Project Manager que te asigne!",
-      "no_description": "Sin descripción...",
-      "tasks_count": "{count} Tareas"
-    },
     "mobile_nav": {
       "summary": "Resumen",
       "audits": "Auditorías",
-      "projects": "Proyectos",
       "web": "Web",
+      "learn": "Aprender",
+      "review": "Repasar",
+      "profile": "Perfil",
       "logout_short": "Salir",
       "coming_soon": "¡estará disponible próximamente! 🚀"
     }
@@ -257,8 +238,7 @@
     "legal_notice": "Aviso Legal",
     "privacy": "Política de Privacidad",
     "cookies": "Política de Cookies",
-    "rights_reserved": "Todos los derechos reservados.",
-    "made_with_love": "Hecho con ❤️ en Cataluña"
+    "rights_reserved": "Todos los derechos reservados."
   },
   "Sidebar": {
     "platform": "Plataforma",
@@ -269,8 +249,10 @@
     "pro_button": "Mejorar",
     "web": "Web",
     "overview": "Resumen General",
-    "projects": "Proyectos",
     "analytics": "Analítica Web",
+    "learn": "Aprender",
+    "review": "Repasar",
+    "profile": "Perfil",
     "users": "Usuarios",
     "settings": "Configuración",
     "logout": "Cerrar Sesión",
@@ -291,11 +273,11 @@
     "kpi_seo": "SEO Medio",
     "kpi_system": "Estado del Sistema",
     "system_status": "Operativo",
-    "recent_projects": "Proyectos Recientes",
     "view_all": "Ver todo",
-    "empty_title": "Aún no tienes proyectos",
+    "empty_title": "Todavía no tienes auditorías",
     "empty_desc": "Analiza tu primera web para descubrir errores de SEO y rendimiento.",
-    "empty_button": "Empezar Auditoría"
+    "empty_button": "Empezar Auditoría",
+    "recent_audits": "Auditorías Recientes"
   },
   "AuditList": {
     "title": "Mis Auditorías",
@@ -389,22 +371,32 @@
   },
   "AuthPages": {
     "login": {
-      "marketing_title": "Gestiona tu ecosistema digital desde un solo lugar.",
-      "marketing_subtitle": "Accede a tus auditorías, gestiona tus proyectos web y controla tus automatizaciones.",
+      "marketing_badge": "Acceso seguro",
+      "marketing_title": "Vuelve a tu formacion tecnica.",
+      "marketing_subtitle": "Accede a tu espacio para seguir aprendiendo IA, sistemas informaticos, automatizaciones y nuevas tecnologias con practica guiada.",
+      "feature_1": "IA aplicada",
+      "feature_2": "Sistemas informaticos",
+      "feature_3": "Nuevas tecnologias",
       "footer": "© DigitAI Studios. Todos los derechos reservados.",
       "back_home": "Volver al inicio"
     },
     "register": {
-      "marketing_badge": "ÚNETE A LA REVOLUCIÓN",
-      "marketing_title": "Empieza a construir el futuro de tu negocio hoy mismo.",
-      "feature_1": "Auditorías web gratuitas e ilimitadas.",
-      "feature_2": "Acceso al panel de control de proyectos.",
-      "feature_3": "Soporte prioritario para digitalización.",
+      "marketing_badge": "Formación DigitAI",
+      "marketing_title": "Aprende tecnología real con práctica guiada.",
+      "marketing_subtitle": "Regístrate para formarte en sistemas informáticos, IA, automatizaciones, ciberseguridad y desarrollo moderno.",
+      "feature_1": "IA aplicada",
+      "feature_2": "Sistemas",
+      "feature_3": "Ciberseguridad",
       "back_home": "Inicio"
     },
     "forgot_password": {
+      "badge": "Recuperación segura",
       "title": "Recuperar cuenta",
       "subtitle": "Introduce tu email y te enviaremos las instrucciones.",
+      "feature_1": "Enlace temporal enviado a tu correo.",
+      "feature_2": "El cambio se valida con tu sesión.",
+      "feature_3": "Las credenciales nunca se comparten.",
+      "back_home": "Inicio",
       "back_login": "Volver al login"
     },
     "reset_password": {
@@ -598,7 +590,14 @@
     "login_subtitle": "Introduce tus credenciales para acceder",
     "label_email": "Correo electrónico",
     "label_password": "Contraseña",
+    "label_full_name": "Nombre completo",
+    "placeholder_full_name": "Ej: Juan García",
+    "email_placeholder": "tu@ejemplo.com",
     "cta_login": "Iniciar Sesión",
+    "cta_register": "Crear cuenta",
+    "reset_submit": "Enviar enlace de recuperación",
+    "reset_success_hint": "Revisa tu bandeja de entrada.",
+    "back_login": "Volver al login",
     "register_title": "Crea tu cuenta",
     "register_subtitle": "Empieza a automatizar tu negocio hoy.",
     "social_google": "Continuar con Google",
@@ -609,6 +608,9 @@
     "register_link": "Regístrate",
     "already_have_account": "¿Ya tienes cuenta?",
     "login_link": "Inicia sesión",
+    "privacy_accept": "Acepto la",
+    "privacy_link": "política de privacidad",
+    "privacy_required": "Debes aceptar la política de privacidad.",
     "error": {
       "invalid_login": "El correo o la contraseña son incorrectos.",
       "not_in_org": "Este usuario no pertenece a esta organización.",
@@ -624,5 +626,518 @@
       "sent_to": "Hemos enviado el resumen ejecutivo a <highlight>{email}</highlight>.",
       "unlock_report": "Regístrate ahora para ver el informe técnico completo y las oportunidades de negocio detectadas por la IA."
     }
+  },
+  "LandingV2": {
+    "hero": {
+      "badge": "Crecimiento Digital con Resultados",
+      "title": "Pasamos de una web bonita a un motor real de ventas y automatización.",
+      "titleStrong": "Automatizamos procesos. Creamos software a medida.",
+      "titleMuted": "Y formamos a tu equipo para dominarlo.",
+      "subtitle": "Diseñamos experiencias que convierten visitas en oportunidades, con IA y procesos que ahorran horas cada semana.",
+      "primaryCta": "Quiero una propuesta estratégica",
+      "secondaryCta": "Ver cómo trabajamos",
+      "kpi1": {
+        "value": "+137%",
+        "label": "Conversiones medias"
+      },
+      "kpi2": {
+        "value": "-42h",
+        "label": "Tiempo manual al mes"
+      },
+      "kpi3": {
+        "value": "3.4x",
+        "label": "Retorno estimado"
+      },
+      "chartTitle": "Impacto acumulado de los primeros 90 días",
+      "chartAxis": {
+        "start": "Semana 1",
+        "end": "Semana 12"
+      },
+      "chip1": "Automatizaciones IA",
+      "chip2": "App Web & SaaS",
+      "chip3": "Software a medida",
+      "outcome1": {
+        "title": "Menos tarea manual",
+        "desc": "Automatizamos pasos repetitivos del día a día."
+      },
+      "outcome2": {
+        "title": "Más velocidad operativa",
+        "desc": "Respuestas y procesos en segundos, no en horas."
+      },
+      "outcome3": {
+        "title": "Software hecho para ti",
+        "desc": "CRM, reservas, usuarios y app web a medida."
+      },
+      "proofLine": "Ejemplo real: lead capturado, CRM actualizado y seguimiento enviado automáticamente.",
+      "pillars": [
+        {
+          "title": "Automatizaciones que trabajan solas",
+          "desc": "Conectamos formularios, WhatsApp, CRM, email y ERP para que cada dato llegue donde toca sin introducirlo a mano."
+        },
+        {
+          "title": "Software pensado para tu proceso",
+          "desc": "AppWebs, portales, ERP, SAT y paneles internos diseñados alrededor de cómo trabaja realmente tu empresa."
+        },
+        {
+          "title": "Formación para dominar la herramienta",
+          "desc": "Cybersecurity, programación, sistemas, IA y automatizaciones explicadas con práctica para que el equipo pueda aplicarlas."
+        }
+      ],
+      "console": {
+        "title": "Consola de Automatización",
+        "live": "En vivo",
+        "columns": {
+          "step": "Paso",
+          "status": "Estado",
+          "latency": "Tiempo"
+        },
+        "rows": {
+          "leadCapture": "Captura de lead",
+          "crmSync": "Sincronización CRM",
+          "followUp": "Seguimiento automático",
+          "bookingUpdate": "Actualización de reservas"
+        },
+        "status": {
+          "captured": "capturado",
+          "synced": "sincronizado",
+          "processing": "procesando",
+          "completed": "completado"
+        }
+      }
+    },
+    "automation": {
+      "titleStrong": "Automatizamos procesos repetitivos para que",
+      "titleMuted": "el negocio trabaje solo.",
+      "flows": {
+        "leads": {
+          "name": "Leads",
+          "summary": "Capta contactos, detecta interés, actualiza el CRM y programa seguimientos para que ninguna oportunidad quede parada.",
+          "nodes": {
+            "campaign": {
+              "title": "Primer contacto",
+              "meta": "WhatsApp / email",
+              "explain": "Se envía o entra un mensaje y el sistema registra el contacto."
+            },
+            "interest": {
+              "title": "Detectar interés",
+              "meta": "respuesta e intención",
+              "explain": "La IA separa curiosidad, urgencia y oportunidad comercial."
+            },
+            "filter": {
+              "title": "Filtrar lead",
+              "meta": "calificación",
+              "explain": "Solo avanza lo que encaja con los criterios del negocio."
+            },
+            "crm": {
+              "title": "Actualizar CRM",
+              "meta": "historial vivo",
+              "explain": "Guarda datos, estado, origen y siguiente acción en el CRM."
+            },
+            "follow": {
+              "title": "Follow-up 48h",
+              "meta": "recordatorio",
+              "explain": "Si no responde, programa un nuevo contacto sin perder el hilo."
+            },
+            "team": {
+              "title": "Avisar equipo",
+              "meta": "contexto completo",
+              "explain": "Cuando hay señal real, llega a la persona adecuada."
+            }
+          }
+        },
+        "quotes": {
+          "name": "Presupuestos",
+          "summary": "Transforma solicitudes en datos ordenados, aplica criterios comerciales y prepara presupuestos o facturas para validar.",
+          "nodes": {
+            "request": {
+              "title": "Solicitud",
+              "meta": "formulario o email",
+              "explain": "Recoge datos del cliente, servicio y condiciones de venta."
+            },
+            "clean": {
+              "title": "Ordenar datos",
+              "meta": "validación",
+              "explain": "Detecta campos incompletos y normaliza la información."
+            },
+            "rules": {
+              "title": "Aplicar criterios",
+              "meta": "precios y margen",
+              "explain": "Aplica tarifas, descuentos, impuestos y márgenes pactados."
+            },
+            "quote": {
+              "title": "Presupuesto",
+              "meta": "documento",
+              "explain": "Genera un borrador listo para revisar y enviar."
+            },
+            "invoice": {
+              "title": "Factura",
+              "meta": "cuando se acepta",
+              "explain": "Cuando el cliente acepta, deja la factura preparada."
+            },
+            "notify": {
+              "title": "Validación",
+              "meta": "responsable",
+              "explain": "El equipo solo revisa decisiones, no vuelve a escribir datos."
+            }
+          }
+        },
+        "social": {
+          "name": "RRSS",
+          "summary": "Convierte ideas en piezas adaptadas por canal, las envía a revisión y las deja programadas con control de resultados.",
+          "nodes": {
+            "idea": {
+              "title": "Idea o noticia",
+              "meta": "entrada inicial",
+              "explain": "Una idea, producto o noticia inicia el flujo de contenido."
+            },
+            "copy": {
+              "title": "Crear versiones",
+              "meta": "tono y formato",
+              "explain": "Adapta el mensaje para LinkedIn, Instagram, blog o email."
+            },
+            "approve": {
+              "title": "Revisar",
+              "meta": "control humano",
+              "explain": "Antes de publicar, el equipo puede validar el contenido."
+            },
+            "calendar": {
+              "title": "Programar",
+              "meta": "calendario",
+              "explain": "Decide día, hora y canal según la planificación."
+            },
+            "publish": {
+              "title": "Publicar",
+              "meta": "canales",
+              "explain": "Publica o deja preparadas las piezas en cada plataforma."
+            },
+            "report": {
+              "title": "Medir",
+              "meta": "resultados",
+              "explain": "Agrupa métricas y detecta qué ha funcionado mejor."
+            }
+          }
+        },
+        "support": {
+          "name": "Soporte",
+          "summary": "Responde preguntas habituales, consulta documentación y crea tickets con contexto cuando necesita intervención humana.",
+          "nodes": {
+            "chat": {
+              "title": "Pregunta cliente",
+              "meta": "chat o web",
+              "explain": "El cliente pregunta y recibe una primera respuesta inmediata."
+            },
+            "kb": {
+              "title": "Consultar base",
+              "meta": "documentación",
+              "explain": "Busca en manuales, FAQs, incidencias e historial."
+            },
+            "resolve": {
+              "title": "¿Puede resolver?",
+              "meta": "decisión",
+              "explain": "Si tiene confianza, responde; si no, prepara escalado."
+            },
+            "answer": {
+              "title": "Respuesta guiada",
+              "meta": "paso a paso",
+              "explain": "Da instrucciones claras para que el cliente avance."
+            },
+            "ticket": {
+              "title": "Crear ticket",
+              "meta": "soporte técnico",
+              "explain": "Si hace falta intervención, crea un ticket con contexto."
+            },
+            "close": {
+              "title": "Seguimiento",
+              "meta": "estado y resumen",
+              "explain": "Mantiene informado al cliente y al equipo hasta el cierre."
+            }
+          }
+        }
+      }
+    },
+    "pain": {
+      "badge": "Diagnóstico Claro",
+      "title": "El problema no es tener tráfico. El problema es no convertirlo.",
+      "description": "Si la web no guía, no resuelve dudas y no impulsa una acción clara, estás perdiendo ventas cada día.",
+      "pain1": "Mensajes dispersos: el usuario no entiende qué ofreces en 5 segundos.",
+      "pain2": "Exceso de secciones: la decisión se diluye y baja la conversión.",
+      "pain3": "Sin embudo activo: no existe un recorrido claro hasta el contacto."
+    },
+    "process": {
+      "title": "Metodología en 3 fases para activar resultados rápido.",
+      "steps": [
+        {
+          "title": "Foco de mensaje",
+          "description": "Sintetizamos propuesta de valor, oferta y CTA para que el visitante entienda qué gana."
+        },
+        {
+          "title": "Ejecución visual",
+          "description": "Landing con jerarquía, ritmo y animación útil para retener atención y reforzar confianza."
+        },
+        {
+          "title": "Optimización continua",
+          "description": "Medimos clics, scroll y formularios para iterar donde realmente impacta en negocio."
+        }
+      ]
+    },
+    "services": {
+      "badge": "Ejecución End-to-End",
+      "title": "Todo lo necesario para pasar de presencia digital a sistema comercial.",
+      "cta": "Reservar sesión de valor",
+      "items": [
+        {
+          "tag": "Captación",
+          "title": "Landing + Oferta",
+          "description": "Arquitectura de mensaje, copy y diseño orientado a decisión rápida.",
+          "points": [
+            "Hero de conversión",
+            "CTA estratégicos",
+            "Narrativa de valor"
+          ]
+        },
+        {
+          "tag": "Automatización",
+          "title": "Procesos IA",
+          "description": "Flujos conectados entre formularios, CRM y notificaciones para no perder ningún lead.",
+          "points": [
+            "Lead routing automático",
+            "Seguimiento omnicanal",
+            "Calificación inicial IA"
+          ]
+        },
+        {
+          "tag": "Escalado",
+          "title": "Datos e Iteración",
+          "description": "Cuadro de mando y experimentos para subir conversión mes a mes.",
+          "points": [
+            "KPIs de captación",
+            "Test A/B por bloques",
+            "Roadmap de mejoras"
+          ]
+        }
+      ],
+      "subtitle": "Desarrollamos automatizaciones, app webs y software a medida: ERP, registro de usuarios y cualquier solución digital que necesites."
+    },
+    "finalCta": {
+      "title": "Si quieres más clientes cualificados, necesitas una landing que guíe decisiones.",
+      "description": "Preparamos una propuesta concreta con prioridades, impacto estimado y plan de implementación.",
+      "primaryCta": "Solicitar diagnóstico",
+      "secondaryCta": "Revisar servicios"
+    },
+    "whatWeBuild": {
+      "badge": "Que Hacemos Exactamente",
+      "title": "Automatizaciones, app webs y software a medida para cualquier necesidad digital.",
+      "description": "Desde un ERP interno hasta un registro de usuarios o flujos comerciales automatizados. Construimos la solución que necesitas, no una plantilla genérica.",
+      "items": [
+        {
+          "title": "Automatizaciones IA",
+          "description": "Flujos que conectan formularios, CRM, emails y tareas internas para reducir trabajo manual."
+        },
+        {
+          "title": "App Web y SaaS",
+          "description": "Plataformas web modernas para vender, operar y escalar procesos digitales."
+        },
+        {
+          "title": "Registro de Usuarios",
+          "description": "Sistemas de cuentas, roles, permisos y paneles de administración seguros."
+        },
+        {
+          "title": "Software a Medida",
+          "description": "ERP, gestión interna y herramientas custom según tu modelo de negocio."
+        }
+      ],
+      "flow": {
+        "label": "Metodo de Trabajo",
+        "steps": [
+          "Diagnóstico y objetivos",
+          "Diseño y prototipo",
+          "Desarrollo modular",
+          "Salida a producción"
+        ]
+      }
+    },
+    "training": {
+      "titleStrong": "Fórmate para crear, automatizar",
+      "titleMuted": "y dominar tecnología real.",
+      "registerCta": "Registrarse",
+      "formats": {
+        "teams": {
+          "title": "Formación para equipos",
+          "desc": "Sesiones prácticas para empresas que quieren aplicar IA, automatizaciones y herramientas digitales con criterio."
+        },
+        "private": {
+          "title": "Formación privada",
+          "desc": "Acompañamiento directo para profesionales, directivos y autónomos que quieren aprender con objetivos concretos."
+        },
+        "academy": {
+          "title": "Academia online",
+          "desc": "Itinerarios digitales con cápsulas, ejercicios y progreso para aprender desde la web a tu ritmo."
+        }
+      }
+    },
+    "contact": {
+      "titleStrong": "Hablemos de lo que necesitas.",
+      "titleMuted": "Y del mejor camino para conseguirlo.",
+      "lead": "Cuéntanos qué quieres mejorar y te responderemos con una propuesta concreta: automatización, software, formación o una combinación realista.",
+      "services": {
+        "automation": "Automatizaciones e IA",
+        "software": "Software a medida"
+      },
+      "proof": {
+        "response": "Respuesta",
+        "responseValue": "En menos de 48 h laborables",
+        "privacy": "Privacidad",
+        "privacyValue": "Datos tratados con criterio",
+        "next": "Siguiente paso",
+        "nextValue": "Diagnóstico y propuesta inicial"
+      },
+      "form": {
+        "name": "Nombre completo",
+        "namePlaceholder": "Juan García",
+        "email": "Email corporativo",
+        "emailPlaceholder": "juan@empresa.com",
+        "message": "¿Qué necesitas construir o automatizar?",
+        "messagePlaceholder": "Quiero reducir trabajo manual, crear un CRM interno, formar al equipo...",
+        "submit": "Enviar mensaje",
+        "sending": "Enviando...",
+        "sent": "Enviado correctamente"
+      },
+      "privacy": "He leído y acepto la <link>política de privacidad</link> y el tratamiento de mis datos."
+    },
+    "explainer": {
+      "badge": "Por Que Funciona",
+      "title": "Automatización = menos tareas manuales, menos errores y mucho más tiempo para vender.",
+      "subtitle": "Cuando automatizamos procesos repetitivos, tu equipo deja el trabajo mecánico y se centra en clientes, ventas y crecimiento.",
+      "automation": {
+        "title": "Impacto real de las automatizaciones",
+        "description": "Sustituimos pasos manuales por flujos automáticos conectados con CRM, email y notificaciones.",
+        "beforeLabel": "Antes",
+        "beforeText": "Tareas manuales/semana",
+        "afterLabel": "Después",
+        "afterText": "Tareas manuales/semana",
+        "points": [
+          "Captura automática de leads y datos",
+          "Seguimiento automático sin olvidar clientes",
+          "Menos errores humanos en procesos repetidos"
+        ]
+      },
+      "software": {
+        "title": "Software a medida para necesidades reales",
+        "description": "No vendemos una plantilla cerrada. Construimos tu herramienta: CRM, control de reservas, usuarios y app web personalizada.",
+        "cases": [
+          "CRM interno para ventas y seguimiento",
+          "Registro de usuarios con roles y permisos",
+          "Control de reservas en tiempo real",
+          "App web operativa para clientes y equipo interno"
+        ],
+        "flowLabel": "Flujo de solución",
+        "flow": [
+          "Necesidad",
+          "Diseño funcional",
+          "Desarrollo",
+          "Resultado productivo"
+        ]
+      }
+    }
+  },
+  "Learning": {
+    "dashboard": "Resumen",
+    "learn": "Aprender",
+    "review": "Repasar",
+    "profile": "Perfil",
+    "training": "Formación",
+    "continueLearning": "Continuar aprendiendo",
+    "startReview": "Repasar ahora",
+    "reviewCount": "Repasar {count}",
+    "formacioDigitAI": "Formación DigitAI",
+    "perfilFormatiu": "Perfil formativo",
+    "level": "Nivel",
+    "proximNivel": "Siguiente nivel",
+    "xpTotal": "XP total",
+    "streak": "Racha",
+    "lessons": "Lecciones",
+    "accuracy": "Precisión",
+    "progresPerRuta": "Progreso por ruta",
+    "rutaForta": "Ruta fuerte",
+    "objectiuDiari": "Objetivo diario",
+    "rutesActives": "Rutas activas",
+    "encaraPendent": "Aún pendiente",
+    "completat": "completado",
+    "active": "Activa",
+    "completed": "Completada",
+    "blocked": "Bloqueada",
+    "noLessonsToReview": "No hay lecciones pendientes de repaso.",
+    "weakSpots": "Puntos débiles",
+    "repeatedMistakes": "Errores repetidos",
+    "reviewQueue": "Cola de repaso",
+    "weeklyTime": "Tiempo semana",
+    "questionsPrioritaries": "Preguntas prioritarias",
+    "lessonsToReview": "Lecciones para reforzar",
+    "practicaErrors": "Practica errores",
+    "correctAnswer": "Respuesta correcta",
+    "wrongAnswer": "Respuesta incorrecta",
+    "lessonComplete": "¡Lección completada!",
+    "continueToNext": "Continuar a la siguiente",
+    "hero_subtitle": "Practica en sesiones cortas, refuerza errores y gana XP sin quedarte bloqueado.",
+    "hero_continue_prefix": "Sigue aprendiendo, ",
+    "hero_next_lesson": "Siguiente lección",
+    "hero_minutes_suffix": " min",
+    "hero_start_prefix": "Empezar ",
+    "hero_streak_suffix": "días de racha",
+    "stats_lessons_done": "Lecciones hechas",
+    "stats_weekly_time": "Tiempo semanal",
+    "stats_accuracy": "Precisión",
+    "track_grid_title": "Rutas formativas",
+    "track_grid_subtitle": "Elige tu camino",
+    "track_page_tracks": "Rutas",
+    "track_page_blocked_desc": "Completa la ruta anterior para desbloquear este camino.",
+    "track_map_prefix": "Ruta ",
+    "review_page_summary": "Resumen",
+    "review_page_active_review": "Repaso activo",
+    "review_page_practice_errors": "Practica errores",
+    "review_page_weak_questions": "preguntas débiles. Precisión actual: ",
+    "review_page_percent": "%",
+    "review_page_lessons_reinforce": "Lecciones para reforzar",
+    "review_page_repeated_errors": "Errores repetidos",
+    "review_page_review_queue": "Cola de repaso",
+    "review_page_weekly_time": "Tiempo semana",
+    "review_page_priority_questions": "Preguntas prioritarias",
+    "review_page_errors": "errores",
+    "review_page_empty": "No hay lecciones pendientes de repaso.",
+    "review_card_reinforce": "Refuerzo",
+    "review_card_practice_errors": "Practica errores",
+    "review_card_accuracy_prefix": "La precisión actual es ",
+    "review_card_accuracy_suffix": "%. Reforzar puntos débiles da XP y desbloquea progreso neto.",
+    "review_card_review_now": "Repasar ahora",
+    "xp_history_title": "Historial XP",
+    "xp_history_suffix": " XP",
+    "xp_history_empty": "Completa una lección para ver el historial.",
+    "achievements_title": "Medallas",
+    "daily_goal_title": "Objetivo diario",
+    "daily_goal_suffix": " XP",
+    "daily_goal_complete": "Objetivo completado hoy.",
+    "daily_goal_empty": "Completa una lección para acercarte al reto.",
+    "app_topbar_percent": "%",
+    "lesson_check": "Comprobar",
+    "lesson_complete_btn": "Completar",
+    "lesson_continue": "Continuar",
+    "lesson_preparing": "Lección en preparación",
+    "lesson_preparing_desc": "Esta lección aún no tiene ejercicios publicados.",
+    "lesson_back_to_map": "Volver al mapa",
+    "lesson_completed_title": "Lección completada",
+    "lesson_accuracy": "precisión · +",
+    "lesson_correct": "Correcto",
+    "lesson_incorrect": "Incorrecto",
+    "terminal_label": "terminal",
+    "terminal_placeholder": "escribe un comando",
+    "code_label": "code",
+    "code_placeholder": "escribe el snippet",
+    "fill_blank_placeholder": "Escribe la respuesta",
+    "profile_language": "Idioma"
+  },
+  "Errors": {
+    "title": "Error",
+    "message": "Se ha producido un error inesperado.",
+    "retry": "Intentar de nuevo"
   }
 }

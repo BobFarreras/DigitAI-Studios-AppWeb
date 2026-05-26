@@ -1,3 +1,9 @@
+/**
+ * @file src/actions/contact.ts
+ * @updated 2026-05-08
+ * @summary Server actions per src/actions/contact.ts
+ * @scope Operacions de servidor, validacio i orquestracio de capa aplicacio.
+ */
 'use server';
 
 // Importem els tipus del fitxer que acabem d'arreglar

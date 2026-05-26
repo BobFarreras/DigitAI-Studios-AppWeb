@@ -1,3 +1,9 @@
+/**
+ * @file src/components/admin/socials/SocialManager.tsx
+ * @updated 2026-05-08
+ * @summary Component UI admin: src/components/admin/socials/SocialManager.tsx
+ * @scope Presentacio i interaccio de la UI d'admin, sense acces directe a dades.
+ */
 'use client'
 
 import { useState } from 'react';

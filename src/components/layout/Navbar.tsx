@@ -15,6 +15,7 @@ import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { UserNav } from './UserNav';
 import { PublicMobileNav } from './PublicMobilNav';
+import { MobileHeaderMenu } from './MobileHeaderMenu';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,16 +23,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-type Props = {
-  user: SupabaseUser | null;
-};
+type Props = { user: SupabaseUser | null };
 
-// Definim els links del Dropdown
 const DROPDOWN_LINKS = [
   { href: '/#solutions', label: 'Solucions Tecnològiques' },
   { href: '/#services', label: 'Serveis & Packs' },
-  { href: '/#audit', label: 'Auditoria Web Gratuïta' },
-  { href: '/#blog-feed', label: 'Blog & Recursos' },
   { href: '/#testimonials', label: "Casos d'Èxit" },
   { href: '/#contact', label: 'Contacte' }
 ];
@@ -41,7 +37,6 @@ export function Navbar({ user }: Props) {
   const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
 
-  // Control d'scroll per canviar l'estil del header
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
@@ -76,14 +71,7 @@ export function Navbar({ user }: Props) {
         )}
       >
         <div className="container mx-auto px-4 flex items-center justify-between">
-
-          {/* 1. LOGO DE MARCA - AMB EFECTE "VIU" */}
           <Link href="/" className="flex items-center space-x-2">
-            {/* MODIFICACIÓ AQUÍ:
-                - transition-all duration-300: Suavitat en l'animació.
-                - hover:scale-110: Es fa un 10% més gran.
-                - hover:drop-shadow-[...]: Crea la brillantor lila (#a855f7) al voltant de la silueta.
-            */}
             <div className="relative h-8 w-32 transition-all duration-300 ease-in-out hover:scale-110 hover:drop-shadow-[0_0_15px_rgba(168,85,247,0.7)]">
               <Image
                 src={logo}
@@ -94,14 +82,11 @@ export function Navbar({ user }: Props) {
               />
             </div>
           </Link>
-
-          {/* 2. MENU ESCRIPTORI CENTRAL */}
           <nav className="hidden md:flex items-center gap-8">
             <Link href="/" className={cn("text-sm font-medium hover:text-primary transition-colors", pathname === '/' ? "text-primary" : "text-muted-foreground")}>
               {t('home')}
             </Link>
 
-            {/* Dropdown "Solucions" */}
             <DropdownMenu>
               <DropdownMenuTrigger className="flex items-center gap-1 text-sm font-medium text-muted-foreground hover:text-primary transition-colors outline-none data-[state=open]:text-primary group">
                 {t('solutions')}
@@ -122,38 +107,24 @@ export function Navbar({ user }: Props) {
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
-
-            <Link href="/projectes" className={cn("text-sm font-medium hover:text-primary transition-colors", pathname === '/projectes' ? "text-primary" : "text-muted-foreground")}>
-              {t('projects')}
-            </Link>
-
-            <Link href="/blog" className={cn("text-sm font-medium hover:text-primary transition-colors", pathname === '/blog' ? "text-primary" : "text-muted-foreground")}>
-              {t('blog')}
-            </Link>
           </nav>
-
-          {/* 3. ÀREA D'ACCIONS (DRETA) */}
           <div className="flex items-center gap-2 md:gap-4">
-            {/* Utilitats */}
             <div className="hidden md:flex items-center gap-1 pr-2 border-r border-border/50">
               <ThemeToggle />
               <LanguageSwitcher />
             </div>
 
-            {/* Mòbil: Només mostrar toggles, el menú va a baix */}
-            <div className="flex md:hidden gap-1">
+            <div className="flex md:hidden items-center gap-1">
               <ThemeToggle />
               <LanguageSwitcher />
+              <MobileHeaderMenu user={user} onSectionClick={handleScrollToSection} />
             </div>
 
-            {/* Lògica d'Usuari encapsulada */}
             <UserNav user={user} />
           </div>
 
         </div>
       </header>
-
-      {/* 4. BARRA DE NAVEGACIÓ MÒBIL */}
       <PublicMobileNav user={user} />
     </>
   );

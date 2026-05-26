@@ -93,8 +93,8 @@ export function LanguageSwitcher() {
 
   const handleLanguageChange = (nextLocale: SupportedLocale) => {
     startTransition(() => {
-    
-      router.replace(pathname, { locale: nextLocale });
+      const currentHash = window.location.hash;
+      router.replace(`${pathname}${currentHash}`, { locale: nextLocale, scroll: false });
     });
   };
 

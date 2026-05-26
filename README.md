@@ -1,36 +1,51 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# DigitAI Studios
 
-## Getting Started
+Modern landing + private admin workspace built with Next.js 16, TypeScript, Supabase and `next-intl`.
 
-First, run the development server:
+## Current Direction
+- Public focus: high-impact landing experience and legal pages.
+- Private focus: internal admin tools for analytics, users, messages and content/RRSS.
+- Retired to `legacy/`: landing v1, public blog, public projects, factory, booking/ecommerce, project dashboard and QA/tests.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Tech Stack
+- Next.js 16 (App Router)
+- TypeScript strict mode
+- Supabase (Auth + Postgres)
+- Tailwind + shadcn/ui
+- Vitest + Testing Library
+- Zod validation
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Project Commands
+- `pnpm dev`: run local app
+- `pnpm build`: production build check
+- `pnpm lint`: eslint checks
+- `pnpm test -- --run`: headless tests
+- `pnpm check:lines`: file length guard (<=150)
+- `pnpm check:architecture`: DB access boundary guard
+- `pnpm check`: full quality gate
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Quality Gate Policy
+Every meaningful change should pass:
+1. `pnpm lint`
+2. `pnpm test -- --run`
+3. `pnpm check`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Architecture Docs
+- Global rules: `AGENTS.md`
+- Target architecture: `ARCHITECTURE.md`
+- Documentation index: `docs/INDEX.md`
+- Module indexes: `src/*/README.md`
 
-## Learn More
+## Structure
+- `src/app`: routes and page composition
+- `src/components`: reusable UI
+- `src/features`: feature modules
+- `src/actions`: shared server actions
+- `src/services`: business logic
+- `src/repositories`: data access layer
+- `src/adapters`: external integrations
+- `legacy`: archived code kept for reference, excluded from TypeScript and ESLint
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Active Supabase Scope
+- Active public schema: profiles, organizations, analytics, audits, contact leads, posts and social publishing tables.
+- Retired tables are backed up in `legacy_backup` with RLS enabled and no client policies.

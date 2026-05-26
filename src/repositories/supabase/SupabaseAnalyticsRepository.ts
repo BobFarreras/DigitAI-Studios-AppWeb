@@ -1,4 +1,4 @@
-import { createClient, createAdminClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/server';
 import { AnalyticsEventDTO } from '@/types/models';
 import { Database, Json } from '@/types/database.types';
 import {
@@ -67,7 +67,7 @@ export class SupabaseAnalyticsRepository implements IAnalyticsRepository {
   // --- LLEGIR DADES (DASHBOARD) ---
 
   async getLast7DaysStats(): Promise<DailyStats[]> {
-    const supabase = await createClient();
+    const supabase = createAdminClient();
     
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
@@ -118,7 +118,7 @@ export class SupabaseAnalyticsRepository implements IAnalyticsRepository {
     browsers: StatItem[];
     os: StatItem[];
   }> {
-    const supabase = await createClient();
+    const supabase = createAdminClient();
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
     const dateStr = thirtyDaysAgo.toISOString();

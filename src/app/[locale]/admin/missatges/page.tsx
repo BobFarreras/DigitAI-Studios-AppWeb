@@ -1,3 +1,9 @@
+/**
+ * @file src/app/[locale]/admin/missatges/page.tsx
+ * @updated 2026-05-08
+ * @summary Route module: src/app/[locale]/admin/missatges/page.tsx
+ * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
+ */
 import { getAdminLeads } from '@/actions/admin/leads';
 import { getAdminAudits } from '@/actions/admin/audits'; // 👈 Importem la nova acció
 import { LeadsTable } from '@/components/admin/LeadsTable';

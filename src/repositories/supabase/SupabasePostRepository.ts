@@ -1,4 +1,4 @@
-import { createClient, createAdminClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/server';
 import { IPostRepository } from '@/repositories/interfaces/IPostRepository';
 import { BlogPostDTO } from '@/types/models';
 import { Database } from '@/types/database.types';
@@ -7,6 +7,7 @@ import { Database } from '@/types/database.types';
 type PostRow = Database['public']['Tables']['posts']['Row'];
 type PostUpdate = Database['public']['Tables']['posts']['Update'];
 type PostInsert = Database['public']['Tables']['posts']['Insert'];
+type SocialPostRow = Database['public']['Tables']['social_posts']['Row'];
 
 // 2. ✅ DEFINICIÓ ESTRICTA DEL JOIN AMB EL NOM CORRECTE DE LA COLUMNA
 type PostRowWithRelations = PostRow & {
@@ -48,59 +49,6 @@ export class SupabasePostRepository implements IPostRepository {
         }))
         : []
     };
-  }
-
-  // --- LECTURA PÚBLICA (WEB) ---
-  // (Aquesta part no canvia, la deixo resumida)
-  async getPostBySlug(slug: string): Promise<BlogPostDTO | null> {
-    const supabase = await createClient();
-    const { data, error } = await supabase
-      .from('posts')
-      .select('*')
-      .eq('slug', slug)
-      .eq('status', 'published')
-      .eq('published', true)
-      .eq('organization_id', MY_ORG_ID)
-      .single();
-
-    if (error || !data) return null;
-    // Cast manual per satisfer el mapToDTO encara que no porti socials
-    return this.mapToDTO({ ...data, social_posts: [] } as unknown as PostRowWithRelations);
-  }
-
-  async getAllPublishedPosts(): Promise<BlogPostDTO[]> {
-    const supabase = await createClient();
-    // ... (El teu codi existent de getAllPublishedPosts està bé)
-    // Simplement recorda que aquí no estem fent join amb socials, així que al map:
-    // return this.mapToDTO({ ...row, social_posts: [] } as unknown as PostRowWithRelations);
-    // (O simplement ignora el camp si és opcional al DTO)
-
-    // Per simplicitat, aquí tens el bloc sencer si vols assegurar:
-    const { data: posts } = await supabase
-      .from('posts')
-      .select('*')
-      .eq('status', 'published')
-      .eq('published', true)
-      .eq('organization_id', MY_ORG_ID)
-      .order('published_at', { ascending: false });
-
-    if (!posts || posts.length === 0) return [];
-
-    const slugs = posts.map(p => p.slug);
-    const { data: reactions } = await supabase
-      .from('post_reactions')
-      .select('post_slug')
-      .in('post_slug', slugs);
-
-    const reactionCounts = new Map<string, number>();
-    reactions?.forEach(r => {
-      reactionCounts.set(r.post_slug, (reactionCounts.get(r.post_slug) || 0) + 1);
-    });
-
-    return posts.map(row => ({
-      ...this.mapToDTO({ ...row, social_posts: [] } as unknown as PostRowWithRelations),
-      totalReactions: reactionCounts.get(row.slug) || 0
-    }));
   }
 
   // --- GESTIÓ ADMIN (DASHBOARD) ---
@@ -213,30 +161,17 @@ export class SupabasePostRepository implements IPostRepository {
     return this.mapToDTO(data as unknown as PostRowWithRelations);
   }
 
-  // ... (Reaccions igual)
-  async getPostReactions(slug: string): Promise<Record<string, number>> {
-    const supabase = await createClient();
-    const { data } = await supabase.from('post_reactions').select('reaction_type').eq('post_slug', slug);
-    const counts: Record<string, number> = {};
-    data?.forEach(r => counts[r.reaction_type] = (counts[r.reaction_type] || 0) + 1);
-    return counts;
-  }
-
-  async toggleReaction(slug: string, reaction: string, visitorId: string) {
+  async getSocialPostsByPostId(postId: string): Promise<SocialPostRow[]> {
     const supabase = createAdminClient();
-    const { data: post } = await supabase.from('posts').select('id').eq('slug', slug).eq('organization_id', MY_ORG_ID).single();
-    if (!post) throw new Error("Post not found");
+    const { data, error } = await supabase
+      .from('social_posts')
+      .select('*')
+      .eq('post_id', postId);
 
-    const { data: existing } = await supabase.from('post_reactions').select('id').eq('post_slug', slug).eq('reaction_type', reaction).eq('visitor_id', visitorId).maybeSingle();
-
-    if (existing) {
-      await supabase.from('post_reactions').delete().eq('id', existing.id);
-      return 'removed';
-    } else {
-      await supabase.from('post_reactions').insert({ post_slug: slug, reaction_type: reaction, visitor_id: visitorId });
-      return 'added';
-    }
+    if (error || !data) return [];
+    return data;
   }
+
   // ✅ NOU MÈTODE PAGINAT
   async getPaginatedPosts(page: number, pageSize: number): Promise<{ posts: BlogPostDTO[]; total: number }> {
     const supabase = createAdminClient();
@@ -266,55 +201,4 @@ export class SupabasePostRepository implements IPostRepository {
     };
 
   }
-
-
-  // 👇 NOU MÈTODE PER AL BLOG PÚBLIC (Paginat + Només Publicats)
-  async getPublishedPostsPaginated(page: number, pageSize: number): Promise<{ posts: BlogPostDTO[]; total: number }> {
-    const supabase = await createClient();
-
-    const start = (page - 1) * pageSize;
-    const end = start + pageSize - 1;
-
-    // 1. Obtenim els posts filtrats
-    const { data, count, error } = await supabase
-      .from('posts')
-      .select('*', { count: 'exact' })
-      .eq('status', 'published')
-      .eq('published', true)
-      .eq('organization_id', process.env.NEXT_PUBLIC_MAIN_ORG_ID!)
-      .order('published_at', { ascending: false })
-      .range(start, end);
-
-    if (error) throw new Error(error.message);
-
-    // 2. Obtenim les reaccions
-    const slugs = data?.map(p => p.slug) || [];
-    const reactionCounts = new Map<string, number>();
-
-    if (slugs.length > 0) {
-      const { data: reactions } = await supabase
-        .from('post_reactions')
-        .select('post_slug')
-        .in('post_slug', slugs);
-
-      reactions?.forEach(r => {
-        reactionCounts.set(r.post_slug, (reactionCounts.get(r.post_slug) || 0) + 1);
-      });
-    }
-
-    // 3. Mapegem a DTO
-    const posts = (data || []).map(row => ({
-      // ✅ CORRECCIÓ: Canviem 'any' per 'PostRowWithRelations'
-      // Com que li estem afegint manualment 'social_posts: []', TypeScript
-      // acceptarà que això ara compleix amb el tipus PostRowWithRelations.
-      ...this.mapToDTO({ ...row, social_posts: [] } as unknown as PostRowWithRelations),
-      totalReactions: reactionCounts.get(row.slug) || 0
-    }));
-
-    return {
-      posts,
-      total: count || 0
-    };
-  }
-
 }

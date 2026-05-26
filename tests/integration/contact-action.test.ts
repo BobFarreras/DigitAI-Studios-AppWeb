@@ -21,7 +21,7 @@ vi.mock('@/adapters/nodemailer/NodemailerAdapter', () => ({
 // ---------------------------------------------------------------------------
 // 2. MOCK DE LA VALIDACIÓ ZOD (Estricte)
 // ---------------------------------------------------------------------------
-vi.mock('@/lib/validations/contact', async (importOriginal) => {
+vi.mock('@/lib/validations/contact', async () => {
   return {
     ContactFormSchema: {
       // ✅ FIX: Usem 'unknown' en lloc de 'any'

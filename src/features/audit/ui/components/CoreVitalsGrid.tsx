@@ -1,3 +1,9 @@
+/**
+ * @file src/features/audit/ui/components/CoreVitalsGrid.tsx
+ * @updated 2026-05-08
+ * @summary Feature module: src/features/audit/ui/components/CoreVitalsGrid.tsx
+ * @scope UI o logica de feature encapsulada dins del domini corresponent.
+ */
 import { Zap, LayoutTemplate, MoveHorizontal, Clock, Gauge } from 'lucide-react';
 
 // Tipus locals per la UI (no cal importar el Zod schema aquí, per mantenir desacoblament)

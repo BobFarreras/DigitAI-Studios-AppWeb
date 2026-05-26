@@ -1,5 +1,11 @@
+/**
+ * @file src/app/[locale]/layout.tsx
+ * @updated 2026-05-08
+ * @summary Route module: src/app/[locale]/layout.tsx
+ * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
+ */
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from 'next-intl/server';
+import { getMessages, getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing, type Locale } from '@/routing';
 import { Inter } from 'next/font/google';
@@ -9,6 +15,7 @@ import type { Metadata, Viewport } from 'next';
 import { Toaster } from 'sonner';
 import { Suspense } from 'react';
 import { AnalyticsTracker } from '@/features/analytics/ui/AnalyticsTracker';
+import { getLocalizedAlternates } from '@/lib/seo';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -27,17 +34,6 @@ export const viewport: Viewport = {
   maximumScale: 1,
 };
 
-// Funció helper per generar URLs segons la lògica 'as-needed'
-const getUrl = (locale: string, path: string = '') => {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://digitaistudios.com';
-  // Si és català (default), NO posem prefix
-  if (locale === 'ca') {
-    return `${baseUrl}${path}`;
-  }
-  // Per la resta, SÍ posem prefix
-  return `${baseUrl}/${locale}${path}`;
-};
-
 // 2. METADADES DINÀMIQUES (SEO + Hreflang + Canonical)
 export async function generateMetadata({
   params
@@ -45,16 +41,16 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const currentUrl = getUrl(locale); // URL canònica actual
-
+  const t = await getTranslations({ locale, namespace: 'Seo.home' });
+  const alternates = getLocalizedAlternates(locale);
 
   return {
     metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://digitaistudios.com'),
     title: {
-      default: 'DigitAI Studios | Desenvolupament Web & IA',
+      default: t('title'),
       template: '%s | DigitAI Studios'
     },
-    description: 'Transformem negocis amb AppWebs, Apps Natives i Automatització IA. Solucions digitals 360°.',
+    description: t('description'),
     keywords: ['Desenvolupament Web', 'App', 'React Native', 'Next.js', 'IA', 'Automatització', 'Girona'],
     authors: [{ name: 'DigitAI Studios' }],
     creator: 'DigitAI Studios',
@@ -69,15 +65,19 @@ export async function generateMetadata({
       },
     },
 
-    // 👇 AQUESTA ÉS LA CLAU PER ARREGLAR GSC i IDIOMES:
-    alternates: {
-      canonical: currentUrl,
-      languages: {
-        'ca': getUrl('ca'), // Retornarà https://digitaistudios.com
-        'es': getUrl('es'), // Retornarà https://digitaistudios.com/es
-        'en': getUrl('en'),
-        'it': getUrl('it'),
-      },
+    alternates,
+    openGraph: {
+      title: t('title'),
+      description: t('description'),
+      url: alternates?.canonical?.toString(),
+      siteName: 'DigitAI Studios',
+      type: 'website',
+      locale,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: t('title'),
+      description: t('description'),
     },
   };
 }
@@ -101,13 +101,14 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale} className={inter.variable} suppressHydrationWarning>
-      <body className="antialiased bg-background text-foreground overflow-x-hidden transition-colors duration-300">
+      <body
+        className="antialiased bg-background text-foreground overflow-x-hidden transition-colors duration-300"
+        suppressHydrationWarning
+      >
         <NextIntlClientProvider messages={messages}>
           <ThemeProvider
-            attribute="class"
             defaultTheme="system"
             enableSystem
-            disableTransitionOnChange
           >
             {/* Analítica sense bloquejar la càrrega */}
             <Suspense fallback={null}>

@@ -1,16 +1,21 @@
+/**
+ * @file src/app/[locale]/auth/reset-password/page.tsx
+ * @updated 2026-05-08
+ * @summary Route module: src/app/[locale]/auth/reset-password/page.tsx
+ * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
+ */
 import { redirect } from 'next/navigation';
-import { createClient } from '@/lib/supabase/server';
 import { getTranslations, getLocale } from 'next-intl/server';
 import { ResetPasswordForm } from '@/features/auth/ui/ResetPasswordForm';
+import { hasAuthenticatedSession } from '@/actions/auth-session';
 
 export default async function ResetPasswordPage() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const session = await hasAuthenticatedSession();
   const t = await getTranslations('AuthPages.reset_password');
   const locale = await getLocale();
 
   // Si l'usuari no té sessió, vol dir que l'enllaç ha caducat o és invàlid.
-  if (!user) {
+  if (!session.hasSession) {
     redirect(`/${locale}/auth/forgot-password`); 
   }
 
@@ -29,3 +34,4 @@ export default async function ResetPasswordPage() {
     </div>
   );
 }
+

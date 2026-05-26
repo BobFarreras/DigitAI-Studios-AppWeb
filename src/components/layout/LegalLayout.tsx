@@ -5,20 +5,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Scale, Shield, Cookie, FileText } from "lucide-react";
-import { createClient } from '@/lib/supabase/client';
-import { useEffect, useState } from "react";
-import type { User } from '@supabase/supabase-js';
 import { useTranslations } from 'next-intl'; // Importem el hook
 
 export default function LegalLayout({ children }: { children: React.ReactNode }) {
   const t = useTranslations('LegalLayout'); // Namespace LegalLayout
   const pathname = usePathname();
-  const [user, setUser] = useState<User | null>(null);
-  
-  useEffect(() => {
-    const supabase = createClient();
-    supabase.auth.getUser().then(({ data }) => setUser(data.user));
-  }, []);
 
   // Definim els links a dins per traduir-los
   const LEGAL_NAV = [

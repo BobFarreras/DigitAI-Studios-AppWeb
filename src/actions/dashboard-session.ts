@@ -1,0 +1,37 @@
+/**
+ * @file src/actions/dashboard-session.ts
+ * @updated 2026-05-20
+ * @summary Server action for dashboard session data.
+ * @scope Auth gate, role resolution, and data orchestration only.
+ */
+'use server';
+
+import { SupabaseProfileRepository } from '@/repositories/supabase/SupabaseProfileRepository';
+import { createClient } from '@/lib/supabase/server';
+import { getServerEnv } from '@/config/server-env';
+
+export async function getDashboardSessionData() {
+  const serverEnv = getServerEnv();
+  const supabase = await createClient();
+  const { data: { user }, error } = await supabase.auth.getUser();
+
+  if (error || !user) {
+    return { success: false, authRequired: true as const };
+  }
+
+  const profileRepo = new SupabaseProfileRepository();
+  const profiles = await profileRepo.findRoleByUserId(user.id);
+
+  const isAdmin =
+    profiles?.some((p) => p.role === 'admin') ||
+    (!!serverEnv.ADMIN_EMAIL && user.email === serverEnv.ADMIN_EMAIL);
+  const userRole = isAdmin ? 'admin' : 'client';
+
+  return {
+    success: true,
+    userEmail: user.email ?? '',
+    userRole,
+    profilesCount: profiles?.length ?? 0,
+  };
+}
+

@@ -1,3 +1,9 @@
+/**
+ * @file src/features/audit/ui/components/AuditHeader.tsx
+ * @updated 2026-05-08
+ * @summary Feature module: src/features/audit/ui/components/AuditHeader.tsx
+ * @scope UI o logica de feature encapsulada dins del domini corresponent.
+ */
 import { Link } from '@/routing';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Share2 } from 'lucide-react';

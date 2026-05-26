@@ -1,3 +1,9 @@
+/**
+ * @file src/features/analytics/ui/TopPagesCard.tsx
+ * @updated 2026-05-08
+ * @summary Feature module: src/features/analytics/ui/TopPagesCard.tsx
+ * @scope UI o logica de feature encapsulada dins del domini corresponent.
+ */
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';

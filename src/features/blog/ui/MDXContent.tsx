@@ -1,3 +1,9 @@
+/**
+ * @file src/features/blog/ui/MDXContent.tsx
+ * @updated 2026-05-08
+ * @summary Feature module: src/features/blog/ui/MDXContent.tsx
+ * @scope UI o logica de feature encapsulada dins del domini corresponent.
+ */
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import { Button } from '@/components/ui/button';
 import React, { ComponentPropsWithoutRef } from 'react';

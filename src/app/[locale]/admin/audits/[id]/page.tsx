@@ -1,18 +1,20 @@
+/**
+ * @file src/app/[locale]/admin/audits/[id]/page.tsx
+ * @updated 2026-05-08
+ * @summary Route module: src/app/[locale]/admin/audits/[id]/page.tsx
+ * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
+ */
 import { getAdminAuditById } from '@/actions/admin/audits';
 import Link from 'next/link';
 import { ArrowLeft, AlertTriangle } from 'lucide-react';
-
-// 👇 REUTILITZACIÓ DE COMPONENTS UI (La mateixa UI que l'usuari)
 import { AuditHeader } from '@/features/audit/ui/components/AuditHeader';
 import { ScoreGrid } from '@/features/audit/ui/components/ScoreGrid';
 import { CoreVitalsGrid, AuditMetric } from '@/features/audit/ui/components/CoreVitalsGrid';
 import { IssuesList } from '@/features/audit/ui/components/IssuesList';
-import { MobilePreview } from '@/features/audit/ui/components/MobilePreviw';
+import { MobilePreview } from '@/features/audit/ui/components/MobilePreview';
 import { BusinessOpportunities } from '@/features/audit/ui/components/BusinessOpportunities';
 import { AuditIssue } from '@/adapters/IWebScanner';
 import { BusinessSuggestion } from '@/types/ai';
-
-// TIPUS HELPER (Copiats de l'altre costat o importats si els tens en un fitxer compartit)
 type LighthouseAudit = {
   id: string; title: string; details: string; description: string; score: number | null; displayValue?: string; numericValue?: number;
 };
@@ -30,11 +32,7 @@ interface Props {
 
 export default async function AdminAuditDetailPage({ params }: Props) {
   const { id } = await params;
-  
-  // 1. Cridem l'acció d'Admin
   const response = await getAdminAuditById(id);
-
-  // 2. Gestió d'Errors (Igual que tenies)
   if (!response.success || !response.data) {
     return (
       <div className="container mx-auto py-20 px-6 flex flex-col items-center justify-center text-center space-y-6">
@@ -50,8 +48,6 @@ export default async function AdminAuditDetailPage({ params }: Props) {
   }
 
   const audit = response.data;
-  
-  // 3. TRANSFORMACIÓ DE DADES (Lògica idèntica a AuditDetailsPage)
   const rawData = audit.reportData as unknown as GoogleRawData;
   const googleAudits = rawData?.lighthouseResult?.audits || rawData?.audits || {};
   const suggestions: BusinessSuggestion[] = rawData?.suggestions || [];
@@ -90,12 +86,8 @@ export default async function AdminAuditDetailPage({ params }: Props) {
   const screenshotData = rawData?.screenshot || (googleAudits['final-screenshot']?.details as ScreenshotDetails)?.data || '';
   const seoScore = audit.seoScore ?? 0;
   const perfScore = audit.performanceScore ?? 0;
-
-  // 4. RENDERITZAT (Reutilitzant components UI)
   return (
     <div className="container mx-auto py-10 px-6 space-y-8 max-w-7xl">
-        
-        {/* HEADER EXTRA D'ADMIN */}
         <div className="flex justify-between items-center mb-6">
             <Link href="/admin" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors">
                 <ArrowLeft className="w-4 h-4 mr-2" /> Tornar a la Bústia
@@ -104,9 +96,6 @@ export default async function AdminAuditDetailPage({ params }: Props) {
                 MODE ADMIN (Vista Prèvia)
             </span>
         </div>
-
-        {/* --- INICI CONTINGUT REUTILITZAT --- */}
-        
         <AuditHeader
             url={audit.url}
             date={new Date(audit.createdAt)}
@@ -137,8 +126,7 @@ export default async function AdminAuditDetailPage({ params }: Props) {
                 </div>
             </div>
         </div>
-
-        {/* --- FI CONTINGUT REUTILITZAT --- */}
     </div>
   );
 }
+

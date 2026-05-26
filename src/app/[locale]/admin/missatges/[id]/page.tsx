@@ -1,3 +1,9 @@
+/**
+ * @file src/app/[locale]/admin/missatges/[id]/page.tsx
+ * @updated 2026-05-08
+ * @summary Route module: src/app/[locale]/admin/missatges/[id]/page.tsx
+ * @scope Composicio de pagina/layout i wiring amb actions; sense logica de dades complexa.
+ */
 import { getAdminLeadById } from '@/actions/admin/leads';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';

@@ -1,3 +1,9 @@
+/**
+ * @file src/features/blog/ui/PostStatusToggle.tsx
+ * @updated 2026-05-08
+ * @summary Feature module: src/features/blog/ui/PostStatusToggle.tsx
+ * @scope UI o logica de feature encapsulada dins del domini corresponent.
+ */
 // src/features/blog/ui/PostStatusToggle.tsx
 
 'use client';

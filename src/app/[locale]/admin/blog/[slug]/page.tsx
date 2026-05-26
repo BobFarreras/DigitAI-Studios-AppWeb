@@ -1,17 +1,16 @@
 // src/app/[locale]/admin/blog/[slug]/page.tsx
 
 import { requireAdmin } from '@/lib/auth/admin-guard';
-import { postRepository } from '@/services/container';
 import { notFound } from 'next/navigation';
 import { MDXContent } from '@/features/blog/ui/MDXContent';
 import { Link } from '@/routing';
-import { ArrowLeft, Save, Trash2, ExternalLink, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, Save, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Image from 'next/image';
 import { PostStatusToggle } from '@/features/blog/ui/PostStatusToggle';
-import { createClient } from '@/lib/supabase/server';
 import { PostViewTabs } from '@/components/admin/posts/PostViewTabs';
+import { getAdminPostDetail } from '@/actions/admin/blog';
 
 type Props = {
     params: Promise<{ slug: string }>;
@@ -21,14 +20,9 @@ export default async function AdminPostDetailPage({ params }: Props) {
     await requireAdmin();
     const { slug } = await params;
 
-    const post = await postRepository.getAdminPostBySlug(slug);
-    if (!post) return notFound();
-
-    const supabase = await createClient();
-    const { data: socialPosts } = await supabase
-        .from('social_posts')
-        .select('*')
-        .eq('post_id', post.id);
+    const detail = await getAdminPostDetail(slug);
+    if (!detail.success) return notFound();
+    const { post, socialPosts } = detail;
 
     return (
         <div className="w-full max-w-7xl mx-auto p-4 md:p-8 space-y-8 pb-20">
@@ -75,14 +69,6 @@ export default async function AdminPostDetailPage({ params }: Props) {
                         <Trash2 className="w-5 h-5"/>
                     </Button>
                     
-                    {post.published && (
-                        <Link href={`/blog/${post.slug}`} target="_blank">
-                            <Button variant="outline" size="icon" className="shrink-0">
-                                <ExternalLink className="w-5 h-5"/>
-                            </Button>
-                        </Link>
-                    )}
-                    
                     {/* Separador vertical (només estètic) */}
                     <div className="h-6 w-px bg-border mx-1 hidden sm:block" />
                     
@@ -102,7 +88,7 @@ export default async function AdminPostDetailPage({ params }: Props) {
             </div>
 
             {/* --- CONTINGUT (TABS & GRID) --- */}
-            <PostViewTabs postId={post.id} socialPosts={socialPosts || []}>
+            <PostViewTabs postId={post.id} socialPosts={socialPosts}>
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 mt-6">
                     
                     {/* COLUMNA ESQUERRA (Contingut) */}
