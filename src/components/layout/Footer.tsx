@@ -45,7 +45,7 @@ export function Footer() {
             <div className="flex flex-col items-center gap-2 md:items-start">
               <SocialLinks />
               <div className="flex flex-wrap justify-center gap-2 md:justify-start">
-                <ContactPill icon={<Mail className="h-3.5 w-3.5 text-[#8b5cf6]" />} href="mailto:info@digitaistudios.com" label="info@digitaistudios.com" />
+                <ContactPill icon={<Mail className="h-3.5 w-3.5 text-[#8b5cf6]" />} href="mailto:digitaistudios.developer@gmail.com" label="digitaistudios.developer@gmail.com" />
                 <ContactPill icon={<MapPin className="h-3.5 w-3.5 text-[#8b5cf6]" />} label="Girona" />
               </div>
             </div>

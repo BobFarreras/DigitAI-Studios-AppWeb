@@ -7,8 +7,7 @@
 'use client';
 
 import type { MouseEvent } from 'react';
-import type { User as SupabaseUser } from '@supabase/supabase-js';
-import { LogIn, Menu, UserPlus } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/routing';
 import {
@@ -19,11 +18,10 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 type Props = {
-  user: SupabaseUser | null;
   onSectionClick: (event: MouseEvent<HTMLAnchorElement>, href: string) => void;
 };
 
-export function MobileHeaderMenu({ user, onSectionClick }: Props) {
+export function MobileHeaderMenu({ onSectionClick }: Props) {
   const t = useTranslations('Navbar');
   const links = [
     { href: '/#automatitzacions', label: t('automation') },
@@ -45,25 +43,7 @@ export function MobileHeaderMenu({ user, onSectionClick }: Props) {
             </Link>
           </DropdownMenuItem>
         ))}
-        {!user ? <AuthLinks t={t} /> : null}
       </DropdownMenuContent>
     </DropdownMenu>
-  );
-}
-
-function AuthLinks({ t }: { t: ReturnType<typeof useTranslations<'Navbar'>> }) {
-  return (
-    <>
-      <DropdownMenuItem asChild>
-        <Link href="/auth/login" className="block w-full cursor-pointer rounded-lg px-2 py-2.5 text-sm font-medium focus:bg-primary/10 active:bg-primary/10">
-          <LogIn className="mr-2 inline h-4 w-4" />{t('login')}
-        </Link>
-      </DropdownMenuItem>
-      <DropdownMenuItem asChild>
-        <Link href="/auth/register" className="block w-full cursor-pointer rounded-lg px-2 py-2.5 text-sm font-medium focus:bg-primary/10 active:bg-primary/10">
-          <UserPlus className="mr-2 inline h-4 w-4" />{t('register')}
-        </Link>
-      </DropdownMenuItem>
-    </>
   );
 }

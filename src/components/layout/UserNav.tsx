@@ -74,17 +74,6 @@ export function UserNav({ user }: UserNavProps) {
     );
   }
 
-  // CAS 2: USUARI CONVIDAT (Guest)
-  return (
-    <div className="flex items-center gap-2 sm:gap-3">
-      <Link href="/auth/login" className="text-sm font-bold text-muted-foreground hover:text-primary transition-colors px-2 hidden sm:block">
-        {t('login')}
-      </Link>
-      <Link href="/auth/register">
-        <Button className="gradient-bg text-white border-0 shadow-md shadow-primary/10 h-9 px-4 sm:h-10 rounded-full">
-          {t('register')}
-        </Button>
-      </Link>
-    </div>
-  );
+  // CAS 2: USUARI CONVIDAT (Guest) — cap botó visible
+  return null;
 }

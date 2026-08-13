@@ -65,7 +65,7 @@ export function TrainingSection() {
                   <div className="flex min-w-0 flex-col rounded-[6px] px-1 py-1 sm:px-2 lg:items-center lg:px-0 lg:py-0 lg:text-center">
                     <h3 className="text-[14px] font-[650] leading-tight text-[#08090a] dark:text-[#d0d6e0] sm:text-[15px] lg:text-[20px]">{t(`formats.${item.key}.title`)}</h3>
                     <p className="mt-1.5 text-[13px] font-[540] leading-[1.55] text-[#383b3f] dark:text-[#d0d6e0] sm:text-[13px] lg:mx-auto lg:mt-2 lg:line-clamp-3 lg:min-h-[64px] lg:max-w-[340px] lg:text-[15px] lg:text-[#62666d] lg:dark:text-[#8a8f98]">{t(`formats.${item.key}.desc`)}</p>
-                    {item.figure === 'grid' ? <div className="mt-2 inline-flex justify-start lg:mt-4 lg:justify-center"><BrandRevealButton href="/#contacte" label={t('registerCta')} /></div> : <div className="hidden lg:mt-4 lg:block lg:h-9" />}
+                    {item.figure === 'grid' ? <div className="hidden lg:mt-4 lg:block lg:h-9" /> : <div className="hidden lg:mt-4 lg:block lg:h-9" />}
                   </div>
                 </motion.article>
               </motion.div>

@@ -1,7 +1,7 @@
 'use client';
 
 import { Link, usePathname } from '@/routing';
-import { Home, Menu, LayoutDashboard, LogIn, UserPlus, type LucideIcon, ChevronUp } from 'lucide-react';
+import { Home, Menu, LayoutDashboard, type LucideIcon, ChevronUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
 import type { User } from '@supabase/supabase-js';
@@ -50,14 +50,14 @@ export function PublicMobileNav({ user }: PublicMobileNavProps) {
     { href: '/#contacte', label: t('contact') },
   ];
 
-  const authItem: NavItem = user
+  const authItem: NavItem | null = user
     ? { id: 'auth', label: t('dashboard'), href: '/dashboard', icon: LayoutDashboard }
-    : { id: 'auth', label: t('register'), href: '/auth/register', icon: UserPlus };
+    : null;
 
   const NAV_ITEMS: NavItem[] = [
     { id: 'home', label: t('home'), href: '/', icon: Home },
     { id: 'solutions', label: t('solutions'), href: '#', icon: Menu, isDropdown: true },
-    authItem,
+    ...(authItem ? [authItem] : []),
   ];
 
   return (
@@ -97,20 +97,6 @@ export function PublicMobileNav({ user }: PublicMobileNavProps) {
                       </Link>
                     </DropdownMenuItem>
                   ))}
-                  {!user ? (
-                    <>
-                      <DropdownMenuItem asChild>
-                        <Link href="/auth/login" className="w-full cursor-pointer text-sm py-2.5 px-2 font-medium rounded-lg focus:bg-primary/10 active:bg-primary/10">
-                          <LogIn className="mr-2 inline h-4 w-4" />{t('login')}
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <Link href="/auth/register" className="w-full cursor-pointer text-sm py-2.5 px-2 font-medium rounded-lg focus:bg-primary/10 active:bg-primary/10">
-                          <UserPlus className="mr-2 inline h-4 w-4" />{t('register')}
-                        </Link>
-                      </DropdownMenuItem>
-                    </>
-                  ) : null}
                 </DropdownMenuContent>
               </DropdownMenu>
             );

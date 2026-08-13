@@ -41,7 +41,7 @@ export class ResendEmailService {
 
       // 2. ENVIEM EL CORREU
       await resend.emails.send({
-        from: 'DigitAI Studios <info@digitaistudios.com>',
+        from: 'DigitAI Studios <noreply@digitaistudios.com>',
         to: [to],
         subject: `🚀 Resultats de l'Auditoria: ${data.url}`,
         html: emailHtml,

@@ -110,7 +110,7 @@ export function NavbarV2({ user }: Props) {
             <ThemeToggle />
             <LanguageSwitcher />
           </div>
-          <div className="flex items-center gap-1 md:hidden"><ThemeToggle /><LanguageSwitcher /><MobileHeaderMenu user={user} onSectionClick={handleAnchor} /></div>
+          <div className="flex items-center gap-1 md:hidden"><ThemeToggle /><LanguageSwitcher /><MobileHeaderMenu onSectionClick={handleAnchor} /></div>
 
           {user ? (
             <div className="hidden items-center gap-2 sm:flex">
@@ -125,10 +125,7 @@ export function NavbarV2({ user }: Props) {
               </button>
             </div>
           ) : (
-            <div className="hidden items-center gap-2 sm:flex">
-              <Link href="/auth/login" className="px-2 text-[14px] font-[590] text-[#62666d] transition-colors hover:text-[#08090a] dark:text-[#8a8f98] dark:hover:text-[#f7f8f8]">{t('login')}</Link>
-              <BrandRevealButton href="/auth/register" label={t('register')} />
-            </div>
+            <div className="hidden items-center gap-2 sm:flex" />
           )}
         </div>
       </div>

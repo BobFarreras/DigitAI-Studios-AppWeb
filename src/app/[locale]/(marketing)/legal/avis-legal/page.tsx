@@ -68,7 +68,7 @@ export default async function AvisLegalPage() {
            <InfoCard 
               icon={Mail} 
               label={t('data_card_contact_label')} 
-              value="info@digitaistudios.com" 
+              value="digitaistudios.developer@gmail.com" 
            />
         </div>
       </section>

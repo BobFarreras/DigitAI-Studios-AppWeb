@@ -117,7 +117,7 @@ export function Navbar({ user }: Props) {
             <div className="flex md:hidden items-center gap-1">
               <ThemeToggle />
               <LanguageSwitcher />
-              <MobileHeaderMenu user={user} onSectionClick={handleScrollToSection} />
+              <MobileHeaderMenu onSectionClick={handleScrollToSection} />
             </div>
 
             <UserNav user={user} />

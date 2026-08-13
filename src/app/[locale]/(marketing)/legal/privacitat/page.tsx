@@ -47,7 +47,7 @@ export default async function PrivacitatPage() {
                   <p className="m-0">
                       {t.rich('section1_text', {
                           strong: (chunks) => <strong>{chunks}</strong>,
-                          link: (chunks) => <a href="mailto:info@digitaistudios.com">{chunks}</a>
+                          link: (chunks) => <a href="mailto:digitaistudios.developer@gmail.com">{chunks}</a>
                       })}
                   </p>
               </div>
