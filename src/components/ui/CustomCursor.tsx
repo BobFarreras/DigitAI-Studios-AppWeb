@@ -1,6 +1,6 @@
 /**
  * @file src/components/ui/CustomCursor.tsx
- * @updated 2026-05-25
+ * @updated 2026-08-19
  * @summary Cursor visual custom amb rendiment adaptatiu. Es desactiva si FPS < 45.
  * @scope Millora visual client-side sense lligam amb logica de negoci.
  */
@@ -9,6 +9,11 @@
 import { useEffect, useRef, useState } from 'react';
 
 type CursorMode = 'default' | 'action' | 'text';
+
+function getCursorLabel(target: EventTarget | null): string {
+  if (!(target instanceof Element)) return '';
+  return target.closest('[data-cursor-label]')?.getAttribute('data-cursor-label') ?? '';
+}
 
 function getCursorMode(target: EventTarget | null): CursorMode {
   if (!(target instanceof Element)) return 'default';
@@ -59,13 +64,16 @@ export function CustomCursor() {
 
     document.body.classList.add('custom-cursor-enabled');
     let mode: CursorMode = 'default';
+    let label = '';
     let pressed = false;
     let visible = false;
+    const labelEl = el.querySelector<HTMLElement>('.custom-cursor__label');
 
     const syncClasses = () => {
       el.className = [
         'custom-cursor',
         `custom-cursor--${mode}`,
+        label ? 'has-label' : '',
         pressed ? 'is-pressed' : '',
         visible ? 'is-visible' : '',
       ].join(' ');
@@ -75,8 +83,11 @@ export function CustomCursor() {
       el.style.setProperty('--cursor-x', `${event.clientX}px`);
       el.style.setProperty('--cursor-y', `${event.clientY}px`);
       const newMode = getCursorMode(event.target);
-      if (newMode !== mode || !visible) {
+      const newLabel = getCursorLabel(event.target);
+      if (newMode !== mode || newLabel !== label || !visible) {
         mode = newMode;
+        label = newLabel;
+        if (labelEl) labelEl.textContent = label;
         visible = true;
         syncClasses();
       }
@@ -111,6 +122,7 @@ export function CustomCursor() {
     <div ref={cursorRef} className="custom-cursor">
       <span className="custom-cursor__ring" />
       <span className="custom-cursor__dot" />
+      <span className="custom-cursor__label" />
     </div>
   );
 }

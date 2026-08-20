@@ -1,10 +1,16 @@
-'use client';
+"use client";
 
-import { Link, usePathname } from '@/routing';
-import { Home, Menu, LayoutDashboard, LogIn, UserPlus, type LucideIcon, ChevronUp } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { useTranslations } from 'next-intl';
-import type { User } from '@supabase/supabase-js';
+import { Link, usePathname } from "@/routing";
+import {
+  Home,
+  Menu,
+  LayoutDashboard,
+  type LucideIcon,
+  ChevronUp,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
+import type { User } from "@supabase/supabase-js";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,55 +26,72 @@ type NavItem = {
   isDropdown?: boolean;
 };
 
-interface PublicMobileNavProps { user: User | null }
+interface PublicMobileNavProps {
+  user: User | null;
+}
 
 export function PublicMobileNav({ user }: PublicMobileNavProps) {
-  const t = useTranslations('Navbar');
+  const t = useTranslations("Navbar");
   const pathname = usePathname();
 
-  const handleScrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    const isHomePage = pathname.replace(/^\/[a-z]{2}/, '') === '' || pathname === '/';
+  const handleScrollToSection = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    href: string,
+  ) => {
+    const isHomePage =
+      pathname.replace(/^\/[a-z]{2}/, "") === "" || pathname === "/";
 
-    if (isHomePage && href.includes('#')) {
+    if (isHomePage && href.includes("#")) {
       e.preventDefault();
-      const id = href.split('#')[1];
+      const id = href.split("#")[1];
       const element = document.getElementById(id);
 
       if (!element) return;
       setTimeout(() => {
-        const offsetPosition = element.getBoundingClientRect().top + window.pageYOffset - 85;
+        const offsetPosition =
+          element.getBoundingClientRect().top + window.pageYOffset - 85;
         window.scrollTo({ top: offsetPosition, behavior: "smooth" });
-        window.history.pushState(null, '', href);
+        window.history.pushState(null, "", href);
       }, 100);
     }
   };
 
   const MENU_LINKS = [
-    { href: '/#automatitzacions', label: t('automation') },
-    { href: '/#software-a-mida', label: t('software') },
-    { href: '/#formacio', label: t('training') },
-    { href: '/#contacte', label: t('contact') },
+    { href: "/#serveis", label: t("solutions") },
+    { href: "/#contacte", label: t("contact") },
   ];
 
-  const authItem: NavItem = user
-    ? { id: 'auth', label: t('dashboard'), href: '/dashboard', icon: LayoutDashboard }
-    : { id: 'auth', label: t('register'), href: '/auth/register', icon: UserPlus };
+  const authItem: NavItem | null = user
+    ? {
+        id: "auth",
+        label: t("dashboard"),
+        href: "/dashboard",
+        icon: LayoutDashboard,
+      }
+    : null;
 
   const NAV_ITEMS: NavItem[] = [
-    { id: 'home', label: t('home'), href: '/', icon: Home },
-    { id: 'solutions', label: t('solutions'), href: '#', icon: Menu, isDropdown: true },
-    authItem,
+    { id: "home", label: t("home"), href: "/", icon: Home },
+    {
+      id: "solutions",
+      label: t("solutions"),
+      href: "#",
+      icon: Menu,
+      isDropdown: true,
+    },
+    ...(authItem ? [authItem] : []),
   ];
 
   return (
     <div className="md:hidden fixed bottom-0 left-0 w-full z-50 bg-background/95 backdrop-blur-xl border-t border-border pb-safe transition-all duration-300">
       <div className="grid grid-cols-3 h-16 items-center">
         {NAV_ITEMS.map((item) => {
-          const isActive = item.href === '/'
-            ? pathname === '/'
-            : pathname.startsWith(item.href.replace('/#', ''));
+          const isActive =
+            item.href === "/"
+              ? pathname === "/"
+              : pathname.startsWith(item.href.replace("/#", ""));
           const Icon = item.icon;
-          const isAuthItem = item.id === 'auth';
+          const isAuthItem = item.id === "auth";
 
           if (item.isDropdown) {
             return (
@@ -85,7 +108,11 @@ export function PublicMobileNav({ user }: PublicMobileNavProps) {
                   </span>
                 </DropdownMenuTrigger>
 
-                <DropdownMenuContent side="top" align="center" className="w-56 mb-4 p-2 bg-card/95 backdrop-blur-md border-border shadow-2xl rounded-xl z-[60]">
+                <DropdownMenuContent
+                  side="top"
+                  align="center"
+                  className="w-56 mb-4 p-2 bg-card/95 backdrop-blur-md border-border shadow-2xl rounded-xl z-[60]"
+                >
                   {MENU_LINKS.map((subLink) => (
                     <DropdownMenuItem key={subLink.href} asChild>
                       <Link
@@ -97,20 +124,6 @@ export function PublicMobileNav({ user }: PublicMobileNavProps) {
                       </Link>
                     </DropdownMenuItem>
                   ))}
-                  {!user ? (
-                    <>
-                      <DropdownMenuItem asChild>
-                        <Link href="/auth/login" className="w-full cursor-pointer text-sm py-2.5 px-2 font-medium rounded-lg focus:bg-primary/10 active:bg-primary/10">
-                          <LogIn className="mr-2 inline h-4 w-4" />{t('login')}
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <Link href="/auth/register" className="w-full cursor-pointer text-sm py-2.5 px-2 font-medium rounded-lg focus:bg-primary/10 active:bg-primary/10">
-                          <UserPlus className="mr-2 inline h-4 w-4" />{t('register')}
-                        </Link>
-                      </DropdownMenuItem>
-                    </>
-                  ) : null}
                 </DropdownMenuContent>
               </DropdownMenu>
             );
@@ -120,25 +133,32 @@ export function PublicMobileNav({ user }: PublicMobileNavProps) {
             <Link
               key={item.id}
               href={item.href}
-              onClick={(e) => item.href.includes('#') && handleScrollToSection(e, item.href)}
+              onClick={(e) =>
+                item.href.includes("#") && handleScrollToSection(e, item.href)
+              }
               className={cn(
                 "flex flex-col items-center justify-center w-full h-full gap-1 active:scale-95 transition-transform",
                 isActive
                   ? "text-primary"
                   : isAuthItem && user
                     ? "text-foreground font-medium"
-                    : "text-muted-foreground hover:text-foreground"
+                    : "text-muted-foreground hover:text-foreground",
               )}
             >
               <Icon
                 className={cn(
                   "w-6 h-6 transition-all",
                   isActive && "fill-current/20 scale-110",
-                  (!isActive && isAuthItem) && "opacity-80"
+                  !isActive && isAuthItem && "opacity-80",
                 )}
                 strokeWidth={isActive ? 2.5 : 2}
               />
-              <span className={cn("text-[10px] truncate w-full text-center px-1", isActive ? "font-bold" : "font-medium")}>
+              <span
+                className={cn(
+                  "text-[10px] truncate w-full text-center px-1",
+                  isActive ? "font-bold" : "font-medium",
+                )}
+              >
                 {item.label}
               </span>
             </Link>

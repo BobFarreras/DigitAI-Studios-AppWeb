@@ -1,20 +1,28 @@
 /**
  * @file src/components/landing/v2/LandingV2.tsx
- * @updated 2026-05-25
- * @summary Landing principal estil Linear amb narrativa compacta.
- * @scope Orquestrar seccions de marketing i contacte final.
+ * @updated 2026-08-19
+ * @summary Composicio de la landing publica sobre fons negre amb efectes de cursor i scroll.
+ * @scope Nomes composicio de seccions; sense logica de dades.
  */
-import { HeroLinear } from '@/components/landing/v2/HeroV2';
-import { HeroAmbientBackground } from './HeroAmbientBackground';
-import { AutomationSection } from './AutomationSection';
-import { LazySections } from './LazySections';
+import { HeroV2 } from "@/components/landing/v2/HeroV2";
+import { JourneyConstellation } from "./JourneyConstellation";
+import { ParticleField } from "./ParticleField";
+import { ScrollProgress } from "./fx/ScrollProgress";
+import { ManifestoSection } from "./ManifestoSection";
+import { ServicesMarquee } from "./ServicesMarquee";
+import { LazySections } from "./LazySections";
 
 export function LandingV2() {
   return (
-    <div className="linear-shell relative isolate overflow-hidden">
-      <HeroAmbientBackground className="fixed inset-0" />
-      <HeroLinear />
-      <AutomationSection />
+    <div className="dala-landing relative isolate overflow-x-clip bg-[var(--dala-bg)] text-[var(--dala-text)] transition-colors duration-500">
+      <ScrollProgress />
+      <ParticleField />
+      <div id="visual-journey" className="relative isolate">
+        <JourneyConstellation />
+        <HeroV2 />
+        <ManifestoSection />
+        <ServicesMarquee />
+      </div>
       <LazySections />
     </div>
   );

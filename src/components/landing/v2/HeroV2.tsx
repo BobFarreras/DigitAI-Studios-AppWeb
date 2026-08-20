@@ -1,50 +1,72 @@
 /**
  * @file src/components/landing/v2/HeroV2.tsx
- * @updated 2026-05-25
- * @summary Hero Linear amb headline immediat (LCP) i animacions nomes per below-fold.
- * @scope Presentar automatitzacions, software i formacio com a portes d'entrada.
+ * @updated 2026-08-19
+ * @summary Hero de la landing: tipografia gegant emmascarada, constel·lacio 3D i parallax d'scroll.
+ * @scope Composicio visual de la seccio inicial; sense logica de negoci.
  */
-'use client';
+"use client";
 
-import { motion, type Variants } from 'framer-motion';
-import { useTranslations } from 'next-intl';
-import { BrandRevealText } from '@/components/ui/brand-reveal';
-import { HeroPillarGrid } from './HeroCommandScene';
+import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
+import { ScrollRevealText } from "./ScrollRevealText";
+import { Magnetic } from "./fx/Magnetic";
+import { CursorSpotlight } from "./fx/CursorSpotlight";
 
-const pillarVariants: Variants = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } },
-};
-
-export function HeroLinear() {
-  const t = useTranslations('LandingV2.hero');
+export function HeroV2() {
+  const t = useTranslations("LandingV2.hero");
 
   return (
     <section
       id="inici"
-      className="relative isolate overflow-visible bg-transparent px-4 pb-8 pt-[82px] text-[#08090a] dark:text-[#f7f8f8] sm:px-6 sm:pb-5 sm:pt-[96px] lg:h-[100svh] lg:overflow-hidden lg:px-8 lg:pb-7 lg:pt-[104px]"
+      className="relative isolate flex h-[100svh] items-start px-4 pb-8 pt-24 sm:px-6 md:items-center md:pt-20 lg:px-8 lg:pb-12 lg:pt-24"
     >
-      <div className="pointer-events-none absolute inset-x-0 top-0 z-[1] h-28 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.72),transparent)] dark:bg-[linear-gradient(to_bottom,rgba(8,9,10,0.78),transparent)]" />
-      <div className="relative z-10 mx-auto flex h-full w-full max-w-7xl flex-col justify-start">
-        <div className="mx-auto max-w-6xl text-center">
-          <h1 className="text-balance text-[clamp(31px,7.4vw,42px)] font-[590] leading-[1.03] tracking-normal text-[#08090a] dark:text-[#f7f8f8] sm:text-[clamp(42px,5vw,58px)] lg:text-[clamp(48px,4.1vw,66px)]">
-            {t('titleStrong')}
-            <BrandRevealText className="block text-[#383b3f] dark:text-[#8a8f98] md:!inline-grid">
-              {' '}{t('titleMuted')}
-            </BrandRevealText>
-          </h1>
-        </div>
+      <CursorSpotlight />
 
-        <motion.div
-          variants={pillarVariants}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, amount: 0.2 }}
-          className="mt-5 min-h-0 sm:mt-7 lg:mt-8"
-        >
-          <HeroPillarGrid />
-        </motion.div>
-      </div>
+      <motion.div className="relative z-10 mx-auto w-full max-w-7xl">
+        <div className="grid items-center gap-12 lg:grid-cols-[1.08fr_0.92fr]">
+          <div>
+            <ScrollRevealText
+              as="h1"
+              size="display"
+              weight={400}
+              color="var(--dala-text)"
+              stagger={0.055}
+              className="max-w-[94vw] sm:max-w-3xl md:max-w-3xl"
+            >
+              {t("titleStrong")}
+            </ScrollRevealText>
+
+            <motion.div
+              initial={{ opacity: 0, y: 28 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, delay: 0.95, ease: [0.16, 1, 0.3, 1] }}
+              className="mt-6 flex flex-col items-start gap-4 sm:mt-10 sm:flex-row sm:flex-wrap sm:items-center sm:gap-6"
+            >
+              <Magnetic radius={170} strength={0.28}>
+                <a
+                  href="#contacte"
+                  className="group relative inline-flex h-[52px] items-center overflow-hidden rounded-[26px] bg-[#8052ff] px-7 text-[12px] font-semibold uppercase tracking-[0.14em] text-white sm:px-8 sm:text-[13px] sm:tracking-[0.16em]"
+                >
+                  <span className="absolute inset-0 translate-y-full bg-white transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-0" />
+                  <span className="relative transition-colors duration-300 group-hover:text-[#08090a]">
+                    {t("cta")}
+                  </span>
+                </a>
+              </Magnetic>
+
+              <a
+                href="#serveis"
+                className="group inline-flex items-center gap-3 text-[13px] uppercase tracking-[0.16em] text-[var(--dala-muted)] transition-colors hover:text-[var(--dala-text)]"
+              >
+                {t("secondaryCta")}
+                <span className="inline-block h-px w-8 bg-[var(--dala-muted)] transition-all duration-500 group-hover:w-14 group-hover:bg-[var(--dala-text)]" />
+              </a>
+            </motion.div>
+          </div>
+
+          <div className="hidden lg:block" />
+        </div>
+      </motion.div>
     </section>
   );
 }

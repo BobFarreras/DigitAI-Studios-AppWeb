@@ -27,7 +27,7 @@ export class ContactService {
     // NO volem dir-li a l'usuari que ha fallat tot (ja hem guardat el lead)
     try {
       await this.mailer.sendMail({
-        to: 'info@digitaistudios.com',
+        to: 'digitaistudios.developer@gmail.com',
         subject: `🚀 Nou Lead Web: ${data.service}`,
         html: htmlContent
       });

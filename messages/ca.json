@@ -436,7 +436,7 @@
       "title": "Política de Privacitat",
       "subtitle": "La teva privacitat és sagrada. Aquí t'expliquem clarament quines dades recollim, per què, i com les protegim.",
       "section1_title": "1. Qui és el responsable de les teves dades?",
-      "section1_text": "El responsable és <strong>DigitAI Studios</strong> (veure Avís Legal per a dades completes). Pots contactar amb el nostre Delegat de Protecció de Dades a: <link>info@digitaistudios.com</link>.",
+      "section1_text": "El responsable és <strong>DigitAI Studios</strong> (veure Avís Legal per a dades completes). Pots contactar amb el nostre Delegat de Protecció de Dades a: <link>digitaistudios.developer@gmail.com</link>.",
       "section2_title": "2. Quines dades recollim?",
       "section2_desc": "Només recollim les dades estrictament necessàries per oferir els nostres serveis:",
       "data_audit_title": "Auditoria Web",
@@ -454,7 +454,7 @@
       "rights_list_2": "Limitar el seu tractament.",
       "rights_list_3": "Oposar-te a rebre comunicacions.",
       "rights_list_4": "Sol·licitar la portabilitat de les dades.",
-      "rights_contact": "Per exercir-los, envia un email a <strong>info@digitaistudios.com</strong>."
+      "rights_contact": "Per exercir-los, envia un email a <strong>digitaistudios.developer@gmail.com</strong>."
     },
     "cookies": {
       "title": "Política de Cookies",
@@ -631,9 +631,11 @@
     "hero": {
       "badge": "Creixement Digital Amb Resultats",
       "title": "Passem de web bonica a motor real de vendes i automatitzacio.",
-      "titleStrong": "Automatitzem processos. Creem software a mida.",
+      "titleStrong": "Automatitzem processos. Creem software a mida i agents IA.",
       "titleMuted": "I formem el teu equip perquè ho domini.",
-      "subtitle": "Dissenyem experiències que converteixen visites en oportunitats, amb IA i processos que estalvien hores cada setmana.",
+      "subtitle": "Creixement Digital Amb Resultats",
+      "description": "Construïm sistemes digitals que treballen amb tu: automatitzen operacions, centralitzen el control i escalen sense afegir complexitat.",
+      "cta": "Parlem del teu projecte",
       "primaryCta": "Vull una proposta estratègica",
       "secondaryCta": "Veure com treballem",
       "kpi1": {
@@ -655,7 +657,7 @@
       },
       "chip1": "Automatitzacions IA",
       "chip2": "App Web & SaaS",
-      "chip3": "Software a mida",
+      "chip3": "Agents IA",
       "outcome1": {
         "title": "Menys tasca manual",
         "desc": "Automatitzem passos repetitius del dia a dia."
@@ -706,8 +708,10 @@
       }
     },
     "automation": {
-      "titleStrong": "Automatitzem processos repetitius perquè",
+      "eyebrow": "Automatització",
+      "titleStrong": "Automatitzem processos repetitius perquè el negoci treballi sol.",
       "titleMuted": "el negoci treballi sol.",
+      "description": "Connectem formularis, WhatsApp, CRM, email i ERP perquè cada dada arribi on toca sense picar-la a mà.",
       "flows": {
         "leads": {
           "name": "Leads",
@@ -856,12 +860,13 @@
       }
     },
     "pain": {
-      "badge": "Diagnosi Clara",
-      "title": "El problema no es tenir trànsit. El problema es no convertir-lo.",
-      "description": "Si la web no guia, no respon dubtes i no impulsa una accio clara, estàs perdent vendes cada dia.",
-      "pain1": "Missatges dispersos: l’usuari no entén què ofereixes en 5 segons.",
-      "pain2": "Excés de seccions: la decisió es dilueix i la conversió cau.",
-      "pain3": "Sense embut actiu: no hi ha recorregut clar cap al contacte."
+      "badge": "Quan tecnologia i negoci encaixen",
+      "title": "Més capacitat. Menys fricció.",
+      "description": "No afegim eines perquè sí. Dissenyem un sistema connectat que millora com treballa i creix el teu negoci.",
+      "pain1": "Escalabilitat real: absorbeix més clients i operacions sense multiplicar costos.",
+      "pain2": "Processos automatitzats: elimina tasques repetitives i errors manuals.",
+      "pain3": "Control centralitzat: dades, equips i decisions en un mateix entorn.",
+      "pain4": "Més velocitat: passa de la idea a l'acció amb informació disponible al moment."
     },
     "process": {
       "title": "Metodologia en 3 fases per activar resultats ràpid.",
@@ -931,15 +936,36 @@
       "items": [
         {
           "title": "Automatitzacions IA",
-          "description": "Fluxos que connecten formularis, CRM, emails i tasques internes per reduir feina manual."
+          "description": "Connectem les eines del negoci perquè les dades avancin soles i cada acció arribi a la persona adequada.",
+          "resultValue": "24/7",
+          "resultLabel": "Processos actius sense supervisió constant",
+          "points": [
+            "Captura i qualificació de leads",
+            "Seguiments i avisos automàtics",
+            "Integració amb CRM, email i ERP"
+          ]
         },
         {
-          "title": "App Web i SaaS",
-          "description": "Plataformes web modernes per vendre, operar i escalar processos digitals."
+          "title": "Software a Mida",
+          "description": "Construïm l'eina que el teu equip necessita, sense adaptar el negoci a una plantilla limitada.",
+          "resultValue": "1 sistema",
+          "resultLabel": "Per centralitzar operació, equips i dades",
+          "points": [
+            "CRM i ERP personalitzats",
+            "Portals de clients i dashboards",
+            "Rols, permisos i dades en temps real"
+          ]
         },
         {
-          "title": "Registre d Usuaris",
-          "description": "Sistemes de comptes, rols, permisos i panells d administracio segurs."
+          "title": "Agents IA",
+          "description": "Agents connectats al teu coneixement que entenen peticions, prenen decisions guiades i executen treball real.",
+          "resultValue": "Segons",
+          "resultLabel": "Per consultar context i activar la següent acció",
+          "points": [
+            "Atenció i resposta contextual 24/7",
+            "Qualificació comercial intel·ligent",
+            "Accions sobre eines internes"
+          ]
         },
         {
           "title": "Software a Mida",
@@ -956,9 +982,37 @@
         ]
       }
     },
+    "software": {
+      "eyebrow": "Software a mida",
+      "titleStrong": "Software pensat pel teu procés, no una plantilla genèrica.",
+      "titleMuted": "i creix amb el teu negoci.",
+      "description": "CRM, reserves, usuaris i app web a mida. Construim la teva eina, no una plantilla tancada."
+    },
+    "agents": {
+      "eyebrow": "Agents IA",
+      "titleStrong": "Agents IA que treballen 24/7 pel teu negoci.",
+      "titleMuted": "i creix amb el teu negoci.",
+      "description": "Chatbots intelligents, agents de vendes automàtics i integracions que connecten les teves eines existents.",
+      "capabilities": {
+        "chatbot": {
+          "title": "Chatbots intelligents",
+          "desc": "Atén clients 24/7 amb respostes contextuales que aprenen del teu negoci."
+        },
+        "agents": {
+          "title": "Agents de vendes",
+          "desc": "Automatitza el seguiment de leads, qualificació i tancament amb IA."
+        },
+        "integration": {
+          "title": "Integracions natives",
+          "desc": "Connecta WhatsApp, email, CRM i eines existents sense codesi."
+        }
+      }
+    },
     "training": {
-      "titleStrong": "Forma't per crear, automatitzar",
+      "eyebrow": "Formació",
+      "titleStrong": "Forma't per crear, automatitzar i dominar la tecnologia real.",
       "titleMuted": "i dominar la tecnologia real.",
+      "description": "Sessions pràctiques per a equips i professionals que volen aplicar IA i automatitzacions amb criteri.",
       "registerCta": "Registrar-se",
       "formats": {
         "teams": {
@@ -976,6 +1030,7 @@
       }
     },
     "contact": {
+      "eyebrow": "Contacte",
       "titleStrong": "Hablemos de lo que necesitas.",
       "titleMuted": "Y del mejor camino para conseguirlo.",
       "lead": "Explica'ns què vols millorar i et respondrem amb una proposta concreta: automatització, software, formació o una combinació realista.",
