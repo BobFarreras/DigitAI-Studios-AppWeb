@@ -73,7 +73,7 @@ export function ServicesMarquee() {
           ))}
         </motion.div>
 
-        <div className="mx-auto h-px w-full max-w-7xl bg-[var(--dala-border)]">
+        <div className="mx-auto hidden h-px w-full max-w-7xl bg-[var(--dala-border)] md:block">
           <motion.div
             className="h-full origin-left bg-[#8052ff]"
             style={{ scaleX: scrollYProgress }}
