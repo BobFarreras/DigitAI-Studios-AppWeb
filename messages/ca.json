@@ -13,6 +13,23 @@
     "dashboard": "Dashboard",
     "logout": "Tancar Sessió"
   },
+  "Projects": {
+    "access": {
+      "title": "Espai de projectes",
+      "description": "Accedeix a propostes, presentacions i interfícies preparades per a cada projecte.",
+      "label": "Contrasenya d'accés",
+      "submit": "Entrar als projectes",
+      "errors": { "invalid": "La contrasenya no és correcta.", "config": "L'accés encara no està configurat." }
+    },
+    "gallery": {
+      "eyebrow": "Projectes privats",
+      "title": "Propostes que es poden explorar.",
+      "description": "Obre un projecte per consultar-ne l'estratègia, les decisions i la interfície completa.",
+      "projectType": "Infraestructura i operacions",
+      "projectDescription": "Proposta inicial, roadmap, arquitectura, costos i responsabilitats del nou Control Hub.",
+      "open": "Obrir projecte"
+    }
+  },
   "Hero": {
     "title_start": "Creem la teva",
     "title_highlight_1": "AppWeb",
@@ -1031,9 +1048,9 @@
     },
     "contact": {
       "eyebrow": "Contacte",
-      "titleStrong": "Hablemos de lo que necesitas.",
-      "titleMuted": "Y del mejor camino para conseguirlo.",
-      "lead": "Explica'ns què vols millorar i et respondrem amb una proposta concreta: automatització, software, formació o una combinació realista.",
+      "titleStrong": "Parlem del teu proper pas.",
+      "titleMuted": "",
+      "lead": "Explica'ns el repte. Et respondrem amb una primera proposta clara en menys de 48 h laborables.",
       "services": {
         "automation": "Automatitzacions i IA",
         "software": "Software a mida"

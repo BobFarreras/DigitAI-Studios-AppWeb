@@ -22,8 +22,8 @@ export function LandingV2() {
         <HeroV2 />
         <ManifestoSection />
         <ServicesMarquee />
+        <LazySections />
       </div>
-      <LazySections />
     </div>
   );
 }

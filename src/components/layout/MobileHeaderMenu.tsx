@@ -25,6 +25,7 @@ export function MobileHeaderMenu({ onSectionClick }: Props) {
   const t = useTranslations("Navbar");
   const links = [
     { href: "/#serveis", label: t("solutions") },
+    { href: "/projectes", label: t("projects") },
     { href: "/#contacte", label: t("contact") },
   ];
 

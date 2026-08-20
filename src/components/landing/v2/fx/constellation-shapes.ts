@@ -5,13 +5,15 @@
  * @scope Geometria pura de presentacio.
  */
 import type { Node3D } from "./constellation";
+import { contactShape } from "./contact-shape";
 
 export type ConstellationShape =
   | "brain"
   | "bulb"
   | "gear"
   | "dashboard"
-  | "agent";
+  | "agent"
+  | "contact";
 
 type Point3D = Pick<Node3D, "x" | "y" | "z">;
 
@@ -139,5 +141,6 @@ export function getShapePoint(
   if (shape === "bulb") return bulb(index, count, radius);
   if (shape === "gear") return gear(index, count, radius);
   if (shape === "dashboard") return dashboard(index, count, radius);
+  if (shape === "contact") return contactShape(index, count, radius);
   return agent(index, count, radius);
 }

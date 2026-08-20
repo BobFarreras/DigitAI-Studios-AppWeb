@@ -60,8 +60,23 @@ export function morphJourneyNode(
 }
 
 export function getJourneyScene(height: number): JourneyScene {
+  const contact = document.querySelector<HTMLElement>("#contacte")?.getBoundingClientRect();
   const impact = document.querySelector<HTMLElement>("#impacte")?.getBoundingClientRect();
   const services = document.querySelector<HTMLElement>("#serveis")?.getBoundingClientRect();
+  if (contact && contact.top < height * 0.98) {
+    const morph = clamp((height * 0.98 - contact.top) / (height * 0.92));
+    if (morph < 1) {
+      const travel = smooth(morph);
+      return {
+        from: "agent",
+        to: "contact",
+        morph,
+        x: 0.24 - travel * 0.46,
+        y: 0.5 + travel * 0.04,
+      };
+    }
+    return { from: "contact", to: "contact", morph: 0, x: -0.22, y: 0.54 };
+  }
   const service = services
     ? clamp(-services.top / Math.max(1, services.height - height))
     : 0;
@@ -70,9 +85,9 @@ export function getJourneyScene(height: number): JourneyScene {
     if (service < 0.42) {
       return { from: "gear", to: "dashboard", morph: (service - 0.14) / 0.28, x: 0.24, y: 0.5 };
     }
-    if (service < 0.58) return { from: "dashboard", to: "dashboard", morph: 0, x: 0.24, y: 0.5 };
-    if (service < 0.86) {
-      return { from: "dashboard", to: "agent", morph: (service - 0.58) / 0.28, x: 0.24, y: 0.5 };
+    if (service < 0.52) return { from: "dashboard", to: "dashboard", morph: 0, x: 0.24, y: 0.5 };
+    if (service < 0.72) {
+      return { from: "dashboard", to: "agent", morph: (service - 0.52) / 0.2, x: 0.24, y: 0.5 };
     }
     return { from: "agent", to: "agent", morph: 0, x: 0.24, y: 0.5 };
   }

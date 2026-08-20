@@ -13,6 +13,23 @@
     "dashboard": "Dashboard",
     "logout": "Cerrar Sesión"
   },
+  "Projects": {
+    "access": {
+      "title": "Espacio de proyectos",
+      "description": "Accede a propuestas, presentaciones e interfaces preparadas para cada proyecto.",
+      "label": "Contraseña de acceso",
+      "submit": "Entrar a los proyectos",
+      "errors": { "invalid": "La contraseña no es correcta.", "config": "El acceso aún no está configurado." }
+    },
+    "gallery": {
+      "eyebrow": "Proyectos privados",
+      "title": "Propuestas que puedes explorar.",
+      "description": "Abre un proyecto para consultar su estrategia, decisiones e interfaz completa.",
+      "projectType": "Infraestructura y operaciones",
+      "projectDescription": "Propuesta inicial, roadmap, arquitectura, costes y responsabilidades del nuevo Control Hub.",
+      "open": "Abrir proyecto"
+    }
+  },
   "Hero": {
     "title_start": "Creamos tu",
     "title_highlight_1": "AppWeb",
@@ -1031,9 +1048,9 @@
     },
     "contact": {
       "eyebrow": "Contacto",
-      "titleStrong": "Hablemos de lo que necesitas.",
-      "titleMuted": "Y del mejor camino para conseguirlo.",
-      "lead": "Cuéntanos qué quieres mejorar y te responderemos con una propuesta concreta: automatización, software, formación o una combinación realista.",
+      "titleStrong": "Hablemos de tu próximo paso.",
+      "titleMuted": "",
+      "lead": "Cuéntanos el reto. Te responderemos con una primera propuesta clara en menos de 48 horas laborables.",
       "services": {
         "automation": "Automatizaciones e IA",
         "software": "Software a medida"
