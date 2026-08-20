@@ -21,6 +21,13 @@ const transition = {
   ease: "easeInOut" as const,
 };
 
+const softwareTransition = {
+  duration: 4.2,
+  repeat: Infinity,
+  repeatDelay: 0.45,
+  ease: [0.16, 1, 0.3, 1] as const,
+};
+
 export function ServiceImpactDemo({ variant, value, label, steps }: Props) {
   return (
     <div className="mt-5 grid grid-cols-[0.64fr_1.36fr] gap-4 border-t border-[var(--dala-border)] pt-5 md:mt-10 md:grid-cols-[0.72fr_1.28fr] md:gap-7 md:pt-7">
@@ -46,10 +53,23 @@ export function ServiceImpactDemo({ variant, value, label, steps }: Props) {
               variant === 0
                 ? { x: [0, 8, 0], opacity: [0.45, 1, 0.45] }
                 : variant === 1
-                  ? { scaleX: [0.28, 1, 0.28] }
+                  ? {
+                      x: [-22, 0, 0, 0],
+                      opacity: [0.15, 1, 1, 0.45],
+                      boxShadow: [
+                        "0 0 0 rgba(128,82,255,0)",
+                        "0 0 24px rgba(128,82,255,0.3)",
+                        "0 0 0 rgba(128,82,255,0)",
+                        "0 0 0 rgba(128,82,255,0)",
+                      ],
+                    }
                   : { y: [0, -4, 0], opacity: [0.5, 1, 0.5] }
             }
-            transition={{ ...transition, delay: index * 0.46 }}
+            transition={
+              variant === 1
+                ? { ...softwareTransition, delay: index * 0.52 }
+                : { ...transition, delay: index * 0.46 }
+            }
             className={[
               "relative mb-2 flex min-h-6 origin-left items-center text-[11px] font-normal leading-tight text-[var(--dala-muted)] last:mb-0 md:mb-2.5 md:min-h-7 md:text-[13px]",
               variant === 1
@@ -70,6 +90,13 @@ export function ServiceImpactDemo({ variant, value, label, steps }: Props) {
             animate={{ top: [16, 104, 16] }}
             transition={transition}
             className="absolute right-3 h-2 w-2 rounded-full bg-[#ffb829] shadow-[0_0_18px_rgba(255,184,41,0.7)]"
+          />
+        )}
+        {variant === 1 && (
+          <motion.span
+            animate={{ top: [12, 96, 12], opacity: [0, 0.9, 0] }}
+            transition={softwareTransition}
+            className="pointer-events-none absolute inset-x-3 h-px bg-gradient-to-r from-transparent via-[#8052ff] to-transparent shadow-[0_0_14px_rgba(128,82,255,0.9)]"
           />
         )}
       </div>
