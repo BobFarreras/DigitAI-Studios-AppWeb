@@ -622,9 +622,11 @@
     "hero": {
       "badge": "Crescita Digitale con Risultati",
       "title": "Trasformiamo un sito bello in un vero motore di vendite e automazione.",
-      "titleStrong": "Automatizziamo processi. Creiamo software su misura.",
+      "titleStrong": "Automatizziamo processi. Creiamo software su misura e agenti IA.",
       "titleMuted": "E formiamo il tuo team per dominarlo.",
-      "subtitle": "Progettiamo esperienze che convertono visite in opportunità, con IA e processi operativi.",
+      "subtitle": "Crescita Digitale con Risultati",
+      "description": "Costruiamo sistemi digitali che lavorano con te: automatizzano le operazioni, centralizzano il controllo e scalano senza aggiungere complessità.",
+      "cta": "Parliamo del tuo progetto",
       "primaryCta": "Voglio una proposta strategica",
       "secondaryCta": "Scopri il metodo",
       "kpi1": {
@@ -646,7 +648,7 @@
       },
       "chip1": "Automazioni IA",
       "chip2": "App Web & SaaS",
-      "chip3": "Software su misura",
+      "chip3": "Agenti IA",
       "outcome1": {
         "title": "Meno lavoro manuale",
         "desc": "Automatizziamo i passaggi ripetitivi quotidiani."
@@ -697,8 +699,10 @@
       }
     },
     "automation": {
-      "titleStrong": "Automatizziamo processi ripetitivi affinche",
+      "eyebrow": "Automazione",
+      "titleStrong": "Automatizziamo processi ripetitivi affinche il business lavori da solo.",
       "titleMuted": "il business lavori da solo.",
+      "description": "Colleghiamo moduli, WhatsApp, CRM, email e ERP affinché ogni dato arrivi dove deve senza digitarlo a mano.",
       "flows": {
         "leads": {
           "name": "Lead",
@@ -847,12 +851,13 @@
       }
     },
     "pain": {
-      "badge": "Diagnosi Chiara",
-      "title": "Il traffico non è il problema. La conversione sì.",
-      "description": "Se il sito non guida, non chiarisce e non spinge a un’azione, perdi vendite ogni giorno.",
-      "pain1": "Messaggi dispersi: l’utente non capisce il valore in 5 secondi.",
-      "pain2": "Troppe sezioni: la decisione si diluisce e la conversione scende.",
-      "pain3": "Funnel assente: manca un percorso chiaro verso il contatto."
+      "badge": "Quando tecnologia e business si allineano",
+      "title": "Più capacità. Meno attrito.",
+      "description": "Non aggiungiamo strumenti senza motivo. Progettiamo un sistema connesso che migliora il modo in cui il tuo business lavora e cresce.",
+      "pain1": "Scalabilità reale: gestisci più clienti e operazioni senza moltiplicare i costi.",
+      "pain2": "Processi automatizzati: elimina attività ripetitive ed errori manuali.",
+      "pain3": "Controllo centralizzato: dati, team e decisioni in un unico ambiente.",
+      "pain4": "Più velocità: passa dall'idea all'azione con informazioni subito disponibili."
     },
     "process": {
       "title": "Metodo in 3 fasi per attivare risultati rapidamente.",
@@ -922,15 +927,36 @@
       "items": [
         {
           "title": "Automazioni IA",
-          "description": "Flussi che collegano form, CRM, email e attività operative per ridurre lavoro manuale."
+          "description": "Colleghiamo gli strumenti aziendali affinché i dati avanzino da soli e ogni azione raggiunga la persona giusta.",
+          "resultValue": "24/7",
+          "resultLabel": "Processi attivi senza supervisione costante",
+          "points": [
+            "Acquisizione e qualifica dei lead",
+            "Follow-up e avvisi automatici",
+            "Integrazione con CRM, email ed ERP"
+          ]
         },
         {
-          "title": "App Web e SaaS",
-          "description": "Piattaforme moderne per vendere, operare e scalare processi digitali."
+          "title": "Software su Misura",
+          "description": "Costruiamo lo strumento che serve al tuo team senza adattare il business a un template limitato.",
+          "resultValue": "1 sistema",
+          "resultLabel": "Per centralizzare operazioni, team e dati",
+          "points": [
+            "CRM ed ERP personalizzati",
+            "Portali clienti e dashboard",
+            "Ruoli, permessi e dati in tempo reale"
+          ]
         },
         {
-          "title": "Registrazione Utenti",
-          "description": "Sistemi account sicuri con ruoli, permessi e pannelli amministrativi."
+          "title": "Agenti IA",
+          "description": "Agenti collegati alla tua conoscenza che comprendono richieste, prendono decisioni guidate ed eseguono lavoro reale.",
+          "resultValue": "Secondi",
+          "resultLabel": "Per consultare il contesto e attivare l'azione successiva",
+          "points": [
+            "Assistenza contestuale 24/7",
+            "Qualifica commerciale intelligente",
+            "Azioni sugli strumenti interni"
+          ]
         },
         {
           "title": "Software su Misura",
@@ -948,8 +974,10 @@
       }
     },
     "training": {
-      "titleStrong": "Formati per creare, automatizzare",
+      "eyebrow": "Formazione",
+      "titleStrong": "Formati per creare, automatizzare e dominare tecnologia reale.",
       "titleMuted": "e dominare tecnologia reale.",
+      "description": "Sessioni pratiche per team e professionisti che vogliono applicare IA e automazioni con criterio.",
       "registerCta": "Registrarsi",
       "formats": {
         "teams": {
@@ -967,6 +995,7 @@
       }
     },
     "contact": {
+      "eyebrow": "Contatto",
       "titleStrong": "Parliamo di cosa ti serve.",
       "titleMuted": "E del primo passo migliore.",
       "lead": "Raccontaci cosa vuoi migliorare e risponderemo con una proposta concreta: automazione, software, formazione o una combinazione realistica.",
@@ -1028,6 +1057,32 @@
           "Sviluppo",
           "Risultato operativo"
         ]
+      }
+    },
+    "software": {
+      "eyebrow": "Software su misura",
+      "titleStrong": "Software pensato per il tuo processo, non un template generico.",
+      "titleMuted": "e cresce con la tua azienda.",
+      "description": "CRM, prenotazioni, utenti e app web su misura. Costruiamo il tuo strumento, non un template chiuso."
+    },
+    "agents": {
+      "eyebrow": "Agenti IA",
+      "titleStrong": "Agenti IA che lavorano 24/7 per la tua azienda.",
+      "titleMuted": "e crescono con la tua azienda.",
+      "description": "Chatbot intelligenti, agenti di vendita automatici e integrazioni che collegano gli strumenti che usi già.",
+      "capabilities": {
+        "chatbot": {
+          "title": "Chatbot intelligenti",
+          "desc": "Assistono i clienti 24/7 con risposte contestuali che imparano dalla tua azienda."
+        },
+        "agents": {
+          "title": "Agenti di vendita",
+          "desc": "Automatizzano follow-up dei lead, qualificazione e chiusura con l’IA."
+        },
+        "integration": {
+          "title": "Integrazioni native",
+          "desc": "Collegano WhatsApp, email, CRM e strumenti esistenti senza scrivere codice."
+        }
       }
     }
   },

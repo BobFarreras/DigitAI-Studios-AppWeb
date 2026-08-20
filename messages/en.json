@@ -631,9 +631,11 @@
     "hero": {
       "badge": "Digital Growth with Real Outcomes",
       "title": "We turn a nice website into a real sales and automation engine.",
-      "titleStrong": "We automate workflows. We build custom software.",
+      "titleStrong": "We automate workflows. We build custom software and AI agents.",
       "titleMuted": "And train your team to master it.",
-      "subtitle": "We design experiences that convert traffic into opportunities, powered by AI and operational workflows.",
+      "subtitle": "Digital Growth with Real Outcomes",
+      "description": "We build digital systems that work with you: automating operations, centralising control, and scaling without added complexity.",
+      "cta": "Let's talk about your project",
       "primaryCta": "Get a strategic proposal",
       "secondaryCta": "See our process",
       "kpi1": {
@@ -655,7 +657,7 @@
       },
       "chip1": "AI Automations",
       "chip2": "Web Apps & SaaS",
-      "chip3": "Custom Software",
+      "chip3": "AI Agents",
       "outcome1": {
         "title": "Less manual work",
         "desc": "We automate repetitive daily tasks."
@@ -706,8 +708,10 @@
       }
     },
     "automation": {
-      "titleStrong": "We automate repetitive workflows so",
+      "eyebrow": "Automation",
+      "titleStrong": "We automate repetitive workflows so the business runs on its own.",
       "titleMuted": "the business runs on its own.",
+      "description": "We connect forms, WhatsApp, CRM, email and ERP so every piece of data reaches where it needs to go without manual entry.",
       "flows": {
         "leads": {
           "name": "Leads",
@@ -856,12 +860,13 @@
       }
     },
     "pain": {
-      "badge": "Clear Diagnosis",
-      "title": "Traffic is not the issue. Conversion is.",
-      "description": "If your site does not guide, clarify, and drive a clear next step, you lose revenue every day.",
-      "pain1": "Scattered messaging: visitors do not get your value in the first 5 seconds.",
-      "pain2": "Too many sections: decisions get delayed and conversion drops.",
-      "pain3": "No active funnel: no clear path from interest to contact."
+      "badge": "When technology and business align",
+      "title": "More capacity. Less friction.",
+      "description": "We do not add tools for their own sake. We design one connected system that improves how your business works and grows.",
+      "pain1": "Real scalability: handle more customers and operations without multiplying costs.",
+      "pain2": "Automated processes: remove repetitive tasks and manual errors.",
+      "pain3": "Centralised control: data, teams, and decisions in one environment.",
+      "pain4": "Greater speed: move from idea to action with information available instantly."
     },
     "process": {
       "title": "A 3-step method to unlock results fast.",
@@ -931,15 +936,36 @@
       "items": [
         {
           "title": "AI Automations",
-          "description": "Connected workflows across forms, CRM, email, and operations to remove manual work."
+          "description": "We connect your business tools so data moves by itself and every action reaches the right person.",
+          "resultValue": "24/7",
+          "resultLabel": "Active processes without constant supervision",
+          "points": [
+            "Lead capture and qualification",
+            "Automated follow-ups and alerts",
+            "CRM, email, and ERP integration"
+          ]
         },
         {
-          "title": "Web Apps & SaaS",
-          "description": "Modern platforms to sell, manage operations, and scale digital processes."
+          "title": "Custom Software",
+          "description": "We build the tool your team needs without forcing the business into a limited template.",
+          "resultValue": "1 system",
+          "resultLabel": "To centralise operations, teams, and data",
+          "points": [
+            "Custom CRM and ERP",
+            "Customer portals and dashboards",
+            "Roles, permissions, and real-time data"
+          ]
         },
         {
-          "title": "User Registration Systems",
-          "description": "Secure account systems with roles, permissions, and admin panels."
+          "title": "AI Agents",
+          "description": "Agents connected to your knowledge that understand requests, make guided decisions, and execute real work.",
+          "resultValue": "Seconds",
+          "resultLabel": "To query context and activate the next action",
+          "points": [
+            "Contextual support around the clock",
+            "Intelligent sales qualification",
+            "Actions across internal tools"
+          ]
         },
         {
           "title": "Custom Software",
@@ -956,9 +982,37 @@
         ]
       }
     },
+    "software": {
+      "eyebrow": "Custom software",
+      "titleStrong": "Software built for your process, not a generic template.",
+      "titleMuted": "and grows with your business.",
+      "description": "CRM, bookings, user management and custom web apps. We build your tool, not a closed template."
+    },
+    "agents": {
+      "eyebrow": "AI agents",
+      "titleStrong": "AI agents working 24/7 for your business.",
+      "titleMuted": "and grows with your business.",
+      "description": "Smart chatbots, automated sales agents and integrations that connect your existing tools seamlessly.",
+      "capabilities": {
+        "chatbot": {
+          "title": "Smart chatbots",
+          "desc": "Serve customers 24/7 with contextual responses that learn from your business."
+        },
+        "agents": {
+          "title": "Sales agents",
+          "desc": "Automate lead follow-up, qualification and closing with AI."
+        },
+        "integration": {
+          "title": "Native integrations",
+          "desc": "Connect WhatsApp, email, CRM and existing tools without code."
+        }
+      }
+    },
     "training": {
-      "titleStrong": "Train to build, automate",
+      "eyebrow": "Training",
+      "titleStrong": "Train to build, automate and master real technology.",
       "titleMuted": "and master real technology.",
+      "description": "Practical sessions for teams and professionals who want to apply AI and automations with clear criteria.",
       "registerCta": "Sign up",
       "formats": {
         "teams": {
@@ -976,6 +1030,7 @@
       }
     },
     "contact": {
+      "eyebrow": "Contact",
       "titleStrong": "Tell us what you need.",
       "titleMuted": "We will define the first step.",
       "lead": "Tell us what you want to improve and we will reply with a concrete proposal: automation, software, training or a realistic combination.",
