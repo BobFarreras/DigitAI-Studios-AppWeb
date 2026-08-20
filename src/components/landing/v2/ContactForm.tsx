@@ -30,7 +30,7 @@ export function ContactForm() {
     useState<(typeof services)[number]["value"]>("ia_automation");
 
   return (
-    <form action={action} className="space-y-8">
+    <form action={action} className="space-y-6 rounded-[28px] border border-[var(--dala-border)] bg-[var(--dala-panel)] p-5 backdrop-blur-xl sm:p-8">
       <div className="flex flex-wrap gap-3">
         {services.map(({ value, key, Icon }) => {
           const active = service === value;

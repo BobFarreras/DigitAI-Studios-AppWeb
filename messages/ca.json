@@ -1031,9 +1031,9 @@
     },
     "contact": {
       "eyebrow": "Contacte",
-      "titleStrong": "Hablemos de lo que necesitas.",
-      "titleMuted": "Y del mejor camino para conseguirlo.",
-      "lead": "Explica'ns què vols millorar i et respondrem amb una proposta concreta: automatització, software, formació o una combinació realista.",
+      "titleStrong": "Parlem del teu proper pas.",
+      "titleMuted": "",
+      "lead": "Explica'ns el repte. Et respondrem amb una primera proposta clara en menys de 48 h laborables.",
       "services": {
         "automation": "Automatitzacions i IA",
         "software": "Software a mida"

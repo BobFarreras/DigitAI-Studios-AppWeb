@@ -1031,9 +1031,9 @@
     },
     "contact": {
       "eyebrow": "Contact",
-      "titleStrong": "Tell us what you need.",
-      "titleMuted": "We will define the first step.",
-      "lead": "Tell us what you want to improve and we will reply with a concrete proposal: automation, software, training or a realistic combination.",
+      "titleStrong": "Let's plan your next move.",
+      "titleMuted": "",
+      "lead": "Tell us the challenge. We will reply with a clear first proposal within 48 business hours.",
       "services": {
         "automation": "Automations and AI",
         "software": "Custom software"

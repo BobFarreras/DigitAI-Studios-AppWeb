@@ -50,10 +50,19 @@ export function JourneyConstellation() {
       const servicesTop = document
         .querySelector<HTMLElement>("#serveis")
         ?.getBoundingClientRect().top;
+      const contactTop = document
+        .querySelector<HTMLElement>("#contacte")
+        ?.getBoundingClientRect().top;
+      const mobileContact =
+        width < 768 && contactTop !== undefined && contactTop < height * 0.98;
       const mobileService =
         width < 768 && servicesTop !== undefined && servicesTop < height * 0.82;
-      const mobileY = mobileService ? -height * 0.24 : height * scene.x * 0.82;
-      const scale = mobileService ? 0.72 : 1;
+      const mobileY = mobileContact
+        ? height * 0.04
+        : mobileService
+          ? -height * 0.24
+          : height * scene.x * 0.82;
+      const scale = mobileContact ? 0.66 : mobileService ? 0.72 : 1;
       const translateX = width < 768 ? 0 : width * scene.x;
       const translateY = width < 768 ? mobileY : height * (scene.y - 0.5);
       ctx.clearRect(0, 0, width, height);

@@ -1031,9 +1031,9 @@
     },
     "contact": {
       "eyebrow": "Contacto",
-      "titleStrong": "Hablemos de lo que necesitas.",
-      "titleMuted": "Y del mejor camino para conseguirlo.",
-      "lead": "Cuéntanos qué quieres mejorar y te responderemos con una propuesta concreta: automatización, software, formación o una combinación realista.",
+      "titleStrong": "Hablemos de tu próximo paso.",
+      "titleMuted": "",
+      "lead": "Cuéntanos el reto. Te responderemos con una primera propuesta clara en menos de 48 horas laborables.",
       "services": {
         "automation": "Automatizaciones e IA",
         "software": "Software a medida"
