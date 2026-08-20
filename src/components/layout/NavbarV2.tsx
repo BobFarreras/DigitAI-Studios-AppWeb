@@ -23,6 +23,7 @@ type Props = { user: User | null };
 
 const sectionLinks = [
   { href: "/#serveis", key: "solutions" },
+  { href: "/projectes", key: "projects" },
   { href: "/#contacte", key: "contact" },
 ] as const;
 const sectionScrollOffsets: Record<string, number> = {
