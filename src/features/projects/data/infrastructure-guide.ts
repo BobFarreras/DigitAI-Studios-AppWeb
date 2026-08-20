@@ -4,7 +4,7 @@
  * @summary Roadmap tecnic i operatiu per construir l'empresa de productes digitals.
  * @scope Dades estàtiques de la guia visual.
  */
-export type TechKey = "github" | "cloudflare" | "vercel" | "supabase" | "postgres" | "n8n" | "openai" | "anthropic" | "hostinger" | "whatsapp" | "ollama" | "redis";
+export type TechKey = "github" | "cloudflare" | "vercel" | "supabase" | "postgres" | "n8n" | "openai" | "anthropic" | "hostinger" | "whatsapp" | "ollama" | "redis" | "nextjs" | "typescript" | "sentry" | "stripe" | "shopify";
 export type GuidePhase = { number: string; title: string; goal: string; owner: string; tech: TechKey[]; actions: string[]; result: string };
 
 export const phases: GuidePhase[] = [
@@ -30,4 +30,9 @@ export const techMeta: Record<TechKey, { name: string; url: string; role: string
   whatsapp: { name: "WhatsApp", url: "https://www.whatsapp.com/favicon.ico", role: "Canal conversacional" },
   ollama: { name: "Ollama", url: "https://ollama.com/public/ollama.png", role: "Models locals" },
   redis: { name: "Redis", url: "https://redis.io/favicon.ico", role: "Queues i cache" },
+  nextjs: { name: "Next.js", url: "https://nextjs.org/favicon.ico", role: "Frontend i backend web" },
+  typescript: { name: "TypeScript", url: "https://www.typescriptlang.org/favicon-32x32.png", role: "Contractes i qualitat" },
+  sentry: { name: "Sentry", url: "https://sentry.io/favicon.ico", role: "Errors i rendiment" },
+  stripe: { name: "Stripe", url: "https://stripe.com/favicon.ico", role: "Pagaments" },
+  shopify: { name: "Shopify", url: "https://www.shopify.com/favicon.ico", role: "Comerç gestionat" },
 };
