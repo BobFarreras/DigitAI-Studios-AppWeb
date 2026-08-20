@@ -1,23 +1,21 @@
 /**
  * @file src/components/landing/v2/LazySections.tsx
- * @updated 2026-05-25
- * @summary Client boundary per dynamic imports de seccions below-fold.
- * @scope Code splitting sense bloquejar SSR del Server Component pare.
+ * @updated 2026-08-20
+ * @summary Carrega diferidament nomes el tancament comercial de la landing.
+ * @scope Optimitzacio de la seccio de contacte.
  */
-'use client';
+"use client";
 
-import dynamic from 'next/dynamic';
+import dynamic from "next/dynamic";
 
-const CustomSoftwareSection = dynamic(() => import('./CustomSoftwareSection').then((m) => ({ default: m.CustomSoftwareSection })), { ssr: false });
-const TrainingSection = dynamic(() => import('./TrainingSection').then((m) => ({ default: m.TrainingSection })), { ssr: false });
-const ContactSectionV2 = dynamic(() => import('./ContactSectionV2').then((m) => ({ default: m.ContactSectionV2 })), { ssr: false });
+const ContactSectionV2 = dynamic(
+  () =>
+    import("./ContactSectionV2").then((module) => ({
+      default: module.ContactSectionV2,
+    })),
+  { ssr: false },
+);
 
 export function LazySections() {
-  return (
-    <>
-      <CustomSoftwareSection />
-      <TrainingSection />
-      <ContactSectionV2 />
-    </>
-  );
+  return <ContactSectionV2 />;
 }
