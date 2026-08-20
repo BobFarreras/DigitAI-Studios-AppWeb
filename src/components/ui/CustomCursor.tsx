@@ -67,6 +67,7 @@ export function CustomCursor() {
     let label = '';
     let pressed = false;
     let visible = false;
+    let onDark = false;
     const labelEl = el.querySelector<HTMLElement>('.custom-cursor__label');
 
     const syncClasses = () => {
@@ -76,6 +77,7 @@ export function CustomCursor() {
         label ? 'has-label' : '',
         pressed ? 'is-pressed' : '',
         visible ? 'is-visible' : '',
+        onDark ? 'is-on-dark' : '',
       ].join(' ');
     };
 
@@ -84,9 +86,13 @@ export function CustomCursor() {
       el.style.setProperty('--cursor-y', `${event.clientY}px`);
       const newMode = getCursorMode(event.target);
       const newLabel = getCursorLabel(event.target);
-      if (newMode !== mode || newLabel !== label || !visible) {
+      const newOnDark =
+        event.target instanceof Element &&
+        Boolean(event.target.closest('[data-cursor-contrast="light"]'));
+      if (newMode !== mode || newLabel !== label || newOnDark !== onDark || !visible) {
         mode = newMode;
         label = newLabel;
+        onDark = newOnDark;
         if (labelEl) labelEl.textContent = label;
         visible = true;
         syncClasses();

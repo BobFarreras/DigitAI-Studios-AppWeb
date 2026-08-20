@@ -740,12 +740,14 @@ img {
       background: #08090a;
     }
 
-    .dark .custom-cursor__ring {
+    .dark .custom-cursor__ring,
+    .custom-cursor.is-on-dark .custom-cursor__ring {
       border-color: rgba(247, 248, 248, 0.7);
       box-shadow: 0 0 18px rgba(247, 248, 248, 0.12);
     }
 
-    .dark .custom-cursor__dot {
+    .dark .custom-cursor__dot,
+    .custom-cursor.is-on-dark .custom-cursor__dot {
       background: #f7f8f8;
     }
 
@@ -772,7 +774,8 @@ img {
       box-shadow: 0 0 18px rgba(99, 102, 241, 0.36);
     }
 
-    .dark .custom-cursor--text .custom-cursor__ring {
+    .dark .custom-cursor--text .custom-cursor__ring,
+    .custom-cursor--text.is-on-dark .custom-cursor__ring {
       color: #f7f8f8;
     }
 

@@ -13,6 +13,23 @@
     "dashboard": "Dashboard",
     "logout": "Log Out"
   },
+  "Projects": {
+    "access": {
+      "title": "Project space",
+      "description": "Access proposals, presentations and interfaces prepared for each project.",
+      "label": "Access password",
+      "submit": "Enter projects",
+      "errors": { "invalid": "The password is incorrect.", "config": "Access has not been configured yet." }
+    },
+    "gallery": {
+      "eyebrow": "Private projects",
+      "title": "Proposals you can explore.",
+      "description": "Open a project to review its strategy, decisions and complete interface.",
+      "projectType": "Infrastructure and operations",
+      "projectDescription": "Initial proposal, roadmap, architecture, costs and responsibilities for the new Control Hub.",
+      "open": "Open project"
+    }
+  },
   "Hero": {
     "title_start": "We build your",
     "title_highlight_1": "WebApp",

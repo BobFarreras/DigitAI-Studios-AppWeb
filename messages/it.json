@@ -13,6 +13,23 @@
     "dashboard": "Dashboard",
     "logout": "Esci"
   },
+  "Projects": {
+    "access": {
+      "title": "Spazio progetti",
+      "description": "Accedi a proposte, presentazioni e interfacce preparate per ogni progetto.",
+      "label": "Password di accesso",
+      "submit": "Entra nei progetti",
+      "errors": { "invalid": "La password non è corretta.", "config": "L'accesso non è ancora configurato." }
+    },
+    "gallery": {
+      "eyebrow": "Progetti privati",
+      "title": "Proposte da esplorare.",
+      "description": "Apri un progetto per consultarne strategia, decisioni e interfaccia completa.",
+      "projectType": "Infrastruttura e operazioni",
+      "projectDescription": "Proposta iniziale, roadmap, architettura, costi e responsabilità del nuovo Control Hub.",
+      "open": "Apri progetto"
+    }
+  },
   "Hero": {
     "title_start": "Creiamo la tua",
     "title_highlight_1": "WebApp",
