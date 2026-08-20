@@ -17,6 +17,7 @@ import { N8nStrategy } from "./N8nStrategy";
 import { OperatingModel } from "./OperatingModel";
 import { ProductBlueprints } from "./ProductBlueprints";
 import { TechLogo } from "./TechLogo";
+import { WebAppDelivery } from "./WebAppDelivery";
 
 export function ProjectPresentation() {
   const { scrollYProgress } = useScroll();
@@ -40,6 +41,8 @@ export function ProjectPresentation() {
       <section id="arquitectura" className="mx-auto max-w-7xl px-5 py-24 sm:px-8"><p className="text-xs uppercase tracking-[0.2em] text-cyan-300">01 · El sistema complet</p><h2 className="mt-4 max-w-4xl text-4xl tracking-[-0.05em] sm:text-6xl">Una empresa és un flux, no una col·lecció d’eines.</h2><p className="mb-10 mt-5 max-w-2xl text-white/50">Cada venda ha d’entrar en un procés repetible i acabar en un producte desplegat, mesurable i facturable.</p><ArchitectureMap /></section>
 
       <section className="mx-auto max-w-7xl px-5 py-24 sm:px-8"><p className="text-xs uppercase tracking-[0.2em] text-violet-300">02 · Què venem</p><h2 className="mt-4 max-w-4xl text-4xl tracking-[-0.05em] sm:text-6xl">Tres productes. Tres arquitectures clares.</h2><p className="mb-10 mt-5 max-w-2xl text-white/50">El client veu el resultat; nosaltres controlem les capes, els costos i els punts de fallada.</p><ProductBlueprints /></section>
+
+      <section className="mx-auto max-w-7xl px-5 py-24 sm:px-8"><WebAppDelivery /></section>
 
       <section className="mx-auto max-w-7xl px-5 py-24 sm:px-8"><N8nStrategy /></section>
 
