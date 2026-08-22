@@ -11,7 +11,6 @@ import { Bot, AppWindow, CheckCircle2, Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { submitContactForm } from "@/actions/contact";
 import { ContactField } from "./ContactField";
-import { Magnetic } from "./fx/Magnetic";
 import { Link } from "@/routing";
 
 const initialState = { success: false, message: "", errors: {} };
@@ -103,8 +102,7 @@ export function ContactForm() {
         <p className="text-[11px] text-red-500">{state.errors.privacy[0]}</p>
       )}
 
-      <Magnetic radius={190} strength={0.2}>
-        <button
+      <button
           type="submit"
           disabled={pending || state.success}
           className="group relative flex h-[54px] w-full items-center justify-center overflow-hidden rounded-[27px] bg-[#8052ff] text-[12px] font-semibold uppercase tracking-[0.2em] text-white transition-opacity disabled:cursor-not-allowed disabled:opacity-50"
@@ -122,8 +120,7 @@ export function ContactForm() {
                 ? t("form.sent")
                 : t("form.submit")}
           </span>
-        </button>
-      </Magnetic>
+      </button>
 
       {state.message && (
         <p

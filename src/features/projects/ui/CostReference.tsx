@@ -7,12 +7,14 @@
 import { CircleDollarSign, TriangleAlert } from "lucide-react";
 
 const costs = [
-  { service: "GitHub Organization", model: "Per seient / pla", estimate: "0–$21+ usuari/mes", owner: "Empresa" },
-  { service: "Vercel Pro", model: "Seients + consum", estimate: "~$20 usuari/mes + ús", owner: "Empresa o client" },
-  { service: "Supabase Pro", model: "Organització + compute", estimate: "$25/mes; projectes extra des de ~$10", owner: "Client/projecte" },
+  { service: "GitHub Organization", model: "Free al principi", estimate: "0 €; Team quan calgui", owner: "Empresa" },
+  { service: "Web estàtica / demo", model: "Cloudflare o hosting", estimate: "0 € + domini", owner: "Empresa o client" },
+  { service: "Vercel Pro", model: "Comercial + consum", estimate: "des de ~$20/mes + ús", owner: "Client/projecte" },
+  { service: "Supabase Free", model: "Prototip del client", estimate: "0 € · 2 actius per Owner/Admin", owner: "Client" },
+  { service: "Supabase Pro", model: "Producció + compute", estimate: "$25/mes; extres des de ~$10", owner: "Client/projecte" },
   { service: "Hostinger VPS KVM 2", model: "Servidor", estimate: "14,99 €/mes renovació", owner: "Client" },
   { service: "n8n Cloud", model: "Execucions", estimate: "20–50 €/mes inici", owner: "Client" },
-  { service: "n8n self-hosted", model: "Infra + llicència", estimate: "Community client / Business 667 €+", owner: "Segons tenancy" },
+  { service: "n8n self-hosted", model: "Infra + llicència", estimate: "Community a instància del client", owner: "Client" },
   { service: "WhatsApp Cloud API", model: "Missatges/template", estimate: "Variable per país i categoria", owner: "Client" },
   { service: "IA via API", model: "Tokens i tools", estimate: "Variable amb límit mensual", owner: "Client o repercutit" },
   { service: "Ollama", model: "GPU + operació", estimate: "Sense tokens; infraestructura dedicada", owner: "Empresa o client" },

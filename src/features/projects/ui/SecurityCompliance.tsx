@@ -1,0 +1,21 @@
+/**
+ * @file src/features/projects/ui/SecurityCompliance.tsx
+ * @updated 2026-08-22
+ * @summary Baseline de seguretat, RGPD i govern d'intelligencia artificial.
+ * @scope Guia operativa privada; validacio juridica externa quan correspongui.
+ */
+import { AlertTriangle, Bot, FileCheck2, LockKeyhole, Siren } from "lucide-react";
+
+const controls = [
+  { icon: FileCheck2, title: "Abans del contracte", items: ["Definir responsable i encarregat del tractament", "DPA, subencarregats i ubicació de dades", "Finalitat, base jurídica, retenció i eliminació", "DPIA si el tractament pot comportar alt risc"] },
+  { icon: LockKeyhole, title: "Abans de producció", items: ["MFA, mínim privilegi i accessos revisables", "Secrets fora de Git; claus separades per entorn", "RLS, validació d’inputs i logs sense dades sensibles", "Backup restaurat en prova, no només configurat"] },
+  { icon: Bot, title: "Agents IA", items: ["Informar clarament que l’usuari parla amb IA", "Inventari de models, prompts, dades i proveïdors", "Permisos per eina i aprovació humana en accions crítiques", "Evals, traçabilitat, límits i sortida cap a una persona"] },
+  { icon: Siren, title: "Quan hi ha un incident", items: ["Contenir, preservar evidències i registrar la cronologia", "Avisar immediatament el client responsable", "Avaluar risc per als drets de les persones", "Notificar AEPD en 72 h quan el RGPD ho exigeixi"] },
+];
+
+export function SecurityCompliance() {
+  return <section><div className="grid gap-8 lg:grid-cols-[.75fr_1.25fr]"><div><p className="text-xs uppercase tracking-[.2em] text-red-300">08 · Seguretat i normativa</p><h2 className="mt-4 text-4xl tracking-[-.05em] sm:text-6xl">Seguretat abans del deploy, no després de l’incident.</h2><p className="mt-5 text-sm leading-relaxed text-white/50">El contracte defineix qui decideix sobre les dades; l’arquitectura demostra com les protegim. Cada projecte conserva un registre de dades, riscos, proveïdors i controls.</p><div className="mt-7 flex gap-3 rounded-3xl border border-amber-300/20 bg-amber-300/[.06] p-5"><AlertTriangle className="h-5 w-5 shrink-0 text-amber-300" /><p className="text-xs leading-relaxed text-white/55">NIS2, ENS, DPO i sistemes IA d’alt risc depenen de sector, mida i cas d’ús. Es valida l’abast abans de prometre compliment contractual.</p></div></div>
+    <div className="grid gap-3 sm:grid-cols-2">{controls.map(({ icon: Icon, title, items }, index) => <article key={title} className="rounded-3xl border border-white/10 bg-white/[.035] p-5"><span className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-400/10"><Icon className="h-5 w-5 text-red-300" /></span><span className="mt-4 block text-[10px] text-white/25">CONTROL 0{index + 1}</span><h3 className="mt-1 text-xl">{title}</h3><ul className="mt-4 space-y-2">{items.map((item) => <li key={item} className="text-xs leading-relaxed text-white/50">· {item}</li>)}</ul></article>)}</div></div>
+    <div className="mt-6 grid gap-3 md:grid-cols-3"><a href="https://www.aepd.es/derechos-y-deberes/cumple-tus-deberes/directrices-de-aplicacion/pymes" target="_blank" rel="noreferrer" className="rounded-2xl border border-white/10 p-4 text-xs text-white/55 transition hover:border-violet-400/40 hover:text-white"><strong className="block text-white">RGPD per PYMES · AEPD</strong><span className="mt-1 block">Registre, clàusules i mesures</span></a><a href="https://www.aepd.es/derechos-y-deberes/cumple-tus-deberes/medidas-de-cumplimiento/brechas-de-datos-personales-notificacion" target="_blank" rel="noreferrer" className="rounded-2xl border border-white/10 p-4 text-xs text-white/55 transition hover:border-violet-400/40 hover:text-white"><strong className="block text-white">Bretxes · AEPD</strong><span className="mt-1 block">Avaluació i notificació</span></a><a href="https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai" target="_blank" rel="noreferrer" className="rounded-2xl border border-white/10 p-4 text-xs text-white/55 transition hover:border-violet-400/40 hover:text-white"><strong className="block text-white">AI Act · Comissió Europea</strong><span className="mt-1 block">Risc, transparència i supervisió</span></a></div>
+  </section>;
+}
