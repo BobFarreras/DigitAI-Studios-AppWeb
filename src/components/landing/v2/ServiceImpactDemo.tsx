@@ -36,7 +36,7 @@ export function ServiceImpactDemo({ variant, value, label, steps }: Props) {
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ amount: 0.8 }}
-          className="block text-[clamp(32px,5vh,46px)] font-normal leading-none tracking-[-0.04em] text-[var(--dala-text)] md:text-[clamp(46px,5vw,72px)]"
+          className="block text-[clamp(24px,3vh,34px)] font-normal leading-none tracking-[-0.04em] text-[var(--dala-text)] md:text-[clamp(32px,3.2vw,48px)]"
         >
           {value}
         </motion.strong>

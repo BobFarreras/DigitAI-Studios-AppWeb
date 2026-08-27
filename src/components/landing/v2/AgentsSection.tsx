@@ -44,6 +44,7 @@ export function AgentsSection() {
             eyebrow={t('eyebrow')}
             title={t('titleStrong')}
             description={t('description')}
+            size="heading"
           />
 
           <div className="mt-12 space-y-px">

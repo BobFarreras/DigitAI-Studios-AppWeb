@@ -51,7 +51,7 @@ export function ServicesMarquee() {
                     0{index + 1}
                   </span>
                   <h3
-                    className={`text-[clamp(34px,5.4vh,52px)] font-normal leading-[0.92] tracking-[-0.045em] text-[var(--dala-text)] ${item === 0 ? "[overflow-wrap:anywhere] md:text-[clamp(36px,3.4vw,52px)]" : "md:text-[clamp(52px,6.4vw,92px)]"}`}
+                    className={`text-[clamp(28px,4.4vh,42px)] font-normal leading-[0.92] tracking-[-0.045em] text-[var(--dala-text)] ${item === 0 ? "[overflow-wrap:anywhere] md:text-[clamp(32px,3vw,46px)]" : "md:text-[clamp(40px,4.8vw,68px)]"}`}
                   >
                     {t(`items.${item}.title`)}
                   </h3>
