@@ -9,6 +9,7 @@ import { Footer } from '@/components/layout/Footer';
 import { ScrollManager } from '@/components/layout/ScrollManager'; // 👈 Importem el component, NO el hook
 import { getSessionUser } from '@/actions/session-user';
 import { CustomCursor } from '@/components/ui/CustomCursor';
+import Script from 'next/script';
 
 export default async function MarketingLayout({
   children,
@@ -31,6 +32,13 @@ export default async function MarketingLayout({
       </main>
 
       <Footer />
+
+      {/* Giny de l'agent de veu (Nertel). La clau és pública i està lligada al domini. */}
+      <Script
+        src="https://app.nertel.ai/api/public/voice/widget.js"
+        data-key="wk_feSDJn1iu6gEkbzrRTni02B-U-y4WUjG"
+        strategy="afterInteractive"
+      />
     </div>
   );
 }

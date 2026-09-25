@@ -48,7 +48,8 @@ export async function proxy(request: NextRequest) {
   enriched.headers.set('X-Frame-Options', 'DENY');
   enriched.headers.set('X-Content-Type-Options', 'nosniff');
   enriched.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-  enriched.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  // El micròfon només es delega a l'iframe del giny de veu de Nertel.
+  enriched.headers.set('Permissions-Policy', 'camera=(), microphone=(self "https://app.nertel.ai"), geolocation=()');
 
   if (request.headers.get('x-forwarded-proto') === 'http') {
     enriched.headers.set('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
